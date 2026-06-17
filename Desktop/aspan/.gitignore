@@ -1,0 +1,14 @@
+test
+test/
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+cache/nasa_power/
+cache/uploads/
+outputs/*.pptx
+!outputs/.gitkeep
+logs/*.jsonl
+!logs/proposal_runs.jsonl
+logs/*.log

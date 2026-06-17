@@ -1,0 +1,123 @@
+{
+  "name": "Aspan Proposal Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "aspan-proposal",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {
+          "binaryData": true
+        }
+      },
+      "id": "WebhookTrigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/extract-bill",
+        "sendBinaryData": true,
+        "binaryPropertyName": "bill",
+        "options": {}
+      },
+      "id": "ExtractBill",
+      "name": "FastAPI Extract Bill",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/generate-proposal",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={\"bill\": $json, \"client\": $node[\"Webhook Trigger\"].json[\"client\"]}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "GenerateProposal",
+      "name": "FastAPI Generate Proposal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "responseDataSource": "firstEntryBinary"
+      },
+      "id": "ReturnPptx",
+      "name": "Return PPTX",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "FastAPI Extract Bill",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastAPI Extract Bill": {
+      "main": [
+        [
+          {
+            "node": "FastAPI Generate Proposal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastAPI Generate Proposal": {
+      "main": [
+        [
+          {
+            "node": "Return PPTX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "v1-streamlit",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
+

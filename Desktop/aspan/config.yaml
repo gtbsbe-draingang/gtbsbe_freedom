@@ -1,0 +1,53 @@
+analysis_horizon_years: 15
+
+# Solar sizing assumptions
+kwp_per_m2: 0.15
+grid_capacity_solar_fraction: 0.70
+daytime_fraction_default: 0.70
+default_specific_yield_kwh_per_kwp: 1450
+conservative_roof_area_m2_default: 1200
+
+daytime_fraction_by_industry:
+  manufacturing: 0.75
+  cold_storage: 0.85
+  food_processing: 0.75
+  retail: 0.65
+  hospitality: 0.60
+  default: 0.70
+
+# Solar production assumptions
+performance_ratio: 0.80
+panel_degradation_rate: 0.005
+use_nasa_power: true
+
+# Financial assumptions
+tariff_escalation_rate: 0.03
+ppa_discount_to_grid_tariff: 0.15
+ppa_tariff_per_kwh_default: null
+
+# Diesel assumptions
+diesel_price_per_liter: 1.20
+diesel_kwh_per_liter: 3.5
+
+# Optional commercial reference value
+system_cost_per_kwp: 850
+
+# Location defaults
+default_latitude_by_country:
+  Ghana: 5.6037
+  Nigeria: 6.5244
+  Senegal: 14.7167
+  "Cote d'Ivoire": 5.3600
+
+default_longitude_by_country:
+  Ghana: -0.1870
+  Nigeria: 3.3792
+  Senegal: -17.4677
+  "Cote d'Ivoire": -4.0083
+
+# NASA POWER API cache
+nasa_power_cache_dir: "cache/nasa_power"
+
+# Output settings
+output_dir: "outputs"
+proposal_log_path: "logs/proposal_runs.jsonl"
