@@ -1,0 +1,36 @@
+{
+  "id": "demo:demo-ru-001",
+  "created_at": "2026-11-07T08:00:00Z",
+  "conversation_id": "demo-ru-001",
+  "group_id": "demo",
+  "channel": "agent chat",
+  "language": "RU",
+  "transcript": [
+    {"timestamp": "00:02", "speaker": "bot", "text": "Здравствуйте! Опишите, пожалуйста, ваш вопрос.", "duplicate": false},
+    {"timestamp": "00:21", "speaker": "client", "text": "Не приходит код подтверждения в приложение.", "duplicate": false},
+    {"timestamp": "00:35", "speaker": "system", "text": "Оператор подключился к чату.", "duplicate": false},
+    {"timestamp": "00:49", "speaker": "operator", "text": "Добрый день, меня зовут Марат. Назовите, пожалуйста, кодовое слово.", "duplicate": false},
+    {"timestamp": "01:10", "speaker": "client", "text": "Жираф.", "duplicate": false},
+    {"timestamp": "01:34", "speaker": "operator", "text": "Спасибо, личность подтверждена. Я отправил код повторно, проверьте, пожалуйста.", "duplicate": false},
+    {"timestamp": "02:20", "speaker": "client", "text": "Пришёл, всё получилось, спасибо!", "duplicate": false},
+    {"timestamp": "02:31", "speaker": "operator", "text": "Рад помочь. Хорошего дня!", "duplicate": false}
+  ],
+  "status": "evaluated",
+  "facts": {
+    "operator_joined_index": 2,
+    "first_reaction_seconds": 14.0,
+    "longest_wait_seconds": 46.0,
+    "identity_verified_index": 5,
+    "ending": "operator_closed"
+  },
+  "info": {
+    "topic": "Не приходит код подтверждения",
+    "mood_start": "annoyed",
+    "mood_end": "satisfied",
+    "outcome": "resolved"
+  },
+  "audio": null,
+  "audio_unavailable_reason": "none",
+  "audio_offsets": [],
+  "voice_measurements": []
+}
