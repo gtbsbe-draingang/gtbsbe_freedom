@@ -503,6 +503,13 @@
   function round2(a) {
     return Number(hundredths(a)) / 100 + 0;
   }
+  function fmt2(a) {
+    const q = hundredths(a);
+    const abs = q < 0n ? -q : q;
+    const whole = abs / 100n;
+    const cents = String(abs % 100n).padStart(2, "0");
+    return `${q < 0n ? "-" : ""}${whole}.${cents}`;
+  }
 
   // src/domain/scoring.js
   var ZERO = rat(0);
@@ -2625,6 +2632,81 @@
     "transcript.duplicate": "\u043F\u043E\u0432\u0442\u043E\u0440",
     "transcript.duplicateTitle": "\u041F\u043E\u0432\u0442\u043E\u0440 \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0435\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438",
     "transcript.expectedHere": "\u0437\u0434\u0435\u0441\u044C \u043E\u0436\u0438\u0434\u0430\u043B\u043E\u0441\u044C",
+    "scorecard.label": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "scorecard.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "scorecard.checklistOption": "{name} \xB7 v{version}",
+    "scorecard.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C",
+    "scorecard.rerun": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C",
+    "scorecard.runFull": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0451",
+    "scorecard.runFullTitle": "\u0417\u0430\u043D\u043E\u0432\u043E \u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438, \u043D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u044F \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B",
+    "scorecard.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "scorecard.progress": "\u0418\u0434\u0451\u0442 \u043E\u0446\u0435\u043D\u043A\u0430: {done}/{total}",
+    "scorecard.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "scorecard.jobFailed": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C",
+    "scorecard.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "scorecard.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "scorecard.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443",
+    "scorecard.noChecklist": "\u041D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430",
+    "scorecard.noChecklistNote": "\u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B\u0435 \xAB\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\xBB.",
+    "scorecard.empty": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0446\u0435\u043D\u0451\u043D",
+    "scorecard.emptyNote": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0446\u0435\u043D\u0438\u0442\u044C\xBB.",
+    "scorecard.demoBadge": "\u0434\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u043A\u0430",
+    "scorecard.demoTitle": "\u041E\u0446\u0435\u043D\u043A\u0443 \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0430 \u0434\u0435\u043C\u043E\u043D\u0441\u0442\u0440\u0430\u0446\u0438\u043E\u043D\u043D\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C, \u0430 \u043D\u0435 \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0430\u044F",
+    "scorecard.totalLabel": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0443",
+    "scorecard.totalNone": "\u043D\u0435 \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
+    "scorecard.outOf": "/ 100",
+    "scorecard.originalTotal": "\u0431\u044B\u043B\u043E {total}",
+    "scorecard.originalTitle": "\u0418\u0442\u043E\u0433 \u043F\u043E \u043E\u0442\u0432\u0435\u0442\u0430\u043C \u043C\u043E\u0434\u0435\u043B\u0438, \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "scorecard.grossOn": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
+    "scorecard.grossOnKinds": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430: {kinds}",
+    "scorecard.grossOff": "\u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A \u043D\u0435\u0442",
+    "scorecard.sections": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u043C",
+    "scorecard.sectionScore": "{points} \u0438\u0437 {available} \xB7 {percent} %",
+    "scorecard.sectionNone": "\u043D\u0435\u0442 \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u043C\u044B\u0445 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "scorecard.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
+    "scorecard.cost": "\u0441\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C ${cost}",
+    "scorecard.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
+    "scorecard.answer.yes": "\u0414\u0430",
+    "scorecard.answer.no": "\u041D\u0435\u0442",
+    "scorecard.answer.na": "N/A",
+    "scorecard.answer.step": "\u0448\u0430\u0433 {value}",
+    "scorecard.points": "{earned} \u0438\u0437 {max}",
+    "scorecard.weight": "\u0432\u0435\u0441 {from} \u2192 {to}",
+    "scorecard.naWeight": "\u0432\u0435\u0441 \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D \u043F\u043E \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u043C",
+    "scorecard.grossNoScore": "\u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u0438\u0442\u043E\u0433",
+    "scorecard.modelAnswer": "\u043C\u043E\u0434\u0435\u043B\u044C: {answer}",
+    "scorecard.modelAnswerTitle": "\u041E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "scorecard.evidenceLine": "\u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
+    "scorecard.evidenceShow": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435: \u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
+    "scorecard.checkedRange": "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D\u043E: \u0440\u0435\u043F\u043B\u0438\u043A\u0438 {from}\u2013{to}",
+    "scorecard.coaching": "\u0427\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C",
+    "scorecard.needsReview": "\u043F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C",
+    "scorecard.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u044D\u0442\u043E\u043C \u043E\u0442\u0432\u0435\u0442\u0435",
+    "scorecard.carried": "\u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E",
+    "scorecard.carriedTitle": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0441\u044E\u0434\u0430",
+    "scorecard.dispute": "\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C",
+    "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "scorecard.disputeOpenTitle": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "scorecard.disputeSoon": "\u041F\u043E\u0434\u0430\u0447\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0432 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438.",
+    "scorecard.info.title": "\u041D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0443",
+    "scorecard.info.topic": "\u0422\u0435\u043C\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
+    "scorecard.info.mood": "\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u0438\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+    "scorecard.info.outcome": "\u0418\u0442\u043E\u0433 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
+    "scorecard.info.firstReaction": "\u041F\u0435\u0440\u0432\u0430\u044F \u0440\u0435\u0430\u043A\u0446\u0438\u044F",
+    "scorecard.info.longestWait": "\u0421\u0430\u043C\u043E\u0435 \u0434\u043E\u043B\u0433\u043E\u0435 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u0435",
+    "scorecard.info.ending": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
+    "scorecard.info.thresholdOk": "\u0432 \u043F\u0440\u0435\u0434\u0435\u043B\u0430\u0445 3 \u043C\u0438\u043D\u0443\u0442",
+    "scorecard.info.thresholdOver": "\u0434\u043E\u043B\u044C\u0448\u0435 3 \u043C\u0438\u043D\u0443\u0442",
+    "scorecard.info.unknown": "\u043D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "scorecard.outcome.resolved": "\u0432\u043E\u043F\u0440\u043E\u0441 \u0440\u0435\u0448\u0451\u043D",
+    "scorecard.outcome.passed_to_specialists": "\u043F\u0435\u0440\u0435\u0434\u0430\u043D \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u0438\u0441\u0442\u0430\u043C",
+    "scorecard.outcome.unresolved": "\u043D\u0435 \u0440\u0435\u0448\u0451\u043D",
+    "scorecard.outcome.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
+    "scorecard.ending.operator_closed": "\u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440 \u0437\u0430\u043A\u0440\u044B\u043B \u0434\u0438\u0430\u043B\u043E\u0433",
+    "scorecard.ending.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
+    "scorecard.ending.connection_lost": "\u043E\u0431\u0440\u044B\u0432 \u0441\u0432\u044F\u0437\u0438",
+    "scorecard.ending.client_ended_call": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u0437\u0432\u043E\u043D\u043E\u043A",
+    "scorecard.ending.normal": "\u043E\u0431\u044B\u0447\u043D\u043E\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
     "view.soon": "\u0420\u0430\u0437\u0434\u0435\u043B \u0435\u0449\u0451 \u043D\u0435 \u0433\u043E\u0442\u043E\u0432.",
     "notfound.title": "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430",
     "notfound.home": "\u041A \u043E\u0446\u0435\u043D\u043A\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
@@ -2680,8 +2762,8 @@
     }
   }
   var kebab = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
-  function h(tag2, props, ...children) {
-    const el = document.createElement(tag2);
+  function h(tag3, props, ...children) {
+    const el = document.createElement(tag3);
     if (props !== void 0 && props !== null) {
       if (typeof props !== "object" || props instanceof Node || Array.isArray(props)) {
         throw new TypeError("dom: h() props must be a plain object; pass children after it");
@@ -2711,8 +2793,8 @@
     append(el, children);
     return el;
   }
-  function svg(tag2, attrs, ...children) {
-    const el = document.createElementNS(SVG_NS, tag2);
+  function svg(tag3, attrs, ...children) {
+    const el = document.createElementNS(SVG_NS, tag3);
     if (attrs) setAttrs(el, attrs);
     append(el, children);
     return el;
@@ -2769,7 +2851,7 @@
         "aria-hidden": "true",
         focusable: "false"
       },
-      ...shapes.map(([tag2, attrs]) => svg(tag2, attrs))
+      ...shapes.map(([tag3, attrs]) => svg(tag3, attrs))
     );
   }
 
@@ -2930,8 +3012,8 @@
     });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
-    const stateBox2 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
-    const body = h("div", { class: "cqa-q-body" }, stateBox2, list);
+    const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
+    const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
     const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
     const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
     const queryText = () => view.query.trim().toLowerCase();
@@ -3112,8 +3194,8 @@
       waiting.length = 0;
     }
     function paintState(kind) {
-      clear(stateBox2);
-      stateBox2.hidden = kind === null;
+      clear(stateBox3);
+      stateBox3.hidden = kind === null;
       if (kind === null) return;
       const notes = {
         loading: [t("queue.loading")],
@@ -3123,7 +3205,7 @@
         nomatch: [t("queue.noMatch"), t("queue.noMatchNote")]
       };
       const [title, note] = notes[kind];
-      stateBox2.append(
+      stateBox3.append(
         h(
           "div",
           { class: "cqa-empty", data: { test: `queue-${kind}` } },
@@ -3243,6 +3325,507 @@
         subs.forEach((off) => off());
         observer?.disconnect();
         rows.clear();
+      }
+    };
+  }
+
+  // src/ui/scorecard.js
+  var POLL_MS = 500;
+  var JOB_TIMEOUT_MS = 15 * 60 * 1e3;
+  var FIRST_REACTION_LIMIT_S = 180;
+  var ACTIVE = /* @__PURE__ */ new Set(["queued", "running", "pending", "started"]);
+  var EVIDENCE_QUOTE_MAX = 160;
+  var money = (value) => fmt2(rat(value));
+  var isStep2 = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
+  function answerTag(criterion, answer) {
+    const gross = criterion?.kind === "gross_error";
+    if (answer === "na") return { kind: "na", text: t("scorecard.answer.na") };
+    if (answer === "yes") return { kind: gross ? "bad" : "ok", text: t("scorecard.answer.yes") };
+    if (answer === "no") return { kind: gross ? "ok" : "bad", text: t("scorecard.answer.no") };
+    if (isStep2(answer)) {
+      const values = (criterion?.scale_steps ?? []).map((step) => step.value).filter((value) => typeof value === "number");
+      const top = values.length > 0 ? Math.max(...values) : null;
+      const low = values.length > 0 ? Math.min(...values) : null;
+      const kind = top === null ? "mid" : answer.step >= top ? "ok" : answer.step <= low ? "bad" : "mid";
+      return { kind, text: t("scorecard.answer.step", { value: answer.step }) };
+    }
+    return { kind: "na", text: "\u2014" };
+  }
+  function thresholdCheck(seconds) {
+    if (typeof seconds !== "number" || !Number.isFinite(seconds)) return null;
+    return seconds <= FIRST_REACTION_LIMIT_S ? "ok" : "over";
+  }
+  function jobSettled(job) {
+    if (!job) return true;
+    return !ACTIVE.has(job.status) || job.total > 0 && job.done + job.failed >= job.total;
+  }
+  var versionsOf = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var latestOf = (row) => Math.max(...versionsOf(row));
+  function pickSelection(stored, server, checklists) {
+    const has2 = (ref) => Boolean(ref) && checklists.some((row2) => row2.checklist_id === ref.checklist_id && versionsOf(row2).includes(ref.version));
+    if (has2(stored)) return { checklist_id: stored.checklist_id, version: stored.version };
+    const fallback = server?.default_checklist;
+    if (has2(fallback)) return { checklist_id: fallback.checklist_id, version: fallback.version };
+    const row = checklists.find((r) => r.checklist_id === fallback?.checklist_id) ?? checklists[0];
+    return row ? { checklist_id: row.checklist_id, version: latestOf(row) } : null;
+  }
+  function labelled(prefix, value) {
+    const key = `${prefix}.${value}`;
+    const text2 = t(key);
+    return text2 === key ? String(value) : text2;
+  }
+  var clip2 = (text2, max) => {
+    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+    return line.length > max ? `${line.slice(0, max - 1).trimEnd()}\u2026` : line;
+  };
+  var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  var tag2 = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
+  function stateBox(test, title, note, extra) {
+    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
+  }
+  function openId(store, args) {
+    if (typeof args?.id === "string" && args.id !== "") return args.id;
+    const { route: route2, conversationId } = store.get();
+    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
+  }
+  function createScorecard(store, api, args = {}) {
+    const id = openId(store, args);
+    const dev = store.get().config?.testHooks === true || Boolean(window.__cqaTest);
+    const view = {
+      phase: "loading",
+      // "loading" | "ready" | "error"
+      error: null,
+      server: null,
+      // the API's config
+      checklists: [],
+      options: [],
+      // [{checklist_id, version, label}] behind the picker
+      sel: null,
+      // {checklist_id, version}
+      version: null,
+      // the picked checklist version
+      evaluation: null,
+      // the newest finished evaluation of this dialogue for it
+      conversation: null,
+      appeals: [],
+      busy: false,
+      job: null,
+      // null | {phase: "starting" | "running" | "failed", id, done, total}
+      active: null
+      // the criterion id whose evidence is marked in the transcript
+    };
+    let destroyed = false;
+    let loadRun = 0;
+    const unwatch = [];
+    const select = h("select", {
+      class: "cqa-sc-select",
+      attrs: { "aria-label": t("scorecard.checklist") },
+      data: { test: "checklist-select" },
+      on: {
+        change: () => {
+          const option = view.options[Number(select.value)];
+          if (!option || view.busy) return;
+          view.sel = { checklist_id: option.checklist_id, version: option.version };
+          store.set({ checklistSel: view.sel });
+          loadSelection();
+        }
+      }
+    });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, data: { test: "run-eval" }, on: { click: () => run("reuse") } });
+    const fullButton = h("button", {
+      class: "cqa-sc-btn",
+      text: t("scorecard.runFull"),
+      attrs: { type: "button", title: t("scorecard.runFullTitle") },
+      data: { test: "run-eval-full" },
+      on: { click: () => run("full") }
+    });
+    const status = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "job-progress" } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("scorecard.keyMissing"), data: { test: "key-hint" } });
+    hint.hidden = true;
+    const bar = h(
+      "div",
+      { class: "cqa-sc-bar" },
+      h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
+      h("div", { class: "cqa-sc-run" }, runButton, fullButton),
+      hint,
+      status
+    );
+    const body = h("div", { class: "cqa-sc-body" });
+    const el = h("div", { class: "cqa-sc", attrs: { role: "region", "aria-label": t("scorecard.label") }, data: { test: "scorecard" } }, bar, body);
+    function fillSelect() {
+      clear(select);
+      view.options = view.checklists.flatMap(
+        (row) => [...versionsOf(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+      );
+      view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
+      const at = view.options.findIndex((o) => o.checklist_id === view.sel?.checklist_id && o.version === view.sel?.version);
+      if (at >= 0) select.value = String(at);
+    }
+    function paintBar() {
+      if (destroyed) return;
+      const keyMissing = view.server?.model_key_configured === false;
+      const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
+      const off = view.busy || keyMissing || !ready;
+      runButton.textContent = t(view.evaluation ? "scorecard.rerun" : "scorecard.run");
+      for (const button of [runButton, fullButton]) {
+        button.disabled = off;
+        if (keyMissing) button.setAttribute("title", t("scorecard.keyMissing"));
+        else if (button === fullButton) button.setAttribute("title", t("scorecard.runFullTitle"));
+        else button.removeAttribute("title");
+      }
+      hint.hidden = !keyMissing;
+      select.disabled = view.busy || view.options.length === 0;
+      clear(status);
+      const job = view.job;
+      if (job?.phase === "starting") status.append(t("scorecard.starting"));
+      else if (job?.phase === "running") status.append(t("scorecard.progress", { done: job.done, total: job.total }));
+      else if (job?.phase === "failed") {
+        status.append(
+          h("span", { class: "cqa-sc-failed", text: t("scorecard.jobFailed") }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "job-retry" }, on: { click: () => retryFailed(job.id) } })
+        );
+      }
+    }
+    const clearMarks = () => store.get().transcript?.highlight(null, [], null);
+    const pickEvaluation = (evaluations, sel) => evaluations.find((e) => e.status === "done" && e.checklist_id === sel.checklist_id && e.version === sel.version) ?? null;
+    async function boot() {
+      const mine = ++loadRun;
+      view.phase = "loading";
+      drawBody();
+      paintBar();
+      try {
+        const [server, checklists] = await Promise.all([api.getConfig(), api.listChecklists()]);
+        if (destroyed || mine !== loadRun) return;
+        view.server = server;
+        view.checklists = checklists;
+        view.sel = pickSelection(store.get().checklistSel, server, checklists);
+        fillSelect();
+        if (view.sel === null) {
+          view.phase = "ready";
+          drawBody();
+          paintBar();
+          return;
+        }
+        await loadSelection();
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        fail2(error);
+      }
+    }
+    function fail2(error) {
+      view.phase = "error";
+      view.error = error;
+      drawBody();
+      paintBar();
+    }
+    async function loadSelection({ quiet = false } = {}) {
+      const mine = ++loadRun;
+      const sel = view.sel;
+      if (!quiet) {
+        view.phase = "loading";
+        drawBody();
+        paintBar();
+      }
+      try {
+        const [version2, evaluations, appeals, conversation] = await Promise.all([
+          api.getChecklistVersion(sel.checklist_id, sel.version),
+          api.listEvaluations({ conversation: id, checklist_id: sel.checklist_id }),
+          api.listAppeals(),
+          api.getConversation(id)
+        ]);
+        if (destroyed || mine !== loadRun) return;
+        view.version = version2;
+        view.evaluation = pickEvaluation(evaluations, sel);
+        view.appeals = appeals;
+        view.conversation = conversation;
+        view.phase = "ready";
+        view.active = null;
+        clearMarks();
+        checkTotal();
+        drawBody();
+        paintBar();
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        fail2(error);
+      }
+    }
+    function checkTotal() {
+      const { evaluation, version: version2, appeals } = view;
+      if (!dev || !evaluation || !version2) return;
+      try {
+        const decided = appeals.filter((appeal) => appeal.status === "decided");
+        const own = score(version2, finalAnswers(evaluation, decided)).total;
+        if (own !== evaluation.final_total) console.warn(`scorecard: score() gives ${own}, the server says final_total ${evaluation.final_total} (${evaluation.id})`);
+      } catch (error) {
+        console.warn("scorecard: the total could not be recomputed", error);
+      }
+    }
+    async function settle(first) {
+      let job = first;
+      const deadline = Date.now() + JOB_TIMEOUT_MS;
+      while (!jobSettled(job)) {
+        if (Date.now() > deadline) throw new ApiError("timeout", "The evaluation did not finish in time");
+        await sleep(POLL_MS);
+        job = await api.getJob(job.id);
+        if (!destroyed) {
+          view.job = { phase: "running", id: job.id, done: job.done, total: job.total };
+          paintBar();
+        }
+      }
+      return job;
+    }
+    async function execute(start, again) {
+      if (view.busy || destroyed) return;
+      view.busy = true;
+      view.job = { phase: "starting" };
+      paintBar();
+      let jobId = null;
+      try {
+        const first = await start();
+        jobId = first.id;
+        if (!destroyed) {
+          view.job = { phase: "running", id: first.id, done: first.done, total: first.total };
+          paintBar();
+        }
+        const job = await settle(first);
+        view.job = job.failed > 0 ? { phase: "failed", id: job.id, done: job.done, total: job.total } : null;
+        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+        if (!destroyed) await loadSelection({ quiet: true });
+      } catch (error) {
+        view.job = null;
+        const resume = jobId === null ? again : () => execute(() => api.getJob(jobId), again);
+        toastError(store, error, { retry: destroyed ? void 0 : resume });
+      } finally {
+        view.busy = false;
+        paintBar();
+      }
+    }
+    function run(mode) {
+      if (!view.sel) return;
+      const { checklist_id, version: version2 } = view.sel;
+      const again = () => run(mode);
+      return execute(() => api.startEvaluations({ conversations: [id], checklist_id, version: version2, mode }), again);
+    }
+    function retryFailed(jobId) {
+      return execute(() => api.retryJob(jobId), () => retryFailed(jobId));
+    }
+    function drawBody() {
+      if (destroyed) return;
+      clear(body);
+      if (view.phase === "loading") {
+        body.append(stateBox("scorecard-loading", t("scorecard.loading")));
+        return;
+      }
+      if (view.phase === "error") {
+        body.append(
+          stateBox(
+            "scorecard-error",
+            t("scorecard.loadFailed"),
+            null,
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "scorecard-retry" }, on: { click: boot } })
+          )
+        );
+        return;
+      }
+      if (view.sel === null) {
+        body.append(stateBox("scorecard-no-checklist", t("scorecard.noChecklist"), t("scorecard.noChecklistNote")));
+        return;
+      }
+      const info = buildInfo(view.conversation);
+      if (!view.evaluation) {
+        body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
+        return;
+      }
+      body.append(buildHero(view.evaluation, view.version), info, buildCards(view.evaluation, view.version));
+    }
+    function buildHero(evaluation, version2) {
+      const none = evaluation.final_total === null || evaluation.final_total === void 0;
+      const totalText = none ? t("scorecard.totalNone") : money(evaluation.final_total);
+      const changed = evaluation.original_total !== evaluation.final_total;
+      const gross = evaluation.gross_error;
+      const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn") : t("scorecard.grossOff");
+      const scored = new Set(version2.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
+      const rows = [...version2.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id)).map((section) => {
+        const row = evaluation.sections?.find((s) => s.section_id === section.id);
+        const has2 = row && row.points !== null && row.points !== void 0 && row.available !== null && row.available !== void 0;
+        const percent = has2 && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
+        return h(
+          "div",
+          { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
+          h("span", { class: "cqa-sc-sec-name", text: section.title }),
+          h("span", {
+            class: ["cqa-sc-sec-score", "num"],
+            text: has2 ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
+            data: { test: "section-score" }
+          }),
+          h("div", { class: "cqa-sc-sec-bar" }, h("i", { style: { width: `${percent}%` } }))
+        );
+      });
+      const model = [evaluation.model ? t("scorecard.model", { model: evaluation.model }) : null, typeof evaluation.cost_usd === "number" ? t("scorecard.cost", { cost: evaluation.cost_usd.toFixed(evaluation.cost_usd < 1 ? 4 : 2) }) : null].filter(Boolean);
+      return h(
+        "div",
+        { class: "cqa-sc-hero", data: { test: "hero" } },
+        h(
+          "div",
+          { class: "cqa-sc-hero-top" },
+          h("span", { class: "cqa-sc-hero-label" }, `${t("scorecard.totalLabel")} `, h("em", { text: `${version2.name} v${version2.version}` })),
+          evaluation.source === "mock" ? h("span", { class: "cqa-sc-demo", text: t("scorecard.demoBadge"), attrs: { title: t("scorecard.demoTitle") }, data: { test: "demo-badge" } }) : null
+        ),
+        h(
+          "div",
+          { class: "cqa-sc-tot" },
+          h("b", { class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"], text: totalText, data: { test: "total" } }),
+          none ? null : h("span", { class: "cqa-sc-outof", text: t("scorecard.outOf") }),
+          changed ? h("s", {
+            class: ["cqa-sc-was", "num"],
+            text: evaluation.original_total === null || evaluation.original_total === void 0 ? t("scorecard.totalNone") : money(evaluation.original_total),
+            attrs: { title: t("scorecard.originalTitle") },
+            data: { test: "total-original" }
+          }) : null
+        ),
+        h("div", { class: ["cqa-sc-flag", gross?.flag && "cqa-sc-flag--on"], text: grossText, data: { test: "gross-flag", state: gross?.flag ? "on" : "off" } }),
+        rows.length > 0 ? h("div", { class: "cqa-sc-secs", attrs: { role: "group", "aria-label": t("scorecard.sections") }, data: { test: "sections" } }, rows) : null,
+        model.length > 0 ? h("p", { class: "cqa-sc-model", text: model.join(" \xB7 "), data: { test: "model" } }) : null
+      );
+    }
+    function buildInfo(conversation) {
+      const info = conversation?.info ?? null;
+      const facts = conversation?.facts ?? null;
+      const rows = [];
+      const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value)));
+      if (info?.topic) row("topic", "info-topic", info.topic);
+      const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
+      if (mood.length > 0) row("mood", "info-mood", mood.join(" \u2192 "));
+      if (info?.outcome) row("outcome", "info-outcome", labelled("scorecard.outcome", info.outcome));
+      if (facts && typeof facts.first_reaction_seconds === "number") {
+        const check = thresholdCheck(facts.first_reaction_seconds);
+        row(
+          "firstReaction",
+          "info-first-reaction",
+          formatOffset(facts.first_reaction_seconds),
+          " ",
+          tag2(check === "ok" ? "ok" : "bad", t(check === "ok" ? "scorecard.info.thresholdOk" : "scorecard.info.thresholdOver"), { data: { test: "threshold", state: check } })
+        );
+      }
+      if (facts && typeof facts.longest_wait_seconds === "number") row("longestWait", "info-longest-wait", formatOffset(facts.longest_wait_seconds));
+      if (facts?.ending) row("ending", "info-ending", labelled("scorecard.ending", facts.ending));
+      const box = h("section", { class: "cqa-sc-info", attrs: { "aria-label": t("scorecard.info.title") }, data: { test: "info" } }, h("h3", { class: "cqa-sc-info-title", text: t("scorecard.info.title") }), h("dl", { class: "cqa-sc-info-list" }, rows));
+      box.hidden = rows.length === 0;
+      return box;
+    }
+    function buildCards(evaluation, version2) {
+      const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
+      const sections = [...version2.sections].sort((a, b) => a.order - b.order);
+      const groups = sections.map((section) => ({ section, criteria: version2.criteria.filter((c) => c.section_id === section.id).sort((a, b) => a.order - b.order) })).filter((group) => group.criteria.length > 0);
+      const controller = store.get().role === "controller";
+      const cards = /* @__PURE__ */ new Map();
+      const activate = (criterionId) => {
+        view.active = criterionId;
+        for (const [key, card] of cards) card.classList.toggle("is-open", key === criterionId);
+      };
+      const list = h("div", { class: "cqa-sc-crits", data: { test: "criteria" } });
+      for (const { section, criteria } of groups) {
+        const items = criteria.filter((c) => byResult.has(c.id)).map((c) => {
+          const card = buildCard(c, byResult.get(c.id), { evaluation, controller, activate });
+          cards.set(c.id, card);
+          return card;
+        });
+        if (items.length === 0) continue;
+        list.append(h("h3", { class: "cqa-sc-sec-title", text: section.title }), ...items);
+      }
+      if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
+      return list;
+    }
+    function buildCard(criterion, result, { evaluation, controller, activate }) {
+      const gross = criterion.kind === "gross_error";
+      const shown = result.final_answer ?? result.answer;
+      const answer = answerTag(criterion, shown);
+      const changed = JSON.stringify(result.answer) !== JSON.stringify(shown);
+      let points = "";
+      let weight = null;
+      if (gross) points = t("scorecard.grossNoScore");
+      else if (shown === "na") points = t("scorecard.naWeight");
+      else if (typeof result.points === "number" && typeof result.effective_weight === "number") {
+        points = t("scorecard.points", { earned: money(result.points), max: money(result.effective_weight) });
+        if (typeof criterion.weight === "number" && money(criterion.weight) !== money(result.effective_weight)) {
+          weight = t("scorecard.weight", { from: String(criterion.weight), to: money(result.effective_weight) });
+        }
+      } else points = "\u2014";
+      const openAppeal = view.appeals.some((a) => a.status === "open" && a.evaluation_id === evaluation.id && a.criterion_id === criterion.id);
+      const evidence = (result.evidence ?? []).map((item) => {
+        const expected = item.role === "expected_here";
+        return h(
+          "li",
+          { class: "cqa-sc-ev-item" },
+          h(
+            "button",
+            {
+              class: ["cqa-sc-ev", expected && "cqa-sc-ev--expected"],
+              attrs: { type: "button", title: item.quote, "aria-label": t("scorecard.evidenceShow", { n: item.message_index + 1 }) },
+              data: { test: "evidence-link", index: item.message_index, role: item.role },
+              on: { click: () => jump(criterion, result, item, activate) }
+            },
+            h("span", { class: "cqa-sc-ev-n", text: `\u21B3 ${t("scorecard.evidenceLine", { n: item.message_index + 1 })}${expected ? ` \xB7 ${t("transcript.expectedHere")}` : ""}` }),
+            item.quote ? h("span", { class: "cqa-sc-ev-quote", text: clip2(item.quote, EVIDENCE_QUOTE_MAX) }) : null
+          )
+        );
+      });
+      const range = result.checked_range;
+      const marks = [
+        result.needs_review ? tag2("mid", t("scorecard.needsReview"), { attrs: { title: t("scorecard.needsReviewTitle") }, data: { test: "needs-review" } }) : null,
+        result.carried_decision ? tag2("out", t("scorecard.carried"), { attrs: { title: t("scorecard.carriedTitle") }, data: { test: "carried" } }) : null,
+        openAppeal ? tag2("mid", t("scorecard.disputeOpenTag"), { data: { test: "appeal-open" } }) : null,
+        changed ? h("span", { class: "cqa-sc-note", text: t("scorecard.modelAnswer", { answer: answerTag(criterion, result.answer).text }), attrs: { title: t("scorecard.modelAnswerTitle") }, data: { test: "model-answer" } }) : null,
+        weight ? h("span", { class: ["cqa-sc-note", "num"], text: weight, data: { test: "weight" } }) : null
+      ].filter(Boolean);
+      return h(
+        "article",
+        { class: "cqa-sc-crit", data: { test: "crit", criterion: criterion.id, answer: typeof shown === "string" ? shown : "step" } },
+        h(
+          "div",
+          { class: "cqa-sc-r1" },
+          h("b", { class: "cqa-sc-crit-title", text: criterion.title }),
+          tag2(answer.kind, answer.text, { data: { test: "answer" } }),
+          h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "points" } })
+        ),
+        marks.length > 0 ? h("div", { class: "cqa-sc-marks" }, marks) : null,
+        result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
+        shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
+        evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
+        range && Number.isInteger(range.from) && Number.isInteger(range.to) ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } }) : null,
+        result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
+        controller ? h(
+          "div",
+          { class: "cqa-sc-acts" },
+          h("button", {
+            class: "cqa-sc-btn",
+            text: t("scorecard.dispute"),
+            attrs: { type: "button", disabled: openAppeal, title: openAppeal ? t("scorecard.disputeOpenTitle") : null },
+            data: { test: "dispute" },
+            on: { click: () => toast(store, { kind: "info", text: t("scorecard.disputeSoon") }) }
+          })
+        ) : null
+      );
+    }
+    function jump(criterion, result, item, activate) {
+      const transcript = store.get().transcript;
+      activate(criterion.id);
+      if (!transcript) return;
+      store.set({ pane: "transcript" });
+      transcript.highlight(criterion.id, result.evidence, result.checked_range, criterion.title);
+      transcript.focusMessage(item.message_index);
+    }
+    unwatch.push(store.subscribe((state, previous) => {
+      if (state.role !== previous.role && view.phase === "ready") drawBody();
+    }));
+    if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
+    else boot();
+    return {
+      el,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        unwatch.forEach((stop) => stop());
       }
     };
   }
@@ -3557,12 +4140,12 @@
     }
     return marks;
   }
-  function openId(store, args) {
+  function openId2(store, args) {
     if (typeof args?.id === "string" && args.id !== "") return args.id;
     const { route: route2, conversationId } = store.get();
     return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
   }
-  function stateBox(test, title, note, extra) {
+  function stateBox2(test, title, note, extra) {
     return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
   }
   function buildMessage(message, index, offset) {
@@ -3583,7 +4166,7 @@
     return { el, flag };
   }
   function renderTranscript(store, api, args = {}) {
-    const id = openId(store, args);
+    const id = openId2(store, args);
     const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
     const head = h("div", { class: "cqa-tr-head" });
     const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
@@ -3663,7 +4246,7 @@
       marked = [];
       loaded = true;
       if (transcript.length === 0) {
-        scroller.append(stateBox("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
+        scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
       } else {
         const at = offsets(transcript);
         rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
@@ -3677,7 +4260,7 @@
     function showError(error) {
       clear(head);
       clear(scroller).append(
-        stateBox(
+        stateBox2(
           "transcript-error",
           t("transcript.loadFailed", { id }),
           errorText(error),
@@ -3691,7 +4274,7 @@
       loaded = false;
       rows = [];
       marked = [];
-      clear(scroller).append(stateBox("transcript-loading", t("transcript.loading", { id })));
+      clear(scroller).append(stateBox2("transcript-loading", t("transcript.loading", { id })));
       try {
         const conversation = await api.getConversation(id);
         if (destroyed || mine !== run) return;
@@ -3713,7 +4296,7 @@
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
     if (hook?.store === store) hook.transcript = { focusMessage, highlight };
-    if (id === null) scroller.append(stateBox("transcript-empty", t("workspace.pick")));
+    if (id === null) scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
     else load2();
     return handle;
   }
@@ -3757,8 +4340,10 @@
       // the queue drawer below 900 px
       pane: "transcript",
       // the visible pane below 700 px: "transcript" | "scorecard"
-      transcript: null
+      transcript: null,
       // handle of the open transcript pane: {highlight, focusMessage}; set by the pane itself
+      checklistSel: null
+      // the checklist version picked in the scorecard: {checklist_id, version}; null = the default
     });
     const roleNow = () => store.get().role;
     const api = createApi(
@@ -3781,7 +4366,7 @@
     };
     window.addEventListener("hashchange", onHashChange);
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
-    const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, ...options.panes }, views: options.views });
+    const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes }, views: options.views });
     el.replaceChildren(shell.el);
     let destroyed = false;
     return {

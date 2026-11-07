@@ -6,6 +6,7 @@ import { groupOf, readContext } from "./context.js";
 import { createStore, isCompact, watch } from "./state/store.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
 import { createQueue } from "./ui/queue.js";
+import { createScorecard } from "./ui/scorecard.js";
 import { createShell } from "./ui/shell.js";
 import { renderTranscript } from "./ui/transcript.js";
 
@@ -62,6 +63,7 @@ export function mount(el, options = {}) {
     queueOpen: false, // the queue drawer below 900 px
     pane: "transcript", // the visible pane below 700 px: "transcript" | "scorecard"
     transcript: null, // handle of the open transcript pane: {highlight, focusMessage}; set by the pane itself
+    checklistSel: null, // the checklist version picked in the scorecard: {checklist_id, version}; null = the default
   });
   const roleNow = () => store.get().role;
   const api = createApi(
@@ -94,7 +96,7 @@ export function mount(el, options = {}) {
 
   if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null }; // `transcript` is filled by the transcript pane
 
-  const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, ...options.panes }, views: options.views });
+  const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes }, views: options.views });
   el.replaceChildren(shell.el);
 
   let destroyed = false;
