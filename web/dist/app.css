@@ -2621,12 +2621,39 @@
   overflow-wrap: anywhere;
 }
 .cqa .cqa-report-brand {
-  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 20px 24px;
   border-radius: var(--r-card);
   background: var(--brand-panel);
+  color: #FFFFFF;
+}
+.cqa .cqa-report-brand-label {
+  flex-basis: 100%;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+.cqa .cqa-report-brand-value {
   color: var(--mint);
-  font-size: 32px;
-  font-variant-numeric: tabular-nums;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.cqa .cqa-report-brand-n {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 15px;
+}
+.cqa .cqa-report-meta {
+  margin: 8px 0;
+}
+.cqa .cqa-report-empty {
+  padding: 16px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-ctl);
+  color: var(--text-2);
 }
 .cqa .cqa-report-section {
   margin: 20px 0;
@@ -2643,7 +2670,23 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+}
+.cqa .cqa-report-num {
   font-variant-numeric: tabular-nums;
+}
+.cqa .cqa-report-select {
+  max-width: 100%;
+  margin: 0 0 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.cqa.cqa--dark .cqa-report-select {
+  color-scheme: dark;
 }
 .cqa .cqa-report-table th,
 .cqa .cqa-report-table td {
@@ -2681,6 +2724,9 @@
 @media (max-width: 700px) {
   .cqa .cqa-reports {
     padding: 16px;
+  }
+  .cqa .cqa-report-brand-value {
+    font-size: 36px;
   }
   .cqa .cqa-report-section {
     padding: 10px;
