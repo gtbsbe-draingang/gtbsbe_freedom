@@ -6,7 +6,10 @@ inline otherwise (`ensure_official`), so these tests pass either way.
 """
 
 import json
+import threading
+import time
 from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -665,3 +668,54 @@ def test_no_call_outlives_its_failed_item(setup, fake: FakeEvaluator) -> None:
     # the siblings were all awaited before the item was resolved
     assert fake.in_flight == 0
     assert [kind for kind, _, _ in fake.events].count("end") == 8
+
+
+# --- final review --------------------------------------------------------------------------
+
+
+def test_two_concurrent_retries_run_a_failed_item_once(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Two POST /jobs/{id}/retry at once (a double click) must not run the same item twice.
+
+    The interleaving that did: the second retry checked ownership before the first one scheduled its
+    run, and its requeue landed after that run had claimed the item. The patched requeue forces it:
+    the first retry's requeue waits (a little) for the second retry to reach its own, and the second
+    one waits until the first run has claimed the item."""
+    client, ids, official = setup()
+    fake.fail_for = {FAILING}
+    job = run(client, [FAILING], official)
+    assert job["items"][0]["status"] == "failed"
+    fake.fail_for = set()
+    fake.judged = []
+    fake.delay = 0.1  # the first run stays `running` long enough to be seen
+
+    real_requeue = store.requeue_items
+    second_arrived = threading.Event()
+    requeues: list[list[str]] = []
+
+    def requeue(job_id: str, conversations: list[str], role):
+        requeues.append(conversations)
+        if len(requeues) == 1:
+            second_arrived.wait(timeout=0.3)
+        else:
+            second_arrived.set()
+            deadline = time.monotonic() + 5
+            while store.get_job(job_id).items[0].status != "running" and time.monotonic() < deadline:
+                time.sleep(0.002)
+        return real_requeue(job_id, conversations, role)
+
+    monkeypatch.setattr(store, "requeue_items", requeue)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        answers = list(
+            pool.map(
+                lambda role: client.post(f"/api/jobs/{job['id']}/retry", json={"role": role}),
+                ["controller", "reviewer"],
+            )
+        )
+    assert [r.status_code for r in answers] == [200, 200]
+    finished = wait(client, job["id"])
+
+    assert len(fake.judged) == len(official.criteria)  # one run: each criterion judged once
+    assert finished["items"][0]["status"] == "done" and finished["done"] == 1
+    assert len(finished["retries"]) == 1  # the second retry found nothing to do
