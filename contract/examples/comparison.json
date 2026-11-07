@@ -1,0 +1,43 @@
+{
+  "from": {
+    "checklist_id": "official-chat",
+    "version": 1,
+    "name": "Чек-лист качества чатов"
+  },
+  "to": {
+    "checklist_id": "official-chat-copy",
+    "version": 1,
+    "name": "Чек-лист качества чатов (копия)"
+  },
+  "summary": {
+    "total": 3,
+    "changed": 3,
+    "avg_delta": -5
+  },
+  "rows": [
+    {
+      "conversation": "example:p1-ru-001",
+      "conversation_id": "p1-ru-001",
+      "group_id": "example",
+      "old_total": 88.82,
+      "new_total": 81.82,
+      "delta": -7
+    },
+    {
+      "conversation": "example:p4-ru-001",
+      "conversation_id": "p4-ru-001",
+      "group_id": "example",
+      "old_total": 32.5,
+      "new_total": 29.5,
+      "delta": -3
+    },
+    {
+      "conversation": "example:p2-ru-003",
+      "conversation_id": "p2-ru-003",
+      "group_id": "example",
+      "old_total": 76,
+      "new_total": 71,
+      "delta": -5
+    }
+  ]
+}

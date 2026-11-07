@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/evaluation",
+  "title": "Evaluation",
+  "description": "The grade of one dialogue against one checklist version. `answer` is the model's answer; `final_answer` applies this evaluation's own and carried decisions.",
+  "type": "object",
+  "required": [
+    "id",
+    "created_at",
+    "conversation",
+    "checklist_id",
+    "version",
+    "status",
+    "source"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 timestamp"
+    },
+    "conversation": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The conversation's id ({group_id}:{conversation_id})."
+    },
+    "checklist_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "done",
+        "failed"
+      ]
+    },
+    "source": {
+      "enum": [
+        "model",
+        "mock"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cost_usd": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/result"
+      }
+    },
+    "original_total": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Total from the model's answers; null = not calculated."
+    },
+    "final_total": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Total after own and carried decisions; null = not calculated."
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/section_result"
+      }
+    },
+    "gross_error": {
+      "$ref": "#/$defs/gross_error"
+    }
+  },
+  "if": {
+    "required": [
+      "status"
+    ],
+    "properties": {
+      "status": {
+        "const": "done"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "results",
+      "original_total",
+      "final_total",
+      "sections",
+      "gross_error"
+    ],
+    "properties": {
+      "results": true,
+      "original_total": true,
+      "final_total": true,
+      "sections": true,
+      "gross_error": true
+    }
+  },
+  "$defs": {
+    "answer": {
+      "description": "An answer: \"yes\", \"no\", \"na\", or {\"step\": value}, where value is the scale step's value (for example 15), not its position.",
+      "oneOf": [
+        {
+          "enum": [
+            "yes",
+            "no",
+            "na"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "step"
+          ],
+          "properties": {
+            "step": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "message_index",
+        "quote",
+        "role"
+      ],
+      "properties": {
+        "message_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quote": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "supports",
+            "expected_here"
+          ]
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "criterion_id",
+        "answer",
+        "final_answer",
+        "kinds",
+        "points",
+        "effective_weight",
+        "explanation",
+        "evidence",
+        "checked_range",
+        "na_reason",
+        "confidence",
+        "needs_review",
+        "coaching",
+        "reused",
+        "carried_decision"
+      ],
+      "properties": {
+        "criterion_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answer": {
+          "$ref": "#/$defs/answer"
+        },
+        "final_answer": {
+          "$ref": "#/$defs/answer",
+          "description": "The answer after the evaluation's own and carried decisions. Equals answer when there are none."
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Violation kinds found; only for a gross-error criterion."
+        },
+        "points": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Points earned after redistribution, following final_answer; null for N/A."
+        },
+        "effective_weight": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Weight after redistributing N/A; null for N/A."
+        },
+        "explanation": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "checked_range": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "from",
+                "to"
+              ],
+              "properties": {
+                "from": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "to": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "For a missed action, the part of the dialogue that was checked."
+        },
+        "na_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which N/A condition holds; null when not N/A."
+        },
+        "confidence": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "needs_review": {
+          "type": "boolean"
+        },
+        "coaching": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What to improve and a better phrasing; null when nothing to coach."
+        },
+        "reused": {
+          "type": "boolean",
+          "description": "True when copied from an earlier evaluation instead of a new model call."
+        },
+        "carried_decision": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "appeal_id",
+                "evaluation_id"
+              ],
+              "properties": {
+                "appeal_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evaluation_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Set when a reviewer's decision was carried forward from an earlier evaluation."
+        }
+      }
+    },
+    "section_result": {
+      "type": "object",
+      "required": [
+        "section_id",
+        "points",
+        "available",
+        "percent"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "points": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Null when nothing applies (and for the gross-error section)."
+        },
+        "available": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Effective weight available in the section."
+        },
+        "percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Sum(fraction x weight) / sum(weight) x 100 over applicable criteria."
+        }
+      }
+    },
+    "gross_error": {
+      "type": "object",
+      "required": [
+        "flag",
+        "kinds",
+        "explanation",
+        "evidence"
+      ],
+      "properties": {
+        "flag": {
+          "type": "boolean"
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "explanation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      }
+    }
+  }
+}

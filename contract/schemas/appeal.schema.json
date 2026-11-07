@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/appeal",
+  "title": "Appeal",
+  "description": "A controller's dispute of one criterion of one evaluation, and the reviewer's decision. At most one open appeal per criterion per evaluation.",
+  "type": "object",
+  "required": [
+    "id",
+    "created_at",
+    "evaluation_id",
+    "conversation",
+    "criterion_id",
+    "comment",
+    "role",
+    "status",
+    "second_opinion",
+    "second_opinion_status",
+    "decision"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 timestamp"
+    },
+    "evaluation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conversation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "criterion_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "comment": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "controller",
+        "reviewer"
+      ]
+    },
+    "status": {
+      "enum": [
+        "open",
+        "decided"
+      ]
+    },
+    "second_opinion": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "answer",
+            "reasoning"
+          ],
+          "properties": {
+            "answer": {
+              "$ref": "#/$defs/answer"
+            },
+            "reasoning": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The model's suggestion, shown to the reviewer as advice."
+    },
+    "second_opinion_status": {
+      "enum": [
+        "pending",
+        "done",
+        "unavailable"
+      ],
+      "description": "unavailable: no model key, or the call failed."
+    },
+    "decision": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "outcome",
+            "answer",
+            "reason",
+            "role",
+            "decided_at"
+          ],
+          "properties": {
+            "outcome": {
+              "enum": [
+                "confirmed",
+                "changed"
+              ]
+            },
+            "answer": {
+              "$ref": "#/$defs/answer"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "role": {
+              "enum": [
+                "controller",
+                "reviewer"
+              ]
+            },
+            "decided_at": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "answer": {
+      "description": "An answer: \"yes\", \"no\", \"na\", or {\"step\": value}, where value is the scale step's value (for example 15), not its position.",
+      "oneOf": [
+        {
+          "enum": [
+            "yes",
+            "no",
+            "na"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "step"
+          ],
+          "properties": {
+            "step": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

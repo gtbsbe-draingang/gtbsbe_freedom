@@ -1,0 +1,22 @@
+{
+  "id": "ap-0001",
+  "created_at": "2026-11-07T09:10:00Z",
+  "evaluation_id": "ev-0001",
+  "conversation": "example:p1-ru-001",
+  "criterion_id": "c05",
+  "comment": "Оператор вежлив и ответил по сути. Клиент не выражал недовольства, а лишь заметил, что не нашёл срок в приложении.",
+  "role": "controller",
+  "status": "decided",
+  "second_opinion": {
+    "answer": "yes",
+    "reasoning": "Жалобы на неудобство в чате нет: клиент лишь уточнил срок, оператор вежливо и конкретно ответил."
+  },
+  "second_opinion_status": "done",
+  "decision": {
+    "outcome": "changed",
+    "answer": "yes",
+    "reason": "Клиент не выражал недовольства, оператор вежлив и дал конкретный срок.",
+    "role": "reviewer",
+    "decided_at": "2026-11-07T09:42:10Z"
+  }
+}

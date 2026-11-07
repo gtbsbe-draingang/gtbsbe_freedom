@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/translation",
+  "title": "Translation",
+  "description": "GET /conversations/{id}/translation?to=ru: generated on demand and stored. The original always stays visible.",
+  "type": "object",
+  "required": [
+    "conversation",
+    "to",
+    "messages"
+  ],
+  "properties": {
+    "conversation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "to": {
+      "type": "string",
+      "description": "Target language."
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "message_index",
+          "text"
+        ],
+        "properties": {
+          "message_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/config",
+  "title": "Config",
+  "description": "GET /config: models, prices, whether a model key is set, the default checklist.",
+  "type": "object",
+  "required": [
+    "models",
+    "prices",
+    "model_key_configured",
+    "default_checklist"
+  ],
+  "properties": {
+    "models": {
+      "type": "array",
+      "description": "Model identifiers the backend can use."
+    },
+    "prices": {
+      "type": "object",
+      "description": "Price table per model."
+    },
+    "model_key_configured": {
+      "type": "boolean"
+    },
+    "default_checklist": {
+      "type": "object",
+      "required": [
+        "checklist_id",
+        "version"
+      ],
+      "properties": {
+        "checklist_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

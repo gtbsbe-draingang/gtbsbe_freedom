@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/conversation",
+  "title": "Conversation",
+  "description": "One dialogue: the organisers' record without audio_url, plus our fields. Messages are referred to by their index in transcript.",
+  "type": "object",
+  "required": [
+    "id",
+    "created_at",
+    "group_id",
+    "conversation_id",
+    "channel",
+    "language",
+    "transcript",
+    "audio",
+    "status",
+    "facts",
+    "info",
+    "audio_offsets",
+    "voice_measurements"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "{group_id}:{conversation_id}. Used in every path and in the field `conversation` of other objects."
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 timestamp"
+    },
+    "group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conversation_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The organisers' id, shown in the UI. The control set may reuse ids with other content."
+    },
+    "channel": {
+      "enum": [
+        "agent chat",
+        "voice call"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "description": "For example ru, kz or en."
+    },
+    "audio": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Relative path of our audio endpoint, or null."
+    },
+    "audio_unavailable_reason": {
+      "enum": [
+        "needs_import",
+        "none",
+        null
+      ],
+      "description": "Required when audio is null. needs_import: no signed link known locally, import the group to enable playback. none: a chat."
+    },
+    "status": {
+      "enum": [
+        "new",
+        "evaluated",
+        "disputed"
+      ]
+    },
+    "facts": {
+      "$ref": "#/$defs/facts"
+    },
+    "info": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/info"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Extra B (not scored); null until known."
+    },
+    "audio_offsets": {
+      "$ref": "#/$defs/audio_offsets"
+    },
+    "voice_measurements": {
+      "$ref": "#/$defs/voice_measurements"
+    },
+    "transcript": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "audio"
+        ],
+        "properties": {
+          "audio": {
+            "type": "null"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "audio_unavailable_reason"
+        ],
+        "properties": {
+          "audio_unavailable_reason": {
+            "enum": [
+              "needs_import",
+              "none"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "not": {
+    "required": [
+      "audio_url"
+    ],
+    "properties": {
+      "audio_url": true
+    }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "required": [
+        "timestamp",
+        "speaker",
+        "text"
+      ],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "description": "Kept as given: MM:SS for chats, ISO 8601 with a time zone for calls."
+        },
+        "speaker": {
+          "type": "string",
+          "description": "Any string; unknown speakers are kept."
+        },
+        "text": {
+          "type": "string"
+        },
+        "duplicate": {
+          "type": "boolean",
+          "description": "Set on a repeated line, which the UI greys out."
+        }
+      }
+    },
+    "facts": {
+      "type": "object",
+      "required": [
+        "operator_joined_index",
+        "first_reaction_seconds",
+        "longest_wait_seconds",
+        "identity_verified_index",
+        "ending"
+      ],
+      "properties": {
+        "operator_joined_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Index in transcript, or null."
+        },
+        "first_reaction_seconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Seconds from the first client line to the first operator reply."
+        },
+        "longest_wait_seconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Longest client wait for an operator reply, in seconds."
+        },
+        "identity_verified_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Index in transcript where identity was verified, or null."
+        },
+        "ending": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "How the dialogue ended, for example operator_goodbye."
+        }
+      }
+    },
+    "info": {
+      "type": "object",
+      "required": [
+        "topic",
+        "mood_start",
+        "mood_end",
+        "outcome"
+      ],
+      "properties": {
+        "topic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mood_start": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mood_end": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "audio_offsets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "message_index",
+          "seconds"
+        ],
+        "properties": {
+          "message_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "seconds": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "description": "Calibrated start of each line in the recording."
+    },
+    "voice_measurements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "message_index",
+          "from_seconds",
+          "to_seconds"
+        ],
+        "properties": {
+          "message_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "from_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "to_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "pitch_range": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Pitch span of the line, in Hz."
+          },
+          "rate_wpm": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Speech rate, words per minute."
+          },
+          "pauses": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Number of pauses in the line."
+          },
+          "overlap": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Seconds of overlapping speech."
+          }
+        }
+      },
+      "description": "Measured voice signs per line (extra A: measured signs plus model judgment)."
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "by_criterion": [
+    {
+      "criterion_id": "c01",
+      "title": "Установление контакта",
+      "fail_rate": 0.12,
+      "na_rate": 0,
+      "n": 50
+    },
+    {
+      "criterion_id": "c02",
+      "title": "Выявление потребности",
+      "fail_rate": 0.22,
+      "na_rate": 0.3,
+      "n": 50
+    },
+    {
+      "criterion_id": "c03",
+      "title": "Идентификация",
+      "fail_rate": 0.1,
+      "na_rate": 0.34,
+      "n": 50
+    },
+    {
+      "criterion_id": "c04",
+      "title": "Корректная и полная консультация",
+      "fail_rate": 0.18,
+      "na_rate": 0.04,
+      "n": 50
+    }
+  ],
+  "by_language": [
+    {
+      "language": "ru",
+      "avg_total": 78.4,
+      "n": 30
+    },
+    {
+      "language": "kz",
+      "avg_total": 71.9,
+      "n": 12
+    },
+    {
+      "language": "en",
+      "avg_total": 80.2,
+      "n": 8
+    }
+  ],
+  "by_channel": [
+    {
+      "channel": "agent chat",
+      "avg_total": 79.1,
+      "n": 40
+    },
+    {
+      "channel": "voice call",
+      "avg_total": 66.5,
+      "n": 10
+    }
+  ],
+  "gross_errors": {
+    "count": 2,
+    "by_kind": [
+      {
+        "kind": "insult",
+        "count": 1
+      },
+      {
+        "kind": "paid_service_outside_company",
+        "count": 1
+      }
+    ],
+    "conversations": [
+      "example:p4-ru-001",
+      "example:p7-kz-002"
+    ]
+  }
+}

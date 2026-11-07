@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/checklist-seed",
+  "title": "Checklist seed",
+  "description": "The checklist version without id, created_at, fingerprint, author_role and based_on. The backend loads checklists/official-chat-v1.json as the official seed and adds those.",
+  "type": "object",
+  "required": [
+    "checklist_id",
+    "version",
+    "name",
+    "description",
+    "channel",
+    "locked",
+    "rounding",
+    "guidance",
+    "sections",
+    "criteria"
+  ],
+  "properties": {
+    "checklist_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "channel": {
+      "enum": [
+        "any",
+        "chat",
+        "call"
+      ],
+      "description": "Pre-selection only; it never prevents running a checklist on a dialogue."
+    },
+    "locked": {
+      "type": "boolean"
+    },
+    "rounding": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Decimals of the total (2)."
+    },
+    "guidance": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Shared text; for the official checklist the page 3 guidance verbatim."
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/section"
+      },
+      "minItems": 1
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/criterion"
+      },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "order"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer"
+        }
+      }
+    },
+    "scale_step": {
+      "type": "object",
+      "required": [
+        "value",
+        "label"
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "section_id",
+        "order",
+        "title",
+        "wording",
+        "answer_type",
+        "scale_steps",
+        "weight",
+        "na_allowed",
+        "na_condition",
+        "kind",
+        "kinds",
+        "guidance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Kept when the criterion is edited; a replaced criterion gets a new one."
+        },
+        "section_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "order": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "wording": {
+          "type": "string",
+          "description": "The «Да — …» sentence (the instruction for a scale criterion)."
+        },
+        "answer_type": {
+          "enum": [
+            "yes_no",
+            "scale"
+          ]
+        },
+        "scale_steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scale_step"
+          },
+          "description": "Empty for yes_no; ascending values for a scale."
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "0 for the gross-error criterion. Weights need not add up to 100."
+        },
+        "na_allowed": {
+          "type": "boolean"
+        },
+        "na_condition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The «N/A — …» sentence; null when N/A is not allowed."
+        },
+        "kind": {
+          "enum": [
+            "scored",
+            "gross_error"
+          ]
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Violation kinds of a gross-error criterion; empty otherwise."
+        },
+        "guidance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional model override."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "answer_type"
+            ],
+            "properties": {
+              "answer_type": {
+                "const": "scale"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "scale_steps": {
+                "type": "array",
+                "minItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "gross_error"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "weight": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "ap-0002",
+  "created_at": "2026-11-07T09:50:00Z",
+  "evaluation_id": "ev-0003",
+  "conversation": "example:p4-ru-001",
+  "criterion_id": "c06",
+  "comment": "Клиент дважды не получил ответа по существу, и разговор оборвал сам оператор. Оценка 4 завышена, прошу поставить 0.",
+  "role": "controller",
+  "status": "open",
+  "second_opinion": null,
+  "second_opinion_status": "pending",
+  "decision": null
+}

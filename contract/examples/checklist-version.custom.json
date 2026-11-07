@@ -1,0 +1,100 @@
+{
+  "id": "chv-0007",
+  "created_at": "2026-11-07T10:05:00Z",
+  "checklist_id": "calls-example",
+  "version": 2,
+  "name": "Звонки (пример)",
+  "description": "Дополнительная оценка звонков: приветствие и интонация по измеренным признакам.",
+  "channel": "call",
+  "locked": false,
+  "based_on": {
+    "checklist_id": "official-chat",
+    "version": 1
+  },
+  "author_role": "controller",
+  "rounding": 2,
+  "guidance": null,
+  "sections": [
+    {
+      "id": "opening",
+      "title": "Начало разговора",
+      "order": 1
+    },
+    {
+      "id": "voice",
+      "title": "Речь",
+      "order": 2
+    },
+    {
+      "id": "gross",
+      "title": "Грубые нарушения",
+      "order": 3
+    }
+  ],
+  "criteria": [
+    {
+      "id": "k01",
+      "section_id": "opening",
+      "order": 1,
+      "title": "Приветствие и представление",
+      "wording": "Да — оператор поздоровался и представился.",
+      "answer_type": "yes_no",
+      "scale_steps": [],
+      "weight": 20,
+      "na_allowed": false,
+      "na_condition": null,
+      "kind": "scored",
+      "kinds": [],
+      "guidance": null,
+      "fingerprint": "9c41d7a2e0b3"
+    },
+    {
+      "id": "k02",
+      "section_id": "voice",
+      "order": 2,
+      "title": "Интонация и темп речи",
+      "wording": "Оцените по измеренным признакам (высота тона, темп, паузы, перебивания) и суждению модели.",
+      "answer_type": "scale",
+      "scale_steps": [
+        {
+          "value": 0,
+          "label": "Раздражённый или монотонный тон, темп мешает понимать."
+        },
+        {
+          "value": 5,
+          "label": "Тон в целом ровный, но есть заметные срывы."
+        },
+        {
+          "value": 10,
+          "label": "Спокойный тон и ровный темп."
+        }
+      ],
+      "weight": 40,
+      "na_allowed": false,
+      "na_condition": null,
+      "kind": "scored",
+      "kinds": [],
+      "guidance": null,
+      "model": null,
+      "fingerprint": "5be08f13c6a9"
+    },
+    {
+      "id": "k03",
+      "section_id": "gross",
+      "order": 3,
+      "title": "Грубые ошибки",
+      "wording": "Да — выявлено оскорбление клиента.",
+      "answer_type": "yes_no",
+      "scale_steps": [],
+      "weight": 0,
+      "na_allowed": false,
+      "na_condition": null,
+      "kind": "gross_error",
+      "kinds": [
+        "insult"
+      ],
+      "guidance": null,
+      "fingerprint": "d2a7716f48e1"
+    }
+  ]
+}

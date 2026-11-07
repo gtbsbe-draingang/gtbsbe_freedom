@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/comparison",
+  "title": "Comparison",
+  "description": "Before/after of final totals, across versions or checklists. Totals are final on both sides.",
+  "type": "object",
+  "required": [
+    "from",
+    "to",
+    "summary",
+    "rows"
+  ],
+  "properties": {
+    "from": {
+      "type": "object",
+      "required": [
+        "checklist_id",
+        "version",
+        "name"
+      ],
+      "properties": {
+        "checklist_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "to": {
+      "type": "object",
+      "required": [
+        "checklist_id",
+        "version",
+        "name"
+      ],
+      "properties": {
+        "checklist_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total",
+        "changed",
+        "avg_delta"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avg_delta": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Average delta; null when no row has one."
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "conversation",
+          "conversation_id",
+          "group_id",
+          "old_total",
+          "new_total",
+          "delta"
+        ],
+        "properties": {
+          "conversation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "conversation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "old_total": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "new_total": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "delta": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "new_total - old_total; null when either side is null."
+          }
+        }
+      }
+    }
+  }
+}

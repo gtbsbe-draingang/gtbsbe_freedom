@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/error",
+  "title": "Error",
+  "description": "A 4xx/5xx response body. model_key_missing (409) means the action needs a new model call and no key is configured.",
+  "type": "object",
+  "required": [
+    "error",
+    "message"
+  ],
+  "properties": {
+    "error": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Machine-readable code, for example model_key_missing."
+    },
+    "message": {
+      "type": "string",
+      "description": "Human-readable text."
+    }
+  }
+}
