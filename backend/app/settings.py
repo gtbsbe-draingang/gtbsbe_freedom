@@ -3,13 +3,16 @@ from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/ and its .env, found from this file so they are the same whatever the working directory is
 # (`uv run cqa-serve` from the repo root reads the same .env as one from backend/).
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 ENV_FILE = BACKEND_DIR / ".env"
+
+# The model `--llm-api` (env LLM_API) forces: the Claude API with ANTHROPIC_API_KEY.
+CLAUDE_API_MODEL = "claude-haiku-5-5"
 
 # The checklist version the app shows by default: what /config reports as `default_checklist` and
 # what the queue's `final` summarises.
@@ -30,6 +33,9 @@ class Settings(BaseSettings):
     # retries. 60 suits the Claude API; a local model on a shared GPU can need several minutes for a
     # long answer.
     model_timeout_seconds: float = Field(default=60.0, gt=0)
+    # env LLM_API (`cqa-serve --llm-api`): use the Claude API with Haiku 5.5 even when .env points
+    # ANTHROPIC_BASE_URL and DEFAULT_MODEL at a local model (Qwen on vLLM).
+    llm_api: bool = False
     organizer_api_url: SecretStr | None = None  # env ORGANIZER_API_URL; group_id is replaced, nothing else
     base_path: str = "/api"
     cors_origins: list[str] = []
@@ -47,6 +53,13 @@ class Settings(BaseSettings):
     # shows the version again. The default checklist version cannot be hidden.
     hidden_checklist_versions: list[str] = []
     web_dist: Path | None = None  # override for the static UI directory (tests)
+
+    @model_validator(mode="after")
+    def _claude_api_when_asked(self) -> "Settings":
+        if self.llm_api:
+            self.anthropic_base_url = None
+            self.default_model = CLAUDE_API_MODEL
+        return self
 
     @field_validator("base_path")
     @classmethod
