@@ -107,7 +107,8 @@ export function score(version, answers) {
       effective_weight: e.applicable ? round2(e.effective) : null,
     })),
     total: weightSum.n > 0n ? round2(total) : null,
-    sections: version.sections.map((s) => {
+    // In their `order`, as the backend returns them (a stable sort keeps ties in array order).
+    sections: [...version.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => {
       const acc = perSection.get(s.id);
       return {
         section_id: s.id,

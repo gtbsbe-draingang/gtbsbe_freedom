@@ -1,0 +1,443 @@
+/* Appeals: the drawer on the scorecard, the card history, the appeals page and the review panel.
+   Everything sits under .cqa (Dynamics rule 6); widths collapse from 600 px (rule 7). */
+
+/* ---- drawer ---- */
+
+.cqa .cqa-drawer-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 60; /* over the header (30), under the toasts (100) */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cqa .cqa-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.32);
+  cursor: default;
+}
+
+.cqa .cqa-drawer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(440px, 100%);
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid var(--line-2);
+  background: var(--surface);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.cqa .cqa-drawer-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cqa .cqa-ap-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cqa .cqa-ap-current {
+  margin: -4px 0 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.cqa .cqa-ap-text,
+.cqa .cqa-rv-text {
+  width: 100%;
+  min-height: 84px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+  resize: vertical;
+}
+
+/* ---- shared form bits ---- */
+
+.cqa .cqa-rv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cqa .cqa-rv-label {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cqa .cqa-rv-hint {
+  margin: 0;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.cqa .cqa-rv-note {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.cqa .cqa-rv-acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---- card history (scorecard) ---- */
+
+.cqa .cqa-sc-hist {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+.cqa .cqa-sc-hist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-sc-hist-item {
+  position: relative;
+  padding-left: 16px;
+}
+
+.cqa .cqa-sc-hist-item::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-2);
+}
+
+.cqa .cqa-sc-hist-item--decision::before,
+.cqa .cqa-sc-hist-item--carried::before {
+  background: var(--accent);
+}
+
+.cqa .cqa-sc-hist-item--final::before {
+  background: var(--text);
+}
+
+.cqa .cqa-sc-hist-what {
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-hist-note {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* ---- appeals page ---- */
+
+.cqa .cqa-aps-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.cqa .cqa-aps-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cqa .cqa-aps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-aps-item {
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+.cqa .cqa-aps-item.is-current {
+  border-color: var(--accent);
+  background: var(--sel);
+}
+
+.cqa .cqa-aps-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  text-decoration: none;
+}
+
+.cqa .cqa-aps-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cqa .cqa-aps-crit {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cqa .cqa-aps-comment {
+  color: var(--text-2);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-aps-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cqa .cqa-aps-back {
+  display: none;
+  font-size: 13px;
+}
+
+/* Narrow: the open appeal takes the page; the list is one link away. */
+.cqa .cqa-aps.has-panel .cqa-aps-col {
+  display: none;
+}
+
+.cqa .cqa-aps.has-panel .cqa-aps-back {
+  display: inline;
+}
+
+.cqa .cqa-aps:not(.has-panel) .cqa-aps-side {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .cqa .cqa-aps-grid {
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .cqa .cqa-aps.has-panel .cqa-aps-col,
+  .cqa .cqa-aps:not(.has-panel) .cqa-aps-side {
+    display: flex;
+  }
+
+  .cqa .cqa-aps.has-panel .cqa-aps-back {
+    display: none;
+  }
+}
+
+/* ---- review panel ---- */
+
+.cqa .cqa-rv {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+.cqa .cqa-rv-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.cqa .cqa-rv-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-rv-card {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+.cqa .cqa-rv-crit,
+.cqa .cqa-rv-comment,
+.cqa .cqa-rv-fragment,
+.cqa .cqa-rv-opinion,
+.cqa .cqa-rv-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cqa .cqa-rv-quote {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--line-2);
+  border-radius: 0 var(--r-ctl) var(--r-ctl) 0;
+  background: var(--surface-2);
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-rv-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-rv-msg {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+}
+
+.cqa .cqa-rv-msg--operator {
+  background: var(--surface);
+}
+
+.cqa .cqa-rv-msg.is-evidence {
+  border-color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.cqa .cqa-rv-msg-meta {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-rv-msg-text {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-rv-gap {
+  color: var(--text-3);
+  text-align: center;
+}
+
+.cqa .cqa-rv-none {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.cqa .cqa-rv-opinion {
+  padding: 12px 14px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-ctl);
+}
+
+.cqa .cqa-rv-opinion-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.cqa .cqa-rv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cqa .cqa-rv-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cqa .cqa-rv-choice {
+  padding: 8px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cqa .cqa-rv-choice.is-on {
+  border-color: var(--accent);
+  background: var(--sel);
+  color: var(--nav-on);
+}
+
+.cqa .cqa-rv-decided {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* The one brand moment of this screen: the recalculated total. */
+.cqa .cqa-rv-result {
+  align-self: flex-start;
+  margin: 4px 0 0;
+  padding: 10px 16px;
+  border-radius: var(--r-card);
+  background: var(--brand-panel);
+  color: var(--mint);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cqa .cqa-rv-then {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+}
+
+.cqa .cqa-tag--link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cqa .cqa-tag--link:hover {
+  text-decoration: underline;
+}
+
+.cqa .cqa-sc-hist-link {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.cqa .cqa-sc-hist-item--earlier-open::before,
+.cqa .cqa-sc-hist-item--pending::before {
+  background: var(--mid-ink);
+}
+
+.cqa .cqa-sc-hist-item--not-carried::before {
+  background: var(--bad-ink);
+}

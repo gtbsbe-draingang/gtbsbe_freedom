@@ -381,8 +381,8 @@
   function markDuplicates(lines) {
     return lines.map((m, i) => {
       const prev = lines[i - 1];
-      const same = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
-      return same || m.duplicate === true ? { ...m, duplicate: true } : m;
+      const same2 = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
+      return same2 || m.duplicate === true ? { ...m, duplicate: true } : m;
     });
   }
   function normalizeRecord(record, groupId, options = {}) {
@@ -588,7 +588,8 @@
         effective_weight: e.applicable ? round2(e.effective) : null
       })),
       total: weightSum.n > 0n ? round2(total) : null,
-      sections: version2.sections.map((s) => {
+      // In their `order`, as the backend returns them (a stable sort keeps ties in array order).
+      sections: [...version2.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => {
         const acc = perSection.get(s.id);
         return {
           section_id: s.id,
@@ -1372,8 +1373,8 @@
     const rng = seeded(`${conversation.id}${criterion.fingerprint}|second`);
     const differs = rng() < RATES.secondOpinionDiffers;
     const answer = differs ? alternative(criterion, current2, rng()) : current2;
-    const same = sameAnswer(answer, current2);
-    const reasoning = same ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
+    const same2 = sameAnswer(answer, current2);
+    const reasoning = same2 ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
     return { answer, reasoning };
   }
   var MOODS = ["\u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u043E\u0435", "\u043F\u043E\u0437\u0438\u0442\u0438\u0432\u043D\u043E\u0435", "\u0440\u0430\u0437\u0434\u0440\u0430\u0436\u0451\u043D\u043D\u043E\u0435", "\u0442\u0440\u0435\u0432\u043E\u0436\u043D\u043E\u0435"];
@@ -2466,101 +2467,6 @@
   }
   var isCompact = (state) => state.mode === "embedded" && Boolean(state.conversationId);
 
-  // src/ui/router.js
-  var COMPARE_KEYS = ["from_checklist", "from_version", "to_checklist", "to_version", "group_id"];
-  var VERSION = /^\d+$/;
-  var NAV_OF = {
-    workspace: "workspace",
-    checklists: "checklists",
-    checklist: "checklists",
-    editor: "checklists",
-    compare: "checklists",
-    appeals: "appeals",
-    appeal: "appeals",
-    analytics: "analytics",
-    accuracy: "accuracy"
-  };
-  var navFor = (routeName) => NAV_OF[routeName] ?? null;
-  var sameRoute = (a, b) => a?.name === b?.name && JSON.stringify(a?.params ?? {}) === JSON.stringify(b?.params ?? {});
-  var route = (name, params = {}) => ({ name, params });
-  function parseRoute(hash) {
-    const raw = typeof hash === "string" ? hash : "";
-    const body = raw.startsWith("#") ? raw.slice(1) : raw;
-    const queryAt = body.indexOf("?");
-    const path = (queryAt < 0 ? body : body.slice(0, queryAt)).replace(/^\/+/, "").replace(/\/+$/, "");
-    const search = queryAt < 0 ? "" : body.slice(queryAt + 1);
-    const notFound = route("notfound", { path: raw });
-    let segments;
-    try {
-      segments = path === "" ? [] : path.split("/").map(decodeURIComponent);
-    } catch {
-      return notFound;
-    }
-    if (segments.some((segment) => segment === "")) return notFound;
-    const [head, a, b, c] = segments;
-    const n = segments.length;
-    if (n === 0) return route("workspace");
-    if (head === "c" && n === 2) return route("workspace", { id: a });
-    if (head === "checklists") {
-      if (n === 1) return route("checklists");
-      if (n === 3 && VERSION.test(b)) return route("checklist", { checklistId: a, version: b });
-      if (n === 4 && VERSION.test(b) && c === "edit") return route("editor", { checklistId: a, version: b });
-      return notFound;
-    }
-    if (head === "appeals") {
-      if (n === 1) return route("appeals");
-      if (n === 2) return route("appeal", { id: a });
-      return notFound;
-    }
-    if (head === "compare" && n === 1) {
-      const query2 = new URLSearchParams(search);
-      const params = {};
-      for (const key of COMPARE_KEYS) {
-        const value = query2.get(key);
-        if (value) params[key] = value;
-      }
-      return route("compare", params);
-    }
-    if ((head === "analytics" || head === "accuracy") && n === 1) return route(head);
-    return notFound;
-  }
-  var encoded = (params, key) => {
-    const value = params?.[key];
-    if (value === void 0 || value === null || value === "") throw new TypeError(`href: missing ${key}`);
-    return encodeURIComponent(String(value));
-  };
-  function href(name, params = {}) {
-    switch (name) {
-      case "workspace":
-        return params?.id ? `#/c/${encoded(params, "id")}` : "#/";
-      case "checklists":
-        return "#/checklists";
-      case "checklist":
-        return `#/checklists/${encoded(params, "checklistId")}/${encoded(params, "version")}`;
-      case "editor":
-        return `#/checklists/${encoded(params, "checklistId")}/${encoded(params, "version")}/edit`;
-      case "appeals":
-        return "#/appeals";
-      case "appeal":
-        return `#/appeals/${encoded(params, "id")}`;
-      case "compare": {
-        const query2 = new URLSearchParams();
-        for (const key of COMPARE_KEYS) {
-          const value = params?.[key];
-          if (value !== void 0 && value !== null && value !== "") query2.set(key, String(value));
-        }
-        const text2 = query2.toString();
-        return text2 ? `#/compare?${text2}` : "#/compare";
-      }
-      case "analytics":
-        return "#/analytics";
-      case "accuracy":
-        return "#/accuracy";
-      default:
-        throw new TypeError(`href: unknown route ${JSON.stringify(name)}`);
-    }
-  }
-
   // src/i18n/ru.js
   var messages = {
     "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
@@ -2686,8 +2592,9 @@
     "scorecard.carriedTitle": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0441\u044E\u0434\u0430",
     "scorecard.dispute": "\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C",
     "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "scorecard.disputeEarlierTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435",
+    "scorecard.disputeEarlierTitle": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043F\u043E\u0434\u0430\u043D\u0430 \u043D\u0430 \u043F\u0440\u0435\u0436\u043D\u044E\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u044D\u0442\u043E\u0433\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0438 \u0435\u0449\u0451 \u043D\u0435 \u0440\u0435\u0448\u0435\u043D\u0430",
     "scorecard.disputeOpenTitle": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
-    "scorecard.disputeSoon": "\u041F\u043E\u0434\u0430\u0447\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0432 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438.",
     "scorecard.info.title": "\u041D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0443",
     "scorecard.info.topic": "\u0422\u0435\u043C\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
     "scorecard.info.mood": "\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u0438\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
@@ -2707,6 +2614,71 @@
     "scorecard.ending.connection_lost": "\u043E\u0431\u0440\u044B\u0432 \u0441\u0432\u044F\u0437\u0438",
     "scorecard.ending.client_ended_call": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u0437\u0432\u043E\u043D\u043E\u043A",
     "scorecard.ending.normal": "\u043E\u0431\u044B\u0447\u043D\u043E\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
+    "history.title": "\u0418\u0441\u0442\u043E\u0440\u0438\u044F \u043E\u0446\u0435\u043D\u043A\u0438",
+    "history.original": "\u0418\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
+    "history.appeal": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F: \xAB{criterion}\xBB, \u043E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \xAB{answer}\xBB",
+    "history.changed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E \u043D\u0430 \xAB{answer}\xBB",
+    "history.confirmed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
+    "history.pending": "\u0416\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "history.carried": "\u041F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB: \xAB{answer}\xBB",
+    "history.final": "\u0418\u0442\u043E\u0433\u043E\u0432\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
+    "history.openAppeal": "\u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "history.earlierOpen": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435: \xAB{criterion}\xBB, \u0436\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+    "history.decidedAfter": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u043F\u043E\u0441\u043B\u0435 \u044D\u0442\u043E\u0439 \u043E\u0446\u0435\u043D\u043A\u0438: \u043F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C",
+    "history.olderVersion": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043E\u0442\u043D\u043E\u0441\u0438\u043B\u043E\u0441\u044C \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "appeal.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "appeal.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "appeal.current": "\u0421\u0435\u0439\u0447\u0430\u0441: \xAB{answer}\xBB",
+    "appeal.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439",
+    "appeal.commentPlaceholder": "\u041F\u043E\u0447\u0435\u043C\u0443 \u043E\u0446\u0435\u043D\u043A\u0430 \u043D\u0435\u0432\u0435\u0440\u043D\u0430: \u0447\u0442\u043E \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435 \u044D\u0442\u043E \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442",
+    "appeal.note": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043C\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439; \u0438\u0442\u043E\u0433 \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u044F.",
+    "appeal.submit": "\u041F\u043E\u0434\u0430\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "appeal.cancel": "\u041E\u0442\u043C\u0435\u043D\u0430",
+    "appeals.list": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "appeals.filters": "\u0424\u0438\u043B\u044C\u0442\u0440 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439",
+    "appeals.filter.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435",
+    "appeals.filter.decided": "\u0420\u0435\u0448\u0451\u043D\u043D\u044B\u0435",
+    "appeals.filter.all": "\u0412\u0441\u0435",
+    "appeals.status.open": "\u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "appeals.status.decided": "\u0440\u0435\u0448\u0435\u043D\u0430",
+    "appeals.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438\u2026",
+    "appeals.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "appeals.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "appeals.empty": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442",
+    "appeals.emptyNote": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440 \u043F\u043E\u0434\u0430\u0451\u0442 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \xAB\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C\xBB \u043D\u0430 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
+    "appeals.noMatch": "\u0417\u0434\u0435\u0441\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043D\u0435\u0442",
+    "appeals.pick": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u0432 \u0441\u043F\u0438\u0441\u043A\u0435",
+    "appeals.back": "\u2190 \u0412\u0441\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "review.label": "\u0420\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "review.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \xB7 {id}",
+    "review.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E\u2026",
+    "review.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "review.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "review.openCard": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "review.criterion": "\u041E\u0441\u043F\u043E\u0440\u0435\u043D\u043D\u044B\u0439 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "review.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440\u0430",
+    "review.fragment": "\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "review.noFragment": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043B\u0430 \u0441\u0442\u0440\u043E\u043A\u0438; \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430.",
+    "review.opinion": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "review.opinionPending": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0435\u0440\u0435\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u044F\u2026",
+    "review.opinionAnswer": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442: \xAB{answer}\xBB",
+    "review.opinionAdvice": "\u042D\u0442\u043E \u0441\u043E\u0432\u0435\u0442: \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439.",
+    "review.opinionUnavailable": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E.",
+    "review.decision": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.readOnly": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439. \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0440\u043E\u043B\u044C, \u0447\u0442\u043E\u0431\u044B \u0440\u0435\u0448\u0438\u0442\u044C.",
+    "review.confirmed": "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C",
+    "review.changed": "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C",
+    "review.newAnswer": "\u041D\u043E\u0432\u044B\u0439 \u043E\u0442\u0432\u0435\u0442",
+    "review.reason": "\u041F\u0440\u0438\u0447\u0438\u043D\u0430 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+    "review.reasonPlaceholder": "\u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E: \u043D\u0430 \u0447\u0451\u043C \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.submit": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.decidedConfirmed": "\u041E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
+    "review.decidedChanged": "\u041E\u0442\u0432\u0435\u0442 \u0438\u0437\u043C\u0435\u043D\u0451\u043D \u043D\u0430 \xAB{answer}\xBB",
+    "review.result": "\u0418\u0442\u043E\u0433: {from} \u2192 {to}",
+    "review.saved": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
+    "review.reloading": "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u0430\u043D\u0435\u043B\u0438\u2026",
+    "review.reloadFailed": "\u041F\u0430\u043D\u0435\u043B\u044C \u043D\u0435 \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u0430\u0441\u044C, \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u0443\u0436\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
+    "review.reload": "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C",
     "view.soon": "\u0420\u0430\u0437\u0434\u0435\u043B \u0435\u0449\u0451 \u043D\u0435 \u0433\u043E\u0442\u043E\u0432.",
     "notfound.title": "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430",
     "notfound.home": "\u041A \u043E\u0446\u0435\u043D\u043A\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
@@ -2762,8 +2734,8 @@
     }
   }
   var kebab = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
-  function h(tag3, props, ...children) {
-    const el = document.createElement(tag3);
+  function h(tag4, props, ...children) {
+    const el = document.createElement(tag4);
     if (props !== void 0 && props !== null) {
       if (typeof props !== "object" || props instanceof Node || Array.isArray(props)) {
         throw new TypeError("dom: h() props must be a plain object; pass children after it");
@@ -2793,8 +2765,8 @@
     append(el, children);
     return el;
   }
-  function svg(tag3, attrs, ...children) {
-    const el = document.createElementNS(SVG_NS, tag3);
+  function svg(tag4, attrs, ...children) {
+    const el = document.createElementNS(SVG_NS, tag4);
     if (attrs) setAttrs(el, attrs);
     append(el, children);
     return el;
@@ -2802,6 +2774,101 @@
   function clear(el) {
     el.replaceChildren();
     return el;
+  }
+
+  // src/ui/router.js
+  var COMPARE_KEYS = ["from_checklist", "from_version", "to_checklist", "to_version", "group_id"];
+  var VERSION = /^\d+$/;
+  var NAV_OF = {
+    workspace: "workspace",
+    checklists: "checklists",
+    checklist: "checklists",
+    editor: "checklists",
+    compare: "checklists",
+    appeals: "appeals",
+    appeal: "appeals",
+    analytics: "analytics",
+    accuracy: "accuracy"
+  };
+  var navFor = (routeName) => NAV_OF[routeName] ?? null;
+  var sameRoute = (a, b) => a?.name === b?.name && JSON.stringify(a?.params ?? {}) === JSON.stringify(b?.params ?? {});
+  var route = (name, params = {}) => ({ name, params });
+  function parseRoute(hash) {
+    const raw = typeof hash === "string" ? hash : "";
+    const body = raw.startsWith("#") ? raw.slice(1) : raw;
+    const queryAt = body.indexOf("?");
+    const path = (queryAt < 0 ? body : body.slice(0, queryAt)).replace(/^\/+/, "").replace(/\/+$/, "");
+    const search = queryAt < 0 ? "" : body.slice(queryAt + 1);
+    const notFound = route("notfound", { path: raw });
+    let segments;
+    try {
+      segments = path === "" ? [] : path.split("/").map(decodeURIComponent);
+    } catch {
+      return notFound;
+    }
+    if (segments.some((segment) => segment === "")) return notFound;
+    const [head, a, b, c] = segments;
+    const n = segments.length;
+    if (n === 0) return route("workspace");
+    if (head === "c" && n === 2) return route("workspace", { id: a });
+    if (head === "checklists") {
+      if (n === 1) return route("checklists");
+      if (n === 3 && VERSION.test(b)) return route("checklist", { checklistId: a, version: b });
+      if (n === 4 && VERSION.test(b) && c === "edit") return route("editor", { checklistId: a, version: b });
+      return notFound;
+    }
+    if (head === "appeals") {
+      if (n === 1) return route("appeals");
+      if (n === 2) return route("appeal", { id: a });
+      return notFound;
+    }
+    if (head === "compare" && n === 1) {
+      const query2 = new URLSearchParams(search);
+      const params = {};
+      for (const key of COMPARE_KEYS) {
+        const value = query2.get(key);
+        if (value) params[key] = value;
+      }
+      return route("compare", params);
+    }
+    if ((head === "analytics" || head === "accuracy") && n === 1) return route(head);
+    return notFound;
+  }
+  var encoded = (params, key) => {
+    const value = params?.[key];
+    if (value === void 0 || value === null || value === "") throw new TypeError(`href: missing ${key}`);
+    return encodeURIComponent(String(value));
+  };
+  function href(name, params = {}) {
+    switch (name) {
+      case "workspace":
+        return params?.id ? `#/c/${encoded(params, "id")}` : "#/";
+      case "checklists":
+        return "#/checklists";
+      case "checklist":
+        return `#/checklists/${encoded(params, "checklistId")}/${encoded(params, "version")}`;
+      case "editor":
+        return `#/checklists/${encoded(params, "checklistId")}/${encoded(params, "version")}/edit`;
+      case "appeals":
+        return "#/appeals";
+      case "appeal":
+        return `#/appeals/${encoded(params, "id")}`;
+      case "compare": {
+        const query2 = new URLSearchParams();
+        for (const key of COMPARE_KEYS) {
+          const value = params?.[key];
+          if (value !== void 0 && value !== null && value !== "") query2.set(key, String(value));
+        }
+        const text2 = query2.toString();
+        return text2 ? `#/compare?${text2}` : "#/compare";
+      }
+      case "analytics":
+        return "#/analytics";
+      case "accuracy":
+        return "#/accuracy";
+      default:
+        throw new TypeError(`href: unknown route ${JSON.stringify(name)}`);
+    }
   }
 
   // src/ui/icons.js
@@ -2851,7 +2918,7 @@
         "aria-hidden": "true",
         focusable: "false"
       },
-      ...shapes.map(([tag3, attrs]) => svg(tag3, attrs))
+      ...shapes.map(([tag4, attrs]) => svg(tag4, attrs))
     );
   }
 
@@ -2935,13 +3002,1410 @@
     return { el: box, destroy: unwatch };
   }
 
+  // src/ui/appeal-drawer.js
+  function openAppealDrawer({ host, store, api, evaluationId, choices, criterionId, onFiled, returnFocus }) {
+    let closed = false;
+    let busy = false;
+    const current2 = h("p", { class: "cqa-ap-current", data: { test: "appeal-current" } });
+    const select = h(
+      "select",
+      { class: ["cqa-sc-select", "cqa-ap-select"], attrs: { "aria-label": t("appeal.criterion") }, data: { test: "appeal-criterion" }, on: { change: () => paint() } },
+      choices.map((choice) => h("option", { attrs: { value: choice.id }, text: choice.title }))
+    );
+    if (choices.some((choice) => choice.id === criterionId)) select.value = criterionId;
+    const comment = h("textarea", {
+      class: "cqa-ap-text",
+      attrs: { rows: "5", "aria-label": t("appeal.comment"), placeholder: t("appeal.commentPlaceholder") },
+      data: { test: "appeal-comment" },
+      on: { input: () => paint() }
+    });
+    const submit = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("appeal.submit"), data: { test: "appeal-submit" } });
+    const cancel = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("appeal.cancel"), data: { test: "appeal-cancel" }, on: { click: () => close() } });
+    function paint() {
+      const choice = choices.find((c) => c.id === select.value);
+      current2.textContent = choice ? t("appeal.current", { answer: choice.answer }) : "";
+      submit.disabled = busy || comment.value.trim() === "";
+      select.disabled = busy;
+    }
+    async function send() {
+      const text2 = comment.value.trim();
+      if (busy || closed || text2 === "") return;
+      busy = true;
+      paint();
+      try {
+        const appeal = await api.fileAppeal({ evaluation_id: evaluationId, criterion_id: select.value, comment: text2 });
+        close();
+        onFiled?.(appeal);
+      } catch (error) {
+        busy = false;
+        if (!closed) paint();
+        toastError(store, error, { retry: send });
+      }
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("appeal.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("appeal.title") })),
+      h(
+        "form",
+        {
+          class: "cqa-ap-form",
+          on: {
+            submit: (event) => {
+              event.preventDefault();
+              send();
+            }
+          }
+        },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("appeal.criterion") }), select),
+        current2,
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("appeal.comment") }), comment),
+        h("p", { class: "cqa-rv-hint", text: t("appeal.note") }),
+        h("div", { class: "cqa-rv-acts" }, cancel, submit)
+      )
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("appeal.cancel") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "appeal-drawer" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.remove();
+      if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+    }
+    paint();
+    host.append(el);
+    comment.focus();
+    return { el, close };
+  }
+
+  // src/ui/scorecard.js
+  var POLL_MS = 500;
+  var JOB_TIMEOUT_MS = 15 * 60 * 1e3;
+  var FIRST_REACTION_LIMIT_S = 180;
+  var ACTIVE = /* @__PURE__ */ new Set(["queued", "running", "pending", "started"]);
+  var EVIDENCE_QUOTE_MAX = 160;
+  var money = (value) => fmt2(rat(value));
+  var isStep2 = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
+  function answerTag(criterion, answer) {
+    const gross = criterion?.kind === "gross_error";
+    if (answer === "na") return { kind: "na", text: t("scorecard.answer.na") };
+    if (answer === "yes") return { kind: gross ? "bad" : "ok", text: t("scorecard.answer.yes") };
+    if (answer === "no") return { kind: gross ? "ok" : "bad", text: t("scorecard.answer.no") };
+    if (isStep2(answer)) {
+      const values = (criterion?.scale_steps ?? []).map((step) => step.value).filter((value) => typeof value === "number");
+      const top = values.length > 0 ? Math.max(...values) : null;
+      const low = values.length > 0 ? Math.min(...values) : null;
+      const kind = top === null ? "mid" : answer.step >= top ? "ok" : answer.step <= low ? "bad" : "mid";
+      return { kind, text: t("scorecard.answer.step", { value: answer.step }) };
+    }
+    return { kind: "na", text: "\u2014" };
+  }
+  function thresholdCheck(seconds) {
+    if (typeof seconds !== "number" || !Number.isFinite(seconds)) return null;
+    return seconds <= FIRST_REACTION_LIMIT_S ? "ok" : "over";
+  }
+  function jobSettled(job) {
+    if (!job) return true;
+    return !ACTIVE.has(job.status) || job.total > 0 && job.done + job.failed >= job.total;
+  }
+  var byFiling = (a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? ""));
+  function cardAppeals(evaluation, appeals, evaluations) {
+    const created = Date.parse(evaluation.created_at ?? "");
+    const earlier = new Set(
+      (evaluations ?? []).filter((e) => e.id !== evaluation.id).filter((e) => {
+        const at = Date.parse(e.created_at ?? "");
+        return !Number.isFinite(at) || !Number.isFinite(created) || at <= created;
+      }).map((e) => e.id)
+    );
+    const carried = new Set(evaluation.results.map((r) => r.carried_decision?.appeal_id).filter(Boolean));
+    const own = [];
+    const earlierOpen = [];
+    const notCarried = [];
+    for (const appeal of [...appeals ?? []].sort(byFiling)) {
+      if (appeal.evaluation_id === evaluation.id) own.push(appeal);
+      else if (!earlier.has(appeal.evaluation_id)) continue;
+      else if (appeal.status === "open") earlierOpen.push(appeal);
+      else if (!carried.has(appeal.id)) {
+        const decided = Date.parse(appeal.decision?.decided_at ?? "");
+        notCarried.push({ appeal, when: Number.isFinite(decided) && Number.isFinite(created) && decided > created ? "after" : "before" });
+      }
+    }
+    return { own, earlierOpen, notCarried };
+  }
+  var versionsOf = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var latestOf = (row) => Math.max(...versionsOf(row));
+  function pickSelection(stored, server, checklists) {
+    const has2 = (ref) => Boolean(ref) && checklists.some((row2) => row2.checklist_id === ref.checklist_id && versionsOf(row2).includes(ref.version));
+    if (has2(stored)) return { checklist_id: stored.checklist_id, version: stored.version };
+    const fallback = server?.default_checklist;
+    if (has2(fallback)) return { checklist_id: fallback.checklist_id, version: fallback.version };
+    const row = checklists.find((r) => r.checklist_id === fallback?.checklist_id) ?? checklists[0];
+    return row ? { checklist_id: row.checklist_id, version: latestOf(row) } : null;
+  }
+  function labelled(prefix, value) {
+    const key = `${prefix}.${value}`;
+    const text2 = t(key);
+    return text2 === key ? String(value) : text2;
+  }
+  var clip = (text2, max) => {
+    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+    return line.length > max ? `${line.slice(0, max - 1).trimEnd()}\u2026` : line;
+  };
+  var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  var tag = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
+  var tagLink = (kind, text2, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text2, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
+  function stateBox(test, title, note, extra) {
+    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
+  }
+  function openId(store, args) {
+    if (typeof args?.id === "string" && args.id !== "") return args.id;
+    const { route: route2, conversationId } = store.get();
+    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
+  }
+  function createScorecard(store, api, args = {}) {
+    const id = openId(store, args);
+    const dev = store.get().config?.testHooks === true || Boolean(window.__cqaTest);
+    const view = {
+      phase: "loading",
+      // "loading" | "ready" | "error"
+      error: null,
+      server: null,
+      // the API's config
+      checklists: [],
+      options: [],
+      // [{checklist_id, version, label}] behind the picker
+      sel: null,
+      // {checklist_id, version}
+      version: null,
+      // the picked checklist version
+      evaluation: null,
+      // the newest finished evaluation of this dialogue for it
+      evaluations: [],
+      // all of this dialogue's evaluations for the picked checklist (for earlier appeals)
+      conversation: null,
+      appeals: [],
+      busy: false,
+      job: null,
+      // null | {phase: "starting" | "running" | "failed", id, done, total}
+      active: null
+      // the criterion id whose evidence is marked in the transcript
+    };
+    let destroyed = false;
+    let loadRun = 0;
+    let drawer = null;
+    const unwatch = [];
+    const select = h("select", {
+      class: "cqa-sc-select",
+      attrs: { "aria-label": t("scorecard.checklist") },
+      data: { test: "checklist-select" },
+      on: {
+        change: () => {
+          const option = view.options[Number(select.value)];
+          if (!option || view.busy) return;
+          view.sel = { checklist_id: option.checklist_id, version: option.version };
+          store.set({ checklistSel: view.sel });
+          loadSelection();
+        }
+      }
+    });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, data: { test: "run-eval" }, on: { click: () => run("reuse") } });
+    const fullButton = h("button", {
+      class: "cqa-sc-btn",
+      text: t("scorecard.runFull"),
+      attrs: { type: "button", title: t("scorecard.runFullTitle") },
+      data: { test: "run-eval-full" },
+      on: { click: () => run("full") }
+    });
+    const status = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "job-progress" } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("scorecard.keyMissing"), data: { test: "key-hint" } });
+    hint.hidden = true;
+    const bar = h(
+      "div",
+      { class: "cqa-sc-bar" },
+      h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
+      h("div", { class: "cqa-sc-run" }, runButton, fullButton),
+      hint,
+      status
+    );
+    const body = h("div", { class: "cqa-sc-body" });
+    const el = h("div", { class: "cqa-sc", attrs: { role: "region", "aria-label": t("scorecard.label") }, data: { test: "scorecard" } }, bar, body);
+    function fillSelect() {
+      clear(select);
+      view.options = view.checklists.flatMap(
+        (row) => [...versionsOf(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+      );
+      view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
+      const at = view.options.findIndex((o) => o.checklist_id === view.sel?.checklist_id && o.version === view.sel?.version);
+      if (at >= 0) select.value = String(at);
+    }
+    function paintBar() {
+      if (destroyed) return;
+      const keyMissing = view.server?.model_key_configured === false;
+      const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
+      const off = view.busy || keyMissing || !ready;
+      runButton.textContent = t(view.evaluation ? "scorecard.rerun" : "scorecard.run");
+      for (const button of [runButton, fullButton]) {
+        button.disabled = off;
+        if (keyMissing) button.setAttribute("title", t("scorecard.keyMissing"));
+        else if (button === fullButton) button.setAttribute("title", t("scorecard.runFullTitle"));
+        else button.removeAttribute("title");
+      }
+      hint.hidden = !keyMissing;
+      select.disabled = view.busy || view.options.length === 0;
+      clear(status);
+      const job = view.job;
+      if (job?.phase === "starting") status.append(t("scorecard.starting"));
+      else if (job?.phase === "running") status.append(t("scorecard.progress", { done: job.done, total: job.total }));
+      else if (job?.phase === "failed") {
+        status.append(
+          h("span", { class: "cqa-sc-failed", text: t("scorecard.jobFailed") }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "job-retry" }, on: { click: () => retryFailed(job.id) } })
+        );
+      }
+    }
+    const clearMarks = () => store.get().transcript?.highlight(null, [], null);
+    const pickEvaluation = (evaluations, sel) => evaluations.find((e) => e.status === "done" && e.checklist_id === sel.checklist_id && e.version === sel.version) ?? null;
+    async function boot() {
+      const mine = ++loadRun;
+      view.phase = "loading";
+      drawBody();
+      paintBar();
+      try {
+        const [server, checklists] = await Promise.all([api.getConfig(), api.listChecklists()]);
+        if (destroyed || mine !== loadRun) return;
+        view.server = server;
+        view.checklists = checklists;
+        view.sel = pickSelection(store.get().checklistSel, server, checklists);
+        fillSelect();
+        if (view.sel === null) {
+          view.phase = "ready";
+          drawBody();
+          paintBar();
+          return;
+        }
+        await loadSelection();
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        fail2(error);
+      }
+    }
+    function fail2(error) {
+      view.phase = "error";
+      view.error = error;
+      drawBody();
+      paintBar();
+    }
+    async function loadSelection({ quiet = false } = {}) {
+      const mine = ++loadRun;
+      const sel = view.sel;
+      if (!quiet) {
+        view.phase = "loading";
+        drawBody();
+        paintBar();
+      }
+      try {
+        const [version2, evaluations, appeals, conversation] = await Promise.all([
+          api.getChecklistVersion(sel.checklist_id, sel.version),
+          api.listEvaluations({ conversation: id, checklist_id: sel.checklist_id }),
+          api.listAppeals(),
+          api.getConversation(id)
+        ]);
+        if (destroyed || mine !== loadRun) return;
+        view.version = version2;
+        view.evaluation = pickEvaluation(evaluations, sel);
+        view.evaluations = evaluations;
+        view.appeals = appeals;
+        view.conversation = conversation;
+        view.phase = "ready";
+        view.active = null;
+        clearMarks();
+        checkTotal();
+        drawBody();
+        paintBar();
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        fail2(error);
+      }
+    }
+    function checkTotal() {
+      const { evaluation, version: version2, appeals } = view;
+      if (!dev || !evaluation || !version2) return;
+      try {
+        const decided = appeals.filter((appeal) => appeal.status === "decided");
+        const own = score(version2, finalAnswers(evaluation, decided)).total;
+        if (own !== evaluation.final_total) console.warn(`scorecard: score() gives ${own}, the server says final_total ${evaluation.final_total} (${evaluation.id})`);
+      } catch (error) {
+        console.warn("scorecard: the total could not be recomputed", error);
+      }
+    }
+    async function settle(first) {
+      let job = first;
+      const deadline = Date.now() + JOB_TIMEOUT_MS;
+      while (!jobSettled(job)) {
+        if (Date.now() > deadline) throw new ApiError("timeout", "The evaluation did not finish in time");
+        await sleep(POLL_MS);
+        job = await api.getJob(job.id);
+        if (!destroyed) {
+          view.job = { phase: "running", id: job.id, done: job.done, total: job.total };
+          paintBar();
+        }
+      }
+      return job;
+    }
+    async function execute(start, again) {
+      if (view.busy || destroyed) return;
+      view.busy = true;
+      view.job = { phase: "starting" };
+      paintBar();
+      let jobId = null;
+      try {
+        const first = await start();
+        jobId = first.id;
+        if (!destroyed) {
+          view.job = { phase: "running", id: first.id, done: first.done, total: first.total };
+          paintBar();
+        }
+        const job = await settle(first);
+        view.job = job.failed > 0 ? { phase: "failed", id: job.id, done: job.done, total: job.total } : null;
+        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+        if (!destroyed) await loadSelection({ quiet: true });
+      } catch (error) {
+        view.job = null;
+        const resume = jobId === null ? again : () => execute(() => api.getJob(jobId), again);
+        toastError(store, error, { retry: destroyed ? void 0 : resume });
+      } finally {
+        view.busy = false;
+        paintBar();
+      }
+    }
+    function run(mode) {
+      if (!view.sel) return;
+      const { checklist_id, version: version2 } = view.sel;
+      const again = () => run(mode);
+      return execute(() => api.startEvaluations({ conversations: [id], checklist_id, version: version2, mode }), again);
+    }
+    function retryFailed(jobId) {
+      return execute(() => api.retryJob(jobId), () => retryFailed(jobId));
+    }
+    function drawBody() {
+      if (destroyed) return;
+      clear(body);
+      if (view.phase === "loading") {
+        body.append(stateBox("scorecard-loading", t("scorecard.loading")));
+        return;
+      }
+      if (view.phase === "error") {
+        body.append(
+          stateBox(
+            "scorecard-error",
+            t("scorecard.loadFailed"),
+            null,
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "scorecard-retry" }, on: { click: boot } })
+          )
+        );
+        return;
+      }
+      if (view.sel === null) {
+        body.append(stateBox("scorecard-no-checklist", t("scorecard.noChecklist"), t("scorecard.noChecklistNote")));
+        return;
+      }
+      const info = buildInfo(view.conversation);
+      if (!view.evaluation) {
+        body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
+        return;
+      }
+      body.append(...[buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+    }
+    function buildHistory(evaluation, version2) {
+      const { own, earlierOpen, notCarried } = cardAppeals(evaluation, view.appeals, view.evaluations);
+      const carried = evaluation.results.filter((result) => result.carried_decision);
+      if (own.length === 0 && earlierOpen.length === 0 && notCarried.length === 0 && carried.length === 0) return null;
+      const criterionOf = (id2) => version2.criteria.find((c) => c.id === id2) ?? { id: id2, title: id2 };
+      const resultOf = (id2) => evaluation.results.find((r) => r.criterion_id === id2) ?? null;
+      const totalText2 = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : money(value);
+      const items = [];
+      const item = (kind, what, note, appealId) => items.push(
+        h(
+          "li",
+          { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } },
+          h("b", { class: "cqa-sc-hist-what", text: what }),
+          appealId ? h("a", { class: ["cqa-link", "cqa-sc-hist-link"], attrs: { href: href("appeal", { id: appealId }) }, text: t("history.openAppeal") }) : null,
+          note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null
+        )
+      );
+      item("original", t("history.original", { total: totalText2(evaluation.original_total) }));
+      for (const appeal of own) {
+        const criterion = criterionOf(appeal.criterion_id);
+        const result = resultOf(appeal.criterion_id);
+        item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "\u2014" }), appeal.comment, appeal.id);
+        const decision = appeal.decision;
+        if (decision) {
+          const what = decision.outcome === "changed" ? t("history.changed", { answer: answerTag(criterion, decision.answer).text }) : t("history.confirmed");
+          item("decision", what, decision.reason);
+        } else item("pending", t("history.pending"));
+      }
+      for (const appeal of earlierOpen) {
+        item("earlier-open", t("history.earlierOpen", { criterion: criterionOf(appeal.criterion_id).title }), appeal.comment, appeal.id);
+      }
+      for (const { appeal, when } of notCarried) {
+        item("not-carried", t(when === "after" ? "history.decidedAfter" : "history.olderVersion", { criterion: criterionOf(appeal.criterion_id).title }), appeal.decision?.reason, appeal.id);
+      }
+      for (const result of carried) {
+        const criterion = criterionOf(result.criterion_id);
+        item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }), null, result.carried_decision.appeal_id);
+      }
+      item("final", t("history.final", { total: totalText2(evaluation.final_total) }));
+      return h(
+        "section",
+        { class: "cqa-sc-hist", attrs: { "aria-label": t("history.title") }, data: { test: "history" } },
+        h("h3", { class: "cqa-sc-info-title", text: t("history.title") }),
+        h("ol", { class: "cqa-sc-hist-list" }, items)
+      );
+    }
+    function blockedCriteria(evaluation) {
+      const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
+      return new Set([...own.filter((a) => a.status === "open"), ...earlierOpen].map((a) => a.criterion_id));
+    }
+    function openDrawer(criterionId, button) {
+      const { evaluation, version: version2 } = view;
+      if (!evaluation || !version2 || destroyed) return;
+      const open = blockedCriteria(evaluation);
+      const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
+      const sections = new Map(version2.sections.map((s) => [s.id, s.order ?? 0]));
+      const choices = [...version2.criteria].sort((a, b) => (sections.get(a.section_id) ?? 0) - (sections.get(b.section_id) ?? 0) || (a.order ?? 0) - (b.order ?? 0)).filter((c) => byResult.has(c.id) && !open.has(c.id)).map((c) => {
+        const result = byResult.get(c.id);
+        return { id: c.id, title: c.title, answer: answerTag(c, result.final_answer ?? result.answer).text };
+      });
+      drawer?.close();
+      drawer = openAppealDrawer({
+        host: el.closest(".cqa") ?? el,
+        store,
+        api,
+        evaluationId: evaluation.id,
+        choices,
+        criterionId,
+        returnFocus: button,
+        onFiled: () => {
+          drawer = null;
+          store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+          if (!destroyed) loadSelection({ quiet: true });
+        }
+      });
+    }
+    function buildHero(evaluation, version2) {
+      const none = evaluation.final_total === null || evaluation.final_total === void 0;
+      const totalText2 = none ? t("scorecard.totalNone") : money(evaluation.final_total);
+      const changed = evaluation.original_total !== evaluation.final_total;
+      const gross = evaluation.gross_error;
+      const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn") : t("scorecard.grossOff");
+      const scored = new Set(version2.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
+      const rows = [...version2.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id)).map((section) => {
+        const row = evaluation.sections?.find((s) => s.section_id === section.id);
+        const has2 = row && row.points !== null && row.points !== void 0 && row.available !== null && row.available !== void 0;
+        const percent = has2 && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
+        return h(
+          "div",
+          { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
+          h("span", { class: "cqa-sc-sec-name", text: section.title }),
+          h("span", {
+            class: ["cqa-sc-sec-score", "num"],
+            text: has2 ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
+            data: { test: "section-score" }
+          }),
+          h("div", { class: "cqa-sc-sec-bar" }, h("i", { style: { width: `${percent}%` } }))
+        );
+      });
+      const model = [evaluation.model ? t("scorecard.model", { model: evaluation.model }) : null, typeof evaluation.cost_usd === "number" ? t("scorecard.cost", { cost: evaluation.cost_usd.toFixed(evaluation.cost_usd < 1 ? 4 : 2) }) : null].filter(Boolean);
+      return h(
+        "div",
+        { class: "cqa-sc-hero", data: { test: "hero" } },
+        h(
+          "div",
+          { class: "cqa-sc-hero-top" },
+          h("span", { class: "cqa-sc-hero-label" }, `${t("scorecard.totalLabel")} `, h("em", { text: `${version2.name} v${version2.version}` })),
+          evaluation.source === "mock" ? h("span", { class: "cqa-sc-demo", text: t("scorecard.demoBadge"), attrs: { title: t("scorecard.demoTitle") }, data: { test: "demo-badge" } }) : null
+        ),
+        h(
+          "div",
+          { class: "cqa-sc-tot" },
+          h("b", { class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"], text: totalText2, data: { test: "total" } }),
+          none ? null : h("span", { class: "cqa-sc-outof", text: t("scorecard.outOf") }),
+          changed ? h("s", {
+            class: ["cqa-sc-was", "num"],
+            text: evaluation.original_total === null || evaluation.original_total === void 0 ? t("scorecard.totalNone") : money(evaluation.original_total),
+            attrs: { title: t("scorecard.originalTitle") },
+            data: { test: "total-original" }
+          }) : null
+        ),
+        h("div", { class: ["cqa-sc-flag", gross?.flag && "cqa-sc-flag--on"], text: grossText, data: { test: "gross-flag", state: gross?.flag ? "on" : "off" } }),
+        rows.length > 0 ? h("div", { class: "cqa-sc-secs", attrs: { role: "group", "aria-label": t("scorecard.sections") }, data: { test: "sections" } }, rows) : null,
+        model.length > 0 ? h("p", { class: "cqa-sc-model", text: model.join(" \xB7 "), data: { test: "model" } }) : null
+      );
+    }
+    function buildInfo(conversation) {
+      const info = conversation?.info ?? null;
+      const facts = conversation?.facts ?? null;
+      const rows = [];
+      const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value)));
+      if (info?.topic) row("topic", "info-topic", info.topic);
+      const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
+      if (mood.length > 0) row("mood", "info-mood", mood.join(" \u2192 "));
+      if (info?.outcome) row("outcome", "info-outcome", labelled("scorecard.outcome", info.outcome));
+      if (facts && typeof facts.first_reaction_seconds === "number") {
+        const check = thresholdCheck(facts.first_reaction_seconds);
+        row(
+          "firstReaction",
+          "info-first-reaction",
+          formatOffset(facts.first_reaction_seconds),
+          " ",
+          tag(check === "ok" ? "ok" : "bad", t(check === "ok" ? "scorecard.info.thresholdOk" : "scorecard.info.thresholdOver"), { data: { test: "threshold", state: check } })
+        );
+      }
+      if (facts && typeof facts.longest_wait_seconds === "number") row("longestWait", "info-longest-wait", formatOffset(facts.longest_wait_seconds));
+      if (facts?.ending) row("ending", "info-ending", labelled("scorecard.ending", facts.ending));
+      const box = h("section", { class: "cqa-sc-info", attrs: { "aria-label": t("scorecard.info.title") }, data: { test: "info" } }, h("h3", { class: "cqa-sc-info-title", text: t("scorecard.info.title") }), h("dl", { class: "cqa-sc-info-list" }, rows));
+      box.hidden = rows.length === 0;
+      return box;
+    }
+    function buildCards(evaluation, version2) {
+      const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
+      const sections = [...version2.sections].sort((a, b) => a.order - b.order);
+      const groups = sections.map((section) => ({ section, criteria: version2.criteria.filter((c) => c.section_id === section.id).sort((a, b) => a.order - b.order) })).filter((group) => group.criteria.length > 0);
+      const controller = store.get().role === "controller";
+      const cards = /* @__PURE__ */ new Map();
+      const activate = (criterionId) => {
+        view.active = criterionId;
+        for (const [key, card] of cards) card.classList.toggle("is-open", key === criterionId);
+      };
+      const list = h("div", { class: "cqa-sc-crits", data: { test: "criteria" } });
+      for (const { section, criteria } of groups) {
+        const items = criteria.filter((c) => byResult.has(c.id)).map((c) => {
+          const card = buildCard(c, byResult.get(c.id), { evaluation, controller, activate });
+          cards.set(c.id, card);
+          return card;
+        });
+        if (items.length === 0) continue;
+        list.append(h("h3", { class: "cqa-sc-sec-title", text: section.title }), ...items);
+      }
+      if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
+      return list;
+    }
+    function buildCard(criterion, result, { evaluation, controller, activate }) {
+      const gross = criterion.kind === "gross_error";
+      const shown = result.final_answer ?? result.answer;
+      const answer = answerTag(criterion, shown);
+      const changed = JSON.stringify(result.answer) !== JSON.stringify(shown);
+      let points = "";
+      let weight = null;
+      if (gross) points = t("scorecard.grossNoScore");
+      else if (shown === "na") points = t("scorecard.naWeight");
+      else if (typeof result.points === "number" && typeof result.effective_weight === "number") {
+        points = t("scorecard.points", { earned: money(result.points), max: money(result.effective_weight) });
+        if (typeof criterion.weight === "number" && money(criterion.weight) !== money(result.effective_weight)) {
+          weight = t("scorecard.weight", { from: String(criterion.weight), to: money(result.effective_weight) });
+        }
+      } else points = "\u2014";
+      const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
+      const ownOpen = own.find((a) => a.status === "open" && a.criterion_id === criterion.id) ?? null;
+      const earlier = earlierOpen.find((a) => a.criterion_id === criterion.id) ?? null;
+      const openAppeal = blockedCriteria(evaluation).has(criterion.id);
+      const evidence = (result.evidence ?? []).map((item) => {
+        const expected = item.role === "expected_here";
+        return h(
+          "li",
+          { class: "cqa-sc-ev-item" },
+          h(
+            "button",
+            {
+              class: ["cqa-sc-ev", expected && "cqa-sc-ev--expected"],
+              attrs: { type: "button", title: item.quote, "aria-label": t("scorecard.evidenceShow", { n: item.message_index + 1 }) },
+              data: { test: "evidence-link", index: item.message_index, role: item.role },
+              on: { click: () => jump(criterion, result, item, activate) }
+            },
+            h("span", { class: "cqa-sc-ev-n", text: `\u21B3 ${t("scorecard.evidenceLine", { n: item.message_index + 1 })}${expected ? ` \xB7 ${t("transcript.expectedHere")}` : ""}` }),
+            item.quote ? h("span", { class: "cqa-sc-ev-quote", text: clip(item.quote, EVIDENCE_QUOTE_MAX) }) : null
+          )
+        );
+      });
+      const range = result.checked_range;
+      const marks = [
+        result.needs_review ? tag("mid", t("scorecard.needsReview"), { attrs: { title: t("scorecard.needsReviewTitle") }, data: { test: "needs-review" } }) : null,
+        result.carried_decision?.appeal_id ? tagLink("out", t("scorecard.carried"), result.carried_decision.appeal_id, { title: t("scorecard.carriedTitle"), test: "carried" }) : null,
+        ownOpen ? tagLink("mid", t("scorecard.disputeOpenTag"), ownOpen.id, { test: "appeal-open" }) : null,
+        !ownOpen && earlier ? tagLink("mid", t("scorecard.disputeEarlierTag"), earlier.id, { title: t("scorecard.disputeEarlierTitle"), test: "appeal-open-earlier" }) : null,
+        changed ? h("span", { class: "cqa-sc-note", text: t("scorecard.modelAnswer", { answer: answerTag(criterion, result.answer).text }), attrs: { title: t("scorecard.modelAnswerTitle") }, data: { test: "model-answer" } }) : null,
+        weight ? h("span", { class: ["cqa-sc-note", "num"], text: weight, data: { test: "weight" } }) : null
+      ].filter(Boolean);
+      return h(
+        "article",
+        { class: "cqa-sc-crit", data: { test: "crit", criterion: criterion.id, answer: typeof shown === "string" ? shown : "step" } },
+        h(
+          "div",
+          { class: "cqa-sc-r1" },
+          h("b", { class: "cqa-sc-crit-title", text: criterion.title }),
+          tag(answer.kind, answer.text, { data: { test: "answer" } }),
+          h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "points" } })
+        ),
+        marks.length > 0 ? h("div", { class: "cqa-sc-marks" }, marks) : null,
+        result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
+        shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
+        evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
+        range && Number.isInteger(range.from) && Number.isInteger(range.to) ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } }) : null,
+        result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
+        controller ? h(
+          "div",
+          { class: "cqa-sc-acts" },
+          h("button", {
+            class: "cqa-sc-btn",
+            text: t("scorecard.dispute"),
+            attrs: { type: "button", disabled: openAppeal, title: openAppeal ? t("scorecard.disputeOpenTitle") : null },
+            data: { test: "dispute" },
+            on: { click: (event) => openDrawer(criterion.id, event.currentTarget) }
+          })
+        ) : null
+      );
+    }
+    function jump(criterion, result, item, activate) {
+      const transcript = store.get().transcript;
+      activate(criterion.id);
+      if (!transcript) return;
+      store.set({ pane: "transcript" });
+      transcript.highlight(criterion.id, result.evidence, result.checked_range, criterion.title);
+      transcript.focusMessage(item.message_index);
+    }
+    unwatch.push(store.subscribe((state, previous) => {
+      if (state.role === previous.role) return;
+      if (state.role !== "controller") drawer?.close();
+      if (view.phase === "ready") drawBody();
+    }));
+    if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
+    else boot();
+    return {
+      el,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        drawer?.close();
+        unwatch.forEach((stop) => stop());
+      }
+    };
+  }
+
+  // src/ui/transcript.js
+  var FLASH_MS = 1200;
+  var KNOWN = /* @__PURE__ */ new Set(["client", "operator", "bot", "system"]);
+  function speakerKind(speaker) {
+    const name = typeof speaker === "string" ? speaker.trim().toLowerCase() : "";
+    return KNOWN.has(name) ? name : "other";
+  }
+  var validIndex = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
+  function highlightPlan(count, evidence, range) {
+    const marks = Array.from({ length: count }, () => ({ supports: false, expected: false, checked: false }));
+    for (const item of Array.isArray(evidence) ? evidence : []) {
+      if (!item || !validIndex(item.message_index, count)) continue;
+      if (item.role === "supports") marks[item.message_index].supports = true;
+      else if (item.role === "expected_here") marks[item.message_index].expected = true;
+    }
+    if (range && Number.isInteger(range.from) && Number.isInteger(range.to)) {
+      const from = Math.max(0, Math.min(range.from, range.to));
+      const to = Math.min(count - 1, Math.max(range.from, range.to));
+      for (let i = from; i <= to; i += 1) marks[i].checked = true;
+    }
+    return marks;
+  }
+  function openId2(store, args) {
+    if (typeof args?.id === "string" && args.id !== "") return args.id;
+    const { route: route2, conversationId } = store.get();
+    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
+  }
+  function stateBox2(test, title, note, extra) {
+    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
+  }
+  function buildMessage(message, index, offset) {
+    const kind = speakerKind(message?.speaker);
+    const raw = typeof message?.timestamp === "string" ? message.timestamp.trim() : "";
+    const clock = formatOffset(offset) || raw;
+    const flag = h("b", { class: "cqa-msg-flag", data: { test: "msg-flag" } });
+    const who = h(
+      "div",
+      { class: "cqa-msg-who" },
+      flag,
+      kind === "system" ? null : h("span", { class: "cqa-msg-speaker", text: t(`transcript.speaker.${kind}`), attrs: kind === "other" && message?.speaker ? { title: String(message.speaker) } : {}, data: { test: "msg-speaker" } }),
+      clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
+      message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
+    );
+    const text2 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text2);
+    return { el, flag };
+  }
+  function renderTranscript(store, api, args = {}) {
+    const id = openId2(store, args);
+    const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
+    const head = h("div", { class: "cqa-tr-head" });
+    const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
+    let destroyed = false;
+    let rows = [];
+    let loaded = false;
+    let marked = [];
+    let pending2 = { highlight: null, focus: null };
+    const flashTimers = /* @__PURE__ */ new Map();
+    function clearMarks() {
+      for (const i of marked) {
+        const row = rows[i];
+        row.el.classList.remove("is-evidence", "is-expected", "is-checked");
+        row.el.removeAttribute("data-criterion");
+        row.flag.textContent = "";
+      }
+      marked = [];
+    }
+    function applyHighlight(criterionId, evidence, range, label) {
+      clearMarks();
+      if (criterionId === null || criterionId === void 0) return;
+      const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
+      const plan = highlightPlan(rows.length, evidence, range);
+      plan.forEach((mark, i) => {
+        if (!mark.supports && !mark.expected && !mark.checked) return;
+        const { el: row, flag } = rows[i];
+        row.classList.toggle("is-evidence", mark.supports);
+        row.classList.toggle("is-expected", mark.expected);
+        row.classList.toggle("is-checked", mark.checked);
+        row.setAttribute("data-criterion", String(criterionId));
+        flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" \xB7 ");
+        marked.push(i);
+      });
+    }
+    function highlight(criterionId, evidence, checkedRange, label) {
+      if (destroyed) return;
+      if (!loaded) pending2.highlight = [criterionId, evidence, checkedRange, label];
+      else applyHighlight(criterionId, evidence, checkedRange, label);
+    }
+    function flash(index) {
+      const { el: row } = rows[index];
+      clearTimeout(flashTimers.get(index));
+      row.classList.remove("is-flash");
+      void row.offsetWidth;
+      row.classList.add("is-flash");
+      flashTimers.set(
+        index,
+        setTimeout(() => {
+          row.classList.remove("is-flash");
+          flashTimers.delete(index);
+        }, FLASH_MS)
+      );
+    }
+    function focusMessage(index) {
+      if (destroyed) return false;
+      if (!loaded) {
+        pending2.focus = index;
+        return Number.isInteger(index) && index >= 0;
+      }
+      if (!validIndex(index, rows.length)) return false;
+      const row = rows[index].el;
+      const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
+      scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+      flash(index);
+      return true;
+    }
+    const handle = { el, highlight, focusMessage, destroy };
+    function show(conversation) {
+      const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+      const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
+      clear(head).append(
+        h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
+        h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" \xB7 "), data: { test: "transcript-meta" } })
+      );
+      clear(scroller);
+      rows = [];
+      marked = [];
+      loaded = true;
+      if (transcript.length === 0) {
+        scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
+      } else {
+        const at = offsets(transcript);
+        rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
+        scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
+      }
+      const { highlight: waiting, focus } = pending2;
+      pending2 = { highlight: null, focus: null };
+      if (waiting) applyHighlight(...waiting);
+      if (focus !== null) focusMessage(focus);
+    }
+    function showError(error) {
+      clear(head);
+      clear(scroller).append(
+        stateBox2(
+          "transcript-error",
+          t("transcript.loadFailed", { id }),
+          errorText(error),
+          h("button", { class: "cqa-tr-retry", attrs: { type: "button" }, text: t("transcript.retry"), data: { test: "transcript-retry" }, on: { click: load2 } })
+        )
+      );
+    }
+    let run = 0;
+    async function load2() {
+      const mine = ++run;
+      loaded = false;
+      rows = [];
+      marked = [];
+      clear(scroller).append(stateBox2("transcript-loading", t("transcript.loading", { id })));
+      try {
+        const conversation = await api.getConversation(id);
+        if (destroyed || mine !== run) return;
+        show(conversation);
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        showError(error);
+      }
+    }
+    function destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      flashTimers.forEach((timer) => clearTimeout(timer));
+      flashTimers.clear();
+      if (store.get().transcript === handle) store.set({ transcript: null });
+      const hook2 = window.__cqaTest;
+      if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
+    }
+    store.set({ transcript: handle });
+    const hook = window.__cqaTest;
+    if (hook?.store === store) hook.transcript = { focusMessage, highlight };
+    if (id === null) scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
+    else load2();
+    return handle;
+  }
+
+  // src/ui/review-panel.js
+  var POLL_MS2 = 2e3;
+  var CONTEXT_LINES = 2;
+  var validIndex2 = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
+  function fragmentIndexes(result, count) {
+    const picked = /* @__PURE__ */ new Set();
+    const evidence = Array.isArray(result?.evidence) ? result.evidence : [];
+    const marks = evidence.map((item) => item?.message_index).filter((i) => validIndex2(i, count));
+    if (marks.length > 0) {
+      for (const i of marks) {
+        for (let k = i - CONTEXT_LINES; k <= i + CONTEXT_LINES; k += 1) if (validIndex2(k, count)) picked.add(k);
+      }
+    } else {
+      const range = result?.checked_range;
+      if (range && Number.isInteger(range.from) && Number.isInteger(range.to)) {
+        const from = Math.max(0, Math.min(range.from, range.to));
+        const to = Math.min(count - 1, Math.max(range.from, range.to));
+        for (let k = from; k <= to; k += 1) picked.add(k);
+      }
+    }
+    return [...picked].sort((a, b) => a - b);
+  }
+  function answerChoices(criterion) {
+    const candidates = criterion?.answer_type === "scale" ? (criterion.scale_steps ?? []).map((step) => ({ step: step.value })) : ["yes", "no"];
+    candidates.push("na");
+    return candidates.filter((answer) => validateAnswer(criterion, answer) === null);
+  }
+  var answerValue = (answer) => typeof answer === "string" ? answer : `step:${answer.step}`;
+  function parseAnswerValue(value) {
+    if (value === "yes" || value === "no" || value === "na") return value;
+    const match = /^step:(-?\d+(?:\.\d+)?)$/.exec(String(value ?? ""));
+    return match ? { step: Number(match[1]) } : null;
+  }
+  var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  var totalText = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : fmt2(rat(value));
+  var tag2 = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, data: props.data });
+  function stepLabel(criterion, answer) {
+    const text2 = answerTag(criterion, answer).text;
+    if (typeof answer !== "object") return text2;
+    const step = (criterion.scale_steps ?? []).find((s) => s.value === answer.step);
+    return step?.label ? `${text2} \xB7 ${step.label}` : text2;
+  }
+  function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
+    const el = h("section", { class: "cqa-rv", attrs: { "aria-label": t("review.label") }, data: { test: "review-panel" } });
+    const view = { appeal: null, evaluation: null, version: null, conversation: null, outcome: null, answer: null, reason: "", busy: false, result: null, saved: null, reloading: false, reloadFailed: false };
+    let destroyed = false;
+    let pollTimer = null;
+    const stops = [];
+    const opinionBox = h("div", { class: "cqa-rv-opinion", attrs: { role: "status", "aria-live": "polite" }, data: { test: "second-opinion" } });
+    const decisionBox = h("div", { class: "cqa-rv-decision", data: { test: "decision" } });
+    const criterion = () => view.version?.criteria.find((c) => c.id === view.appeal.criterion_id) ?? null;
+    const result = () => view.evaluation?.results.find((r) => r.criterion_id === view.appeal.criterion_id) ?? null;
+    async function load2() {
+      clear(el).append(h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test: "review-loading" } }, h("b", { class: "cqa-empty-title", text: t("review.loading") })));
+      try {
+        const appeal = await api.getAppeal(appealId);
+        const [evaluation, conversation] = await Promise.all([api.getEvaluation(appeal.evaluation_id), api.getConversation(appeal.conversation)]);
+        const version2 = await api.getChecklistVersion(evaluation.checklist_id, evaluation.version);
+        if (destroyed) return;
+        Object.assign(view, { appeal, evaluation, version: version2, conversation });
+        draw();
+        schedulePoll();
+      } catch (error) {
+        if (destroyed) return;
+        clear(el).append(
+          h(
+            "div",
+            { class: "cqa-empty", attrs: { role: "status" }, data: { test: "review-error" } },
+            h("b", { class: "cqa-empty-title", text: t("review.loadFailed") }),
+            h("p", { class: "cqa-empty-note", text: errorText(error) }),
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("review.retry"), on: { click: load2 } })
+          )
+        );
+      }
+    }
+    function schedulePoll() {
+      clearTimeout(pollTimer);
+      if (destroyed || view.appeal?.second_opinion_status !== "pending") return;
+      pollTimer = setTimeout(async () => {
+        try {
+          const fresh = await api.getAppeal(appealId);
+          if (destroyed) return;
+          view.appeal = { ...view.appeal, second_opinion: fresh.second_opinion, second_opinion_status: fresh.second_opinion_status };
+          paintOpinion();
+        } catch {
+        }
+        schedulePoll();
+      }, POLL_MS2);
+    }
+    function draw() {
+      const { appeal, conversation } = view;
+      const c = criterion();
+      const r = result();
+      const open = appeal.status === "open";
+      const conversationId = conversation?.conversation_id ?? appeal.conversation;
+      const head = h(
+        "div",
+        { class: "cqa-rv-head" },
+        h("h2", { class: "cqa-rv-title", text: t("review.title", { id: conversationId }) }),
+        tag2(open ? "mid" : "ok", t(open ? "appeals.status.open" : "appeals.status.decided"), { data: { test: "review-status" } }),
+        h("a", { class: ["cqa-link", "cqa-rv-card"], attrs: { href: href("workspace", { id: appeal.conversation }) }, text: t("review.openCard"), data: { test: "review-card-link" } })
+      );
+      const points = c?.kind === "gross_error" ? t("scorecard.grossNoScore") : r && typeof r.points === "number" && typeof r.effective_weight === "number" ? t("scorecard.points", { earned: fmt2(rat(r.points)), max: fmt2(rat(r.effective_weight)) }) : "\u2014";
+      const disputed = h(
+        "div",
+        { class: "cqa-rv-crit", data: { test: "review-criterion" } },
+        h("p", { class: "cqa-rv-label", text: t("review.criterion") }),
+        h(
+          "div",
+          { class: "cqa-sc-r1" },
+          h("b", { class: "cqa-sc-crit-title", text: c?.title ?? appeal.criterion_id }),
+          r && c ? tag2(answerTag(c, r.answer).kind, answerTag(c, r.answer).text, { data: { test: "review-answer" } }) : null,
+          // after a decision the points follow the new answer, so show it next to the model's
+          r && c && r.final_answer !== void 0 && r.final_answer !== null && !same(r.final_answer, r.answer) ? h("span", { class: "cqa-rv-then" }, h("span", { text: "\u2192", attrs: { "aria-hidden": "true" } }), tag2(answerTag(c, r.final_answer).kind, answerTag(c, r.final_answer).text, { data: { test: "review-final-answer" } })) : null,
+          h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "review-points" } })
+        ),
+        r?.explanation ? h("p", { class: "cqa-sc-why", text: r.explanation }) : null,
+        r?.answer === "na" && r.na_reason ? h("p", { class: "cqa-sc-na", text: r.na_reason }) : null
+      );
+      const comment = h(
+        "div",
+        { class: "cqa-rv-comment" },
+        h("p", { class: "cqa-rv-label", text: t("review.comment") }),
+        h("p", { class: "cqa-rv-quote", text: appeal.comment, data: { test: "review-comment" } })
+      );
+      clear(el).append(head, disputed, comment, buildFragment(r), opinionBox, decisionBox);
+      paintOpinion();
+      paintDecision();
+    }
+    function buildFragment(r) {
+      const lines = Array.isArray(view.conversation?.transcript) ? view.conversation.transcript : [];
+      const picked = fragmentIndexes(r, lines.length);
+      const marked = new Set((r?.evidence ?? []).map((item) => item?.message_index));
+      const at = offsets(lines);
+      const items = [];
+      picked.forEach((index, n) => {
+        if (n > 0 && index !== picked[n - 1] + 1) items.push(h("li", { class: "cqa-rv-gap", text: "\u2026", attrs: { "aria-hidden": "true" } }));
+        const message = lines[index];
+        const kind = speakerKind(message?.speaker);
+        const clock = formatOffset(at[index]) || (typeof message?.timestamp === "string" ? message.timestamp : "");
+        items.push(
+          h(
+            "li",
+            { class: ["cqa-rv-msg", `cqa-rv-msg--${kind}`, marked.has(index) && "is-evidence"], data: { test: "fragment-msg", index } },
+            h("span", { class: "cqa-rv-msg-meta", text: [t("scorecard.evidenceLine", { n: index + 1 }), kind === "system" ? null : t(`transcript.speaker.${kind}`), clock].filter(Boolean).join(" \xB7 ") }),
+            h("p", { class: "cqa-rv-msg-text", text: typeof message?.text === "string" ? message.text : "" })
+          )
+        );
+      });
+      return h(
+        "div",
+        { class: "cqa-rv-fragment", data: { test: "review-fragment" } },
+        h("p", { class: "cqa-rv-label", text: t("review.fragment") }),
+        items.length > 0 ? h("ol", { class: "cqa-rv-msgs" }, items) : h("p", { class: "cqa-rv-none", text: t("review.noFragment") })
+      );
+    }
+    function paintOpinion() {
+      const { second_opinion: opinion, second_opinion_status: status } = view.appeal;
+      const c = criterion();
+      opinionBox.setAttribute("data-state", status ?? "unavailable");
+      clear(opinionBox).append(h("p", { class: "cqa-rv-label", text: t("review.opinion") }));
+      if (status === "pending") opinionBox.append(h("p", { class: "cqa-rv-note", text: t("review.opinionPending") }));
+      else if (status === "done" && opinion) {
+        opinionBox.append(
+          h(
+            "div",
+            { class: "cqa-rv-opinion-body" },
+            c && opinion.answer !== void 0 && opinion.answer !== null ? tag2(answerTag(c, opinion.answer).kind, t("review.opinionAnswer", { answer: answerTag(c, opinion.answer).text })) : null,
+            opinion.reasoning ? h("p", { class: "cqa-rv-note", text: opinion.reasoning }) : null,
+            h("p", { class: "cqa-rv-hint", text: t("review.opinionAdvice") })
+          )
+        );
+      } else opinionBox.append(h("p", { class: "cqa-rv-note", text: t("review.opinionUnavailable") }));
+    }
+    function paintDecision() {
+      clear(decisionBox).append(h("p", { class: "cqa-rv-label", text: t("review.decision") }));
+      const { appeal } = view;
+      if (view.saved) {
+        decisionBox.append(savedView());
+        return;
+      }
+      if (appeal.status !== "open") {
+        decisionBox.append(decidedView());
+        return;
+      }
+      if (store.get().role !== "reviewer") {
+        decisionBox.append(h("p", { class: "cqa-rv-note", text: t("review.readOnly"), data: { test: "decision-readonly" } }));
+        return;
+      }
+      decisionBox.append(decisionForm());
+    }
+    function decidedView() {
+      const { decision } = view.appeal;
+      const c = criterion();
+      const box = h("div", { class: "cqa-rv-decided", data: { test: "decision-done" } });
+      if (decision) {
+        const what = decision.outcome === "changed" && c ? t("review.decidedChanged", { answer: answerTag(c, decision.answer).text }) : t("review.decidedConfirmed");
+        box.append(h("b", { class: "cqa-rv-decided-what", text: what }), decision.reason ? h("p", { class: "cqa-rv-note", text: decision.reason }) : null);
+      }
+      if (view.result) {
+        box.append(h("p", { class: "cqa-rv-result", text: t("review.result", { from: totalText(view.result.before), to: totalText(view.result.after) }), data: { test: "decision-result" } }));
+      }
+      return box;
+    }
+    function decisionForm() {
+      const c = criterion();
+      const r = result();
+      const current2 = r ? r.final_answer ?? r.answer : null;
+      const choices = c ? answerChoices(c) : [];
+      if (view.answer === null || !choices.some((a) => same(a, view.answer))) view.answer = choices.find((a) => !same(a, current2)) ?? choices[0] ?? null;
+      const submit = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("review.submit"), data: { test: "decision-submit" } });
+      const paintSubmit = () => {
+        submit.disabled = view.busy || view.outcome === null || view.reason.trim() === "" || view.outcome === "changed" && view.answer === null;
+      };
+      const outcomeButton = (outcome, test) => h("button", {
+        class: ["cqa-rv-choice", view.outcome === outcome && "is-on"],
+        attrs: { type: "button", "aria-pressed": String(view.outcome === outcome) },
+        text: t(`review.${outcome}`),
+        data: { test },
+        on: {
+          click: () => {
+            view.outcome = outcome;
+            paintDecision();
+          }
+        }
+      });
+      let picker = null;
+      if (view.outcome === "changed") {
+        const select = h(
+          "select",
+          {
+            class: "cqa-sc-select",
+            attrs: { "aria-label": t("review.newAnswer") },
+            data: { test: "decision-answer" },
+            on: {
+              change: () => {
+                view.answer = parseAnswerValue(select.value);
+                paintSubmit();
+              }
+            }
+          },
+          choices.map((answer) => h("option", { attrs: { value: answerValue(answer) }, text: stepLabel(c, answer) }))
+        );
+        if (view.answer !== null) select.value = answerValue(view.answer);
+        picker = h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("review.newAnswer") }), select);
+      }
+      const reason = h("textarea", {
+        class: "cqa-rv-text",
+        attrs: { rows: "3", "aria-label": t("review.reason"), placeholder: t("review.reasonPlaceholder") },
+        data: { test: "decision-reason" },
+        on: {
+          input: () => {
+            view.reason = reason.value;
+            paintSubmit();
+          }
+        }
+      });
+      reason.value = view.reason;
+      paintSubmit();
+      return h(
+        "form",
+        {
+          class: "cqa-rv-form",
+          data: { test: "decision-form" },
+          on: {
+            submit: (event) => {
+              event.preventDefault();
+              decide();
+            }
+          }
+        },
+        h("div", { class: "cqa-rv-choices", attrs: { role: "group", "aria-label": t("review.decision") } }, outcomeButton("confirmed", "decision-confirm"), outcomeButton("changed", "decision-change")),
+        picker,
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("review.reason") }), reason),
+        h("div", { class: "cqa-rv-acts" }, submit)
+      );
+    }
+    async function decide() {
+      if (destroyed || view.busy || view.saved || view.outcome === null || view.reason.trim() === "") return;
+      view.busy = true;
+      paintDecision();
+      const before = view.evaluation.final_total;
+      const body = { outcome: view.outcome, reason: view.reason.trim() };
+      if (view.outcome === "changed") body.answer = view.answer;
+      let evaluation;
+      try {
+        evaluation = await api.decideAppeal(appealId, body);
+      } catch (error) {
+        if (destroyed) return;
+        view.busy = false;
+        paintDecision();
+        toastError(store, error, { retry: decide });
+        return;
+      }
+      view.saved = { before, evaluation: evaluation?.results ? evaluation : null };
+      view.busy = false;
+      store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+      if (destroyed) return;
+      onDecided?.();
+      await reloadAfterDecision();
+    }
+    async function reloadAfterDecision() {
+      if (destroyed || !view.saved || view.reloading) return;
+      view.reloading = true;
+      view.reloadFailed = false;
+      paintDecision();
+      try {
+        const appeal = await api.getAppeal(appealId);
+        const evaluation = view.saved.evaluation ?? await api.getEvaluation(appeal.evaluation_id);
+        if (destroyed) return;
+        view.appeal = appeal;
+        view.evaluation = evaluation;
+        view.result = { before: view.saved.before, after: evaluation.final_total };
+        view.saved = null;
+        view.reloading = false;
+        draw();
+      } catch (error) {
+        if (destroyed) return;
+        view.reloading = false;
+        view.reloadFailed = true;
+        paintDecision();
+        toastError(store, error, { retry: reloadAfterDecision });
+      }
+    }
+    function savedView() {
+      const { before, evaluation } = view.saved;
+      return h(
+        "div",
+        { class: "cqa-rv-decided", data: { test: "decision-saved" } },
+        h("b", { class: "cqa-rv-decided-what", text: t("review.saved") }),
+        evaluation ? h("p", { class: "cqa-rv-result", text: t("review.result", { from: totalText(before), to: totalText(evaluation.final_total) }), data: { test: "decision-result" } }) : null,
+        view.reloadFailed ? h(
+          "p",
+          { class: "cqa-rv-note" },
+          t("review.reloadFailed"),
+          " ",
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("review.reload"), data: { test: "decision-reload" }, on: { click: () => reloadAfterDecision() } })
+        ) : h("p", { class: "cqa-rv-hint", text: t("review.reloading") })
+      );
+    }
+    stops.push(
+      watch(store, (state) => state.role, () => {
+        if (view.appeal && !destroyed) paintDecision();
+      })
+    );
+    load2();
+    return {
+      el,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(pollTimer);
+        stops.forEach((stop) => stop());
+      }
+    };
+  }
+
+  // src/ui/appeals-page.js
+  var FILTERS = ["open", "decided", "all"];
+  var COMMENT_MAX = 120;
+  var clip2 = (text2) => {
+    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+    return line.length > COMMENT_MAX ? `${line.slice(0, COMMENT_MAX - 1).trimEnd()}\u2026` : line;
+  };
+  function splitConversation(id) {
+    const text2 = String(id ?? "");
+    const at = text2.indexOf(":");
+    return at < 0 ? { group: "", conversation: text2 } : { group: text2.slice(0, at), conversation: text2.slice(at + 1) };
+  }
+  function createAppealsPage(store, api, route2) {
+    const view = { filter: "open", appeals: [], phase: "loading", error: null, titles: /* @__PURE__ */ new Map() };
+    let destroyed = false;
+    let panel = null;
+    let openId3 = route2.name === "appeal" ? route2.params.id : null;
+    let run = 0;
+    const pills = FILTERS.map((name) => {
+      const count = h("span", { class: ["cqa-q-count", "num"] });
+      const button = h(
+        "button",
+        { class: "cqa-q-pill", attrs: { type: "button", "aria-pressed": "false" }, data: { test: `appeals-filter-${name}` }, on: { click: () => setFilter(name) } },
+        h("span", { text: t(`appeals.filter.${name}`) }),
+        count
+      );
+      return { name, button, count };
+    });
+    const list = h("ul", { class: "cqa-aps-list", attrs: { "aria-label": t("appeals.list") }, data: { test: "appeals-list" } });
+    const state = h("div", { class: "cqa-aps-state" });
+    const listCol = h("div", { class: "cqa-aps-col" }, h("div", { class: "cqa-q-pills", attrs: { role: "group", "aria-label": t("appeals.filters") } }, pills.map((p) => p.button)), state, list);
+    const back = h("a", { class: ["cqa-link", "cqa-aps-back"], attrs: { href: href("appeals") }, text: t("appeals.back"), data: { test: "appeals-back" } });
+    const panelCol = h("div", { class: "cqa-aps-panel" });
+    const el = h(
+      "section",
+      { class: ["cqa-view", "cqa-aps"], data: { test: "appeals-page" } },
+      h("h1", { class: "cqa-view-title", text: t("nav.appeals") }),
+      h("div", { class: "cqa-aps-grid" }, listCol, h("div", { class: "cqa-aps-side" }, back, panelCol))
+    );
+    function setFilter(name) {
+      if (view.filter === name) return;
+      view.filter = name;
+      paint();
+    }
+    const matches = (appeal) => view.filter === "all" || appeal.status === view.filter;
+    function row(appeal) {
+      const { group, conversation } = splitConversation(appeal.conversation);
+      const open = appeal.status === "open";
+      const link = h(
+        "a",
+        { class: "cqa-aps-link", attrs: { href: href("appeal", { id: appeal.id }), "aria-current": appeal.id === openId3 ? "true" : null } },
+        h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
+        h("span", { class: "cqa-aps-crit", text: view.titles.get(appeal.id) ?? appeal.criterion_id }),
+        h("span", { class: "cqa-aps-comment", text: clip2(appeal.comment) }),
+        group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: group })) : null
+      );
+      return h("li", { class: ["cqa-aps-item", appeal.id === openId3 && "is-current"], data: { test: "appeal-row", id: appeal.id, status: appeal.status } }, link);
+    }
+    function paint() {
+      if (destroyed) return;
+      for (const pill of pills) {
+        pill.count.textContent = String(view.appeals.filter((a) => pill.name === "all" || a.status === pill.name).length);
+        pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
+        pill.button.classList.toggle("is-on", pill.name === view.filter);
+      }
+      const shown = view.appeals.filter(matches);
+      list.replaceChildren(...shown.map(row));
+      clear(state);
+      const box = (test, title, note) => h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null);
+      if (view.phase === "loading") state.append(box("appeals-loading", t("appeals.loading")));
+      else if (view.phase === "error") {
+        state.append(box("appeals-error", t("appeals.loadFailed"), errorText(view.error)));
+        state.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("appeals.retry"), on: { click: load2 } }));
+      } else if (shown.length === 0) state.append(box("appeals-empty", t(view.appeals.length === 0 ? "appeals.empty" : "appeals.noMatch"), view.appeals.length === 0 ? t("appeals.emptyNote") : null));
+      el.classList.toggle("has-panel", openId3 !== null);
+    }
+    async function titlesFor(appeals) {
+      const versions = /* @__PURE__ */ new Map();
+      const byEvaluation = /* @__PURE__ */ new Map();
+      const versionOf = (evaluationId) => {
+        if (!byEvaluation.has(evaluationId)) {
+          byEvaluation.set(
+            evaluationId,
+            api.getEvaluation(evaluationId).then((ev) => {
+              const key = `${ev.checklist_id}@${ev.version}`;
+              if (!versions.has(key)) versions.set(key, api.getChecklistVersion(ev.checklist_id, ev.version));
+              return versions.get(key);
+            })
+          );
+        }
+        return byEvaluation.get(evaluationId);
+      };
+      await Promise.all(
+        appeals.filter((appeal) => !view.titles.has(appeal.id)).map(
+          (appeal) => versionOf(appeal.evaluation_id).then(
+            (version2) => {
+              const criterion = version2.criteria.find((c) => c.id === appeal.criterion_id);
+              if (criterion) view.titles.set(appeal.id, criterion.title);
+            },
+            () => {
+            }
+            // the row keeps the criterion id
+          )
+        )
+      );
+    }
+    async function load2() {
+      const mine = ++run;
+      try {
+        const appeals = await api.listAppeals();
+        if (destroyed || mine !== run) return;
+        view.appeals = appeals;
+        view.phase = "ready";
+        paint();
+        await titlesFor(appeals);
+        if (!destroyed && mine === run) paint();
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        view.phase = "error";
+        view.error = error;
+        paint();
+      }
+    }
+    function showPanel(id) {
+      panel?.destroy();
+      panel = null;
+      clear(panelCol);
+      openId3 = id;
+      if (id === null) {
+        panelCol.append(h("div", { class: "cqa-empty", data: { test: "appeals-pick" } }, h("b", { class: "cqa-empty-title", text: t("appeals.pick") })));
+      } else {
+        panel = renderReviewPanel(store, api, id, { onDecided: () => load2() });
+        panelCol.append(panel.el);
+      }
+      paint();
+    }
+    showPanel(openId3);
+    load2();
+    return {
+      el,
+      update(next) {
+        const id = next.name === "appeal" ? next.params.id : null;
+        if (id !== openId3) showPanel(id);
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        panel?.destroy();
+      }
+    };
+  }
+
   // src/ui/queue.js
   var IMPORT_ON_EMPTY = "DEV";
   var TOPIC_MAX = 80;
   var FETCH_SLOTS = 4;
   var SERVER_SEARCH_MS = 300;
   var SERVER_SEARCH_MIN = 2;
-  var FILTERS = ["all", "chats", "calls", "disputed", "new"];
+  var FILTERS2 = ["all", "chats", "calls", "disputed", "new"];
   var MATCHES = {
     all: () => true,
     chats: (item) => item.channel === "agent chat",
@@ -2949,21 +4413,21 @@
     disputed: (item) => item.status === "disputed",
     new: (item) => item.status === "new"
   };
-  function clip(text2) {
+  function clip3(text2) {
     const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
     return line.length > TOPIC_MAX ? `${line.slice(0, TOPIC_MAX - 1).trimEnd()}\u2026` : line;
   }
   function firstClientLine(conversation) {
     const lines = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const line = lines.find((m) => m?.speaker === "client" && typeof m.text === "string" && m.text.trim() !== "");
-    return line ? clip(line.text) : "";
+    return line ? clip3(line.text) : "";
   }
   var topicOf = (item) => typeof item.info?.topic === "string" ? item.info.topic.trim() : "";
   function scoreText(final) {
     const total = final?.total;
     return typeof total === "number" && Number.isFinite(total) ? String(total).replace(".", ",") : "\u2014";
   }
-  var tag = (kind, text2, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, ...extra });
+  var tag3 = (kind, text2, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, ...extra });
   function createQueue(store, api) {
     const subs = [];
     let destroyed = false;
@@ -2988,7 +4452,7 @@
       data: { test: "queue-search" }
     });
     const searchBox = h("div", { class: "cqa-q-search" }, icon("search", { size: 16 }), search);
-    const pills = FILTERS.map((name) => {
+    const pills = FILTERS2.map((name) => {
       const count = h("span", { class: ["cqa-q-count", "num"] });
       const button = h(
         "button",
@@ -3074,9 +4538,9 @@
     function buildRow(item) {
       const flags = item.final;
       const tags = [];
-      if (flags?.open_appeals > 0) tags.push(tag("mid", flags.open_appeals > 1 ? t("queue.tag.appeals", { n: flags.open_appeals }) : t("queue.tag.appeal"), { data: { test: "queue-tag-appeal" } }));
-      if (flags?.gross_error) tags.push(tag("bad", t("queue.tag.grossError"), { data: { test: "queue-tag-gross" } }));
-      if (flags?.needs_review) tags.push(tag("out", t("queue.tag.needsReview"), { attrs: { title: t("queue.tag.needsReviewTitle") }, data: { test: "queue-tag-review" } }));
+      if (flags?.open_appeals > 0) tags.push(tag3("mid", flags.open_appeals > 1 ? t("queue.tag.appeals", { n: flags.open_appeals }) : t("queue.tag.appeal"), { data: { test: "queue-tag-appeal" } }));
+      if (flags?.gross_error) tags.push(tag3("bad", t("queue.tag.grossError"), { data: { test: "queue-tag-gross" } }));
+      if (flags?.needs_review) tags.push(tag3("out", t("queue.tag.needsReview"), { attrs: { title: t("queue.tag.needsReviewTitle") }, data: { test: "queue-tag-review" } }));
       const scoreTitle = flags ? typeof flags.total === "number" ? null : t("queue.score.notCalculated") : t("queue.score.none");
       const topic = h("span", { class: "cqa-q-topic", data: { test: "queue-topic" } });
       const check = h("input", {
@@ -3094,8 +4558,8 @@
         h(
           "span",
           { class: "cqa-q-meta" },
-          view.groups ? tag("out", item.group_id, { attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
-          tag("out", item.language, { attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
+          view.groups ? tag3("out", item.group_id, { attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
+          tag3("out", item.language, { attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
           h("span", { class: "cqa-q-channel", text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }),
           tags
         )
@@ -3325,507 +4789,6 @@
         subs.forEach((off) => off());
         observer?.disconnect();
         rows.clear();
-      }
-    };
-  }
-
-  // src/ui/scorecard.js
-  var POLL_MS = 500;
-  var JOB_TIMEOUT_MS = 15 * 60 * 1e3;
-  var FIRST_REACTION_LIMIT_S = 180;
-  var ACTIVE = /* @__PURE__ */ new Set(["queued", "running", "pending", "started"]);
-  var EVIDENCE_QUOTE_MAX = 160;
-  var money = (value) => fmt2(rat(value));
-  var isStep2 = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
-  function answerTag(criterion, answer) {
-    const gross = criterion?.kind === "gross_error";
-    if (answer === "na") return { kind: "na", text: t("scorecard.answer.na") };
-    if (answer === "yes") return { kind: gross ? "bad" : "ok", text: t("scorecard.answer.yes") };
-    if (answer === "no") return { kind: gross ? "ok" : "bad", text: t("scorecard.answer.no") };
-    if (isStep2(answer)) {
-      const values = (criterion?.scale_steps ?? []).map((step) => step.value).filter((value) => typeof value === "number");
-      const top = values.length > 0 ? Math.max(...values) : null;
-      const low = values.length > 0 ? Math.min(...values) : null;
-      const kind = top === null ? "mid" : answer.step >= top ? "ok" : answer.step <= low ? "bad" : "mid";
-      return { kind, text: t("scorecard.answer.step", { value: answer.step }) };
-    }
-    return { kind: "na", text: "\u2014" };
-  }
-  function thresholdCheck(seconds) {
-    if (typeof seconds !== "number" || !Number.isFinite(seconds)) return null;
-    return seconds <= FIRST_REACTION_LIMIT_S ? "ok" : "over";
-  }
-  function jobSettled(job) {
-    if (!job) return true;
-    return !ACTIVE.has(job.status) || job.total > 0 && job.done + job.failed >= job.total;
-  }
-  var versionsOf = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
-  var latestOf = (row) => Math.max(...versionsOf(row));
-  function pickSelection(stored, server, checklists) {
-    const has2 = (ref) => Boolean(ref) && checklists.some((row2) => row2.checklist_id === ref.checklist_id && versionsOf(row2).includes(ref.version));
-    if (has2(stored)) return { checklist_id: stored.checklist_id, version: stored.version };
-    const fallback = server?.default_checklist;
-    if (has2(fallback)) return { checklist_id: fallback.checklist_id, version: fallback.version };
-    const row = checklists.find((r) => r.checklist_id === fallback?.checklist_id) ?? checklists[0];
-    return row ? { checklist_id: row.checklist_id, version: latestOf(row) } : null;
-  }
-  function labelled(prefix, value) {
-    const key = `${prefix}.${value}`;
-    const text2 = t(key);
-    return text2 === key ? String(value) : text2;
-  }
-  var clip2 = (text2, max) => {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
-    return line.length > max ? `${line.slice(0, max - 1).trimEnd()}\u2026` : line;
-  };
-  var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  var tag2 = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
-  function stateBox(test, title, note, extra) {
-    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
-  }
-  function openId(store, args) {
-    if (typeof args?.id === "string" && args.id !== "") return args.id;
-    const { route: route2, conversationId } = store.get();
-    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
-  }
-  function createScorecard(store, api, args = {}) {
-    const id = openId(store, args);
-    const dev = store.get().config?.testHooks === true || Boolean(window.__cqaTest);
-    const view = {
-      phase: "loading",
-      // "loading" | "ready" | "error"
-      error: null,
-      server: null,
-      // the API's config
-      checklists: [],
-      options: [],
-      // [{checklist_id, version, label}] behind the picker
-      sel: null,
-      // {checklist_id, version}
-      version: null,
-      // the picked checklist version
-      evaluation: null,
-      // the newest finished evaluation of this dialogue for it
-      conversation: null,
-      appeals: [],
-      busy: false,
-      job: null,
-      // null | {phase: "starting" | "running" | "failed", id, done, total}
-      active: null
-      // the criterion id whose evidence is marked in the transcript
-    };
-    let destroyed = false;
-    let loadRun = 0;
-    const unwatch = [];
-    const select = h("select", {
-      class: "cqa-sc-select",
-      attrs: { "aria-label": t("scorecard.checklist") },
-      data: { test: "checklist-select" },
-      on: {
-        change: () => {
-          const option = view.options[Number(select.value)];
-          if (!option || view.busy) return;
-          view.sel = { checklist_id: option.checklist_id, version: option.version };
-          store.set({ checklistSel: view.sel });
-          loadSelection();
-        }
-      }
-    });
-    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, data: { test: "run-eval" }, on: { click: () => run("reuse") } });
-    const fullButton = h("button", {
-      class: "cqa-sc-btn",
-      text: t("scorecard.runFull"),
-      attrs: { type: "button", title: t("scorecard.runFullTitle") },
-      data: { test: "run-eval-full" },
-      on: { click: () => run("full") }
-    });
-    const status = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "job-progress" } });
-    const hint = h("p", { class: "cqa-sc-hint", text: t("scorecard.keyMissing"), data: { test: "key-hint" } });
-    hint.hidden = true;
-    const bar = h(
-      "div",
-      { class: "cqa-sc-bar" },
-      h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
-      h("div", { class: "cqa-sc-run" }, runButton, fullButton),
-      hint,
-      status
-    );
-    const body = h("div", { class: "cqa-sc-body" });
-    const el = h("div", { class: "cqa-sc", attrs: { role: "region", "aria-label": t("scorecard.label") }, data: { test: "scorecard" } }, bar, body);
-    function fillSelect() {
-      clear(select);
-      view.options = view.checklists.flatMap(
-        (row) => [...versionsOf(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
-      );
-      view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
-      const at = view.options.findIndex((o) => o.checklist_id === view.sel?.checklist_id && o.version === view.sel?.version);
-      if (at >= 0) select.value = String(at);
-    }
-    function paintBar() {
-      if (destroyed) return;
-      const keyMissing = view.server?.model_key_configured === false;
-      const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
-      const off = view.busy || keyMissing || !ready;
-      runButton.textContent = t(view.evaluation ? "scorecard.rerun" : "scorecard.run");
-      for (const button of [runButton, fullButton]) {
-        button.disabled = off;
-        if (keyMissing) button.setAttribute("title", t("scorecard.keyMissing"));
-        else if (button === fullButton) button.setAttribute("title", t("scorecard.runFullTitle"));
-        else button.removeAttribute("title");
-      }
-      hint.hidden = !keyMissing;
-      select.disabled = view.busy || view.options.length === 0;
-      clear(status);
-      const job = view.job;
-      if (job?.phase === "starting") status.append(t("scorecard.starting"));
-      else if (job?.phase === "running") status.append(t("scorecard.progress", { done: job.done, total: job.total }));
-      else if (job?.phase === "failed") {
-        status.append(
-          h("span", { class: "cqa-sc-failed", text: t("scorecard.jobFailed") }),
-          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "job-retry" }, on: { click: () => retryFailed(job.id) } })
-        );
-      }
-    }
-    const clearMarks = () => store.get().transcript?.highlight(null, [], null);
-    const pickEvaluation = (evaluations, sel) => evaluations.find((e) => e.status === "done" && e.checklist_id === sel.checklist_id && e.version === sel.version) ?? null;
-    async function boot() {
-      const mine = ++loadRun;
-      view.phase = "loading";
-      drawBody();
-      paintBar();
-      try {
-        const [server, checklists] = await Promise.all([api.getConfig(), api.listChecklists()]);
-        if (destroyed || mine !== loadRun) return;
-        view.server = server;
-        view.checklists = checklists;
-        view.sel = pickSelection(store.get().checklistSel, server, checklists);
-        fillSelect();
-        if (view.sel === null) {
-          view.phase = "ready";
-          drawBody();
-          paintBar();
-          return;
-        }
-        await loadSelection();
-      } catch (error) {
-        if (destroyed || mine !== loadRun) return;
-        fail2(error);
-      }
-    }
-    function fail2(error) {
-      view.phase = "error";
-      view.error = error;
-      drawBody();
-      paintBar();
-    }
-    async function loadSelection({ quiet = false } = {}) {
-      const mine = ++loadRun;
-      const sel = view.sel;
-      if (!quiet) {
-        view.phase = "loading";
-        drawBody();
-        paintBar();
-      }
-      try {
-        const [version2, evaluations, appeals, conversation] = await Promise.all([
-          api.getChecklistVersion(sel.checklist_id, sel.version),
-          api.listEvaluations({ conversation: id, checklist_id: sel.checklist_id }),
-          api.listAppeals(),
-          api.getConversation(id)
-        ]);
-        if (destroyed || mine !== loadRun) return;
-        view.version = version2;
-        view.evaluation = pickEvaluation(evaluations, sel);
-        view.appeals = appeals;
-        view.conversation = conversation;
-        view.phase = "ready";
-        view.active = null;
-        clearMarks();
-        checkTotal();
-        drawBody();
-        paintBar();
-      } catch (error) {
-        if (destroyed || mine !== loadRun) return;
-        fail2(error);
-      }
-    }
-    function checkTotal() {
-      const { evaluation, version: version2, appeals } = view;
-      if (!dev || !evaluation || !version2) return;
-      try {
-        const decided = appeals.filter((appeal) => appeal.status === "decided");
-        const own = score(version2, finalAnswers(evaluation, decided)).total;
-        if (own !== evaluation.final_total) console.warn(`scorecard: score() gives ${own}, the server says final_total ${evaluation.final_total} (${evaluation.id})`);
-      } catch (error) {
-        console.warn("scorecard: the total could not be recomputed", error);
-      }
-    }
-    async function settle(first) {
-      let job = first;
-      const deadline = Date.now() + JOB_TIMEOUT_MS;
-      while (!jobSettled(job)) {
-        if (Date.now() > deadline) throw new ApiError("timeout", "The evaluation did not finish in time");
-        await sleep(POLL_MS);
-        job = await api.getJob(job.id);
-        if (!destroyed) {
-          view.job = { phase: "running", id: job.id, done: job.done, total: job.total };
-          paintBar();
-        }
-      }
-      return job;
-    }
-    async function execute(start, again) {
-      if (view.busy || destroyed) return;
-      view.busy = true;
-      view.job = { phase: "starting" };
-      paintBar();
-      let jobId = null;
-      try {
-        const first = await start();
-        jobId = first.id;
-        if (!destroyed) {
-          view.job = { phase: "running", id: first.id, done: first.done, total: first.total };
-          paintBar();
-        }
-        const job = await settle(first);
-        view.job = job.failed > 0 ? { phase: "failed", id: job.id, done: job.done, total: job.total } : null;
-        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-        if (!destroyed) await loadSelection({ quiet: true });
-      } catch (error) {
-        view.job = null;
-        const resume = jobId === null ? again : () => execute(() => api.getJob(jobId), again);
-        toastError(store, error, { retry: destroyed ? void 0 : resume });
-      } finally {
-        view.busy = false;
-        paintBar();
-      }
-    }
-    function run(mode) {
-      if (!view.sel) return;
-      const { checklist_id, version: version2 } = view.sel;
-      const again = () => run(mode);
-      return execute(() => api.startEvaluations({ conversations: [id], checklist_id, version: version2, mode }), again);
-    }
-    function retryFailed(jobId) {
-      return execute(() => api.retryJob(jobId), () => retryFailed(jobId));
-    }
-    function drawBody() {
-      if (destroyed) return;
-      clear(body);
-      if (view.phase === "loading") {
-        body.append(stateBox("scorecard-loading", t("scorecard.loading")));
-        return;
-      }
-      if (view.phase === "error") {
-        body.append(
-          stateBox(
-            "scorecard-error",
-            t("scorecard.loadFailed"),
-            null,
-            h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("scorecard.retry"), data: { test: "scorecard-retry" }, on: { click: boot } })
-          )
-        );
-        return;
-      }
-      if (view.sel === null) {
-        body.append(stateBox("scorecard-no-checklist", t("scorecard.noChecklist"), t("scorecard.noChecklistNote")));
-        return;
-      }
-      const info = buildInfo(view.conversation);
-      if (!view.evaluation) {
-        body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
-        return;
-      }
-      body.append(buildHero(view.evaluation, view.version), info, buildCards(view.evaluation, view.version));
-    }
-    function buildHero(evaluation, version2) {
-      const none = evaluation.final_total === null || evaluation.final_total === void 0;
-      const totalText = none ? t("scorecard.totalNone") : money(evaluation.final_total);
-      const changed = evaluation.original_total !== evaluation.final_total;
-      const gross = evaluation.gross_error;
-      const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn") : t("scorecard.grossOff");
-      const scored = new Set(version2.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
-      const rows = [...version2.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id)).map((section) => {
-        const row = evaluation.sections?.find((s) => s.section_id === section.id);
-        const has2 = row && row.points !== null && row.points !== void 0 && row.available !== null && row.available !== void 0;
-        const percent = has2 && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
-        return h(
-          "div",
-          { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
-          h("span", { class: "cqa-sc-sec-name", text: section.title }),
-          h("span", {
-            class: ["cqa-sc-sec-score", "num"],
-            text: has2 ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
-            data: { test: "section-score" }
-          }),
-          h("div", { class: "cqa-sc-sec-bar" }, h("i", { style: { width: `${percent}%` } }))
-        );
-      });
-      const model = [evaluation.model ? t("scorecard.model", { model: evaluation.model }) : null, typeof evaluation.cost_usd === "number" ? t("scorecard.cost", { cost: evaluation.cost_usd.toFixed(evaluation.cost_usd < 1 ? 4 : 2) }) : null].filter(Boolean);
-      return h(
-        "div",
-        { class: "cqa-sc-hero", data: { test: "hero" } },
-        h(
-          "div",
-          { class: "cqa-sc-hero-top" },
-          h("span", { class: "cqa-sc-hero-label" }, `${t("scorecard.totalLabel")} `, h("em", { text: `${version2.name} v${version2.version}` })),
-          evaluation.source === "mock" ? h("span", { class: "cqa-sc-demo", text: t("scorecard.demoBadge"), attrs: { title: t("scorecard.demoTitle") }, data: { test: "demo-badge" } }) : null
-        ),
-        h(
-          "div",
-          { class: "cqa-sc-tot" },
-          h("b", { class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"], text: totalText, data: { test: "total" } }),
-          none ? null : h("span", { class: "cqa-sc-outof", text: t("scorecard.outOf") }),
-          changed ? h("s", {
-            class: ["cqa-sc-was", "num"],
-            text: evaluation.original_total === null || evaluation.original_total === void 0 ? t("scorecard.totalNone") : money(evaluation.original_total),
-            attrs: { title: t("scorecard.originalTitle") },
-            data: { test: "total-original" }
-          }) : null
-        ),
-        h("div", { class: ["cqa-sc-flag", gross?.flag && "cqa-sc-flag--on"], text: grossText, data: { test: "gross-flag", state: gross?.flag ? "on" : "off" } }),
-        rows.length > 0 ? h("div", { class: "cqa-sc-secs", attrs: { role: "group", "aria-label": t("scorecard.sections") }, data: { test: "sections" } }, rows) : null,
-        model.length > 0 ? h("p", { class: "cqa-sc-model", text: model.join(" \xB7 "), data: { test: "model" } }) : null
-      );
-    }
-    function buildInfo(conversation) {
-      const info = conversation?.info ?? null;
-      const facts = conversation?.facts ?? null;
-      const rows = [];
-      const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value)));
-      if (info?.topic) row("topic", "info-topic", info.topic);
-      const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
-      if (mood.length > 0) row("mood", "info-mood", mood.join(" \u2192 "));
-      if (info?.outcome) row("outcome", "info-outcome", labelled("scorecard.outcome", info.outcome));
-      if (facts && typeof facts.first_reaction_seconds === "number") {
-        const check = thresholdCheck(facts.first_reaction_seconds);
-        row(
-          "firstReaction",
-          "info-first-reaction",
-          formatOffset(facts.first_reaction_seconds),
-          " ",
-          tag2(check === "ok" ? "ok" : "bad", t(check === "ok" ? "scorecard.info.thresholdOk" : "scorecard.info.thresholdOver"), { data: { test: "threshold", state: check } })
-        );
-      }
-      if (facts && typeof facts.longest_wait_seconds === "number") row("longestWait", "info-longest-wait", formatOffset(facts.longest_wait_seconds));
-      if (facts?.ending) row("ending", "info-ending", labelled("scorecard.ending", facts.ending));
-      const box = h("section", { class: "cqa-sc-info", attrs: { "aria-label": t("scorecard.info.title") }, data: { test: "info" } }, h("h3", { class: "cqa-sc-info-title", text: t("scorecard.info.title") }), h("dl", { class: "cqa-sc-info-list" }, rows));
-      box.hidden = rows.length === 0;
-      return box;
-    }
-    function buildCards(evaluation, version2) {
-      const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
-      const sections = [...version2.sections].sort((a, b) => a.order - b.order);
-      const groups = sections.map((section) => ({ section, criteria: version2.criteria.filter((c) => c.section_id === section.id).sort((a, b) => a.order - b.order) })).filter((group) => group.criteria.length > 0);
-      const controller = store.get().role === "controller";
-      const cards = /* @__PURE__ */ new Map();
-      const activate = (criterionId) => {
-        view.active = criterionId;
-        for (const [key, card] of cards) card.classList.toggle("is-open", key === criterionId);
-      };
-      const list = h("div", { class: "cqa-sc-crits", data: { test: "criteria" } });
-      for (const { section, criteria } of groups) {
-        const items = criteria.filter((c) => byResult.has(c.id)).map((c) => {
-          const card = buildCard(c, byResult.get(c.id), { evaluation, controller, activate });
-          cards.set(c.id, card);
-          return card;
-        });
-        if (items.length === 0) continue;
-        list.append(h("h3", { class: "cqa-sc-sec-title", text: section.title }), ...items);
-      }
-      if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
-      return list;
-    }
-    function buildCard(criterion, result, { evaluation, controller, activate }) {
-      const gross = criterion.kind === "gross_error";
-      const shown = result.final_answer ?? result.answer;
-      const answer = answerTag(criterion, shown);
-      const changed = JSON.stringify(result.answer) !== JSON.stringify(shown);
-      let points = "";
-      let weight = null;
-      if (gross) points = t("scorecard.grossNoScore");
-      else if (shown === "na") points = t("scorecard.naWeight");
-      else if (typeof result.points === "number" && typeof result.effective_weight === "number") {
-        points = t("scorecard.points", { earned: money(result.points), max: money(result.effective_weight) });
-        if (typeof criterion.weight === "number" && money(criterion.weight) !== money(result.effective_weight)) {
-          weight = t("scorecard.weight", { from: String(criterion.weight), to: money(result.effective_weight) });
-        }
-      } else points = "\u2014";
-      const openAppeal = view.appeals.some((a) => a.status === "open" && a.evaluation_id === evaluation.id && a.criterion_id === criterion.id);
-      const evidence = (result.evidence ?? []).map((item) => {
-        const expected = item.role === "expected_here";
-        return h(
-          "li",
-          { class: "cqa-sc-ev-item" },
-          h(
-            "button",
-            {
-              class: ["cqa-sc-ev", expected && "cqa-sc-ev--expected"],
-              attrs: { type: "button", title: item.quote, "aria-label": t("scorecard.evidenceShow", { n: item.message_index + 1 }) },
-              data: { test: "evidence-link", index: item.message_index, role: item.role },
-              on: { click: () => jump(criterion, result, item, activate) }
-            },
-            h("span", { class: "cqa-sc-ev-n", text: `\u21B3 ${t("scorecard.evidenceLine", { n: item.message_index + 1 })}${expected ? ` \xB7 ${t("transcript.expectedHere")}` : ""}` }),
-            item.quote ? h("span", { class: "cqa-sc-ev-quote", text: clip2(item.quote, EVIDENCE_QUOTE_MAX) }) : null
-          )
-        );
-      });
-      const range = result.checked_range;
-      const marks = [
-        result.needs_review ? tag2("mid", t("scorecard.needsReview"), { attrs: { title: t("scorecard.needsReviewTitle") }, data: { test: "needs-review" } }) : null,
-        result.carried_decision ? tag2("out", t("scorecard.carried"), { attrs: { title: t("scorecard.carriedTitle") }, data: { test: "carried" } }) : null,
-        openAppeal ? tag2("mid", t("scorecard.disputeOpenTag"), { data: { test: "appeal-open" } }) : null,
-        changed ? h("span", { class: "cqa-sc-note", text: t("scorecard.modelAnswer", { answer: answerTag(criterion, result.answer).text }), attrs: { title: t("scorecard.modelAnswerTitle") }, data: { test: "model-answer" } }) : null,
-        weight ? h("span", { class: ["cqa-sc-note", "num"], text: weight, data: { test: "weight" } }) : null
-      ].filter(Boolean);
-      return h(
-        "article",
-        { class: "cqa-sc-crit", data: { test: "crit", criterion: criterion.id, answer: typeof shown === "string" ? shown : "step" } },
-        h(
-          "div",
-          { class: "cqa-sc-r1" },
-          h("b", { class: "cqa-sc-crit-title", text: criterion.title }),
-          tag2(answer.kind, answer.text, { data: { test: "answer" } }),
-          h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "points" } })
-        ),
-        marks.length > 0 ? h("div", { class: "cqa-sc-marks" }, marks) : null,
-        result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
-        shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
-        evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
-        range && Number.isInteger(range.from) && Number.isInteger(range.to) ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } }) : null,
-        result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
-        controller ? h(
-          "div",
-          { class: "cqa-sc-acts" },
-          h("button", {
-            class: "cqa-sc-btn",
-            text: t("scorecard.dispute"),
-            attrs: { type: "button", disabled: openAppeal, title: openAppeal ? t("scorecard.disputeOpenTitle") : null },
-            data: { test: "dispute" },
-            on: { click: () => toast(store, { kind: "info", text: t("scorecard.disputeSoon") }) }
-          })
-        ) : null
-      );
-    }
-    function jump(criterion, result, item, activate) {
-      const transcript = store.get().transcript;
-      activate(criterion.id);
-      if (!transcript) return;
-      store.set({ pane: "transcript" });
-      transcript.highlight(criterion.id, result.evidence, result.checked_range, criterion.title);
-      transcript.focusMessage(item.message_index);
-    }
-    unwatch.push(store.subscribe((state, previous) => {
-      if (state.role !== previous.role && view.phase === "ready") drawBody();
-    }));
-    if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
-    else boot();
-    return {
-      el,
-      destroy() {
-        if (destroyed) return;
-        destroyed = true;
-        unwatch.forEach((stop) => stop());
       }
     };
   }
@@ -4087,8 +5050,9 @@
       const compact = isCompact(store.get());
       const main = h("div", { class: "cqa-main", attrs: { role: "region", "aria-label": t("app.title") }, data: { test: "main" } });
       let current2 = null;
+      const sameView = (route2) => current2.name === route2.name || Boolean(views[route2.name]) && views[current2.name] === views[route2.name];
       const show = (route2) => {
-        if (current2 && current2.name === route2.name && current2.view.update) {
+        if (current2 && current2.view.update && sameView(route2)) {
           current2.view.update(route2);
           return;
         }
@@ -4116,189 +5080,6 @@
         teardown = [];
       }
     };
-  }
-
-  // src/ui/transcript.js
-  var FLASH_MS = 1200;
-  var KNOWN = /* @__PURE__ */ new Set(["client", "operator", "bot", "system"]);
-  function speakerKind(speaker) {
-    const name = typeof speaker === "string" ? speaker.trim().toLowerCase() : "";
-    return KNOWN.has(name) ? name : "other";
-  }
-  var validIndex = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
-  function highlightPlan(count, evidence, range) {
-    const marks = Array.from({ length: count }, () => ({ supports: false, expected: false, checked: false }));
-    for (const item of Array.isArray(evidence) ? evidence : []) {
-      if (!item || !validIndex(item.message_index, count)) continue;
-      if (item.role === "supports") marks[item.message_index].supports = true;
-      else if (item.role === "expected_here") marks[item.message_index].expected = true;
-    }
-    if (range && Number.isInteger(range.from) && Number.isInteger(range.to)) {
-      const from = Math.max(0, Math.min(range.from, range.to));
-      const to = Math.min(count - 1, Math.max(range.from, range.to));
-      for (let i = from; i <= to; i += 1) marks[i].checked = true;
-    }
-    return marks;
-  }
-  function openId2(store, args) {
-    if (typeof args?.id === "string" && args.id !== "") return args.id;
-    const { route: route2, conversationId } = store.get();
-    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
-  }
-  function stateBox2(test, title, note, extra) {
-    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
-  }
-  function buildMessage(message, index, offset) {
-    const kind = speakerKind(message?.speaker);
-    const raw = typeof message?.timestamp === "string" ? message.timestamp.trim() : "";
-    const clock = formatOffset(offset) || raw;
-    const flag = h("b", { class: "cqa-msg-flag", data: { test: "msg-flag" } });
-    const who = h(
-      "div",
-      { class: "cqa-msg-who" },
-      flag,
-      kind === "system" ? null : h("span", { class: "cqa-msg-speaker", text: t(`transcript.speaker.${kind}`), attrs: kind === "other" && message?.speaker ? { title: String(message.speaker) } : {}, data: { test: "msg-speaker" } }),
-      clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
-      message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
-    );
-    const text2 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
-    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text2);
-    return { el, flag };
-  }
-  function renderTranscript(store, api, args = {}) {
-    const id = openId2(store, args);
-    const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
-    const head = h("div", { class: "cqa-tr-head" });
-    const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
-    let destroyed = false;
-    let rows = [];
-    let loaded = false;
-    let marked = [];
-    let pending2 = { highlight: null, focus: null };
-    const flashTimers = /* @__PURE__ */ new Map();
-    function clearMarks() {
-      for (const i of marked) {
-        const row = rows[i];
-        row.el.classList.remove("is-evidence", "is-expected", "is-checked");
-        row.el.removeAttribute("data-criterion");
-        row.flag.textContent = "";
-      }
-      marked = [];
-    }
-    function applyHighlight(criterionId, evidence, range, label) {
-      clearMarks();
-      if (criterionId === null || criterionId === void 0) return;
-      const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
-      const plan = highlightPlan(rows.length, evidence, range);
-      plan.forEach((mark, i) => {
-        if (!mark.supports && !mark.expected && !mark.checked) return;
-        const { el: row, flag } = rows[i];
-        row.classList.toggle("is-evidence", mark.supports);
-        row.classList.toggle("is-expected", mark.expected);
-        row.classList.toggle("is-checked", mark.checked);
-        row.setAttribute("data-criterion", String(criterionId));
-        flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" \xB7 ");
-        marked.push(i);
-      });
-    }
-    function highlight(criterionId, evidence, checkedRange, label) {
-      if (destroyed) return;
-      if (!loaded) pending2.highlight = [criterionId, evidence, checkedRange, label];
-      else applyHighlight(criterionId, evidence, checkedRange, label);
-    }
-    function flash(index) {
-      const { el: row } = rows[index];
-      clearTimeout(flashTimers.get(index));
-      row.classList.remove("is-flash");
-      void row.offsetWidth;
-      row.classList.add("is-flash");
-      flashTimers.set(
-        index,
-        setTimeout(() => {
-          row.classList.remove("is-flash");
-          flashTimers.delete(index);
-        }, FLASH_MS)
-      );
-    }
-    function focusMessage(index) {
-      if (destroyed) return false;
-      if (!loaded) {
-        pending2.focus = index;
-        return Number.isInteger(index) && index >= 0;
-      }
-      if (!validIndex(index, rows.length)) return false;
-      const row = rows[index].el;
-      const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
-      scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
-      flash(index);
-      return true;
-    }
-    const handle = { el, highlight, focusMessage, destroy };
-    function show(conversation) {
-      const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
-      const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
-      clear(head).append(
-        h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
-        h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" \xB7 "), data: { test: "transcript-meta" } })
-      );
-      clear(scroller);
-      rows = [];
-      marked = [];
-      loaded = true;
-      if (transcript.length === 0) {
-        scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
-      } else {
-        const at = offsets(transcript);
-        rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
-        scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
-      }
-      const { highlight: waiting, focus } = pending2;
-      pending2 = { highlight: null, focus: null };
-      if (waiting) applyHighlight(...waiting);
-      if (focus !== null) focusMessage(focus);
-    }
-    function showError(error) {
-      clear(head);
-      clear(scroller).append(
-        stateBox2(
-          "transcript-error",
-          t("transcript.loadFailed", { id }),
-          errorText(error),
-          h("button", { class: "cqa-tr-retry", attrs: { type: "button" }, text: t("transcript.retry"), data: { test: "transcript-retry" }, on: { click: load2 } })
-        )
-      );
-    }
-    let run = 0;
-    async function load2() {
-      const mine = ++run;
-      loaded = false;
-      rows = [];
-      marked = [];
-      clear(scroller).append(stateBox2("transcript-loading", t("transcript.loading", { id })));
-      try {
-        const conversation = await api.getConversation(id);
-        if (destroyed || mine !== run) return;
-        show(conversation);
-      } catch (error) {
-        if (destroyed || mine !== run) return;
-        showError(error);
-      }
-    }
-    function destroy() {
-      if (destroyed) return;
-      destroyed = true;
-      flashTimers.forEach((timer) => clearTimeout(timer));
-      flashTimers.clear();
-      if (store.get().transcript === handle) store.set({ transcript: null });
-      const hook2 = window.__cqaTest;
-      if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
-    }
-    store.set({ transcript: handle });
-    const hook = window.__cqaTest;
-    if (hook?.store === store) hook.transcript = { focusMessage, highlight };
-    if (id === null) scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
-    else load2();
-    return handle;
   }
 
   // src/app.js
@@ -4366,7 +5147,10 @@
     };
     window.addEventListener("hashchange", onHashChange);
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
-    const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes }, views: options.views });
+    const shell = createShell(store, api, {
+      panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
+      views: { appeals: createAppealsPage, appeal: createAppealsPage, ...options.views }
+    });
     el.replaceChildren(shell.el);
     let destroyed = false;
     return {

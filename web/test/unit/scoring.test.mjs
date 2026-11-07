@@ -339,6 +339,21 @@ describe("score: custom checklists and edge cases", () => {
     assert.equal(r.x2.effective_weight, null);
   });
 
+  test("sections come back in their `order`, not their array order (as the backend returns them)", () => {
+    const v = custom(
+      [yn("x1", "b", 10, false), yn("x2", "a", 10, false)],
+      [
+        { id: "b", title: "b", order: 2 },
+        { id: "a", title: "a", order: 1 },
+      ],
+    );
+    const res = score(v, { x1: A("yes"), x2: A("no") });
+    assert.deepEqual(
+      res.sections.map((s) => s.section_id),
+      ["a", "b"],
+    );
+  });
+
   test("T5 exact half-up: weights 201 (yes) and 19799 (no) -> 1.01", () => {
     const v = custom([yn("x1", "s", 201, false), yn("x2", "s", 19799, false)]);
     const res = score(v, { x1: A("yes"), x2: A("no") });

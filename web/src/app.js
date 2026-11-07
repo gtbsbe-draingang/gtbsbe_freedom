@@ -4,6 +4,7 @@
 import { createApi } from "./api/index.js";
 import { groupOf, readContext } from "./context.js";
 import { createStore, isCompact, watch } from "./state/store.js";
+import { createAppealsPage } from "./ui/appeals-page.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
 import { createQueue } from "./ui/queue.js";
 import { createScorecard } from "./ui/scorecard.js";
@@ -96,7 +97,10 @@ export function mount(el, options = {}) {
 
   if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null }; // `transcript` is filled by the transcript pane
 
-  const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes }, views: options.views });
+  const shell = createShell(store, api, {
+    panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
+    views: { appeals: createAppealsPage, appeal: createAppealsPage, ...options.views },
+  });
   el.replaceChildren(shell.el);
 
   let destroyed = false;
