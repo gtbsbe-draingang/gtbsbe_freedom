@@ -6,6 +6,11 @@ from pathlib import Path
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# backend/ and its .env, found from this file so they are the same whatever the working directory is
+# (`uv run cqa-serve` from the repo root reads the same .env as one from backend/).
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+ENV_FILE = BACKEND_DIR / ".env"
+
 # The checklist version the app shows by default: what /config reports as `default_checklist` and
 # what the queue's `final` summarises.
 DEFAULT_CHECKLIST_ID = "official-chat"
@@ -15,7 +20,7 @@ DEFAULT_CHECKLIST_VERSION = 1
 class Settings(BaseSettings):
     # env_ignore_empty: `ANTHROPIC_API_KEY=` (as copied from .env.example) means "not set", and an
     # empty CORS_ORIGINS= is not a JSON parse error.
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_ignore_empty=True)
+    model_config = SettingsConfigDict(env_file=ENV_FILE, extra="ignore", env_ignore_empty=True)
 
     anthropic_api_key: SecretStr | None = None  # env ANTHROPIC_API_KEY
     organizer_api_url: SecretStr | None = None  # env ORGANIZER_API_URL; group_id is replaced, nothing else
