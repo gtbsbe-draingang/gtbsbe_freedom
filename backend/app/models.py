@@ -246,6 +246,8 @@ class GrossError(BaseModel):
 
 
 class Evaluation(BaseModel):
+    # A queued, running or failed evaluation has no results or totals yet, so everything after
+    # `source` has a default.
     id: str
     created_at: datetime
     conversation: str  # the conversation's id
@@ -253,13 +255,13 @@ class Evaluation(BaseModel):
     version: int
     status: _RunStatus
     source: Literal["model", "mock"] = "model"
-    model: str | None
-    cost_usd: Num
-    results: list[CriterionResult]
-    original_total: Num | None  # null = not calculated
-    final_total: Num | None
-    sections: list[SectionScore]
-    gross_error: GrossError
+    model: str | None = None
+    cost_usd: Num = Decimal("0")
+    results: list[CriterionResult] = Field(default_factory=list)
+    original_total: Num | None = None  # null = not calculated
+    final_total: Num | None = None
+    sections: list[SectionScore] = Field(default_factory=list)
+    gross_error: GrossError = Field(default_factory=lambda: GrossError(flag=False))
 
 
 # --- appeals -------------------------------------------------------------------------------

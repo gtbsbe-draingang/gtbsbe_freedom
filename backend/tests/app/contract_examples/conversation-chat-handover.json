@@ -13,7 +13,7 @@
     {"timestamp": "01:10", "speaker": "client", "text": "Жираф.", "duplicate": false},
     {"timestamp": "01:34", "speaker": "operator", "text": "Спасибо, личность подтверждена. Я отправил код повторно, проверьте, пожалуйста.", "duplicate": false},
     {"timestamp": "02:20", "speaker": "client", "text": "Пришёл, всё получилось, спасибо!", "duplicate": false},
-    {"timestamp": "02:31", "speaker": "operator", "text": "Рад помочь. Хорошего дня!", "duplicate": false}
+    {"timestamp": "02:31", "speaker": "operator", "text": "Обращайтесь, если появятся вопросы.", "duplicate": false}
   ],
   "status": "evaluated",
   "facts": {

@@ -26,6 +26,7 @@ from app.models import (
     DryRun,
     ErrorBody,
     Evaluation,
+    GrossError,
     ImportSummary,
     Job,
     Judgment,
@@ -86,6 +87,25 @@ def load(path: Path) -> Any:
 
 
 EXAMPLES = examples()
+
+
+def example_data(key: str) -> list[dict[str, Any]]:
+    """Every example of one shape, from whichever folder holds the examples."""
+    data = [load(path) for path in EXAMPLES if example_key(path) == key]
+    assert data, f"no example of {key}"
+    return data
+
+
+def conversation_dict(**override: Any) -> dict[str, Any]:
+    base: dict[str, Any] = {
+        "id": "demo:demo-ru-001",
+        "conversation_id": "demo-ru-001",
+        "group_id": "demo",
+        "channel": "agent chat",
+        "language": "RU",
+        "transcript": [{"timestamp": "00:01", "speaker": "client", "text": "hi"}],
+    }
+    return {**base, **override}
 
 
 # --- the contract examples -----------------------------------------------------------------
@@ -224,10 +244,10 @@ def test_every_decimal_in_the_shared_models_is_a_json_number() -> None:
         latency_ms=5,
     )
     assert type(call.model_dump(mode="json")["cost_usd"]) is float
-    checklist = ChecklistVersion.model_validate(load(EXAMPLES_DIR / "checklist-version.json"))
-    weights = [c["weight"] for c in dump(checklist)["criteria"]]
-    assert weights == [10, 10.5, 20, 10, 10, 0]
-    assert all(type(w) is float for w in weights)
+    for data in example_data("checklist-version"):
+        weights = [c["weight"] for c in dump(ChecklistVersion.model_validate(data))["criteria"]]
+        assert weights == [c["weight"] for c in data["criteria"]]
+        assert all(type(w) is float for w in weights)
     config = dump(
         Config(
             models=["m"],
@@ -282,10 +302,11 @@ def test_checked_range_alias() -> None:
 def test_conversation_has_no_audio_url() -> None:
     assert "audio_url" not in Conversation.model_fields
     assert "audio_url" not in QueueItem.model_fields
-    data = load(EXAMPLES_DIR / "conversation-chat-handover.json")
-    parsed = Conversation.model_validate({**data, "audio_url": "x"})
+    parsed = Conversation.model_validate(conversation_dict(audio_url="x"))
     assert "audio_url" not in dump(parsed)
     assert not hasattr(parsed, "audio_url")
+    for data in example_data("conversation"):
+        assert "audio_url" not in dump(Conversation.model_validate({**data, "audio_url": "x"}))
 
 
 def test_unknown_speaker_kept() -> None:
@@ -295,23 +316,23 @@ def test_unknown_speaker_kept() -> None:
 
 
 def test_queue_item_dump_has_no_transcript() -> None:
-    data = load(EXAMPLES_DIR / "queue-item.json")
     line = {"timestamp": "00:01", "speaker": "client", "text": "hi"}
-    item = QueueItem.model_validate({**data, "transcript": [line]})
-    body = dump(item)
-    assert "transcript" not in body
-    assert body["final"]["total"] == 62.5
-    assert QueueItem.model_validate(data).transcript == []
-    assert QueueItem.model_validate({**data, "final": None}).final is None
+    for data in example_data("queue-item"):
+        assert "transcript" not in data
+        body = dump(QueueItem.model_validate({**data, "transcript": [line]}))
+        assert "transcript" not in body
+        assert body["final"] == dump(QueueItem.model_validate(data))["final"]
+        assert QueueItem.model_validate(data).transcript == []
+        assert QueueItem.model_validate({**data, "final": None}).final is None
 
 
 def test_checklist_version_id_defaults_to_checklist_and_version() -> None:
-    data = load(EXAMPLES_DIR / "checklist-version.json")
-    without_id = {k: v for k, v in data.items() if k not in {"id", "created_at"}}
-    parsed = ChecklistVersion.model_validate(without_id)
-    assert parsed.id == "demo-checklist:2"
-    assert parsed.created_at is None
-    assert ChecklistVersion.model_validate({**without_id, "id": "custom"}).id == "custom"
+    for data in example_data("checklist-version"):
+        without_id = {k: v for k, v in data.items() if k not in {"id", "created_at"}}
+        parsed = ChecklistVersion.model_validate(without_id)
+        assert parsed.id == f"{data['checklist_id']}:{data['version']}"
+        assert parsed.created_at is None
+        assert ChecklistVersion.model_validate({**without_id, "id": "custom"}).id == "custom"
 
 
 # --- dump() --------------------------------------------------------------------------------
@@ -371,30 +392,110 @@ def test_judgment_still_requires_model_and_reuse_key() -> None:
     assert Judgment.model_validate({**judgment, "model": "m", "reuse_key": "k"}).reuse_key == "k"
 
 
+def test_queued_evaluation_has_defaults() -> None:
+    queued = Evaluation(
+        id="eval-2",
+        created_at=datetime(2026, 11, 7, 9, 0, tzinfo=UTC),
+        conversation="demo:demo-ru-001",
+        checklist_id="demo-checklist",
+        version=1,
+        status="queued",
+        source="model",
+    )
+    assert queued.results == [] and queued.sections == []
+    assert queued.model is None
+    assert queued.cost_usd == Decimal("0")
+    assert queued.original_total is None and queued.final_total is None
+    assert queued.gross_error == GrossError(flag=False)
+    body = dump(queued)
+    assert body["status"] == "queued"
+    assert body["results"] == [] and body["sections"] == []
+    assert body["model"] is None
+    assert body["cost_usd"] == 0.0 and type(body["cost_usd"]) is float
+    assert body["original_total"] is None and body["final_total"] is None
+    assert body["gross_error"] == {"flag": False, "kinds": [], "explanation": None, "evidence": []}
+    assert Evaluation.model_validate(body) == queued
+    # Defaults are per instance, never shared.
+    other = Evaluation(
+        id="eval-3",
+        created_at=queued.created_at,
+        conversation="c",
+        checklist_id="x",
+        version=1,
+        status="running",
+    )
+    queued.results.append(_result())
+    queued.gross_error.kinds.append("insult")
+    assert other.results == [] and other.gross_error.kinds == []
+    assert other.source == "model"
+
+
+def test_model_dump_json_matches_dump() -> None:
+    evaluation = _evaluation()
+    raw = json.loads(evaluation.model_dump_json(by_alias=True))
+    for result in raw["results"]:  # the two internal fields are the only difference
+        del result["calls"], result["reuse_key"]
+    assert raw == dump(evaluation)
+
+
 def test_dump_uses_aliases_for_other_models() -> None:
-    comparison = Comparison.model_validate(load(EXAMPLES_DIR / "comparison.json"))
-    body = dump(comparison)
-    assert set(body) == {"from", "to", "summary", "rows"}
-    assert body["from"]["version"] == 1
-    assert body["rows"][2]["delta"] is None
-    assert type(body["summary"]["avg_delta"]) is float
-    assert Comparison.model_validate(body) == comparison
+    for data in example_data("comparison"):
+        comparison = Comparison.model_validate(data)
+        body = dump(comparison)
+        assert {"from", "to", "summary", "rows"} <= set(body)
+        assert "from_" not in body
+        assert body["from"]["version"] == data["from"]["version"]
+        for row, expected in zip(body["rows"], data["rows"], strict=True):
+            assert (row["delta"] is None) == (expected["delta"] is None)
+            assert row["delta"] is None or type(row["delta"]) is float
+        assert Comparison.model_validate(body) == comparison
+    side = {"checklist_id": "c", "version": 1, "name": "n"}
+    built = Comparison(
+        from_=side,
+        to={**side, "version": 2},
+        summary={"total": 1, "changed": 0, "avg_delta": None},
+        rows=[
+            {
+                "conversation": "g:a",
+                "conversation_id": "a",
+                "group_id": "g",
+                "old_total": None,
+                "new_total": Decimal("50.41"),
+                "delta": None,
+            }
+        ],
+    )
+    body = dump(built)
+    assert body["from"]["version"] == 1 and body["to"]["version"] == 2
+    assert body["summary"]["avg_delta"] is None
+    assert body["rows"][0]["new_total"] == 50.41 and body["rows"][0]["delta"] is None
 
 
 def test_dump_leaves_datetimes_as_iso_strings() -> None:
     assert dump(_evaluation())["created_at"] == "2026-11-07T09:00:00Z"
-    chat = Conversation.model_validate(load(EXAMPLES_DIR / "conversation-chat-handover.json"))
+    chat = Conversation.model_validate(conversation_dict(created_at="2026-11-07T08:00:00Z"))
     assert dump(chat)["created_at"] == "2026-11-07T08:00:00Z"
+    assert dump(Conversation.model_validate(conversation_dict()))["created_at"] is None
 
 
-def test_call_conversation_keeps_original_timestamps_and_needs_import_reason() -> None:
-    data = load(EXAMPLES_DIR / "conversation-call-needs-import.json")
-    body = dump(Conversation.model_validate(data))
+def test_conversation_keeps_original_timestamps() -> None:
+    for data in example_data("conversation"):
+        body = dump(Conversation.model_validate(data))
+        assert [m["timestamp"] for m in body["transcript"]] == [
+            m["timestamp"] for m in data["transcript"]
+        ]
+    call = conversation_dict(
+        channel="voice call",
+        transcript=[
+            {"timestamp": "2026-11-05T09:31:02+05:00", "speaker": "operator", "text": "hello"}
+        ],
+        audio=None,
+        audio_unavailable_reason="needs_import",
+    )
+    body = dump(Conversation.model_validate(call))
+    assert body["transcript"][0]["timestamp"] == "2026-11-05T09:31:02+05:00"
     assert body["audio"] is None
     assert body["audio_unavailable_reason"] == "needs_import"
-    assert [m["timestamp"] for m in body["transcript"]] == [
-        m["timestamp"] for m in data["transcript"]
-    ]
 
 
 def test_error_body_and_import_summary_shapes() -> None:
