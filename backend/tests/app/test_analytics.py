@@ -441,6 +441,33 @@ def test_a_decision_can_clear_and_raise_a_gross_error(setup, fake: FakeEvaluator
     assert body["gross_errors"] == {"count": 0, "by_kind": [], "conversations": []}
 
 
+def test_by_language_lists_other_codes_after_the_known_ones(setup) -> None:
+    """RU, KZ, EN first (those present, in that order), then any other code present, sorted, each
+    exactly as stored (final review I1)."""
+    client, official = setup
+    for conversation_id, language, total in (
+        ("a", "ru", "10.00"),
+        ("b", "KK", "20.00"),
+        ("c", "EN", "30.00"),
+        ("d", "RU", "40.00"),
+        ("e", "AA", "50.00"),
+        ("f", "KK", "60.00"),
+    ):
+        put_total(add_conversation("G", conversation_id, language=language), official, total)
+
+    body = get_analytics(client, official)
+    assert body["by_language"] == [
+        {"language": "RU", "avg_total": 40.0, "n": 1},
+        {"language": "EN", "avg_total": 30.0, "n": 1},
+        {"language": "AA", "avg_total": 50.0, "n": 1},
+        {"language": "KK", "avg_total": 40.0, "n": 2},
+        {"language": "ru", "avg_total": 10.0, "n": 1},
+    ]
+    rows = parse(get_csv(client, official).content)
+    column = rows[0].index("language")
+    assert sorted(row[column] for row in rows[1:]) == ["AA", "EN", "KK", "KK", "RU", "ru"]
+
+
 def test_by_language_and_channel(setup) -> None:
     client, official = setup
     kz = add_conversation("G", "kz1", language="KZ")

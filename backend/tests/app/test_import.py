@@ -28,6 +28,7 @@ from app.errors import ApiError
 from app.models import AudioOffset, VoiceMeasurement
 from app.settings import get_settings
 from app.transcript import normalize_record
+from tests.app.helpers import validate
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "dev_subset.json"
 ORGANIZER_URL = "https://org.example/run?sp=x&sig=FAKE&group_id=DEV"
@@ -432,15 +433,16 @@ def broken(record: dict, **changes: Any) -> dict:
     [
         {"conversation_id": ...},
         {"conversation_id": ""},
-        {"conversation_id": 12},
+        {"conversation_id": "   "},
+        {"conversation_id": 1.5},
+        {"conversation_id": True},
         {"channel": ...},
         {"channel": "fax"},
         {"language": ...},
-        {"language": "ru"},
-        {"language": "DE"},
+        {"language": None},
+        {"language": 7},
         {"transcript": ...},
         {"transcript": "hello"},
-        {"transcript": None},
     ],
     ids=lambda c: next(iter(c)) + "=" + repr(next(iter(c.values()))),
 )
@@ -459,6 +461,41 @@ def test_upload_rejects_a_record_that_is_not_an_object(client: TestClient, bad: 
     assert r.status_code == 422
     assert r.json()["error"] == "bad_record:1"
     assert stored_count() == 0
+
+
+def test_upload_keeps_values_dev_never_had_as_given(client: TestClient) -> None:
+    """A control set may hold what DEV never did (final review I1): a lower-case or unknown language
+    code, an integer conversation_id, a null transcript. Every record is stored, nothing is
+    normalised, and every response still fits the contract."""
+    base = dev_records()[0]
+    records = [
+        {**base, "conversation_id": "lower", "language": "ru"},
+        {**base, "conversation_id": "unknown", "language": "KK"},
+        {**base, "conversation_id": 123, "language": "EN"},
+        {**base, "conversation_id": "empty", "transcript": None},
+    ]
+    r = client.post("/api/conversations", json={"dataset_group_id": "CTRL", "records": records})
+
+    assert r.status_code == 200, r.text
+    assert r.json() == {"group_id": "CTRL", "total": 4, "imported": 4, "updated": 0, "unchanged": 0}
+    validate("import-summary", r.json())
+    got = {cid: client.get(f"/api/conversations/CTRL:{cid}").json() for cid in ("lower", "unknown", "123", "empty")}
+    for body in got.values():
+        validate("conversation", body)
+    assert got["lower"]["language"] == "ru"  # kept as given, not upper-cased
+    assert got["unknown"]["language"] == "KK"
+    assert (got["123"]["id"], got["123"]["conversation_id"]) == ("CTRL:123", "123")
+    assert got["empty"]["transcript"] == []
+    assert stored_row("CTRL:lower")["language"] == "ru"
+
+    queue = client.get("/api/conversations", params={"group_id": "CTRL"}).json()
+    for item in queue:
+        validate("queue-item", item)
+    assert sorted(item["language"] for item in queue) == ["EN", "KK", "RU", "ru"]
+    assert [i["id"] for i in client.get("/api/conversations", params={"language": "ru"}).json()] == ["CTRL:lower"]
+
+    again = client.post("/api/conversations", json={"dataset_group_id": "CTRL", "records": records})
+    assert again.json()["unchanged"] == 4  # the same values again: nothing changed
 
 
 def test_upload_message_never_echoes_the_record_values(client: TestClient) -> None:
@@ -730,7 +767,7 @@ async def test_import_checks_every_record_before_writing(
 
     monkeypatch.setattr(store, "upsert_conversation", must_not_run)
     records = dev_records()
-    records[5] = {**records[5], "language": "FR"}
+    records[5] = {**records[5], "channel": "fax"}
 
     with pytest.raises(ApiError) as caught:
         await importer.import_records(records, "DEV")

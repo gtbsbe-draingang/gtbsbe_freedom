@@ -82,7 +82,9 @@ class Conversation(BaseModel):
     conversation_id: str
     group_id: str
     channel: Literal["agent chat", "voice call"]
-    language: Literal["RU", "KZ", "EN"]
+    # RU, KZ or EN by convention; the contract keeps any other code exactly as given (no
+    # upper-casing, no trimming), so one unexpected code never fails an import.
+    language: str
     transcript: list[Message]
     status: Literal["new", "evaluated", "disputed"] = "new"
     facts: Facts | None = None
@@ -393,7 +395,7 @@ class AnalyticsCriterion(BaseModel):
 
 
 class AnalyticsLanguage(BaseModel):
-    language: Literal["RU", "KZ", "EN"]
+    language: str  # the conversations' code, as stored (see Conversation.language)
     avg_total: Num | None
     n: int
 

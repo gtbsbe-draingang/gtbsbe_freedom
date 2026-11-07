@@ -188,16 +188,25 @@ async def fetch_group(group_id: str) -> list[dict]:
 
 
 def _problem_with(record: Any) -> str | None:
-    """Why a record cannot be imported, judged by its shape only; None when it looks fine."""
+    """Why a record cannot be imported, judged by its shape only; None when it looks fine.
+
+    Lenient where a new set may differ from DEV without being wrong: an integer conversation_id
+    (stored as its text) and a null transcript (an empty one) are fine. A transcript that is
+    absent is still missing."""
     if not isinstance(record, dict):
         return "it is not an object"
-    missing = [field for field in _REQUIRED_FIELDS if record.get(field) is None]
+    missing = [
+        field
+        for field in _REQUIRED_FIELDS
+        if field not in record or (record[field] is None and field != "transcript")
+    ]
     if missing:
         return f"missing {', '.join(missing)}"
     conversation_id = record["conversation_id"]
-    if not isinstance(conversation_id, str) or not conversation_id.strip():
-        return "conversation_id must be a non-empty string"
-    if not isinstance(record["transcript"], list):
+    is_integer = isinstance(conversation_id, int) and not isinstance(conversation_id, bool)
+    if not is_integer and not (isinstance(conversation_id, str) and conversation_id.strip()):
+        return "conversation_id must be a non-empty string or an integer"
+    if record["transcript"] is not None and not isinstance(record["transcript"], list):
         return "transcript must be a list"
     return None
 
@@ -211,9 +220,9 @@ def parse_upload(payload: Any) -> tuple[list[dict], str | None]:
 
     Accepts one record, an array of records, `{"records": [...]}` (an optional
     `dataset_group_id` next to it names the group) or the organisers' full response
-    (`data.records`, group `data.dataset_group_id`). Every record needs `conversation_id`,
-    `channel`, `language` and `transcript` (a list); the values themselves are checked by
-    `import_records`.
+    (`data.records`, group `data.dataset_group_id`). Every record needs `conversation_id` (a
+    string or an integer), `channel`, `language` and `transcript` (a list, or null for none); the
+    values themselves are checked by `import_records`.
 
     Raises ApiError 422 `no_records`, or `bad_record:<i>` with i the index in the payload.
     """
