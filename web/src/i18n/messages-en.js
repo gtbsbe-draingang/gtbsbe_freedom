@@ -475,5 +475,12 @@ export default {
   "reports.loading": "Loading report…",
   "reports.failed": "Could not load report. {error}",
   "reports.channel.chat": "Chat",
-  "reports.channel.call": "Call"
+  "reports.channel.call": "Call",
+  "loader.dropTitle": "Drop a JSON file here",
+  "loader.dropHint": "or choose a file from your device",
+  "loader.chooseFile": "Choose file",
+  "loader.noFile": "No file selected",
+  "loader.error.oneFile": "Choose one JSON file at a time.",
+  "loader.error.fileType": "Only JSON files are supported.",
+  "loader.dropActive": "Release to upload"
 };

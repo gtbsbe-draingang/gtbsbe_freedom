@@ -475,5 +475,12 @@ export default {
   "reports.loading": "Есеп жүктелуде…",
   "reports.failed": "Есепті жүктеу мүмкін болмады. {error}",
   "reports.channel.chat": "Чат",
-  "reports.channel.call": "Қоңырау"
+  "reports.channel.call": "Қоңырау",
+  "loader.dropTitle": "JSON файлын осында сүйреп әкеліңіз",
+  "loader.dropHint": "немесе құрылғыдан файл таңдаңыз",
+  "loader.chooseFile": "Файл таңдау",
+  "loader.noFile": "Файл таңдалмаған",
+  "loader.error.oneFile": "Бір JSON файлын таңдаңыз.",
+  "loader.error.fileType": "Тек JSON файлдары қолданылады.",
+  "loader.dropActive": "Жүктеу үшін файлды жіберіңіз"
 };

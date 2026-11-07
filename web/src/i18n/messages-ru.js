@@ -475,5 +475,12 @@ export default {
   "reports.loading": "Загрузка отчёта…",
   "reports.failed": "Не удалось загрузить отчёт. {error}",
   "reports.channel.chat": "Чат",
-  "reports.channel.call": "Звонок"
+  "reports.channel.call": "Звонок",
+  "loader.dropTitle": "Перетащите JSON-файл сюда",
+  "loader.dropHint": "или выберите файл с устройства",
+  "loader.chooseFile": "Выбрать файл",
+  "loader.noFile": "Файл не выбран",
+  "loader.error.oneFile": "Выберите один JSON-файл.",
+  "loader.error.fileType": "Поддерживаются только JSON-файлы.",
+  "loader.dropActive": "Отпустите файл, чтобы загрузить"
 };
