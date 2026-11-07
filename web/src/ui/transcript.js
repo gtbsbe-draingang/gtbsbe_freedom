@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The transcript pane: the dialogue as bubbles (client left, operator and bot right, system lines
 // as centred notes), built once per conversation.
 //
@@ -118,7 +119,7 @@ function buildMessage(message, index, offset, seek) {
     time,
     message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null,
   );
-  const text = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+  const text = h("p", { class: "cqa-msg-text", verbatim: true, text: typeof message?.text === "string" ? message.text : "" });
   const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text);
   return { el, flag };
 }
@@ -143,6 +144,9 @@ export function renderTranscript(store, api, args = {}) {
   let pending = { highlight: null, focus: null };
   let lastHighlight = null; // the arguments of the marks on screen, applied again after a redraw
   let shown = null; // shownKey() of the dialogue on screen
+  let translationRun = 0;
+  let translationOn = false;
+  let translationCache = null;
   let player = null; // the call player, for a call
   let playingAt = null; // the index of the line marked .is-playing
   const flashTimers = new Map(); // index -> timer id
@@ -154,7 +158,7 @@ export function renderTranscript(store, api, args = {}) {
       const row = rows[i];
       row.el.classList.remove("is-evidence", "is-expected", "is-checked");
       row.el.removeAttribute("data-criterion");
-      row.flag.textContent = "";
+      setLocalizedText(row.flag, "");
     }
     marked = [];
   }
@@ -172,7 +176,7 @@ export function renderTranscript(store, api, args = {}) {
       row.classList.toggle("is-expected", mark.expected);
       row.classList.toggle("is-checked", mark.checked);
       row.setAttribute("data-criterion", String(criterionId));
-      flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" · ");
+      setLocalizedText(flag, [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" · "));
       marked.push(i);
     });
   }
@@ -232,17 +236,59 @@ export function renderTranscript(store, api, args = {}) {
     if (follow && (above || below)) centre(playingAt);
   }
 
-  const handle = { el, highlight, focusMessage, destroy };
+  function seekSeconds(seconds) {
+    return player?.seekSeconds?.(seconds) ?? false;
+  }
+  const handle = { el, highlight, focusMessage, seekSeconds, destroy };
 
   // ---- loading --------------------------------------------------------------------------------
 
   function show(conversation) {
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
+    const translationEpoch = ++translationRun;
+    translationOn = false;
+    translationCache = null;
+    const translate = h("button", {
+      class: "cqa-sc-btn", text: t("translate.show"),
+      attrs: { type: "button", "aria-pressed": "false" }, data: { test: "translate-toggle" },
+      on: { click: async () => {
+        if (destroyed || translationEpoch !== translationRun) return;
+        translationOn = !translationOn;
+        translate.setAttribute("aria-pressed", String(translationOn));
+        setLocalizedText(translate, translationOn ? t("translate.hide") : t("translate.show"));
+        if (!translationOn) {
+          rows.forEach(({ el }) => el.querySelector(".msg-translation")?.remove());
+          return;
+        }
+        translate.disabled = true;
+        setLocalizedText(translate, t("translate.loading"));
+        try {
+          const data = translationCache ?? await api.getTranslation(id, "ru");
+          if (destroyed || translationEpoch !== translationRun) return;
+          translationCache = data;
+          for (const message of data.messages ?? []) {
+            const row = rows[message.message_index];
+            if (!row || typeof message.text !== "string") continue;
+            row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, verbatim: true, text: message.text }));
+          }
+          setLocalizedText(translate, t("translate.hide"));
+        } catch (error) {
+          if (destroyed || translationEpoch !== translationRun) return;
+          translationOn = false;
+          translate.setAttribute("aria-pressed", "false");
+          setLocalizedText(translate, t("translate.retry"));
+          toastError(store, error);
+        } finally {
+          if (!destroyed && translationEpoch === translationRun) translate.disabled = false;
+        }
+      } },
+    });
     clear(head).append(
-      h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
+      h("b", { class: "cqa-tr-title", verbatim: true, text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
       h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" · "), data: { test: "transcript-meta" } }),
     );
+    if (["KZ", "EN"].includes(conversation?.language?.toUpperCase())) head.append(translate);
     clear(scroller);
     rows = [];
     marked = [];
@@ -346,7 +392,7 @@ export function renderTranscript(store, api, args = {}) {
   const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
   store.set({ transcript: handle });
   const hook = window.__cqaTest;
-  if (hook?.store === store) hook.transcript = { focusMessage, highlight };
+  if (hook?.store === store) hook.transcript = { focusMessage, highlight, seekSeconds };
 
   if (id === null) scroller.append(stateBox("transcript-empty", t("workspace.pick")));
   else load();

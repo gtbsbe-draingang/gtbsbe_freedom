@@ -1,3 +1,5 @@
+import {bindRootLanguage} from "./i18n/dom.js";
+import {setLanguage, storedLanguage} from "./i18n/ru.js";
 // mount(el, options) builds the store and the API, renders the shell into `el` and returns the
 // handle a host uses. Context comes from outside: mount options, URL parameters and the config
 // (see context.js); nothing here reads parent.Xrm.
@@ -9,6 +11,7 @@ import { createChecklistEditor } from "./ui/checklist-editor.js";
 import { createChecklistsPage } from "./ui/checklists-page.js";
 import { createComparePage } from "./ui/compare-page.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
+import { createReportsPage } from "./ui/reports-page.js";
 import { createQueue } from "./ui/queue.js";
 import { createScorecard } from "./ui/scorecard.js";
 import { createShell } from "./ui/shell.js";
@@ -50,6 +53,8 @@ export function mount(el, options = {}) {
   // Theme: the host or the URL wins; otherwise the stored choice, except when embedded (a host
   // page is not the user's own browser tab); otherwise the config; otherwise light.
   const theme = ctx.themeExplicit || ctx.mode === "embedded" ? ctx.theme : (readStoredTheme() ?? ctx.theme);
+
+  setLanguage(ctx.language ?? storedLanguage() ?? "ru", {persist:false});
 
   const compactRoute = (id) => ({ name: "workspace", params: { id } });
 
@@ -109,10 +114,13 @@ export function mount(el, options = {}) {
       checklist: createChecklistEditor,
       editor: createChecklistEditor,
       compare: createComparePage,
+      accuracy: createReportsPage,
+      analytics: createReportsPage,
       ...options.views,
     },
   });
   el.replaceChildren(shell.el);
+  stops.push(bindRootLanguage(el));
 
   let destroyed = false;
   return {
@@ -128,6 +136,7 @@ export function mount(el, options = {}) {
         goTo(parseRoute(window.location.hash)); // now, not on the hashchange event that follows
       }
     },
+    setLanguage,
     setRole(role) {
       if (role === "controller" || role === "reviewer") store.set({ role });
     },

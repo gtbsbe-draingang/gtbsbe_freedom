@@ -84,3 +84,64 @@ export function formatOffset(sec) {
   const body = h > 0 ? `${h}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
   return negative ? `-${body}` : body;
 }
+
+// System events that start, pause and resume a call's recording (RU, KZ, EN), as in
+// backend/audio/offsets.py.
+const REC_START = ["запущены", "басталды", "recording started", "transcription started"];
+const REC_PAUSE = ["приостановлены", "тоқтатылды", "paused"];
+const REC_RESUME = ["возобновлены", "жалғастырылды", "қайта басталды", "resumed"];
+const SPOKEN = ["client", "operator", "bot"];
+const CHARS_PER_SECOND = 13; // fitted on the five DEV calls (#28)
+const says = (message, words) => {
+  const text = typeof message?.text === "string" ? message.text.toLowerCase() : "";
+  return message?.speaker === "system" && words.some((w) => text.includes(w));
+};
+
+/**
+ * Where each line starts in the call recording, in seconds, from the transcript alone. The
+ * recording begins at the "recording started" event and skips each paused-to-resumed stretch.
+ * A call timestamp marks the END of a line, so a spoken line starts its estimated length earlier
+ * (text length at CHARS_PER_SECOND, 0.6 to 20 s), but not before the previous spoken line ended
+ * (minus 0.3 s); a system event has no length. Null for a duplicate line, a line said before the
+ * recording, while it was paused or after an unresumed pause, and a line `offsets` cannot place.
+ * Still an estimate: each call keeps a few seconds of constant shift that only the audio
+ * alignment finds (#28). Mirrors compute_spans in backend/audio/offsets.py, without the audio.
+ * @param {{timestamp?: unknown, speaker?: string, text?: string, duplicate?: boolean}[]} transcript
+ * @returns {(number | null)[]}
+ */
+export function recordingStarts(transcript) {
+  const lines = Array.isArray(transcript) ? transcript : [];
+  const at = offsets(lines);
+  const startIndex = lines.findIndex((m, i) => at[i] !== null && says(m, REC_START));
+  const start = startIndex === -1 ? 0 : at[startIndex];
+  const pauses = [];
+  let opened = null;
+  lines.forEach((m, i) => {
+    if (at[i] === null) return;
+    if (opened === null && says(m, REC_PAUSE)) opened = at[i];
+    else if (opened !== null && says(m, REC_RESUME)) {
+      pauses.push([opened, at[i]]);
+      opened = null;
+    }
+  });
+  const ends = at.map((t) => {
+    if (t === null || t < start || (opened !== null && t >= opened)) return null;
+    let y = t - start;
+    for (const [a, b] of pauses) {
+      if (t >= b) y -= b - a;
+      else if (t > a) return null; // said while the recording was paused
+    }
+    return Math.max(0, y);
+  });
+  let previousEnd = 0;
+  return lines.map((m, i) => {
+    const end = ends[i];
+    if (end === null || m?.duplicate === true) return null;
+    if (!SPOKEN.includes(m?.speaker)) return end;
+    const length = Math.min(Math.max((typeof m.text === "string" ? m.text.length : 0) / CHARS_PER_SECOND, 0.6), 20);
+    const lineStart = Math.max(0, end - length, previousEnd - 0.3);
+    previousEnd = Math.max(previousEnd, end);
+    return lineStart;
+  });
+}
+

@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The appeals page (R7, R8), for both roles: the list with open / decided filters and, when an
 // appeal is open (#/appeals/:id), its review panel beside the list. Below 900 px the panel takes
 // the page and a link leads back to the list.
@@ -75,10 +76,10 @@ export function createAppealsPage(store, api, route) {
     const link = h(
       "a",
       { class: "cqa-aps-link", attrs: { href: href("appeal", { id: appeal.id }), "aria-current": appeal.id === openId ? "true" : null } },
-      h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
-      h("span", { class: "cqa-aps-crit", text: view.titles.get(appeal.id) ?? appeal.criterion_id }),
-      h("span", { class: "cqa-aps-comment", text: clip(appeal.comment) }),
-      group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: group })) : null,
+      h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", verbatim:true, text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
+      h("span", { class: "cqa-aps-crit", verbatim: true, text: view.titles.get(appeal.id) ?? appeal.criterion_id }),
+      h("span", { class: "cqa-aps-comment", verbatim: true, text: clip(appeal.comment) }),
+      group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], verbatim:true, text: group })) : null,
     );
     return h("li", { class: ["cqa-aps-item", appeal.id === openId && "is-current"], data: { test: "appeal-row", id: appeal.id, status: appeal.status } }, link);
   }
@@ -86,7 +87,7 @@ export function createAppealsPage(store, api, route) {
   function paint() {
     if (destroyed) return;
     for (const pill of pills) {
-      pill.count.textContent = String(view.appeals.filter((a) => pill.name === "all" || a.status === pill.name).length);
+      setLocalizedText(pill.count, String(view.appeals.filter((a) => pill.name === "all" || a.status === pill.name).length));
       pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
       pill.button.classList.toggle("is-on", pill.name === view.filter);
     }

@@ -53,9 +53,35 @@ Three labels stay disputed because the text itself is ambiguous: `p1-ru-025` `c0
 
 All 520 labels still need the team review (#24). New admin-created criteria need their own reviewed labels.
 
+## Measured agreement: the 7 November DEV run
+
+`agreement-dev-2026-11-07.json` compares the 65-dialogue run of 7 November (PR #60: Claude Haiku 5.5, official checklist v1, 613 calls, 0 failures, $0.2685) with these labels, using the same code as `/api/reports/accuracy`. It is agreement with our own draft references, not with the organisers' ground truth.
+
+| | Agreement | Labels |
+|---|---|---|
+| **Overall** | **79.75%** | 479 (41 disputed excluded, 0 missing) |
+| c01 Установление контакта | 93.65% | 63 |
+| c02 Выявление потребности | 70.31% | 64 |
+| c03 Идентификация | 68.25% | 63 |
+| c04 Консультация | 68.75% | 64 |
+| c05 Эмпатия | 92.31% | 65 |
+| c06 Ведение диалога | 68.75% | 64 |
+| c07 Завершение | 80.65% | 31 |
+| c08 Грубые ошибки | 95.38% | 65 |
+| RU / KZ / EN | 79.15% / 81.82% / 79.09% | 259 / 110 / 110 |
+| Chats / calls | 81.26% / 61.11% | 443 / 36 |
+
+The run was graded on v1 and the labels are for v2. v2 only adds guidance on c01, c03, c06 and c07, and every label that guidance affects is disputed, so the undisputed labels mean the same under both.
+
+Planted violations: the run catches 21 of 25. It misses both planted confidential disclosures as gross errors (`p1-kz-015`, `p1-en-014`: it marks c03 No but c08 No), scores `p1-ru-026` c04 at 5 instead of 0, and answers `p1-kz-011` c07 No instead of N/A.
+
+On the disputed labels the model sides with the #25 proposals: c07 Yes on 32 of the 34 bare goodbyes, c01 No on both call openings, c03 N/A on one of the two.
+
+`review-2026-11-07.csv` is the review sheet: the 97 disagreements first, then the 41 disputed labels, each with our note and the model's explanation and empty `decision` and `reviewer` columns. Reviewing those 138 rows first is the fastest way through #73; the other 382 labels already agree with the model, which makes them likely but not certainly right.
+
 ## Planted violations
 
-`backend/quality/planted.py` lists them (design section 4, plan Task 8); `tests/quality/test_planted.py` checks that every one matches this file. All 26 match.
+`backend/quality/planted.py` lists them (design section 4, plan Task 8); `tests/quality/test_planted.py` checks that every one matches this file. All 25 match.
 
 ## Totals with these answers
 

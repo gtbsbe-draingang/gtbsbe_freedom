@@ -60,24 +60,24 @@ export async function run(page) {
 
   assert.equal(await page.count(sel("crit")), checklist.criteria, "one card per criterion");
   const total = await page.text(sel("total"));
-  assert.match(total, /^(\d+\.\d{2}|не рассчитывается)$/, "the total has two decimals");
+  assert.match(total, /^(\d+,\d{2}|не рассчитывается)$/, "the total has two decimals");
   assert.equal(await page.text(sel("demo-badge")), "демо-оценка", "a mock evaluation is marked");
   assert.equal(await page.text(sel("run-eval")), "Переоценить");
   assert.match(await page.text(sel("gross-flag")), /грубая ошибка|грубых ошибок нет/);
   assert.equal(await page.eval(`document.querySelector(${quote(sel("gross-flag"))}).getAttribute("data-state")`), (await page.eval(`window.__cqaTest.api.listEvaluations({ conversation: ${quote(ID)} }).then((l) => l[0].gross_error.flag)`)) ? "on" : "off");
   assert.ok((await page.count(sel("section"))) >= 1, "sections are listed");
-  assert.match(await page.text(sel("section-score")), /^\d+\.\d{2} из \d+\.\d{2} · \d+\.\d{2} %$|нет применимых критериев/);
+  assert.match(await page.text(sel("section-score")), /^\d+,\d{2} из \d+,\d{2} · \d+,\d{2} %$|нет применимых критериев/);
   assert.match(await page.text(sel("model")), /Модель:/);
   assert.equal(await page.eval(`window.__cqaTest.store.get().queueRefresh > 0`), true, "the queue was told to reload");
   // the total is the one the server (mock) computed, to the cent
   const server = await page.eval(`window.__cqaTest.api.listEvaluations({ conversation: ${quote(ID)} }).then((l) => l[0].final_total)`);
-  assert.equal(total, server === null ? "не рассчитывается" : server.toFixed(2));
+  assert.equal(total, server === null ? "не рассчитывается" : server.toFixed(2).replace(".",","));
 
   // ---- cards: answer tag, points, explanation, coaching, info ----
   assert.equal(await page.eval(`[...document.querySelectorAll('[data-test="crit"]')].every((c) => c.querySelector('[data-test="answer"]') && c.querySelector('[data-test="points"]'))`), true);
   assert.equal(await page.eval(`[...document.querySelectorAll('[data-test="crit"]')].filter((c) => c.querySelector('[data-test="why"]')).length`), checklist.criteria, "every card explains itself");
   assert.equal(await page.eval(`[...document.querySelectorAll('[data-test="answer"]')].every((a) => /^(Да|Нет|N\\/A|шаг -?[\\d.]+)$/.test(a.textContent))`), true, "answer tags use the contract's four forms");
-  assert.equal(await page.eval(`[...document.querySelectorAll('[data-test="points"]')].every((p) => /^(\\d+\\.\\d{2} из \\d+\\.\\d{2}|вес распределён по остальным|не влияет на итог|—)$/.test(p.textContent))`), true, "points read «earned из max»");
+  assert.equal(await page.eval(`[...document.querySelectorAll('[data-test="points"]')].every((p) => /^(\\d+,\\d{2} из \\d+,\\d{2}|вес распределён по остальным|не влияет на итог|—)$/.test(p.textContent))`), true, "points read «earned из max»");
   assert.equal(await page.count(sel("info")), 1);
   assert.equal(await page.eval(`document.querySelector(${quote(sel("info"))}).hidden`), false, "the info block has something to show");
   assert.match(await page.text(`${sel("info")} h3`), /Не влияет на оценку/);

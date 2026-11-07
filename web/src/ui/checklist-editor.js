@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The checklist editor (R1, R2, R10; routes `checklist` and `editor`, and #/checklists/new/0/edit
 // for a blank checklist). Sections and criteria with every field the contract has: title, wording,
 // answer type, scale steps (value + label), weight, N/A allowed + condition, gross-error kind and
@@ -143,7 +144,7 @@ export function createChecklistEditor(store, api, route) {
     const control = h(
       "select",
       { class: "cqa-sc-select", attrs: { "aria-label": label }, data: { test }, on: { change: () => onChange(control.value) } },
-      options.map(([v, text]) => h("option", { attrs: { value: v }, text })),
+      options.map(([v, text]) => h("option", { verbatim: test === "crit-section", attrs: { value: v }, text })),
     );
     control.value = value;
     return control;
@@ -280,7 +281,7 @@ export function createChecklistEditor(store, api, route) {
     const head = h(
       "div",
       { class: "cqa-ck-head" },
-      h("h1", { class: "cqa-view-title", text: isNew() ? t("editor.titleNew") : source.name }),
+      h("h1", { class: "cqa-view-title", verbatim: !isNew(), text: isNew() ? t("editor.titleNew") : source.name }),
       !isNew() ? h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("editor.apply"), data: { test: "open-apply" }, on: { click: () => openApply() } }) : null,
     );
     const meta = isNew()
@@ -341,7 +342,7 @@ export function createChecklistEditor(store, api, route) {
       if (!ref) continue;
       const kind = !c.id || !known.has(c.id) ? "new" : reworded.has(c.id) ? "reworded" : weightOnly.has(c.id) ? "weight" : null;
       ref.badge.hidden = kind === null;
-      ref.badge.textContent = kind ? t(`editor.badge.${kind}`) : "";
+      setLocalizedText(ref.badge, kind ? t(`editor.badge.${kind}`) : "");
       ref.badge.className = `cqa-tag ${kind === "new" ? "cqa-tag--ok" : kind === "reworded" ? "cqa-tag--mid" : "cqa-tag--out"}`;
       for (const e of ref.errs.values()) e.hidden = true;
     }
@@ -352,7 +353,7 @@ export function createChecklistEditor(store, api, route) {
       const match = /^criteria\.(\d+)\.(\w+)$/.exec(path);
       const target = match ? refs.cards.get(draft.criteria[Number(match[1])]?._key)?.errs.get(match[2]) : path === "name" ? refs.nameError : refs.global;
       if (!target) continue;
-      target.textContent = message;
+      setLocalizedText(target, message);
       target.hidden = false;
     }
 
@@ -370,7 +371,7 @@ export function createChecklistEditor(store, api, route) {
               h(
                 "span",
                 { class: "cqa-ed-removed-item" },
-                h("span", { class: ["cqa-tag", "cqa-tag--bad"], text: c.title }),
+                h("span", { class: ["cqa-tag", "cqa-tag--bad"], verbatim: true, text: c.title }),
                 h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.restore"), data: { test: "restore-criterion" }, on: { click: () => restore(c.id) } }),
               ),
             ),
@@ -378,10 +379,10 @@ export function createChecklistEditor(store, api, route) {
         : "",
     );
 
-    refs.diff.textContent = t("editor.diff", { added: diff.added.length, removed: diff.removed.length, reworded: diff.reworded.length, weight: diff.weightOnly.length });
-    refs.count.textContent = errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "";
+    setLocalizedText(refs.diff, t("editor.diff", { added: diff.added.length, removed: diff.removed.length, reworded: diff.reworded.length, weight: diff.weightOnly.length }));
+    setLocalizedText(refs.count, errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "");
     refs.count.hidden = errors.length === 0;
-    refs.save.textContent = t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion");
+    setLocalizedText(refs.save, t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion"));
     refs.save.disabled = view.saving || errors.length > 0;
   }
 

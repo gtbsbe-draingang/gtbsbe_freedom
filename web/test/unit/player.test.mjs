@@ -17,9 +17,9 @@ describe("startTimes", () => {
     assert.deepEqual(starts, [1.5, 7, null, 26.4]);
   });
 
-  test("without audio_offsets (absent or empty), the transcript's own times count from the first line", () => {
-    assert.deepEqual(startTimes({ transcript }), [0, 5, null, 20]);
-    assert.deepEqual(startTimes({ transcript, audio_offsets: [] }), [0, 5, null, 20]);
+  test("without audio_offsets (absent or empty), the transcript's own times, moved from each line's end to its start", () => {
+    assert.deepEqual(startTimes({ transcript }), [0, 4.4, null, 19.4]);
+    assert.deepEqual(startTimes({ transcript, audio_offsets: [] }), [0, 4.4, null, 19.4]);
   });
 
   test("offsets outside the transcript or not numbers are ignored", () => {
@@ -52,5 +52,48 @@ describe("playingIndex: start ≤ t < the next start", () => {
 
   test("times out of order are read by value, not by position", () => {
     assert.equal(playingIndex([0, 10, 5], 7), 2);
+  });
+});
+
+describe("startTimes without audio_offsets: the recording's clock", () => {
+  const at = (s) => `2026-11-07T10:${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}+05:00`;
+  const line = (s, speaker, text) => ({ timestamp: at(s), speaker, text });
+
+  test("the recording starts at its system event; earlier lines have no start", () => {
+    const transcript = [line(0, "bot", "a"), line(30, "system", "Запись и транскрибирование запущены."), line(40, "client", "b")];
+    assert.deepEqual(startTimes({ transcript, audio_offsets: [] }), [null, 0, 9.4]);
+  });
+
+  test("a paused stretch is cut; lines said during it have no start", () => {
+    const transcript = [
+      line(0, "operator", "a"),
+      line(50, "system", "Запись и транскрибирование приостановлены."),
+      line(55, "client", "card number"),
+      line(65, "system", "Запись и транскрибирование возобновлены."),
+      line(70, "operator", "b"),
+    ];
+    assert.deepEqual(startTimes({ transcript }), [0, 50, null, 50, 54.4]);
+  });
+
+  test("Kazakh start event, and a pause never resumed ends the recording", () => {
+    const transcript = [
+      line(0, "bot", "a"),
+      line(5, "system", "Жазу және транскрипция басталды."),
+      line(9, "system", "Recording paused"),
+      line(12, "client", "b"),
+    ];
+    assert.deepEqual(startTimes({ transcript }), [null, 0, null, null]);
+  });
+
+  test("a timestamp is where the line ends: it starts its length (13 chars a second) earlier", () => {
+    const words = "x".repeat(65); // 5 s
+    assert.deepEqual(startTimes({ transcript: [line(0, "client", "a"), line(30, "operator", words)] }), [0, 25]);
+    assert.deepEqual(startTimes({ transcript: [line(0, "client", "a"), line(40, "client", "x".repeat(1000))] }), [0, 20]); // 20 s at most
+  });
+
+  test("a line never starts before the previous one ended, less 0.3 s; a duplicate has no start", () => {
+    const long = "x".repeat(130); // 10 s
+    const transcript = [line(0, "client", "a"), line(8, "operator", "b"), line(12, "client", long), { ...line(12, "client", long), duplicate: true }];
+    assert.deepEqual(startTimes({ transcript }), [0, 7.4, 7.7, null]);
   });
 });

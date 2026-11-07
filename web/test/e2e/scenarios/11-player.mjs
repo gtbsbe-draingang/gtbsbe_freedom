@@ -36,20 +36,44 @@ export async function run(page) {
   await open(page, CALL);
   await page.waitFor(sel("transcript-msgs"), 8000);
   await page.waitFor(AUDIO, 5000);
-  assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).hasAttribute("controls")`), true, "native controls");
+  assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).hasAttribute("controls")`), false, "custom waveform controls");
   assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).getAttribute("preload")`), "metadata");
   await until(page, `document.querySelector(${quote(AUDIO)}).readyState >= 1`, "the recording's metadata", 5000);
+  await until(page, `document.querySelector('[data-test="player"]')?.getAttribute('data-waveform') === 'ready'`, "the decoded waveform", 15000);
+  assert.equal(await page.count(sel("waveform-track")), 2, "client and operator rows");
+  assert.equal(await page.count(".cqa-wave-bar"), 440, "real decoded envelope on both rows");
+  assert.equal(await page.eval(`document.querySelectorAll('.cqa-wave-bar[height="2"]').length < 440`), true, "recording contains non-silent waveform bars");
+  // Playback controls and timeline navigation stay linked to the same recording.
+  await page.click(sel("player-play"));
+  await until(page, `!document.querySelector(${quote(AUDIO)}).paused && document.querySelector(${quote(AUDIO)}).currentTime > 0.1`, "playback");
+  await page.click(sel("player-play"));
+  assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).paused`), true);
+  await page.click(sel("player-mute"));
+  assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).muted`), true);
+  await page.click(sel("player-mute"));
+  await page.eval(`(() => {const speed=document.querySelector('[data-test="player-speed"]');speed.value='1.5';speed.dispatchEvent(new Event('change'));})()`);
+  assert.equal(await page.eval(`document.querySelector(${quote(AUDIO)}).playbackRate`), 1.5);
+  // A real pointer click in the middle of the first waveform seeks to the middle of the call.
+  await page.click(sel("waveform-track"));
+  await until(page, `Math.abs(document.querySelector(${quote(AUDIO)}).currentTime - document.querySelector(${quote(AUDIO)}).duration / 2) < 1`, "waveform pointer seek");
+  const beforeKeyboard = await page.eval(`document.querySelector(${quote(AUDIO)}).currentTime`);
+  await page.eval(`document.querySelector('[data-test="waveform-track"]').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}))`);
+  await until(page, `Math.abs(document.querySelector(${quote(AUDIO)}).currentTime - ${beforeKeyboard + 5}) < 1`, "waveform keyboard seek");
+  assert.ok(await page.count(".cqa-wave-selection:not([hidden])") > 0, "current transcript turn is highlighted");
   const at = await page.eval(`window.__cqaTest.api.getConversation(${quote(CALL)}).then((c) => Object.fromEntries(c.audio_offsets.map((o) => [o.message_index, o.seconds])))`);
 
-  // ---- clicking the time of message 10 seeks to it ----
-  await page.eval(`document.querySelector(${quote(row(10))}).scrollIntoView({ block: "center" })`);
+  // Choose a recorded line: #85 correctly excludes message 10, which is inside a pause.
+  const messageIndex = Object.keys(at).map(Number).find((index) => index >= 10);
+  assert.ok(Number.isInteger(messageIndex), "there is a recorded line after the pause");
+  // ---- clicking a recorded line's time seeks to it ----
+  await page.eval(`document.querySelector(${quote(row(messageIndex))}).scrollIntoView({ block: "center" })`);
   await page.sleep(100);
-  await page.click(`${row(10)} ${sel("msg-time")}`);
-  await until(page, `Math.abs(document.querySelector(${quote(AUDIO)}).currentTime - ${at[10]}) < 0.5`, "the seek to message 10");
+  await page.click(`${row(messageIndex)} ${sel("msg-time")}`);
+  await until(page, `Math.abs(document.querySelector(${quote(AUDIO)}).currentTime - ${at[messageIndex]}) < 0.5`, "the seek to the recorded line");
 
   // ---- timeupdate marks the line being played ----
   await page.eval(`document.querySelector(${quote(AUDIO)}).dispatchEvent(new Event("timeupdate"))`);
-  assert.deepEqual(await playing(page), [10], "message 10 is the line being played, and the only one");
+  assert.deepEqual(await playing(page), [messageIndex], "the recorded line is playing, and is the only one");
 
   // ---- an evidence link (focusMessage) seeks too ----
   assert.equal(await page.eval(`window.__cqaTest.transcript.focusMessage(5)`), true);
@@ -73,6 +97,7 @@ export async function run(page) {
   assert.equal(await page.eval(`document.querySelector(${quote(sel("group-id"))}).value`), "CTRL", "the loader opens on this call's group");
   await page.click(sel("loader-close"));
 
+  await page.eval(`window.__cqaTest.api.getAudioWaveform = async () => { throw new Error('waveform unavailable'); }`);
   // ---- lines before the recording starts (no audio offset) show the dialogue's clock, not a raw stamp ----
   await page.eval(`(() => {
     const api = window.__cqaTest.api;
@@ -81,6 +106,8 @@ export async function run(page) {
   })()`);
   await open(page, CALL);
   await page.waitFor(AUDIO, 5000);
+  await until(page, `document.querySelector('[data-test="player"]')?.getAttribute('data-waveform') === 'unavailable'`, "waveform fallback");
+  assert.equal(await page.eval(`document.querySelector('[data-test="player-play"]').disabled`), false, "decoding failure keeps playback available");
   await until(page, `document.querySelector(${quote(`${row(0)} ${sel("msg-time")}`)}) !== null`, "the first line's time");
   assert.equal(await page.eval(`document.querySelector(${quote(`${row(0)} ${sel("msg-time")}`)}).tagName`), "SPAN", "a line without a start in the recording does not seek");
   assert.match(await page.text(`${row(0)} ${sel("msg-time")}`), /^\d+:\d\d$/, "it shows m:ss, not the raw timestamp");

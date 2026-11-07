@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The workspace queue: search, filter pills, a language filter and one row per conversation.
 //
 //   createQueue(store, api) -> { el, destroy }   what the shell mounts (panes.queue)
@@ -147,7 +148,7 @@ export function createQueue(store, api) {
   const exportLink = h("a", {
     class: "cqa-q-export",
     attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
-    data: { test: "queue-export" },
+    data: { test: "export-csv" },
     on: {
       click: (event) => {
         try {
@@ -170,7 +171,7 @@ export function createQueue(store, api) {
     { class: "cqa-q-controls" },
     pillBar,
     h("div", { class: "cqa-q-sub" }, groupSelect, language),
-    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink),
+    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), h("span", { data: { test: "queue-export" } }, exportLink)),
   );
   const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
   const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
@@ -210,7 +211,7 @@ export function createQueue(store, api) {
       view.group = "";
       if ((store.get().queueGroup ?? "") !== "") store.set({ queueGroup: "" });
     }
-    groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+    groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, verbatim:true, text: g })));
     groupSelect.value = view.group;
     groupSelect.hidden = groups.length < 2;
   }
@@ -295,7 +296,7 @@ export function createQueue(store, api) {
     if (flags?.needs_review) tags.push(tag("out", t("queue.tag.needsReview"), { attrs: { title: t("queue.tag.needsReviewTitle") }, data: { test: "queue-tag-review" } }));
 
     const scoreTitle = flags ? (typeof flags.total === "number" ? null : t("queue.score.notCalculated")) : t("queue.score.none");
-    const topic = h("span", { class: "cqa-q-topic", data: { test: "queue-topic" } });
+    const topic = h("span", { class: "cqa-q-topic", verbatim:true, data: { test: "queue-topic" } });
     const check = h("input", {
       class: "cqa-q-check",
       attrs: { type: "checkbox", "aria-label": t("queue.select", { id: item.conversation_id }) },
@@ -305,14 +306,14 @@ export function createQueue(store, api) {
     const link = h(
       "a",
       { class: "cqa-q-link", attrs: { href: href("workspace", { id: item.id }) }, on: { click: closeDrawer } },
-      h("b", { class: "cqa-q-id", text: item.conversation_id }),
+      h("b", { class: "cqa-q-id", verbatim:true, text: item.conversation_id }),
       h("span", { class: ["cqa-q-score", "num", flags && typeof flags.total === "number" ? "" : "is-none"], text: scoreText(flags), attrs: { title: scoreTitle }, data: { test: "queue-score" } }),
       topic,
       h(
         "span",
         { class: "cqa-q-meta" },
-        view.groups ? tag("out", item.group_id, { attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
-        tag("out", item.language, { attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
+        view.groups ? tag("out", item.group_id, { verbatim:true, attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
+        tag("out", item.language, { verbatim:true, attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
         h("span", { class: "cqa-q-channel", text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }),
         tags,
       ),
@@ -342,7 +343,7 @@ export function createQueue(store, api) {
 
   function paintTopic(row) {
     const topic = topicOf(row.item);
-    row.topic.textContent = topic !== "" ? topic : (firstLines.get(row.item.id) ?? "");
+    setLocalizedText(row.topic, topic !== "" ? topic : (firstLines.get(row.item.id) ?? ""));
   }
 
   function paintCurrent(row) {
@@ -474,7 +475,7 @@ export function createQueue(store, api) {
       const q = queryText();
       const base = view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, q));
       for (const pill of pills) {
-        pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
+        setLocalizedText(pill.count, String(base.filter(MATCHES[pill.name]).length));
         pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
         pill.button.classList.toggle("is-on", pill.name === view.filter);
       }
@@ -489,10 +490,10 @@ export function createQueue(store, api) {
           return row.el;
         }),
       );
-      summary.textContent = t("queue.shown", { shown: shown.length, total: view.items.length });
+      setLocalizedText(summary, t("queue.shown", { shown: shown.length, total: view.items.length }));
     } else {
       clear(list);
-      summary.textContent = "";
+      setLocalizedText(summary, "");
     }
     paintSelectAll(shown);
 
