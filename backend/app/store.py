@@ -20,11 +20,16 @@ jobs (the whole `Job` as JSON, items included, plus the checklist version and ro
 Every status change of a job item is one write transaction together with its evaluation, so the
 two never disagree and `GET /jobs/{id}` shows progress as it happens.
 
+Appeals (app/appeals.py): one row per appeal, the whole `Appeal` as JSON plus the columns filtered
+on, with the criterion fingerprint and graded transcript hash that carry-forward matches on. A
+partial unique index keeps at most one open appeal per criterion per evaluation.
+
 Reads for the UI's lists (`list_conversations`, `list_evaluations`, `find_evaluations`,
-`count_open_appeals`): each is one query (or one per call), so the queue costs the same for ten
-conversations as for a thousand.
+`count_open_appeals`, `conversation_keys`): each is one query (or one per call), so the queue costs
+the same for ten conversations as for a thousand.
 """
 
+import json
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -34,6 +39,7 @@ from typing import Literal
 from app.db import connect, register_migration
 from app.errors import ApiError
 from app.models import (
+    Appeal,
     AudioOffset,
     ChecklistVersion,
     Conversation,
@@ -44,6 +50,7 @@ from app.models import (
     JobRetry,
     Judgment,
     Role,
+    SecondOpinion,
     VoiceMeasurement,
 )
 from app.transcript import transcript_hash
@@ -123,6 +130,28 @@ register_migration(
         created_at   TEXT NOT NULL
     );
     CREATE INDEX jobs_status ON jobs (status);
+    """,
+)
+
+register_migration(
+    "b_006_appeals",
+    """
+    CREATE TABLE appeals (
+        id              TEXT PRIMARY KEY,
+        evaluation_id   TEXT NOT NULL,
+        conversation    TEXT NOT NULL,
+        criterion_id    TEXT NOT NULL,
+        fingerprint     TEXT NOT NULL,
+        transcript_hash TEXT NOT NULL,
+        status          TEXT NOT NULL,
+        json            TEXT NOT NULL,
+        created_at      TEXT NOT NULL,
+        decided_at      TEXT
+    );
+    CREATE UNIQUE INDEX appeals_one_open ON appeals (evaluation_id, criterion_id) WHERE status = 'open';
+    CREATE INDEX appeals_evaluation ON appeals (evaluation_id, status);
+    CREATE INDEX appeals_carry ON appeals (conversation, transcript_hash, status, decided_at);
+    CREATE INDEX appeals_created ON appeals (created_at);
     """,
 )
 
@@ -298,6 +327,24 @@ def _mentions(conv: Conversation, needle: str) -> bool:
     return any(needle in message.text.casefold() for message in conv.transcript)
 
 
+def conversation_keys(conversations: list[str]) -> dict[str, tuple[str, str]]:
+    """`{conversation id: (group_id, conversation_id)}` for the stored conversations among those
+    given; an id that is not stored is absent. One query on the key columns (no transcripts are
+    read), however many ids: they travel as one JSON array parameter."""
+    if not conversations:
+        return {}
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT id, group_id, conversation_id FROM conversations "
+            "WHERE id IN (SELECT value FROM json_each(?))",
+            (json.dumps(conversations),),
+        ).fetchall()
+    finally:
+        conn.close()
+    return {row["id"]: (row["group_id"], row["conversation_id"]) for row in rows}
+
+
 def get_audio_url(conversation: str) -> str | None:
     """The organisers' signed audio URL (private: never send it to the UI, never log it)."""
     conn = connect()
@@ -467,22 +514,46 @@ def update_conversation_info(conversation: str, info: DialogInfo, expected_hash:
 
 
 def mark_conversation_evaluated(conversation: str, expected_hash: str) -> bool:
-    """A done evaluation: status "new" becomes "evaluated". "disputed" stays (open appeals are
-    still open), and nothing changes when the transcript is no longer the evaluated one."""
+    """A done evaluation: the status becomes "disputed" while any appeal on the conversation's
+    evaluations is open, else "evaluated". Nothing changes when the transcript is no longer the
+    evaluated one. True when the status was written."""
     with write_transaction() as conn:
         row = conn.execute(
-            "SELECT conversation_json, transcript_hash FROM conversations WHERE id = ?", (conversation,)
+            "SELECT transcript_hash FROM conversations WHERE id = ?", (conversation,)
         ).fetchone()
         if row is None or row["transcript_hash"] != expected_hash:
             return False
-        stored = _read_conversation(row["conversation_json"])
-        if stored.status != "new":
-            return False
-        conn.execute(
-            "UPDATE conversations SET conversation_json = ?, updated_at = ? WHERE id = ?",
-            (stored.model_copy(update={"status": "evaluated"}).model_dump_json(), _stamp(_now()), conversation),
-        )
+        status = "disputed" if _open_appeals_on(conn, conversation) else "evaluated"
+        return _set_conversation_status(conn, conversation, status)
+
+
+def _set_conversation_status(conn: sqlite3.Connection, conversation: str, status: str) -> bool:
+    """Write the conversation's status (no-op when unknown or already `status`). True when written."""
+    row = conn.execute(
+        "SELECT conversation_json FROM conversations WHERE id = ?", (conversation,)
+    ).fetchone()
+    if row is None:
+        return False
+    stored = _read_conversation(row["conversation_json"])
+    if stored.status == status:
+        return False
+    conn.execute(
+        "UPDATE conversations SET conversation_json = ?, updated_at = ? WHERE id = ?",
+        (stored.model_copy(update={"status": status}).model_dump_json(), _stamp(_now()), conversation),
+    )
     return True
+
+
+def get_transcript_hash(conversation: str) -> str | None:
+    """The hash of the conversation's stored transcript, or None for an unknown conversation."""
+    conn = connect()
+    try:
+        row = conn.execute(
+            "SELECT transcript_hash FROM conversations WHERE id = ?", (conversation,)
+        ).fetchone()
+    finally:
+        conn.close()
+    return None if row is None else row["transcript_hash"]
 
 
 # --- judgment cache --------------------------------------------------------------------------
@@ -604,11 +675,34 @@ def find_evaluations(conversation: str | None = None, checklist_id: str | None =
 
 def count_open_appeals(evaluation_ids: list[str]) -> dict[str, int]:
     """The number of open appeals of each evaluation, as `{evaluation id: count}` with an entry for
-    every id given. A batch, so the queue asks once for all of its evaluations.
+    every id given (0 when it has none). One query, however many ids: they travel as one JSON
+    array parameter, so SQLite's limit on bound parameters never applies."""
+    counts = dict.fromkeys(evaluation_ids, 0)
+    if not counts:
+        return counts
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT evaluation_id, COUNT(*) AS n FROM appeals "
+            "WHERE status = 'open' AND evaluation_id IN (SELECT value FROM json_each(?)) "
+            "GROUP BY evaluation_id",
+            (json.dumps(list(counts)),),
+        ).fetchall()
+    finally:
+        conn.close()
+    for row in rows:
+        counts[row["evaluation_id"]] = row["n"]
+    return counts
 
-    There is no appeals table yet, so every count is 0 for now; the appeals task (#12) gives this
-    function a real query, and callers do not change."""
-    return {evaluation_id: 0 for evaluation_id in evaluation_ids}
+
+def write_evaluation(conn: sqlite3.Connection, ev: Evaluation) -> None:
+    """Replace a stored evaluation (status and JSON) inside the caller's transaction."""
+    _write_evaluation(conn, ev)
+
+
+def read_evaluation(conn: sqlite3.Connection, evaluation_id: str) -> Evaluation | None:
+    """An evaluation read on the caller's connection (inside its transaction)."""
+    return _read_evaluation(conn, evaluation_id)
 
 
 def _set_evaluation_status(conn: sqlite3.Connection, evaluation_id: str | None, status: str) -> None:
@@ -805,4 +899,222 @@ def fail_interrupted() -> int:
             "SELECT id FROM evaluations WHERE status IN ('queued', 'running')"
         ).fetchall():
             _set_evaluation_status(conn, row["id"], "failed")
+    return changed
+
+
+# --- appeals ---------------------------------------------------------------------------------
+#
+# One row per appeal: the whole `Appeal` as JSON plus the columns filtered on. `fingerprint` (of
+# the appealed criterion in the evaluation's checklist version) and `transcript_hash` (of the
+# transcript the evaluation graded) decide whether a decision carries into a later evaluation.
+# The partial unique index `appeals_one_open` keeps at most one open appeal per criterion per
+# evaluation, whatever the number of writers.
+
+
+class AppealAlreadyOpen(Exception):
+    """An open appeal on this criterion of this evaluation already exists."""
+
+
+def _stamp_precise(moment: datetime) -> str:
+    # Microseconds always written, so the text sorts in time order.
+    return moment.astimezone(UTC).isoformat(timespec="microseconds")
+
+
+def _read_appeal_row(row: sqlite3.Row) -> Appeal:
+    return Appeal.model_validate_json(row["json"])
+
+
+def insert_appeal(
+    appeal: Appeal, *, fingerprint: str, transcript_hash: str, conn: sqlite3.Connection | None = None
+) -> Appeal:
+    """Store a new appeal. Raises AppealAlreadyOpen when it is open and the same criterion of the
+    same evaluation already has an open one (the database enforces it)."""
+    if conn is None:
+        with write_transaction() as own:
+            return insert_appeal(appeal, fingerprint=fingerprint, transcript_hash=transcript_hash, conn=own)
+    try:
+        conn.execute(
+            "INSERT INTO appeals (id, evaluation_id, conversation, criterion_id, fingerprint, "
+            "transcript_hash, status, json, created_at, decided_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                appeal.id, appeal.evaluation_id, appeal.conversation, appeal.criterion_id, fingerprint,
+                transcript_hash, appeal.status, appeal.model_dump_json(), _stamp_precise(appeal.created_at),
+                _stamp_precise(appeal.decision.decided_at) if appeal.decision else None,
+            ),
+        )  # fmt: skip
+    except sqlite3.IntegrityError as exc:
+        if "appeals.evaluation_id" in str(exc) and appeal.status == "open":
+            raise AppealAlreadyOpen() from None
+        raise
+    return appeal
+
+
+def has_open_appeal(conn: sqlite3.Connection, evaluation_id: str, criterion_id: str) -> bool:
+    return (
+        conn.execute(
+            "SELECT 1 FROM appeals WHERE evaluation_id = ? AND criterion_id = ? AND status = 'open'",
+            (evaluation_id, criterion_id),
+        ).fetchone()
+        is not None
+    )
+
+
+def update_appeal(conn: sqlite3.Connection, appeal: Appeal) -> None:
+    """Replace a stored appeal (status, decision time and JSON) inside the caller's transaction."""
+    conn.execute(
+        "UPDATE appeals SET status = ?, json = ?, decided_at = ? WHERE id = ?",
+        (
+            appeal.status, appeal.model_dump_json(),
+            _stamp_precise(appeal.decision.decided_at) if appeal.decision else None, appeal.id,
+        ),
+    )  # fmt: skip
+
+
+def read_appeal(conn: sqlite3.Connection, appeal_id: str) -> Appeal | None:
+    row = conn.execute("SELECT json FROM appeals WHERE id = ?", (appeal_id,)).fetchone()
+    return None if row is None else _read_appeal_row(row)
+
+
+def get_appeal(appeal_id: str) -> Appeal | None:
+    conn = connect()
+    try:
+        return read_appeal(conn, appeal_id)
+    finally:
+        conn.close()
+
+
+def list_appeals(
+    status: str | None = None, *, evaluation_id: str | None = None, conversation: str | None = None
+) -> list[Appeal]:
+    """Appeals that match every filter given (exact; None or "" is no filter), newest first."""
+    clauses: list[str] = []
+    args: list[str] = []
+    for column, value in (("status", status), ("evaluation_id", evaluation_id), ("conversation", conversation)):
+        if value:
+            clauses.append(f"{column} = ?")
+            args.append(value)
+    where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+    conn = connect()
+    try:
+        rows = conn.execute(
+            f"SELECT json FROM appeals{where} ORDER BY created_at DESC, rowid DESC", args
+        ).fetchall()
+    finally:
+        conn.close()
+    return [_read_appeal_row(row) for row in rows]
+
+
+def decided_appeals(
+    evaluation_id: str, appeal_ids: list[str], *, conn: sqlite3.Connection | None = None
+) -> tuple[dict[str, Appeal], dict[str, Appeal]]:
+    """The decided appeals an evaluation's final answers depend on, in one query: its own, by
+    criterion id (the latest decision when a criterion was decided more than once), and the ones
+    named by `appeal_ids` (its carried decisions), by appeal id."""
+    if conn is None:
+        own_conn = connect()
+        try:
+            return decided_appeals(evaluation_id, appeal_ids, conn=own_conn)
+        finally:
+            own_conn.close()
+    rows = conn.execute(
+        "SELECT json, evaluation_id FROM appeals WHERE status = 'decided' "
+        "AND (evaluation_id = ? OR id IN (SELECT value FROM json_each(?))) "
+        "ORDER BY decided_at, rowid",
+        (evaluation_id, json.dumps(appeal_ids)),
+    ).fetchall()
+    own: dict[str, Appeal] = {}
+    named: dict[str, Appeal] = {}
+    wanted = set(appeal_ids)
+    for row in rows:
+        appeal = _read_appeal_row(row)
+        if row["evaluation_id"] == evaluation_id:
+            own[appeal.criterion_id] = appeal  # ascending: the latest wins
+        if appeal.id in wanted:
+            named[appeal.id] = appeal
+    return own, named
+
+
+def latest_decisions(
+    conversation: str, transcript_hash: str, fingerprints: list[str]
+) -> dict[str, Appeal]:
+    """For each fingerprint, the most recently decided appeal (by `decided_at`) of this
+    conversation and transcript on a criterion with that fingerprint. One query."""
+    if not fingerprints:
+        return {}
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT json, fingerprint FROM appeals WHERE status = 'decided' AND conversation = ? "
+            "AND transcript_hash = ? AND fingerprint IN (SELECT value FROM json_each(?)) "
+            "ORDER BY decided_at DESC, rowid DESC",
+            (conversation, transcript_hash, json.dumps(list(dict.fromkeys(fingerprints)))),
+        ).fetchall()
+    finally:
+        conn.close()
+    latest: dict[str, Appeal] = {}
+    for row in rows:
+        latest.setdefault(row["fingerprint"], _read_appeal_row(row))
+    return latest
+
+
+def _open_appeals_on(conn: sqlite3.Connection, conversation: str) -> int:
+    row = conn.execute(
+        "SELECT COUNT(*) AS n FROM appeals WHERE conversation = ? AND status = 'open'", (conversation,)
+    ).fetchone()
+    return int(row["n"])
+
+
+def open_appeals_on(conn: sqlite3.Connection, conversation: str) -> int:
+    """The open appeals on any evaluation of the conversation (inside the caller's transaction)."""
+    return _open_appeals_on(conn, conversation)
+
+
+def set_conversation_status(conn: sqlite3.Connection, conversation: str, status: str) -> bool:
+    """Write the conversation's status inside the caller's transaction. True when it changed."""
+    return _set_conversation_status(conn, conversation, status)
+
+
+def settle_dispute(conn: sqlite3.Connection, conversation: str) -> bool:
+    """A "disputed" conversation with no open appeal left becomes "evaluated" (inside the caller's
+    transaction). Any other status stays: "new" means the transcript was re-imported since, so it
+    has no evaluation of its current text. True when it changed."""
+    if _open_appeals_on(conn, conversation):
+        return False
+    row = conn.execute(
+        "SELECT conversation_json FROM conversations WHERE id = ?", (conversation,)
+    ).fetchone()
+    if row is None or _read_conversation(row["conversation_json"]).status != "disputed":
+        return False
+    return _set_conversation_status(conn, conversation, "evaluated")
+
+
+def set_second_opinion(appeal_id: str, opinion: SecondOpinion | None) -> Appeal | None:
+    """Store the outcome of an appeal's second opinion: `done` with the opinion, or `unavailable`
+    when it is None. Only a `pending` second opinion is written; returns the appeal as stored, or
+    None when nothing was written."""
+    with write_transaction() as conn:
+        appeal = read_appeal(conn, appeal_id)
+        if appeal is None or appeal.second_opinion_status != "pending":
+            return None
+        update = (
+            {"second_opinion": opinion, "second_opinion_status": "done"}
+            if opinion is not None
+            else {"second_opinion": None, "second_opinion_status": "unavailable"}
+        )
+        appeal = appeal.model_copy(update=update)
+        update_appeal(conn, appeal)
+        return appeal
+
+
+def fail_pending_second_opinions() -> int:
+    """At startup no second opinion is being asked for: every `pending` one becomes `unavailable`
+    (its task died with the previous process). Returns the number changed."""
+    changed = 0
+    with write_transaction() as conn:
+        for row in conn.execute(
+            "SELECT json FROM appeals WHERE json_extract(json, '$.second_opinion_status') = 'pending'"
+        ).fetchall():
+            appeal = _read_appeal_row(row).model_copy(update={"second_opinion_status": "unavailable"})
+            update_appeal(conn, appeal)
+            changed += 1
     return changed
