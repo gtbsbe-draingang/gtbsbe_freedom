@@ -9,3 +9,6 @@ graphify-out/
 # Build and tooling
 node_modules/
 .DS_Store
+
+# Stream D: reference-label batches stay local
+data/reference/batches/

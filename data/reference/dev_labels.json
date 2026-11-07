@@ -1,4434 +1,4439 @@
 {
- "checklist_id": "official",
+ "checklist_id": "official-chat",
  "version": 1,
- "source": "Drafted by Claude Opus 5.5 in Claude Code from the DEV transcripts; our references, not the organisers' ground truth. Rules in data/reference/README.md.",
  "labels": [
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Maya from support. A login stays on record after the'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Maya from support. A login stays on record after...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'You're welcome. Take care!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «You're welcome. Take care!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-001",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Noah. Open tradernet.global for the browser version,'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Noah. Open tradernet.global for the browser versi...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] 'Glad you got in. Have a good day!': acknowledgement, not a summary",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Glad you got in. Have a good day!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-002",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Eva. Open the account area, labelled «Кабинет» in th'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Eva. Open the account area, labelled «Кабинет» in...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Great. Thanks for reaching out, and goodbye!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Great. Thanks for reaching out, and goodbye!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-003",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Alex. Open Reports and Documents, choose Broker Repo'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Alex. Open Reports and Documents, choose Broker R...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'You're welcome. Have a good day!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «You're welcome. Have a good day!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-004",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Lina. In the app, open Menu, then Add Funds, then th'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Lina. In the app, open Menu, then Add Funds, then...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'You're welcome. Goodbye!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «You're welcome. Goodbye!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-005",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hello, I'm Sam. I understand why you'd want to check. We'll '",
+   "note": "Приветствие и имя в первой реплике [#10]: «Hello, I'm Sam. I understand why you'd want to check. We'...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked the currency and the time of the transfer",
+   "note": "Уточнил валюту [#13] и время перевода [#18].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "yes",
    "kinds": [],
-   "note": "identity event at line 12 before the account check",
+   "note": "Личность подтверждена [#12] до проверки счёта.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#29].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "'I understand why you'd want to check.'",
+   "note": "Отреагировал на беспокойство [#10]: «I understand why you'd want to check.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "'We'll follow up here about the transfer. Goodbye!'",
+   "note": "Итог и прощание [#29]: «We'll follow up here about the transfer. Goodbye!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-006",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Chris. Go to Menu, Orders, Personal Details, then Ch'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Chris. Go to Menu, Orders, Personal Details, then...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "path given; 'Can I submit the withdrawal right after this?' never answered",
+   "note": "Путь дан [#9]; вопрос, можно ли сразу подать вывод [#10], остался без ответа.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "the follow up question was brushed off",
+   "note": "Повторный вопрос клиента [#10] проигнорирован.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "closing dismisses the open question: 'That's where the profile request is. ... Bye.'",
+   "note": "Закрытие отмахивается от открытого вопроса [#11]: «That's where the profile request is.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-007",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Sofia. Enter the ticker in the search bar under Quot'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Hi, I'm Sofia. Enter the ticker in the search bar under Q...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#19].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Of course. Have a good day!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#19]: «Of course. Have a good day!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-008",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Leo. Open Order Settings and untick Use Margin befor'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Leo. Open Order Settings and untick Use Margin be...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] connection lost 18 s after the client's thanks",
+   "note": "N/A: соединение прервано [#11] через 18 с после благодарности клиента.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-009",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Nina. Money in the D account can't be used directly '",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Nina. Money in the D account can't be used direct...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'You're welcome. Bye!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «You're welcome. Bye!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-010",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Julia. Yes, the 1042-S form is provided in English.'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Julia. Yes, the 1042-S form is provided in English.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Happy to help. Goodbye!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Happy to help. Goodbye!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-011",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hello, I'm Daniel. On the Freedom Holding Corp. website, go '",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hello, I'm Daniel. On the Freedom Holding Corp. website,...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'You're welcome. Have a good day!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «You're welcome. Have a good day!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-en-012",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Adrian. Open Quotes and search by the bond's name or'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Adrian. Open Quotes and search by the bond's name...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "agent closed the chat with no goodbye (line 13)",
+   "note": "Оператор закрыл чат без прощания [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-013",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "yes",
    "kinds": [
-    "outside_paid_service"
+    "paid_service_outside_company"
    ],
-   "note": "'Send me your personal number ... I charge for private advice'",
+   "note": "Платная частная консультация [#11]: «Send me your personal number ... I charge»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Hi, I'm Tyler. I can see a withdrawal restriction on your ac'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Hi, I'm Tyler. I can see a withdrawal restriction on your...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "no",
    "kinds": [],
-   "note": "'I can see a withdrawal restriction on your account.' with no identity event; then 'We can skip that.'",
+   "note": "Ограничение на счёте названо без идентификации [#10], затем «We can skip that.» [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 5
    },
    "kinds": [],
-   "note": "reason never given; only 'I'll send it to the team'",
+   "note": "Причина не названа; только «I'll send it to the team» [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "ignored 'How do you know it's my account?' and 'Will I hear back here?'",
+   "note": "Проигнорировал «How do you know it's my account?» [#11] и «Will I hear back here?» [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client's question went unanswered",
+   "note": "Вопрос клиента [#13] остался без ответа.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "bare 'Goodbye.' in reply to 'Will I hear back here?'",
+   "note": "Только «Goodbye.» [#14] в ответ на вопрос клиента.",
    "disputed": false
   },
   {
    "conversation_id": "p1-en-014",
-   "criterion_id": "08",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#10]: «I can see a withdrawal restriction»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c01",
    "answer": "no",
    "kinds": [],
-   "note": "[08a] disclosure of the client's own account status before identification is scored in 03",
+   "note": "Первая реплика [#9] «Open settings then go back and log in again.»: нет приветствия и имени.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ответил наугад, не спросив приложение или сайт [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Первый совет ошибочен [#9], итоговый ответ верный [#11]: tradernet.global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось переспросить «Settings where?» [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Bye.»",
    "disputed": true
   },
   {
    "conversation_id": "p1-en-015",
-   "criterion_id": "01",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "first reply 'Open settings then go back and log in again.': no greeting, no name",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "02",
-   "answer": "no",
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c01",
+   "answer": "yes",
    "kinds": [],
-   "note": "answered on a guess without asking app or website",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, менің атым Аружан. Веб-нұсқада «Кабинет» б...»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "03",
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "04",
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "[04a] first advice wrong, final answer correct (tradernet.global)",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "05",
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "06",
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Оқасы жоқ. Сау болыңыз!»",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе! Мен Нұрланмын. «Меню → Пополнить → Перевод...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Жақсы. Күніңіз сәтті өтсін!»",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Сәлеметсіз бе, мен Дана. Ақша көрінбей қалса, алаңдайтыны...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил валюту [#13] и время перевода [#16].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#12] до проверки платежа.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#25].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Отреагировал на беспокойство [#10]: «алаңдайтыныңыз түсінікті»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#25]: «аударымға қатысты жауапты осында жібереміз. Сау болыңыз!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Айбекпін. «Меню → Поручения → Персонал...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Сау болыңыз!»",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Мадина. Профильге кіріңіз де, тапсырма...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Первая подсказка ошибочна [#9] «Профильге кіріңіз», затем точный путь [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to re-ask 'Settings where?'",
+   "note": "Клиенту пришлось поправить расплывчатую подсказку [#10]: «Профильде ондай бөлім жоқ қой»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "07",
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Bye.'",
+   "note": "Закончил «Жақсы.» [#13] без прощания.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-en-015",
-   "criterion_id": "08",
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "01",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, менің атым Аружан. Веб-нұсқада «Кабинет» бөлі'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Әсел. «Отчёт брокера» тармағын ашыңыз....»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "02",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "03",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "04",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "05",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "06",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "07",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Оқасы жоқ. Сау болыңыз!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Көмегім тигеніне қуаныштымын. Сау болыңыз!»",
+   "disputed": true
   },
   {
-   "conversation_id": "p1-kz-001",
-   "criterion_id": "08",
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "01",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе! Мен Нұрланмын. «Меню → Пополнить → Перевод по'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, менің атым Ермек. Бұрын қолданылған логин...»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "02",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "03",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "04",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "05",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "06",
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "07",
-   "answer": "no",
-   "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Жақсы. Күніңіз сәтті өтсін!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-002",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Дана. Ақша көрінбей қалса, алаңдайтыныңыз'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "02",
-   "answer": "yes",
-   "kinds": [],
-   "note": "asked the currency and when the transfer was made",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "03",
-   "answer": "yes",
-   "kinds": [],
-   "note": "identity event at line 12 before the payment check",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "'алаңдайтыныңыз түсінікті'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "07",
-   "answer": "yes",
-   "kinds": [],
-   "note": "'аударымға қатысты жауапты осында жібереміз. Сау болыңыз!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-003",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Айбекпін. «Меню → Поручения → Персональны'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "02",
-   "answer": "na",
-   "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "07",
-   "answer": "no",
-   "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Сау болыңыз!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-004",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Мадина. Профильге кіріңіз де, тапсырмалар'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "02",
-   "answer": "na",
-   "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "[04a] first instruction wrong ('Профильге кіріңіз'), then the exact path",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "06",
-   "answer": {
-    "step": 4
-   },
-   "kinds": [],
-   "note": "client had to correct the vague first instruction: 'Профильде ондай бөлім жоқ қой'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "07",
-   "answer": "no",
-   "kinds": [],
-   "note": "ends with 'Жақсы.': no goodbye",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-005",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Әсел. «Отчёт брокера» тармағын ашыңыз. Өт'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "02",
-   "answer": "na",
-   "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "07",
-   "answer": "no",
-   "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Көмегім тигеніне қуаныштымын. Сау болыңыз!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-006",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-007",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, менің атым Ермек. Бұрын қолданылған логин шот'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "02",
-   "answer": "na",
-   "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-kz-007",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Сау болыңыз!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Сау болыңыз!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-kz-007",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "no",
    "kinds": [],
-   "note": "'Сәлем. Қай сайтқа кірдіңіз?': informal greeting, no name",
+   "note": "Первая реплика [#9] «Сәлем. Қай сайтқа кірдіңіз?»: неформальное приветствие, имени нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "asked for what the client already wrote (Global site)",
+   "note": "Спросил то, что клиент уже написал [#4]: сайт Global.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 7
    },
    "kinds": [],
-   "note": "client had to repeat 'Жоғарыда жаздым ғой'",
+   "note": "Клиенту пришлось повторить «Жоғарыда жаздым ғой» [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "operator never closed; chat ends on the client's thanks with no end event",
+   "note": "Оператор не завершил чат: последняя реплика клиента [#12], события закрытия нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-008",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе! Мен Айсұлумын. Тикерді іздеу жолағына енгізің'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Сәлеметсіз бе! Мен Айсұлумын. Тикерді іздеу жолағына енгі...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#19].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Оқасы жоқ. Сау болыңыз!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#19]: «Оқасы жоқ. Сау болыңыз!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-kz-009",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Алма. Өтінімді жібермей тұрып, «Настройки'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Алма. Өтінімді жібермей тұрып, «Настро...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Сау болыңыз!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Сау болыңыз!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-kz-010",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Саматпын. D-шоттағы қаражат акция сатып а'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Саматпын. D-шоттағы қаражат акция саты...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] connection lost 28 s after the client's 'Жақсы.'",
+   "note": "N/A: соединение прервано [#13] через 28 с после «Жақсы.» клиента [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-011",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Дидармын. Қай облигацияны таңдадыңыз? Тик'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Дидармын. Қай облигацияны таңдадыңыз?...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked which bond and the ticker",
+   "note": "Уточнил облигацию и тикер [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "correct next step: send the ticker and the message for a check",
+   "note": "Корректный следующий шаг [#11]: прислать тикер и текст сообщения для проверки.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "next step and goodbye: 'дайын болғанда осы мәліметтерді жіберіңіз. Сау болыңыз!'",
+   "note": "Следующий шаг и прощание [#13]: «дайын болғанда осы мәліметтерді жіберіңіз. Сау болыңыз!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-012",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Айданамын. «Котировки» бөлімін ашсаңыз, а'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Айданамын. «Котировки» бөлімін ашсаңыз...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "operator closed the chat with no goodbye (line 13)",
+   "note": "Оператор закрыл чат без прощания [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-013",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "yes",
    "kinds": [
-    "outside_paid_service"
+    "paid_service_outside_company"
    ],
-   "note": "'Жеке нөміріңізді қалдырсаңыз ... ақылы түрде айтып беремін'",
+   "note": "Платная частная консультация [#11]: «Жеке нөміріңізді қалдырсаңыз ... ақылы түрде»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Ләззатпын. Иә, 1042-S нысаны ағылшын тілі'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Ләззатпын. Иә, 1042-S нысаны ағылшын т...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "'Иә, ... ағылшын тілінде беріледі' never says plainly that there is no Kazakh version; 'Иә' can read as yes to Kazakh",
+   "note": "«Иә, ... ағылшын тілінде беріледі» [#9]: прямо не сказано, что казахской версии нет; «Иә» читается как «да» на вопрос.",
    "disputed": true
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 7
    },
    "kinds": [],
-   "note": "one noticeable glitch: 'Иә' before 'English only'. If read as confirming the bot, 04 is 20 and 06 is 10",
+   "note": "Один заметный сбой: «Иә» перед «только на английском» [#9]. Если «Иә» подтверждает бота, то c04 = 20, c06 = 10.",
    "disputed": true
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Сау болыңыз!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Сау болыңыз!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-kz-014",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Сәлеметсіз бе, мен Мұратпын. Сіздің шотыңызда ақша шығаруға '",
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Мұратпын. Сіздің шотыңызда ақша шығару...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "no",
    "kinds": [],
-   "note": "account restriction disclosed with no identity event, then 'Қазір растаудың қажеті жоқ'",
+   "note": "Ограничение на счёте названо без идентификации [#9], затем «Қазір растаудың қажеті жоқ» [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 5
    },
    "kinds": [],
-   "note": "reason never given; only 'Оны тексеруге жіберемін'",
+   "note": "Причина не названа; только «Оны тексеруге жіберемін» [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "brushed off the identity concern",
+   "note": "Отмахнулся от опасения клиента о проверке личности [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to ask 'Ал себебі қандай?'",
+   "note": "Клиенту пришлось спросить «Ал себебі қандай?» [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "next step and goodbye: 'Оны тексеруге жіберемін. Сау болыңыз.'",
+   "note": "Следующий шаг и прощание [#13]: «Оны тексеруге жіберемін. Сау болыңыз.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-kz-015",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "[08a] disclosure of the client's own account status before identification is scored in 03",
-   "disputed": true
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#9]: «шотыңызда ақша шығаруға шектеу»",
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Меня зовут Алина. В веб-версии откройте вкладк'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Алина. В веб-версии откройте вкл...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. Хорошего вечера!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Пожалуйста. Хорошего вечера!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-001",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Тимур. Понимаю, что неожиданное изменение та'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Тимур. Понимаю, что неожиданное изменение...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked where the client compared tariff names before answering: 'Где вы сравнивали названия тарифов?'",
+   "note": "Уточнил, где клиент сравнивал тарифы [#9]: «Где вы сравнивали названия тарифов?»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "[03a] identification offered, client declined ('Давайте пока без неё'); nothing account specific was disclosed, so N/A. Alternative reading: yes",
+   "note": "(вопрос 2) Идентификацию предложил [#11], клиент отказался [#12]; данные счёта не раскрыты, поэтому N/A. Другое прочтение: Да.",
    "disputed": true
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#18].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "acknowledged the worry: 'Понимаю, что неожиданное изменение тарифа может беспокоить'",
+   "note": "Отреагировал на беспокойство [#9]: «Понимаю, что неожиданное изменение тарифа может беспокоить»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "next step, offer of help and goodbye: 'начните со сверки дат. Если вопрос останется, напишите нам. До свидания!'",
+   "note": "Следующий шаг, предложение помощи и прощание [#18]: «Если вопрос останется, напишите нам. До свидания!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Добрый день! Я Лера из поддержки. Вы через приложение или ве'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Добрый день! Я Лера из поддержки. Вы через приложение или...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked app or web before answering where the tariff is",
+   "note": "Уточнил приложение или веб [#10] до ответа о тарифе.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "tariff location answered; the commission question ('А комиссию где искать?') was never answered",
+   "note": "Где тариф, ответил [#12]; вопрос о комиссии [#13] остался без ответа.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client re-asked about the commission and got the tariff answer again: 'Название тарифа смотрите там же'",
+   "note": "Клиент переспросил о комиссии [#13] и снова получил ответ про тариф [#14].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "closed with an open question left: 'Название тарифа смотрите там же. Хорошего дня!'",
+   "note": "Закрыл разговор с открытым вопросом [#14]: «Название тарифа смотрите там же. Хорошего дня!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-003",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Артём. Вам нужны реквизиты для пополнения, в'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Артём. Вам нужны реквизиты для пополнения...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Отлично. Хорошего дня!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Отлично. Хорошего дня!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-004",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Добрый день, меня зовут Нина. Сумму комиссии без условий ваш'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день, меня зовут Нина. Сумму комиссии без условий...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "requisites path given after a re-ask; whether the broker charges anything was never said, only 'проверьте комиссию в банке'",
+   "note": "Путь к реквизитам дан после переспроса [#13]; берёт ли комиссию брокер, не сказано, только «проверьте комиссию в банке» [#15].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "vague first instruction 'сверху вниз в меню' made the client re-ask 'В каком меню?'",
+   "note": "Расплывчатое «сверху вниз в меню» [#11] вынудило переспросить «В каком меню?» [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "next step and goodbye: 'Перед переводом проверьте комиссию в банке. До свидания!'",
+   "note": "Следующий шаг и прощание [#15]: «Перед переводом проверьте комиссию в банке. До свидания!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-005",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, меня зовут Роман. Понимаю, что вы переживаете '",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Роман. Понимаю, что вы переживае...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked the transfer currency to add to the case",
+   "note": "Уточнил валюту перевода для обращения [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "yes",
    "kinds": [],
-   "note": "identity event at line 11 before the account check",
+   "note": "Личность подтверждена [#11] до проверки счёта.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "correct next step: passed to specialists with the currency",
+   "note": "Корректный следующий шаг: вопрос передан специалистам с валютой [#12], [#14].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "'Понимаю, что вы переживаете из-за платежа'",
+   "note": "Отреагировал на беспокойство [#9]: «Понимаю, что вы переживаете из-за платежа»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "summary and goodbye: 'Когда по платежу будет ответ, мы сообщим вам в этом чате... До свидания!'",
+   "note": "Итог и прощание [#14]: «Когда по платежу будет ответ, мы сообщим вам в этом чате»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-006",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Дамир. В приложении откройте «Меню → Поручен'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, я Дамир. В приложении откройте «Меню → Пору...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "path to 'Изменение сведений' given; when to retry the withdrawal asked twice, never answered",
+   "note": "Путь к «Изменению сведений» дан [#10]; когда снова подавать вывод, спрошено дважды [#4], [#11], ответа нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client asked again 'сразу заново подавать на вывод?' and was brushed off",
+   "note": "Клиент повторил вопрос [#11], оператор отмахнулся [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "the closing dismisses the open question: 'Путь к обновлению я указал. Хорошего дня!'",
+   "note": "Закрытие отмахивается от открытого вопроса [#12]: «Путь к обновлению я указал. Хорошего дня!»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-007",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Добрый день! Меня зовут Вера. Если поручение ещё в обработке'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день! Меня зовут Вера. Если поручение ещё в обрабо...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. До свидания!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Пожалуйста. До свидания!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-008",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Руслан. Какое сообщение вы видите в приложен'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Руслан. Какое сообщение вы видите в прило...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked what message the app shows",
+   "note": "Уточнил, какое сообщение видно в приложении [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "no",
    "kinds": [],
-   "note": "account restriction disclosed with no identity event: 'на вашем счёте есть ограничение на вывод'; then 'Подтверждение пока не нужно'",
+   "note": "Ограничение на счёте названо без идентификации [#11], затем «Подтверждение пока не нужно» [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 5
    },
    "kinds": [],
-   "note": "reason never given; wrong advice about the app freezing; only 'Передам вопрос на проверку'",
+   "note": "Причина не названа; совет про зависание приложения ошибочен [#13]; только «Передам вопрос на проверку» [#15].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "brushed off the client's identity concern and the question 'почему вывод ограничен'",
+   "note": "Отмахнулся от опасения клиента [#12] и от вопроса «почему вывод ограничен» [#14].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to repeat 'Я спрашиваю, почему вывод ограничен'",
+   "note": "Клиенту пришлось повторить вопрос [#14].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "next step and goodbye: 'Передам вопрос на проверку. До свидания.'",
+   "note": "Следующий шаг и прощание [#15]: «Передам вопрос на проверку. До свидания.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-009",
-   "criterion_id": "08",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#11]: «на вашем счёте есть ограничение на вывод»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, я Соня. Понимаю, что пропавшая строка в пор...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил приложение или веб [#10], затем название бумаги [#15].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#14] до проверки позиции.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#31].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#31]: «Вопрос о позиции передан. Хорошего вечера!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "[08a] disclosure of the client's own account status before identification is scored in 03; alternative reading: confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Я Лиза. В приложении откройте «Меню → Отчёт...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Пожалуйста. Хорошего дня!»",
    "disputed": true
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "01",
-   "answer": "yes",
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c08",
+   "answer": "no",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Соня. Понимаю, что пропавшая строка в портфе'",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "02",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "asked app or web, then the security name",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте. Я Илья. Форма 1042-S предоставляется на анг...»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "03",
-   "answer": "yes",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c02",
+   "answer": "na",
    "kinds": [],
-   "note": "identity event at line 14 before the position check",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "04",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#9].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "05",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "06",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "07",
-   "answer": "yes",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c07",
+   "answer": "na",
    "kinds": [],
-   "note": "'Вопрос о позиции передан. Хорошего вечера!'",
+   "note": "N/A: клиент закончил [#10], через 18 с соединение прервано [#11]; оператор не успел завершить.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-010",
-   "criterion_id": "08",
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "01",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Я Лиза. В приложении откройте «Меню → Отчёты и'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Я Кира. На сайте Freedom Holding Corp. откр...»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "02",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "03",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "04",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "05",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "06",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "07",
-   "answer": "no",
-   "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. Хорошего дня!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-011",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "01",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте. Я Илья. Форма 1042-S предоставляется на англий'",
+   "note": "Итог и прощание [#11]: «Да, нужный раздел в меню для инвесторов. Хорошего дня!»",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "02",
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "Первая реплика [#9] «Привет, где именно ищете?»: неформальное приветствие, имени нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Спросил то, что клиент уже написал [#4]: сайт Freedom Finance Global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "04",
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "05",
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "07",
-   "answer": "na",
-   "kinds": [],
-   "note": "[07b] client ended ('Ок, это всё что хотел узнать') and the connection dropped 18 s later",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-012",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "01",
-   "answer": "yes",
-   "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Я Кира. На сайте Freedom Holding Corp. откройт'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "02",
-   "answer": "na",
-   "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "06",
-   "answer": {
-    "step": 10
-   },
-   "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "07",
-   "answer": "yes",
-   "kinds": [],
-   "note": "recap and goodbye: 'нужный раздел в меню для инвесторов. Хорошего дня!'",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-013",
-   "criterion_id": "08",
-   "answer": "no",
-   "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-014",
-   "criterion_id": "01",
-   "answer": "no",
-   "kinds": [],
-   "note": "'Привет, где именно ищете?': informal greeting, no name",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-014",
-   "criterion_id": "02",
-   "answer": "no",
-   "kinds": [],
-   "note": "asked for what the client already wrote (Freedom Finance Global site)",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-014",
-   "criterion_id": "03",
-   "answer": "na",
-   "kinds": [],
-   "note": "general question; no account data and no protected action",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-014",
-   "criterion_id": "04",
-   "answer": {
-    "step": 20
-   },
-   "kinds": [],
-   "note": "request resolved or a correct next step given",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-014",
-   "criterion_id": "05",
-   "answer": "yes",
-   "kinds": [],
-   "note": "polite; no complaint left unanswered",
-   "disputed": false
-  },
-  {
-   "conversation_id": "p1-ru-014",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 7
    },
    "kinds": [],
-   "note": "client had to repeat 'Я уже писал'; dialog then went on normally",
+   "note": "Клиенту пришлось повторить «Я уже писал» [#10]; дальше разговор шёл нормально.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-014",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye: 'Хорошего дня.'",
-   "disputed": false
+   "note": "(вопрос 1) Только «Хорошего дня.» [#13], без итога и предложения помощи.",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-014",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, меня зовут Дина. Да, использованный ранее логи'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Дина. Да, использованный ранее л...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "summary and goodbye: 'Для регистрации сейчас выберите другой логин. Спасибо за обращение, до свидания!'",
+   "note": "Итог и прощание [#11]: «Для регистрации сейчас выберите другой логин.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-015",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, меня зовут Антон. Переустановите приложение.'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Антон. Переустановите приложение.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "answered on a guess ('Переустановите приложение') without asking where the client logs in",
+   "note": "Ответил наугад «Переустановите приложение» [#9], не спросив, где клиент входит.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "[04a] first advice wrong, final answer correct (tradernet.global)",
+   "note": "Первый совет ошибочен [#9], итоговый ответ верный [#13]: tradernet.global.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to re-ask after 'Переустановите приложение' and 'Ну, тогда сайт.'",
+   "note": "Клиенту пришлось переспрашивать после [#9] и «Ну, тогда сайт.» [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста, до свидания.'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#15]: «Пожалуйста, до свидания.»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-016",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Я Олег. Вы знаете точный тикер нужной бумаги и'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте! Я Олег. Вы знаете точный тикер нужной бумаг...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked whether the client knows the exact ticker",
+   "note": "Уточнил, знает ли клиент точный тикер [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#14].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Рад помочь. Хорошего дня!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#14]: «Рад помочь. Хорошего дня!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-017",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, меня зовут Саша. Сейчас точно биржа отменяет в'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Саша. Сейчас точно биржа отменяе...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "claimed a cause without asking which bond or order",
+   "note": "Назвал причину, не спросив бумагу и приказ [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 0
    },
    "kinds": [],
-   "note": "'точно биржа отменяет ваш приказ' then 'Тогда не знаю': no answer",
+   "note": "«точно биржа отменяет ваш приказ» [#9], затем «Тогда не знаю» [#11]: ответа по существу нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "did not engage with the problem and closed the chat",
+   "note": "Не разобрался в проблеме и закрыл чат [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 0
    },
    "kinds": [],
-   "note": "contradictory replies: certain, then 'Тогда не знаю'",
+   "note": "Противоречивые реплики: уверенный ответ [#9], затем «Тогда не знаю» [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "operator closed the chat with no goodbye (line 12)",
+   "note": "Оператор закрыл чат без прощания [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-018",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Мария. У вас есть тикер нужной бумаги?'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Мария. У вас есть тикер нужной бумаги?»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked whether the client has the ticker",
+   "note": "Уточнил, есть ли у клиента тикер [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. До свидания!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Пожалуйста. До свидания!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-019",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Егор. Пока приказ не отправлен, откройте «На'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Егор. Пока приказ не отправлен, откройте...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. Хорошего дня!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Пожалуйста. Хорошего дня!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-020",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Меня зовут Олеся. Это две разные биржи. Nasdaq'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Олеся. Это две разные биржи. Nas...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Рада помочь. До свидания!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#11]: «Рада помочь. До свидания!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-021",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Кирилл. Скиньте деньги мне на карту, я сам и'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Кирилл. Скиньте деньги мне на карту, я са...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "ignored the request and made a private offer",
+   "note": "Не выяснил запрос, сразу частное предложение [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 0
    },
    "kinds": [],
-   "note": "no consultation; key recommendation is to send money to the operator's card",
+   "note": "Консультации нет; ключевая рекомендация: перевести деньги на карту оператора [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "doubled down after 'Вы серьёзно?'",
+   "note": "Настоял на своём после «Вы серьёзно?» [#10], [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to restate 'Я про консультацию в приложении спрашивал'",
+   "note": "Клиенту пришлось пояснить «Я про консультацию в приложении спрашивал» [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "operator closed the chat with no goodbye (line 13)",
+   "note": "Оператор закрыл чат без прощания [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-022",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "yes",
    "kinds": [
-    "outside_paid_service"
+    "paid_service_outside_company"
    ],
-   "note": "'Скиньте деньги мне на карту, я сам их вложу с выгодой'",
+   "note": "Предложение в обход компании [#9]: «Скиньте деньги мне на карту, я сам их вложу с выгодой»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Марк. Откройте «Котировки». Если знаете назв'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Марк. Откройте «Котировки». Если знаете н...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Хорошо. Всего доброго.'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Хорошо. Всего доброго.»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-023",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "yes",
    "kinds": [
-    "outside_paid_service"
+    "paid_service_outside_company"
    ],
-   "note": "'Можете дать личный номер? ... за плату объясню, какие бумаги взять'",
+   "note": "Платная частная консультация [#11]: «Можете дать личный номер? ... за плату объясню»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Света. Средства на D-счёте напрямую для поку'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Света. Средства на D-счёте напрямую для п...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "said D-account money is not used directly; never said how to move it to the trading account",
+   "note": "Сказал, что деньги D-счёта напрямую не используются [#9]; как перевести их на торговый счёт, не объяснил.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Хорошего дня!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Хорошего дня!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-024",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте! Меня зовут Валерия, поддержка Freedom Broker. '",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Валерия, поддержка Freedom Broke...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked 'С чем помочь?' because the request was missing; N/A is not allowed by its condition here. Alternative reading: N/A",
+   "note": "Спросил «С чем помочь?» [#9], так как запроса не было; N/A по условию не подходит. Другое прочтение: N/A.",
    "disputed": true
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": "na",
    "kinds": [],
-   "note": "client left before stating a request",
+   "note": "N/A: клиент ушёл [#10] до того, как сформулировал запрос.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] client left 13 s after the operator's greeting (line 10)",
+   "note": "N/A: клиент покинул чат [#10] через 13 с после приветствия.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-025",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Добрый день, я Виктор. Чем могу помочь?'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день, я Виктор. Чем могу помочь?»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "'Чем могу помочь?' ignores the request already written above",
+   "note": "«Чем могу помочь?» [#9] игнорирует уже написанный запрос [#0].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 0
    },
    "kinds": [],
-   "note": "'Всё есть в приложении.': no answer",
+   "note": "«Всё есть в приложении.» [#11]: ответа по существу нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "dismissive reply to 'Я писал выше'",
+   "note": "Пренебрежительный ответ [#11] на «Я писал выше» [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to repeat the request",
+   "note": "Клиенту пришлось повторить запрос [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "operator closed the chat with no goodbye (line 12)",
+   "note": "Оператор закрыл чат без прощания [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-026",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, меня зовут Инга. Откройте «Меню → Отчёты и док'",
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, меня зовут Инга. Откройте «Меню → Отчёты и...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#23].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. Хорошего вечера!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#23]: «Пожалуйста. Хорошего вечера!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-027",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Ирина. Сейчас проверю путь.'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Ирина. Сейчас проверю путь.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#15].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "warned before the wait ('Сейчас проверю путь') and thanked after it",
+   "note": "Предупредил об ожидании [#9] «Сейчас проверю путь» и поблагодарил после него [#11].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Пожалуйста. До свидания!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#15]: «Пожалуйста. До свидания!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-028",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Алексей. Вы вообще читать умеете? Бот всё на'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Алексей. Вы вообще читать умеете? Бот всё...»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "insult and no reaction to 'со мной так говорить не надо'",
+   "note": "Оскорбление [#9] и нет реакции на «со мной так говорить не надо» [#12].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "first reply had no answer, client had to ask again 'на какой сайт перейти'",
+   "note": "В первой реплике [#9] ответа нет, клиенту пришлось переспросить [#10].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "bare 'До свидания.' after the complaint",
+   "note": "Только «До свидания.» [#13] после жалобы клиента.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-029",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "yes",
    "kinds": [
     "insult"
    ],
-   "note": "'Вы вообще читать умеете? Бот всё написал.'",
+   "note": "Оскорбление клиента [#9]: «Вы вообще читать умеете? Бот всё написал.»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, я Полина. Как называется скачанный документ?'",
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Полина. Как называется скачанный документ?»",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked which document the client opened",
+   "note": "Уточнил, какой документ открыт [#9].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "request resolved or a correct next step given",
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "clear, ordered replies; no unexplained wait",
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
    "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] bare goodbye, no summary or offer of help: 'Отлично. Спасибо за обращение, до свидания!'",
-   "disputed": false
+   "note": "(вопрос 1) Только прощание без итога и предложения помощи [#13]: «Отлично. Спасибо за обращение, до свидания!»",
+   "disputed": true
   },
   {
    "conversation_id": "p1-ru-030",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "'меня зовут [Имя скрыто] Здравствуйте, чем могу вам помочь'",
+   "note": "Приветствие и имя в первой реплике [#12]: «меня зовут [Имя скрыто] Здравствуйте»",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "na",
    "kinds": [],
-   "note": "[02a] the client's messages already had what was needed and the answer used them",
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "general question; no account data and no protected action",
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "explained support's scope correctly; 'у меня теперь нет персонального менеджера ... тогда что?' answered only with 'самостоятельно совершаете торги'",
+   "note": "Рамки поддержки объяснены [#25]; на «нет персонального менеджера ... тогда что?» [#28] только «самостоятельно совершаете торги» [#29].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "no",
    "kinds": [],
-   "note": "client felt brushed off ('отфутболили', 'как будто я ... навязываюсь'); curt 'Нет, не делаем.'; the acknowledgement came only at the end",
+   "note": "Клиент чувствует, что его «отфутболили» [#33]; сухое «Нет, не делаем.» [#39]; понимание выражено лишь в конце [#42].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 7
    },
    "kinds": [],
-   "note": "client had to ask what 'техническая часть' means",
+   "note": "Клиенту пришлось спросить, что значит «техническая часть» [#34].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] client hung up while the operator was speaking (line 43)",
+   "note": "N/A: клиент завершил звонок [#43], пока оператор говорил.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-001",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "no",
    "kinds": [],
-   "note": "[01c] 'Да компания федеброкер меня зовут [Имя скрыто]': name, but no greeting in the transcript; check the audio",
+   "note": "(вопрос 4) [#2] «Да компания федеброкер меня зовут [Имя скрыто]»: имя есть, приветствия в тексте нет; проверить по записи.",
    "disputed": true
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "built on the earlier call and asked the client to try a limit order first",
+   "note": "Опирался на прошлый разговор [#2] и попросил сначала выставить лимитный приказ [#5].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "yes",
    "kinds": [],
-   "note": "asked full name and address before checking the client's security with traders",
+   "note": "Запросил ФИО и адрес [#11] до проверки бумаги клиента у трейдеров.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "the bond trades only OTC; how to place an OTC deal and its fee ('$25 минимум ... 2 процента', told by the trader to pass on) never reached the client",
+   "note": "Бумага торгуется только во внебиржевой сделке [#63]; как её провести и комиссию (трейдер [#41], [#42]) клиенту не сказал.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 10
    },
    "kinds": [],
-   "note": "warned before the hold ('прошу вас ожидать на линии') and thanked after it",
+   "note": "Предупредил об удержании [#14] и поблагодарил за ожидание [#59].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "no",
    "kinds": [],
-   "note": "[07a] 'Благодарю вас за уделенное время всего хорошего до свидания.': goodbye with no summary or offer",
-   "disputed": false
+   "note": "(вопрос 1) [#70] «всего хорошего до свидания»: прощание без итога и предложения помощи.",
+   "disputed": true
   },
   {
    "conversation_id": "p4-ru-002",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "greeting and name in the first reply: 'Здравствуйте, Фридом брокер меня зовут [Имя скрыто], чем мог'",
+   "note": "Приветствие и имя в первой реплике [#12]: «Здравствуйте, Фридом брокер меня зовут [Имя скрыто], чем...»",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "no",
    "kinds": [],
-   "note": "interrupted and answered about 'изменения сведений' before understanding the trade order question",
+   "note": "Перебил и ответил про «изменения сведений» [#26], не разобравшись в вопросе о торговом поручении.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "yes",
    "kinds": [],
-   "note": "full name, IIN and SMS code before the account check: 'идентификацию успешно'",
+   "note": "ФИО, ИИН и код из СМС [#39], [#53] до проверки счёта: «идентификацию успешно» [#64].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 20
    },
    "kinds": [],
-   "note": "correct next step: escalated to the technical department with a callback",
+   "note": "Корректный следующий шаг [#70]: запрос в технический отдел и обратный звонок.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client had to re-explain after the wrong answer; callback time unclear ('до 12' vs 'до 00:00')",
+   "note": "Клиенту пришлось объяснять заново [#27]; срок обратной связи неясен: «до 12» [#73] и «до 00:00» [#75].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] summary of the callback given; client hung up 1 s after 'спасибо'",
+   "note": "N/A: итог обратной связи дан [#75], клиент завершил звонок через секунду после «спасибо» [#77].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-003",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "yes",
    "kinds": [],
-   "note": "'Фридом брокера [Имя скрыто] Здравствуйте, чем могу вам помочь?'",
+   "note": "Приветствие и имя в первой реплике [#14]: «Фридом брокера [Имя скрыто] Здравствуйте»",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked which bonds and the ticker before checking",
+   "note": "Уточнил облигации и тикер [#29], [#33] до проверки.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "yes",
    "kinds": [],
-   "note": "full name, address and SMS code before 'я наблюдаю, что вы выставляли приказ'",
+   "note": "ФИО, адрес и код из СМС [#46], [#70] до «я наблюдаю, что вы выставляли приказ» [#78].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "explained the bond can be bought only through traders and the market is closed; 'постоянно писать надо что ли?' never answered plainly",
+   "note": "Объяснил, что бумагу берут только через трейдеров и рынок закрыт [#89]; на «постоянно писать надо?» прямо не ответил.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "offered email as an alternative to calling at work",
+   "note": "Предложил почту как альтернативу звонкам с работы [#93].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 4
    },
    "kinds": [],
-   "note": "client asked 'every time?' four times and got the email address repeated",
+   "note": "Клиент четыре раза спросил «каждый раз?» [#96], [#110] и получал повтор адреса почты.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "na",
    "kinds": [],
-   "note": "[07b] client ended the call as the operator asked 'у вас остались дополнительные вопросы?'",
+   "note": "N/A: клиент завершил звонок [#113], когда оператор спрашивал о других вопросах [#114].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-004",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "01",
+   "criterion_id": "c01",
    "answer": "no",
    "kinds": [],
-   "note": "[01c] 'Компания fernetbark и операции Здравствуйте': greeting, name not recognisable in the transcript; check the audio",
+   "note": "(вопрос 4) [#16] «Компания fernetbark и операции Здравствуйте»: приветствие есть, имя в тексте не распознано; проверить по записи.",
    "disputed": true
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "02",
+   "criterion_id": "c02",
    "answer": "yes",
    "kinds": [],
-   "note": "asked the registration phone number and VNZh versus ID card",
+   "note": "Уточнил номер телефона регистрации [#19] и ВНЖ или удостоверение [#61].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "03",
+   "criterion_id": "c03",
    "answer": "na",
    "kinds": [],
-   "note": "[03a] deletion promised for tomorrow, not done in the call; nothing account specific disclosed",
+   "note": "(вопрос 2) Удаление счёта перенесено на завтра [#43], в звонке не выполнено; данные счёта не раскрыты.",
    "disputed": true
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "04",
+   "criterion_id": "c04",
    "answer": {
     "step": 15
    },
    "kinds": [],
-   "note": "log out now, call from 09:00 to delete, re-register with the Kyrgyz passport first; timing left vague",
+   "note": "Выйти сейчас, позвонить с 09:00 для удаления, заново зарегистрироваться с паспортом КР [#70]; сроки размыты.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "05",
+   "criterion_id": "c05",
    "answer": "yes",
    "kinds": [],
-   "note": "polite; no complaint left unanswered",
+   "note": "Вежлив; жалоб без реакции нет.",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "06",
+   "criterion_id": "c06",
    "answer": {
     "step": 7
    },
    "kinds": [],
-   "note": "timing unclear ('обычно это через 02:00', 'если успеем сегодня')",
+   "note": "Неясные сроки [#39]: «обычно это через 02:00», «если успеем сегодня» [#34].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "07",
+   "criterion_id": "c07",
    "answer": "yes",
    "kinds": [],
-   "note": "offered more help ('у вас остались ... вопросы?') and closed with 'благодарю вас за обращение'",
+   "note": "Предложил ещё помощь [#54] и закрыл «благодарю вас за обращение» [#71].",
    "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
-   "criterion_id": "08",
+   "criterion_id": "c08",
    "answer": "no",
    "kinds": [],
-   "note": "no insult, outside paid offer or confidential disclosure",
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
    "disputed": false
   }
  ]
