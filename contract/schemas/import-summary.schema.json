@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/import-summary",
+  "title": "Import summary",
+  "description": "The response of GET /datasets/{group_id} and POST /conversations.",
+  "type": "object",
+  "required": [
+    "group_id",
+    "total",
+    "imported",
+    "updated",
+    "unchanged"
+  ],
+  "properties": {
+    "group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "imported": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "updated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unchanged": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

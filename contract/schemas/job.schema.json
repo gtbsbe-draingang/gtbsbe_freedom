@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/job",
+  "title": "Job",
+  "description": "A batch of evaluations, with progress per dialogue.",
+  "type": "object",
+  "required": [
+    "id",
+    "created_at",
+    "status",
+    "mode",
+    "total",
+    "done",
+    "failed",
+    "items"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 timestamp"
+    },
+    "status": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "reuse",
+        "full"
+      ]
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "done": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "failed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "conversation",
+          "status",
+          "error",
+          "evaluation_id"
+        ],
+        "properties": {
+          "conversation": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^.+:.+$"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evaluation_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Null until the item has an evaluation."
+          }
+        }
+      }
+    }
+  }
+}

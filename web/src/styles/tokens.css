@@ -1,0 +1,61 @@
+/* Design tokens (Freedom design language, see CLAUDE.md). Names follow the approved mockup.
+   Light is the default theme; add .cqa--dark next to .cqa for the dark one.
+   Custom properties sit on .cqa itself, never on :root, so nothing leaks into a host page. */
+
+.cqa {
+  /* brand */
+  --accent: #4FB84E;
+  --accent-2: #2A8640;
+  --accent-3: #055532;
+  --mint: #74FA97;
+  --cta: linear-gradient(90deg, #60D080, #64D9C4);
+  --brand-panel: radial-gradient(120% 120% at 100% 0%, rgba(116, 250, 151, 0.20), transparent 55%), linear-gradient(160deg, #0B231E 0%, #041311 100%);
+
+  /* shapes */
+  --r-pill: 100px;
+  --r-card: 16px;
+  --r-ctl: 12px;
+
+  /* light theme */
+  --page: #F5F6F7;
+  --surface: #FFFFFF;
+  --surface-2: #F5F6F7;
+  --line: #E6E7E9;
+  --line-2: #D1D1D1;
+  --frame: #D1D1D1;
+  --text: #191919;
+  --text-2: #737373;
+  --text-3: #939393;
+  --ok-bg: #DDF6CE;
+  --ok-ink: #1E6B30;
+  --mid-bg: #FFF3C4;
+  --mid-ink: #7A5A00;
+  --bad-bg: #FDE4E4;
+  --bad-ink: #B8333A;
+  --na-bg: #ECEEF0;
+  --na-ink: #5C5C5C;
+  --nav-on: #2A8640;
+  --sel: #F0F9EB;
+}
+
+.cqa.cqa--dark {
+  --page: #191919;
+  --surface: #282828;
+  --surface-2: #1F1F1F;
+  --line: #333333;
+  --line-2: #454545;
+  --frame: #000000;
+  --text: rgba(255, 255, 255, 0.87);
+  --text-2: #B7BBBD;
+  --text-3: #8A8A8A;
+  --ok-bg: rgba(114, 191, 68, 0.14);
+  --ok-ink: #8FD07F;
+  --mid-bg: rgba(251, 214, 85, 0.12);
+  --mid-ink: #FBD655;
+  --bad-bg: rgba(251, 85, 85, 0.13);
+  --bad-ink: #FF8A8A;
+  --na-bg: #333333;
+  --na-ink: #B7BBBD;
+  --nav-on: #6CB65B;
+  --sel: rgba(114, 191, 68, 0.08);
+}
