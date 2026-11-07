@@ -11,13 +11,53 @@ GET /conversations/{conversation}/translation?to=ru
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from fastapi import APIRouter
 
 from app.errors import ApiError
+from evaluator import client, translation
+from evaluator._compat import Conversation
 
 router = APIRouter(tags=["evaluator"])
 
 
+def _no_store(conversation: str) -> Conversation | None:
+    return None
+
+
+# Hook: B's conversation store replaces this (`evaluator.router.find_conversation = ...`) when it
+# exists; C owns no conversation storage. Returns the Conversation or None. Tests monkeypatch it.
+find_conversation: Callable[[str], Conversation | None] = _no_store
+
+
+def _payload(conversation: str, to: str, texts: list[str]) -> dict:
+    return {
+        "conversation": conversation,
+        "to": to,
+        "messages": [{"message_index": i, "text": t} for i, t in enumerate(texts)],
+    }
+
+
 @router.get("/conversations/{conversation}/translation")
 async def get_translation(conversation: str, to: str = "ru") -> dict:
-    raise ApiError(501, "not_implemented", "translation is not implemented yet (#23)")
+    if to not in translation.SUPPORTED_TARGETS:
+        raise ApiError(422, "unsupported_language", f"Translation into {to!r} is not supported.")
+    conv = find_conversation(conversation)
+    if conv is None:
+        raise ApiError(404, "not_found", "Conversation not found.")
+    if conv.language.lower() == to:  # already in the target language: originals, no call
+        return _payload(conversation, to, [m.text for m in conv.transcript])
+    cached = translation.load_translation(conversation, to)
+    if cached is not None:
+        return _payload(conversation, to, cached)
+    try:
+        client.get_client()
+    except client.ModelKeyMissing:
+        raise ApiError(409, "model_key_missing", "No model key is configured and nothing is cached.") from None
+    try:
+        texts, _calls = await translation.translate(conv, to)  # translate logs its own calls
+    except client.JudgmentFailed:
+        raise ApiError(502, "model_failed", "The model could not translate this conversation.") from None
+    translation.save_translation(conversation, to, texts)
+    return _payload(conversation, to, texts)
