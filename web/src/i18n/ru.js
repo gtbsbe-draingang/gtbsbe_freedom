@@ -1,6 +1,18 @@
 // Every UI string lives here and is read through t(key, params).
 // Mock-generated "model" text is not UI chrome and lives in the mock module instead.
 const messages = {
+  "player.play": "Воспроизвести",
+  "player.pause": "Пауза",
+  "player.timeline": "Позиция в записи",
+  "player.waveformLoading": "Строим звуковую волну…",
+  "player.waveformUnavailable": "Звуковая волна недоступна. Запись можно прослушать.",
+  "player.speakerNote": "Роли по расшифровке",
+  "player.speakerTitle": "Общая запись, разделённая по времени реплик в расшифровке",
+  "player.client": "Клиент",
+  "player.operator": "Оператор",
+  "player.mute": "Выключить звук",
+  "player.unmute": "Включить звук",
+  "player.speed": "Скорость воспроизведения",
   "app.title": "Качество диалогов",
   "brand.name": "Freedom — на главную",
 

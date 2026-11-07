@@ -1,3 +1,4 @@
+import { getAudioWaveform } from "./audio-waveform.js";
 // HTTP adapter for the backend API (spec section 7). The only module family that may call fetch.
 //
 // Every method returns the parsed JSON of the response, or throws an ApiError:
@@ -123,6 +124,7 @@ export function createHttpApi({ apiBase, role, fetchImpl = globalThis.fetch, tim
   }
 
   return {
+    getAudioWaveform,
     getConfig: async () => get("config"),
     importDataset: async (groupId) => get(`datasets/${seg(groupId, "group_id")}`),
     uploadConversations: async (payload) => post("conversations", Array.isArray(payload) ? { records: payload } : payload),

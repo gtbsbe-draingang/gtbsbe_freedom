@@ -2,6 +2,63 @@
   // package.json
   var version = "0.1.0";
 
+  // src/domain/waveform.js
+  function waveformPeaks(channels, bins = 220) {
+    const length = channels[0]?.length ?? 0;
+    if (!length || !Number.isInteger(bins) || bins < 1) return [];
+    const peaks = Array.from({ length: bins }, (_, i) => {
+      const from = Math.floor(i * length / bins);
+      const to = Math.min(length, Math.max(from + 1, Math.floor((i + 1) * length / bins)));
+      let sum = 0;
+      for (const channel of channels) {
+        for (let j = from; j < to; j++) sum += (channel[j] ?? 0) ** 2;
+      }
+      return Math.sqrt(sum / ((to - from) * channels.length));
+    });
+    const maximum = Math.max(...peaks);
+    return maximum ? peaks.map((value2) => Math.sqrt(value2 / maximum)) : peaks;
+  }
+  function speakerWindows(transcript, starts, duration) {
+    if (!Number.isFinite(duration) || duration <= 0) return [];
+    const turns = starts.flatMap((time, index) => Number.isFinite(time) && time >= 0 && time < duration ? [{ time, index }] : []).sort((a, b) => a.time - b.time || a.index - b.index);
+    return turns.flatMap(({ time, index }, i) => {
+      const role = transcript[index]?.speaker?.trim().toLowerCase();
+      const end = turns[i + 1]?.time ?? duration;
+      return (role === "client" || role === "operator") && end > time ? [{ role, from: time, to: end }] : [];
+    });
+  }
+  function splitWaveform(peaks, windows, duration, role) {
+    return peaks.map((peak, i) => {
+      const from = i / peaks.length * duration;
+      const to = (i + 1) / peaks.length * duration;
+      return windows.some((window2) => window2.role === role && window2.from < to && window2.to > from) ? peak : 0;
+    });
+  }
+
+  // src/api/audio-waveform.js
+  var cache = /* @__PURE__ */ new Map();
+  async function getAudioWaveform(url, { signal } = {}) {
+    if (cache.has(url)) return cache.get(url);
+    const AudioContext = globalThis.AudioContext ?? globalThis.webkitAudioContext;
+    if (!AudioContext) throw new Error("Audio decoding unavailable");
+    const response = await fetch(url, { signal });
+    if (!response.ok) throw new Error("Audio waveform unavailable");
+    const buffer = await response.arrayBuffer();
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    const context = new AudioContext({ sampleRate: 8e3 });
+    try {
+      const decoded = await context.decodeAudioData(buffer);
+      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+      const channels = Array.from({ length: decoded.numberOfChannels }, (_, index) => decoded.getChannelData(index));
+      const result = { duration: decoded.duration, peaks: waveformPeaks(channels) };
+      cache.set(url, result);
+      if (cache.size > 6) cache.delete(cache.keys().next().value);
+      return result;
+    } finally {
+      await context.close();
+    }
+  }
+
   // src/api/errors.js
   var CLIENT_CODES = Object.freeze(["network", "timeout", "bad_response"]);
   var ApiError = class extends Error {
@@ -109,6 +166,7 @@
       return rel.startsWith("/") ? rel : `${base}/${rel}`;
     }
     return {
+      getAudioWaveform,
       getConfig: async () => get("config"),
       importDataset: async (groupId) => get(`datasets/${seg(groupId, "group_id")}`),
       uploadConversations: async (payload) => post("conversations", Array.isArray(payload) ? { records: payload } : payload),
@@ -2345,6 +2403,7 @@
       };
     }
     return {
+      getAudioWaveform,
       getConfig: method("getConfig", async () => ({
         models: [MODEL],
         prices: { [MODEL]: { input_per_mtok_usd: 0, output_per_mtok_usd: 0 } },
@@ -2505,6 +2564,18 @@
 
   // src/i18n/ru.js
   var messages = {
+    "player.play": "\u0412\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0441\u0442\u0438",
+    "player.pause": "\u041F\u0430\u0443\u0437\u0430",
+    "player.timeline": "\u041F\u043E\u0437\u0438\u0446\u0438\u044F \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
+    "player.waveformLoading": "\u0421\u0442\u0440\u043E\u0438\u043C \u0437\u0432\u0443\u043A\u043E\u0432\u0443\u044E \u0432\u043E\u043B\u043D\u0443\u2026",
+    "player.waveformUnavailable": "\u0417\u0432\u0443\u043A\u043E\u0432\u0430\u044F \u0432\u043E\u043B\u043D\u0430 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430. \u0417\u0430\u043F\u0438\u0441\u044C \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0441\u043B\u0443\u0448\u0430\u0442\u044C.",
+    "player.speakerNote": "\u0420\u043E\u043B\u0438 \u043F\u043E \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
+    "player.speakerTitle": "\u041E\u0431\u0449\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C, \u0440\u0430\u0437\u0434\u0435\u043B\u0451\u043D\u043D\u0430\u044F \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u0440\u0435\u043F\u043B\u0438\u043A \u0432 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
+    "player.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "player.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "player.mute": "\u0412\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
+    "player.unmute": "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
+    "player.speed": "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u044F",
     "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
     "brand.name": "Freedom \u2014 \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E",
     "nav.label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B",
@@ -4470,11 +4541,167 @@
     const starts = startTimes(conversation);
     const status = h("p", { class: "cqa-player-note", attrs: { role: "status" } });
     status.hidden = true;
-    const audio = h("audio", { class: "cqa-player-audio", attrs: { controls: true, preload: "metadata", src, "aria-label": t("player.label") } });
-    const el = h("div", { class: "cqa-player", data: { test: "player" } }, audio, status);
+    const audio = h("audio", { class: "cqa-player-audio", attrs: { preload: "metadata", src, "aria-label": t("player.label") } });
+    const playIcon = svg("svg", { viewBox: "0 0 24 24", width: 22, height: 22, "aria-hidden": "true" });
+    const play = h("button", { class: "cqa-wave-play", attrs: { type: "button", "aria-label": t("player.play") }, data: { test: "player-play" } }, playIcon);
+    const clock = h("span", { class: "cqa-wave-clock num", text: "0:00 / \u2014", data: { test: "player-time" } });
+    const scrubber = h("input", { class: "cqa-wave-range", attrs: { type: "range", min: 0, max: 1, step: 0.1, value: 0, disabled: true, "aria-label": t("player.timeline") }, data: { test: "player-seek" } });
+    const mute = h("button", { class: "cqa-wave-mute", attrs: { type: "button", "aria-label": t("player.mute"), "aria-pressed": "false" }, data: { test: "player-mute" } });
+    const speed = h(
+      "select",
+      { class: "cqa-wave-speed", attrs: { "aria-label": t("player.speed") }, data: { test: "player-speed" } },
+      [0.75, 1, 1.25, 1.5, 2].map((value2) => h("option", { attrs: { value: value2 }, text: `${value2}\xD7` }))
+    );
+    speed.value = "1";
+    const waveformNote = h("span", { text: t("player.waveformLoading"), attrs: { role: "status" }, data: { test: "waveform-status" } });
+    const tracks = ["client", "operator"].map((role) => {
+      const graphic = svg("svg", { viewBox: "0 0 660 48", preserveAspectRatio: "none", "aria-hidden": "true", focusable: "false" });
+      const selection = h("span", { class: "cqa-wave-selection" });
+      const cursor = h("span", { class: "cqa-wave-cursor" });
+      const plot = h("div", { class: ["cqa-wave-plot", `cqa-wave-plot--${role}`], attrs: { role: "slider", tabindex: 0, "aria-label": `${t(`player.${role}`)} \u2014 ${t("player.timeline")}`, "aria-valuemin": 0, "aria-valuemax": 0, "aria-valuenow": 0 }, data: { test: "waveform-track", speaker: role } }, selection, graphic, cursor);
+      return { role, plot, graphic, selection, cursor, bars: [] };
+    });
+    const el = h(
+      "div",
+      { class: ["cqa-player", "cqa-wave-player"], data: { test: "player" } },
+      audio,
+      h("div", { class: "cqa-wave-tracks" }, tracks.map(({ role, plot }) => h("div", { class: "cqa-wave-row" }, h("b", { class: "cqa-wave-label", text: t(`player.${role}`) }), plot))),
+      h("div", { class: "cqa-wave-controls" }, play, clock, scrubber, mute, speed),
+      h("div", { class: "cqa-wave-caption" }, h("span", { text: t("player.speakerNote"), attrs: { title: t("player.speakerTitle") } }), waveformNote),
+      status
+    );
     let current2 = null;
     let destroyed = false;
+    let envelope = null;
+    let windows = [];
+    let frame = null;
+    let waveRun = 0;
+    const controller = new AbortController();
+    const duration = () => isTime(audio.duration) && audio.duration > 0 ? audio.duration : envelope?.duration ?? 0;
+    function paintControls() {
+      playIcon.replaceChildren(svg("path", { d: audio.paused ? "M8 5v14l11-7Z" : "M6 5h4v14H6zM14 5h4v14h-4z", fill: "currentColor" }));
+      play.setAttribute("aria-label", t(audio.paused ? "player.play" : "player.pause"));
+      mute.replaceChildren(svg(
+        "svg",
+        { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", "stroke-width": 1.8, "stroke-linecap": "round", "aria-hidden": "true" },
+        svg("path", { d: "M11 4 5 9H2v6h3l6 5Z" }),
+        svg("path", { d: audio.muted ? "m16 9 6 6m0-6-6 6" : "M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14" })
+      ));
+      mute.setAttribute("aria-label", t(audio.muted ? "player.unmute" : "player.mute"));
+      mute.setAttribute("aria-pressed", String(audio.muted));
+    }
+    function paintProgress() {
+      const length = duration();
+      const seconds = audio.currentTime || 0;
+      const fraction2 = length ? Math.min(1, seconds / length) : 0;
+      clock.textContent = `${formatOffset(seconds) || "0:00"} / ${length ? formatOffset(length) : "\u2014"}`;
+      scrubber.disabled = !length;
+      scrubber.max = String(length || 1);
+      scrubber.value = String(seconds);
+      scrubber.style.setProperty("--progress", `${fraction2 * 100}%`);
+      scrubber.setAttribute("aria-valuetext", clock.textContent);
+      const window2 = windows.find((part) => seconds >= part.from && seconds < part.to);
+      for (const track of tracks) {
+        track.plot.setAttribute("aria-valuemax", String(length));
+        track.plot.setAttribute("aria-valuenow", String(seconds));
+        track.plot.setAttribute("aria-valuetext", clock.textContent);
+        track.cursor.style.left = `${fraction2 * 100}%`;
+        track.selection.hidden = !window2 || window2.role !== track.role;
+        if (window2) {
+          track.selection.style.left = `${window2.from / length * 100}%`;
+          track.selection.style.width = `${(window2.to - window2.from) / length * 100}%`;
+        }
+        track.bars.forEach((bar2, index) => bar2.classList.toggle("is-played", index / track.bars.length < fraction2));
+      }
+    }
+    function drawWaves() {
+      if (destroyed) return;
+      const length = duration();
+      windows = speakerWindows(conversation.transcript ?? [], starts, length);
+      for (const track of tracks) {
+        const peaks = envelope ? splitWaveform(envelope.peaks, windows, length, track.role) : [];
+        track.bars = peaks.map((peak, index) => svg("rect", { class: "cqa-wave-bar", x: index * 3, y: 24 - Math.max(1, peak * 20), width: 1.8, height: Math.max(2, peak * 40), rx: 0.9 }));
+        track.graphic.replaceChildren(...track.bars);
+      }
+      paintProgress();
+    }
+    async function loadWaveform() {
+      const mine = ++waveRun;
+      waveformNote.textContent = t("player.waveformLoading");
+      try {
+        const data = await api.getAudioWaveform(src, { signal: controller.signal });
+        if (destroyed || mine !== waveRun) return;
+        envelope = data;
+        waveformNote.textContent = "";
+        el.setAttribute("data-waveform", "ready");
+        drawWaves();
+      } catch {
+        if (destroyed || mine !== waveRun) return;
+        waveformNote.textContent = t("player.waveformUnavailable");
+        el.setAttribute("data-waveform", "unavailable");
+      }
+    }
+    function animate() {
+      if (destroyed || audio.paused) {
+        frame = null;
+        return;
+      }
+      paintProgress();
+      frame = requestAnimationFrame(animate);
+    }
+    function seekSeconds(seconds) {
+      if (destroyed || !isTime(seconds) || seconds < 0) return false;
+      audio.currentTime = duration() ? Math.min(seconds, duration()) : seconds;
+      mark();
+      return true;
+    }
+    play.addEventListener("click", async () => {
+      if (!audio.paused) {
+        audio.pause();
+        return;
+      }
+      try {
+        await audio.play();
+      } catch {
+        if (!destroyed) {
+          status.textContent = t("player.failed");
+          status.hidden = false;
+        }
+      }
+    });
+    mute.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+    });
+    speed.addEventListener("change", () => {
+      audio.playbackRate = Number(speed.value);
+    });
+    scrubber.addEventListener("input", () => seekSeconds(Number(scrubber.value)));
+    for (const track of tracks) {
+      const seekPointer = (event) => {
+        const bounds = track.plot.getBoundingClientRect();
+        if (bounds.width) seekSeconds(Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width)) * duration());
+      };
+      track.plot.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || !duration()) return;
+        track.plot.focus();
+        track.plot.setPointerCapture(event.pointerId);
+        seekPointer(event);
+      });
+      track.plot.addEventListener("pointermove", (event) => {
+        if (track.plot.hasPointerCapture(event.pointerId)) seekPointer(event);
+      });
+      track.plot.addEventListener("pointerup", (event) => {
+        if (track.plot.hasPointerCapture(event.pointerId)) track.plot.releasePointerCapture(event.pointerId);
+      });
+      track.plot.addEventListener("keydown", (event) => {
+        const next = { ArrowLeft: audio.currentTime - 5, ArrowDown: audio.currentTime - 5, ArrowRight: audio.currentTime + 5, ArrowUp: audio.currentTime + 5, Home: 0, End: duration() }[event.key];
+        if (next === void 0) return;
+        event.preventDefault();
+        seekSeconds(Math.max(0, next));
+      });
+    }
     function mark() {
+      paintProgress();
       const index = playingIndex(starts, audio.currentTime);
       if (index === current2) return;
       current2 = index;
@@ -4484,30 +4711,51 @@
     audio.addEventListener("seeked", mark);
     audio.addEventListener("loadedmetadata", () => {
       status.hidden = true;
+      drawWaves();
     });
+    audio.addEventListener("durationchange", drawWaves);
+    audio.addEventListener("play", () => {
+      paintControls();
+      if (frame === null) animate();
+    });
+    audio.addEventListener("pause", () => {
+      paintControls();
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      paintProgress();
+    });
+    audio.addEventListener("ended", () => {
+      paintControls();
+      paintProgress();
+    });
+    audio.addEventListener("volumechange", paintControls);
     audio.addEventListener("error", () => {
       if (destroyed) return;
       status.replaceChildren(
         t("player.failed"),
         " ",
-        h("button", { class: ["cqa-link", "cqa-player-retry"], attrs: { type: "button" }, text: t("player.retry"), data: { test: "player-retry" }, on: { click: () => audio.load() } })
+        h("button", { class: ["cqa-link", "cqa-player-retry"], attrs: { type: "button" }, text: t("player.retry"), data: { test: "player-retry" }, on: { click: () => {
+          audio.load();
+          loadWaveform();
+        } } })
       );
       status.hidden = false;
     });
+    paintControls();
+    loadWaveform();
     return {
       el,
       seek(index) {
-        return this.seekSeconds(starts[index]);
+        return seekSeconds(starts[index]);
       },
-      seekSeconds(seconds) {
-        if (destroyed || !isTime(seconds) || seconds < 0) return false;
-        audio.currentTime = seconds;
-        mark();
-        return true;
-      },
+      seekSeconds,
       destroy() {
         destroyed = true;
+        controller.abort();
+        if (frame !== null) cancelAnimationFrame(frame);
         audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
       }
     };
   }
