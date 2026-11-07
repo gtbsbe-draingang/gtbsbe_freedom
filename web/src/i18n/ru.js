@@ -59,6 +59,47 @@ const messages = {
   "queue.tag.grossError": "грубая ошибка",
   "queue.tag.needsReview": "на проверку",
   "queue.tag.needsReviewTitle": "Модель не уверена в части критериев",
+  "queue.groupFilter": "Набор данных",
+  "queue.group.all": "Все наборы",
+  "queue.selectAll": "Выбрать все показанные",
+  "queue.load": "Загрузить",
+  "queue.loadTitle": "Загрузить группу по group_id или файл с диалогами",
+
+  "loader.title": "Загрузка диалогов",
+  "loader.close": "Закрыть",
+  "loader.group": "Группа по group_id",
+  "loader.groupHint": "Диалоги придут от организаторов через наш сервер.",
+  "loader.groupPlaceholder": "например, CTRL",
+  "loader.import": "Загрузить группу",
+  "loader.importing": "Загружаю группу {group}…",
+  "loader.file": "Файл с диалогами (JSON)",
+  "loader.fileHint": "Одна запись, массив записей или весь ответ организаторов.",
+  "loader.uploading": "Загружаю файл {name}…",
+  "loader.summary": "Всего {total} · новых {imported} · обновлено {updated} · без изменений {unchanged}",
+  "loader.summaryGroup": "Набор {group}",
+  "loader.error.not_json": "Файл не в формате JSON.",
+  "loader.error.no_records": "В файле нет ни одной записи.",
+  "loader.error.bad_record": "Запись №{n} в файле некорректна: нужны conversation_id, channel, language и transcript.",
+  "loader.error.read": "Файл не удалось прочитать.",
+
+  "batch.label": "Пакетная оценка",
+  "batch.selected": "Выбрано: {n}",
+  "batch.checklist": "Чек-лист",
+  "batch.estimating": "Считаю, сколько нужно вызовов…",
+  "batch.estimate": "{dialogs} · {calls} модели · {cached} из кэша",
+  "batch.run": "Оценить выбранные",
+  "batch.clear": "Снять выбор",
+  "batch.keyMissing": "нужен ключ модели: часть ответов нужно получить у модели",
+  "batch.progress": "Оценено {done} из {total}",
+  "batch.failed": "не удалось: {n}",
+  "batch.retry": "Повторить неудачные",
+  "batch.done": "Готово: оценено {done} из {total}",
+  "batch.dialogs.one": "{n} диалог",
+  "batch.dialogs.few": "{n} диалога",
+  "batch.dialogs.many": "{n} диалогов",
+  "batch.calls.one": "{n} вызов",
+  "batch.calls.few": "{n} вызова",
+  "batch.calls.many": "{n} вызовов",
 
   "transcript.loading": "Загружаю диалог {id}…",
   "transcript.loadFailed": "Не удалось загрузить диалог {id}",
@@ -260,4 +301,19 @@ export function format(template, params) {
 // A missing key returns the key itself and logs nothing.
 export function t(key, params) {
   return has(messages, key) ? format(messages[key], params) : key;
+}
+
+// Russian plural form of n: "one" (1, 21, 101), "few" (2-4, 22-24) or "many" (0, 5-20, 25-30).
+export function pluralForm(n) {
+  const abs = Math.abs(Math.trunc(Number(n)));
+  const ten = abs % 10;
+  const hundred = abs % 100;
+  if (ten === 1 && hundred !== 11) return "one";
+  if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "few";
+  return "many";
+}
+
+// t() for a counted noun: reads `${base}.one|few|many` and fills {n} (and any other params).
+export function tp(base, n, params = {}) {
+  return t(`${base}.${pluralForm(n)}`, { ...params, n });
 }

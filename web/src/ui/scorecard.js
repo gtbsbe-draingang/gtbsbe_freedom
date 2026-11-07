@@ -15,6 +15,7 @@ import { finalAnswers, score } from "../domain/scoring.js";
 import { fmt2, rat } from "../domain/rational.js";
 import { formatOffset } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
+import { watch } from "../state/store.js";
 import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
 import { href } from "./router.js";
@@ -735,6 +736,14 @@ export function createScorecard(store, api, args = {}) {
   }
 
   // ---- wiring ---------------------------------------------------------------------------------
+
+  // A batch run or an import elsewhere changed the results: show the fresh ones (not during our
+  // own run, which reloads by itself).
+  unwatch.push(
+    watch(store, (state) => state.queueRefresh, () => {
+      if (!view.busy && view.phase === "ready" && view.sel) loadSelection({ quiet: true });
+    }),
+  );
 
   unwatch.push(store.subscribe((state, previous) => {
     if (state.role === previous.role) return;
