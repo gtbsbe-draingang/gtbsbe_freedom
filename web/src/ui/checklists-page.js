@@ -7,10 +7,11 @@ import { t, tp } from "../i18n/ru.js";
 import { clear, h } from "./dom.js";
 import { href } from "./router.js";
 import { errorText, toastError } from "./toast.js";
+import { versionNumbers } from "../domain/checklist-versions.js";
 
 export const NEW_ID = "new"; // #/checklists/new/0/edit: a blank checklist, created on save
 
-const versionsOf = (row) => (Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version]);
+const versionsOf = versionNumbers;
 const weightSum = (row) => (row.criteria ?? []).filter((c) => c.kind !== "gross_error").reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
 
 export function createChecklistsPage(store, api) {
