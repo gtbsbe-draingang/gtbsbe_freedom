@@ -13,6 +13,7 @@ import { transformSync } from "esbuild";
 const webRoot = fileURLToPath(new URL("../../", import.meta.url));
 const srcDir = join(webRoot, "src");
 const stylesDir = join(srcDir, "styles");
+const staticDir = join(webRoot, "static");
 
 function walk(dir) {
   if (!existsSync(dir)) return [];
@@ -118,8 +119,9 @@ function splitSelectors(list) {
   return out.filter(Boolean);
 }
 
-// Returns a list of violations; empty means the stylesheet is scoped.
-function cssViolations(css, { allowRoot = false } = {}) {
+// Returns a list of violations; empty means the stylesheet is scoped. `scopes` are the root
+// classes a selector may start with: .cqa (and .cqa-page) for the UI, .dynmock for the proof page.
+function cssViolations(css, { allowRoot = false, scopes = [".cqa"] } = {}) {
   const found = [];
   const walkBlocks = (source) => {
     for (const { prelude, body } of cssBlocks(source)) {
@@ -133,7 +135,7 @@ function cssViolations(css, { allowRoot = false } = {}) {
         found.push(`at-rule "${prelude}"`);
       } else {
         for (const selector of splitSelectors(prelude)) {
-          const scoped = selector.startsWith(".cqa") || selector.startsWith(".cqa-page");
+          const scoped = scopes.some((scope) => selector.startsWith(scope));
           const root = allowRoot && selector.startsWith(":root");
           if (!scoped && !root) found.push(`selector "${selector}"`);
         }
@@ -213,6 +215,24 @@ describe("source rules", () => {
       for (const violation of cssViolations(readFileSync(file, "utf8"), { allowRoot })) {
         problems.push(`${rel(file)}: ${violation}`);
       }
+    }
+    assert.deepEqual(problems, []);
+  });
+});
+
+describe("static proof page", () => {
+  // static/ is copied into dist/ as it is, so the Dynamics proof page's own files follow the rules.
+  test("dynamics-mock.css is scoped under .dynmock", () => {
+    const css = readFileSync(join(staticDir, "dynamics-mock.css"), "utf8");
+    assert.deepEqual(cssViolations(css, { scopes: [".dynmock"] }), []);
+  });
+
+  test("static scripts use no forbidden API and make no network call", () => {
+    const scripts = walk(staticDir).filter((file) => extname(file) === ".js" && basename(file) !== "config.js");
+    assert.ok(scripts.some((file) => basename(file) === "dynamics-mock.js"), "static/dynamics-mock.js is missing");
+    const problems = [];
+    for (const file of scripts) {
+      for (const name of scanJs(readFileSync(file, "utf8"), [...FORBIDDEN_JS, ...NETWORK_JS])) problems.push(`${rel(file)}: ${name}`);
     }
     assert.deepEqual(problems, []);
   });
@@ -307,6 +327,9 @@ describe("scanners catch violations", () => {
     ]) {
       assert.ok(cssViolations(css).length > 0, `not detected: ${css}`);
     }
+    assert.ok(cssViolations(".cqa-x { a: 1 } .dynmock { a: 1 }").length > 0, ".dynmock is not a UI scope");
+    assert.ok(cssViolations(".cqa { a: 1 }", { scopes: [".dynmock"] }).length > 0);
+    assert.deepEqual(cssViolations(".dynmock .a { a: 1 }", { scopes: [".dynmock"] }), []);
     assert.deepEqual(cssViolations(":root { --a: 1 }", { allowRoot: true }), []);
     assert.ok(cssViolations("body { --a: 1 }", { allowRoot: true }).length > 0);
   });

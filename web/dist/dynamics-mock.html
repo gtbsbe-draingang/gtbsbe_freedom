@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dynamics 365: макет формы</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="dynamics-mock.css">
+</head>
+<body class="dynmock">
+  <!-- A stand-in for a Dynamics 365 record form. It proves the embedding rule: the UI runs in an
+       iframe in a 600 px column under the strict CSP, and a form script hands over the context
+       through window.CQA.setClientApiContext(). Not part of the product. -->
+  <header class="dynmock-bar">
+    <span class="dynmock-waffle" aria-hidden="true"></span>
+    <span class="dynmock-app">Dynamics 365</span>
+    <span class="dynmock-hub">Customer Service Hub (макет)</span>
+  </header>
+  <nav class="dynmock-cmd" aria-label="Команды формы">
+    <span>Сохранить</span><span>Создать</span><span>Назначить</span><span>Закрыть обращение</span>
+  </nav>
+  <main class="dynmock-form">
+    <div class="dynmock-title">
+      <h1 class="dynmock-h1">Обращение CAS-01234</h1>
+      <span class="dynmock-sub">Обращение · Активно</span>
+    </div>
+    <div class="dynmock-tabs" aria-hidden="true">
+      <span>Сводка</span><span class="dynmock-tab-on">Диалог</span><span>Связанные записи</span>
+    </div>
+    <div class="dynmock-columns">
+      <section class="dynmock-col dynmock-col-fields" aria-label="Поля записи">
+        <h2 class="dynmock-h2">Сведения</h2>
+        <dl class="dynmock-rows">
+          <div class="dynmock-row"><dt>Клиент</dt><dd>Иванова А. С.</dd></div>
+          <div class="dynmock-row"><dt>Канал</dt><dd>Чат</dd></div>
+          <div class="dynmock-row"><dt>Язык</dt><dd>RU</dd></div>
+          <div class="dynmock-row"><dt>Создано</dt><dd>07.11.2026 10:42</dd></div>
+          <div class="dynmock-row"><dt>Ответственный</dt><dd>Контролёр качества</dd></div>
+          <div class="dynmock-row"><dt>cqa_conversationid</dt><dd class="dynmock-mono" data-test="record-field">DEV:p1-ru-001</dd></div>
+        </dl>
+        <p class="dynmock-status" data-test="handover-status">Ожидание: форма ещё не передала контекст.</p>
+      </section>
+      <section class="dynmock-col dynmock-col-cqa" aria-label="Качество диалога">
+        <h2 class="dynmock-h2">Качество диалога</h2>
+        <iframe class="dynmock-frame" data-test="cqa-frame" title="Качество диалога" src="index.html?mode=embedded&amp;conversationId=DEV%3Ap1-ru-001&amp;theme=light"></iframe>
+      </section>
+    </div>
+  </main>
+  <script src="dynamics-mock.js"></script>
+</body>
+</html>

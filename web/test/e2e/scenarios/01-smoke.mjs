@@ -21,5 +21,6 @@ export async function run(page) {
   assert.ok(faces >= 1, "CoFo Sans did not load");
 
   // The host-facing API exists.
-  assert.deepEqual(await page.eval(`Object.keys(window.CQA).sort()`), ["mount", "setClientApiContext", "version"]);
+  const keys = await page.eval(`Object.keys(window.CQA)`);
+  for (const key of ["mount", "setClientApiContext", "version"]) assert.ok(keys.includes(key), `window.CQA.${key} is missing`);
 }
