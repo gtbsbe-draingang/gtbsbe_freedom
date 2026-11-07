@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/accuracy",
+  "title": "Accuracy report",
+  "description": "Agreement with our reference answers (not the organisers' ground truth).",
+  "type": "object",
+  "required": [
+    "reference_note",
+    "model",
+    "overall",
+    "by_criterion",
+    "by_language",
+    "by_channel",
+    "missing",
+    "disputed_excluded",
+    "disagreements"
+  ],
+  "properties": {
+    "reference_note": {
+      "type": "string",
+      "description": "Says these are our references, not the organisers' ground truth."
+    },
+    "model": {
+      "type": "string"
+    },
+    "overall": {
+      "type": "object",
+      "required": [
+        "agreement",
+        "n"
+      ],
+      "properties": {
+        "agreement": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "by_criterion": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "title",
+          "agreement",
+          "n"
+        ],
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "agreement": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "by_language": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "language",
+          "agreement",
+          "n"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Same code as conversation.language (RU, KZ, EN)."
+          },
+          "agreement": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "by_channel": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "channel",
+          "agreement",
+          "n"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "agreement": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "missing": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Reference answers with no evaluated answer."
+    },
+    "disputed_excluded": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Answers left out because they were disputed."
+    },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "conversation",
+          "conversation_id",
+          "criterion_id",
+          "reference",
+          "evaluated"
+        ],
+        "properties": {
+          "conversation": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^.+:.+$",
+            "description": "The backend id, used for linking."
+          },
+          "conversation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reference": {
+            "$ref": "#/$defs/answer"
+          },
+          "evaluated": {
+            "$ref": "#/$defs/answer"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "answer": {
+      "description": "An answer: \"yes\", \"no\", \"na\", or {\"step\": value}, where value is the scale step's value (for example 15), not its position.",
+      "oneOf": [
+        {
+          "enum": [
+            "yes",
+            "no",
+            "na"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "step"
+          ],
+          "properties": {
+            "step": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,912 @@
+/* Workspace panes. Ported from the approved mockup (design-language-v2): .q-search, .q-chips,
+   .q-item and the tags .t -> .cqa-q-search, .cqa-q-pill, .cqa-q-item, .cqa-tag.
+   The pane itself (padding, border, drawer below 900 px) is shell.css; this file styles what sits
+   inside it. */
+
+/* ---- tags: full pills, shared by every pane ---- */
+
+.cqa .cqa-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cqa .cqa-tag--ok {
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+}
+
+.cqa .cqa-tag--mid {
+  background: var(--mid-bg);
+  color: var(--mid-ink);
+}
+
+.cqa .cqa-tag--bad {
+  background: var(--bad-bg);
+  color: var(--bad-ink);
+}
+
+.cqa .cqa-tag--na {
+  background: var(--na-bg);
+  color: var(--na-ink);
+}
+
+.cqa .cqa-tag--out {
+  border: 1px solid var(--line-2);
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* ---- queue ---- */
+
+.cqa .cqa-q {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Wide layout: the queue stays in view while a long dialogue scrolls, and its list scrolls inside. */
+@media (min-width: 900px) {
+  .cqa .cqa-pane-queue > .cqa-q {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+  }
+
+  .cqa .cqa-q-body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+.cqa .cqa-q-controls {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.cqa .cqa-q-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.cqa .cqa-q-search:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.cqa .cqa-q-search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  outline: none;
+}
+
+.cqa .cqa-q-search-input::placeholder {
+  color: var(--text-3);
+}
+
+.cqa .cqa-q-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cqa .cqa-q-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cqa .cqa-q-pill.is-on {
+  background: var(--text);
+  color: var(--page);
+  font-weight: 600;
+}
+
+.cqa .cqa-q-count {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-q-pill.is-on .cqa-q-count {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.cqa .cqa-q-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cqa .cqa-q-select {
+  flex: none;
+  max-width: 55%;
+  padding: 4px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cqa.cqa--dark .cqa-q-select,
+.cqa.cqa--dark .cqa-q-check {
+  color-scheme: dark;
+}
+
+.cqa .cqa-q-summary {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-q-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-q-state {
+  flex: none;
+}
+
+.cqa .cqa-q-retry {
+  margin-top: 12px;
+  padding: 7px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* one conversation: [checkbox] [id ........ score / topic / meta] */
+.cqa .cqa-q-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  margin-bottom: 4px;
+  border-radius: var(--r-ctl);
+  cursor: pointer;
+}
+
+.cqa .cqa-q-item:hover {
+  background: var(--surface-2);
+}
+
+.cqa .cqa-q-item.is-current {
+  background: var(--sel);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.cqa .cqa-q-pick {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 44px;
+  padding-left: 6px;
+  cursor: pointer;
+}
+
+.cqa .cqa-q-check {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.cqa .cqa-q-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  min-width: 0;
+  padding: 11px 12px 11px 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cqa .cqa-q-id {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-q-score {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.cqa .cqa-q-score.is-none {
+  color: var(--text-3);
+}
+
+.cqa .cqa-q-topic {
+  grid-column: 1 / -1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-q-topic:empty {
+  display: none;
+}
+
+.cqa .cqa-q-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* ---- transcript ---- */
+
+.cqa .cqa-tr {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cqa .cqa-tr-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 14px;
+}
+
+.cqa .cqa-tr-head:empty {
+  display: none;
+}
+
+.cqa .cqa-tr-title {
+  font-size: 22px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-tr-meta {
+  color: var(--text-2);
+}
+
+/* The dialogue scrolls inside the pane, so jumping to a line never moves the scorecard beside it. */
+.cqa .cqa-tr-scroll {
+  position: relative; /* the offset parent of the messages */
+  min-height: 0;
+  max-height: max(240px, calc(100vh - 230px));
+  padding: 3px 4px 3px 3px; /* room for the 2-3 px outlines, which overflow would clip */
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cqa .cqa-tr-scroll:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (min-width: 700px) {
+  .cqa .cqa-tr {
+    position: sticky;
+    top: 16px;
+  }
+
+  .cqa .cqa-tr-scroll {
+    max-height: max(300px, calc(100vh - 130px));
+  }
+}
+
+.cqa .cqa-tr-retry {
+  margin-top: 12px;
+  padding: 7px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cqa .cqa-tr-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-msg {
+  align-self: flex-start;
+  min-width: 0;
+  max-width: 78%;
+}
+
+.cqa .cqa-msg-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  margin: 0 4px 3px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* the criterion label of a marked line */
+.cqa .cqa-msg-flag {
+  color: var(--nav-on);
+}
+
+.cqa .cqa-msg-flag:empty {
+  display: none;
+}
+
+/* a dot between the parts of the caption; the speaker and the time are the only fixed pair */
+.cqa .cqa-msg-flag:not(:empty)::after,
+.cqa .cqa-msg-speaker + .cqa-msg-time::before,
+.cqa .cqa-msg-time + .cqa-msg-dup::before {
+  content: "·";
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.cqa .cqa-msg-speaker + .cqa-msg-time::before,
+.cqa .cqa-msg-time + .cqa-msg-dup::before {
+  margin-right: 4px;
+  margin-left: 0;
+}
+
+.cqa .cqa-msg-text {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  transition: box-shadow 0.5s ease, background-color 0.5s ease;
+}
+
+/* client: left, white */
+.cqa .cqa-msg--client .cqa-msg-text {
+  border-color: var(--line);
+  border-top-left-radius: 4px;
+  background: var(--surface);
+}
+
+/* operator: right, a step darker than the page */
+.cqa .cqa-msg--operator {
+  align-self: flex-end;
+}
+
+.cqa .cqa-msg--operator .cqa-msg-who {
+  justify-content: flex-end;
+}
+
+.cqa .cqa-msg--operator .cqa-msg-text {
+  border-color: #EEF0F2;
+  border-top-right-radius: 4px;
+  background: #EEF0F2;
+}
+
+.cqa.cqa--dark .cqa-msg--operator .cqa-msg-text {
+  border-color: var(--line-2);
+  background: var(--surface-2);
+}
+
+/* bot: right too, in the neutral grey of the tags, so it reads as neither a person nor the client */
+.cqa .cqa-msg--bot {
+  align-self: flex-end;
+}
+
+.cqa .cqa-msg--bot .cqa-msg-who {
+  justify-content: flex-end;
+}
+
+.cqa .cqa-msg--bot .cqa-msg-text {
+  border-color: var(--line-2);
+  border-top-right-radius: 4px;
+  background: var(--na-bg);
+}
+
+/* any other speaker: left, dashed */
+.cqa .cqa-msg--other .cqa-msg-text {
+  border: 1px dashed var(--line-2);
+  border-top-left-radius: 4px;
+  background: var(--surface);
+}
+
+/* system line: a centred note */
+.cqa .cqa-msg--system {
+  align-self: center;
+  max-width: 90%;
+  text-align: center;
+}
+
+.cqa .cqa-msg--system .cqa-msg-who {
+  justify-content: center;
+}
+
+.cqa .cqa-msg--system .cqa-msg-text {
+  padding: 3px 12px;
+  border: 1px dashed var(--line-2);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 12px;
+  font-style: oblique 8deg;
+}
+
+.cqa .cqa-msg-dup {
+  font-style: italic;
+}
+
+.cqa .cqa-msg.is-duplicate .cqa-msg-text {
+  opacity: 0.55;
+}
+
+/* the part of the dialogue the model looked at */
+.cqa .cqa-msg.is-checked .cqa-msg-text {
+  border-color: var(--accent);
+  background: var(--sel);
+}
+
+/* the line that supports the answer: a solid outline; the line that was expected: a dashed one */
+.cqa .cqa-msg.is-evidence .cqa-msg-text {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.cqa .cqa-msg.is-expected .cqa-msg-text {
+  outline: 2px dashed var(--accent);
+  outline-offset: 1px;
+}
+
+/* a jump from the scorecard: the line lights up, then fades back when the class comes off after 1.2 s */
+.cqa .cqa-msg.is-flash .cqa-msg-text {
+  background: var(--mid-bg);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-msg-text {
+    transition: none;
+  }
+}
+
+@media (max-width: 699.98px) {
+  .cqa .cqa-msg {
+    max-width: 88%;
+  }
+}
+
+/* ---- scorecard: the toolbar, the brand panel, the criterion cards ----
+   Ported from the mockup: .q-hero -> .cqa-sc-hero, .q-sec -> .cqa-sc-sec, .q-crit -> .cqa-sc-crit,
+   .q-btn -> .cqa-sc-btn. The panel keeps its dark brand colours in both themes. */
+
+.cqa .cqa-sc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cqa .cqa-sc-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cqa .cqa-sc-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cqa .cqa-sc-pick-label {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-sc-select {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+}
+
+.cqa .cqa-sc-run {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cqa .cqa-sc-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cqa .cqa-sc-btn--cta {
+  border: 0;
+  background: var(--cta);
+  color: #04221A;
+}
+
+.cqa .cqa-sc-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cqa .cqa-sc-hint {
+  margin: 0;
+  color: var(--bad-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cqa .cqa-sc-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-status:empty {
+  display: none;
+}
+
+.cqa .cqa-sc-failed {
+  color: var(--bad-ink);
+  font-weight: 600;
+}
+
+.cqa .cqa-sc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* brand panel: one per screen */
+.cqa .cqa-sc-hero {
+  padding: 16px 18px;
+  border-radius: var(--r-card);
+  background: var(--brand-panel);
+  color: #FFFFFF;
+}
+
+.cqa .cqa-sc-hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+}
+
+.cqa .cqa-sc-hero-label {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-hero-label em {
+  color: #FFFFFF;
+  font-style: oblique 12deg;
+  font-weight: 700;
+}
+
+.cqa .cqa-sc-demo {
+  padding: 2px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--r-pill);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cqa .cqa-sc-tot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 2px 0 10px;
+}
+
+.cqa .cqa-sc-total {
+  color: var(--mint);
+  font-size: 54px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cqa .cqa-sc-total--none {
+  font-size: 24px;
+  letter-spacing: 0;
+}
+
+.cqa .cqa-sc-outof {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+}
+
+.cqa .cqa-sc-was {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+}
+
+.cqa .cqa-sc-flag {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cqa .cqa-sc-flag--on {
+  background: #E5484D;
+}
+
+.cqa .cqa-sc-secs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cqa .cqa-sc-sec {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-sec-score {
+  text-align: right;
+}
+
+.cqa .cqa-sc-sec-bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cqa .cqa-sc-sec-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--cta);
+}
+
+.cqa .cqa-sc-model {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+/* info that does not count */
+.cqa .cqa-sc-info {
+  padding: 10px 12px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-ctl);
+}
+
+.cqa .cqa-sc-info-title {
+  margin: 0 0 6px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cqa .cqa-sc-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-info-row {
+  display: grid;
+  grid-template-columns: minmax(0, 9em) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.cqa .cqa-sc-info-row dt {
+  color: var(--text-2);
+}
+
+.cqa .cqa-sc-info-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* criteria */
+.cqa .cqa-sc-crits {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cqa .cqa-sc-sec-title {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cqa .cqa-sc-crit {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+}
+
+.cqa .cqa-sc-crit.is-open {
+  border-color: var(--line-2);
+  background: var(--sel);
+}
+
+.cqa .cqa-sc-r1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.cqa .cqa-sc-crit-title {
+  flex: 1 1 12em; /* a long title takes its own line before it would break inside a word */
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.cqa .cqa-sc-pts {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 6px;
+}
+
+.cqa .cqa-sc-note {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-sc-why {
+  margin: 8px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-sc-na,
+.cqa .cqa-sc-range {
+  margin: 4px 0 0;
+  color: var(--text-2);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-sc-evs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-sc-ev {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cqa .cqa-sc-ev:hover {
+  border-color: var(--accent);
+}
+
+.cqa .cqa-sc-ev--expected {
+  border-style: dashed;
+}
+
+.cqa .cqa-sc-ev-n {
+  color: var(--nav-on);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cqa .cqa-sc-ev-quote {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.cqa .cqa-sc-coach {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--r-ctl);
+  background: var(--mid-bg);
+  color: var(--mid-ink);
+  font-size: 13px;
+}
+
+.cqa .cqa-sc-coach-label {
+  font-size: 12px;
+}
+
+.cqa .cqa-sc-coach-text {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.cqa .cqa-sc-acts {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}

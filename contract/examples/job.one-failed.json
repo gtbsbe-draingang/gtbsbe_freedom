@@ -1,0 +1,29 @@
+{
+  "id": "job-0001",
+  "created_at": "2026-11-07T09:29:00Z",
+  "status": "done",
+  "mode": "reuse",
+  "total": 3,
+  "done": 2,
+  "failed": 1,
+  "items": [
+    {
+      "conversation": "example:p1-ru-001",
+      "status": "done",
+      "error": null,
+      "evaluation_id": "ev-0002"
+    },
+    {
+      "conversation": "example:p4-ru-001",
+      "status": "done",
+      "error": null,
+      "evaluation_id": "ev-0003"
+    },
+    {
+      "conversation": "example:p2-ru-003",
+      "status": "failed",
+      "error": "Модель не ответила за 60 секунд.",
+      "evaluation_id": null
+    }
+  ]
+}

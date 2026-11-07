@@ -1,0 +1,85 @@
+{
+  "reference_note": "Сверка с нашими эталонными ответами, а не с истиной организаторов.",
+  "model": "example-model",
+  "overall": {
+    "agreement": 0.84,
+    "n": 50
+  },
+  "by_criterion": [
+    {
+      "criterion_id": "c01",
+      "title": "Установление контакта",
+      "agreement": 0.94,
+      "n": 50
+    },
+    {
+      "criterion_id": "c02",
+      "title": "Выявление потребности",
+      "agreement": 0.82,
+      "n": 46
+    },
+    {
+      "criterion_id": "c03",
+      "title": "Идентификация",
+      "agreement": 0.9,
+      "n": 40
+    },
+    {
+      "criterion_id": "c04",
+      "title": "Корректная и полная консультация",
+      "agreement": 0.68,
+      "n": 48
+    }
+  ],
+  "by_language": [
+    {
+      "language": "RU",
+      "agreement": 0.86,
+      "n": 30
+    },
+    {
+      "language": "KZ",
+      "agreement": 0.8,
+      "n": 12
+    },
+    {
+      "language": "EN",
+      "agreement": 0.83,
+      "n": 8
+    }
+  ],
+  "by_channel": [
+    {
+      "channel": "agent chat",
+      "agreement": 0.85,
+      "n": 40
+    },
+    {
+      "channel": "voice call",
+      "agreement": 0.8,
+      "n": 10
+    }
+  ],
+  "missing": 2,
+  "disputed_excluded": 3,
+  "disagreements": [
+    {
+      "conversation": "example:p1-ru-001",
+      "conversation_id": "p1-ru-001",
+      "criterion_id": "c04",
+      "reference": {
+        "step": 20
+      },
+      "evaluated": {
+        "step": 15
+      }
+    },
+    {
+      "conversation": "example:p4-ru-001",
+      "conversation_id": "p4-ru-001",
+      "criterion_id": "c02",
+      "reference": "no",
+      "evaluated": "yes"
+    }
+  ]
+}

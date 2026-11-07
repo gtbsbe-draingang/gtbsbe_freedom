@@ -1,0 +1,169 @@
+/* The mock Dynamics form's own look (Fluent-like greys and blue). Every rule hangs on .dynmock,
+   a class on <body>, so the page follows the same scoping rule as the UI. */
+
+.dynmock {
+  margin: 0;
+  background: #f3f2f1;
+  color: #201f1e;
+  font: 14px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+.dynmock * {
+  box-sizing: border-box;
+}
+
+.dynmock .dynmock-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 48px;
+  padding: 0 16px;
+  background: #002050;
+  color: #fff;
+}
+
+.dynmock .dynmock-waffle {
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle, #fff 1.6px, transparent 2px) 0 0 / 6px 6px;
+}
+
+.dynmock .dynmock-app {
+  font-weight: 600;
+}
+
+.dynmock .dynmock-hub {
+  opacity: 0.8;
+}
+
+.dynmock .dynmock-cmd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid #edebe9;
+  color: #323130;
+}
+
+.dynmock .dynmock-form {
+  padding: 16px;
+}
+
+.dynmock .dynmock-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-bottom: 12px;
+}
+
+.dynmock .dynmock-h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.dynmock .dynmock-sub {
+  color: #605e5c;
+}
+
+.dynmock .dynmock-tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #edebe9;
+  color: #605e5c;
+}
+
+.dynmock .dynmock-tabs span {
+  padding: 8px 0;
+  border-bottom: 3px solid transparent;
+}
+
+.dynmock .dynmock-tabs .dynmock-tab-on {
+  border-bottom-color: #0f6cbd;
+  color: #201f1e;
+  font-weight: 600;
+}
+
+.dynmock .dynmock-columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.dynmock .dynmock-col {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #edebe9;
+  border-radius: 4px;
+}
+
+.dynmock .dynmock-col-fields {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* the form column the UI lives in: 600 px, the narrowest width the UI promises to support */
+.dynmock .dynmock-col-cqa {
+  flex: 0 0 auto;
+  width: 600px;
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.dynmock .dynmock-h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dynmock .dynmock-col-cqa .dynmock-h2 {
+  margin: 0;
+  padding: 12px 16px;
+  border-bottom: 1px solid #edebe9;
+}
+
+.dynmock .dynmock-rows {
+  margin: 0;
+}
+
+.dynmock .dynmock-row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f2f1;
+}
+
+.dynmock .dynmock-row dt {
+  color: #605e5c;
+}
+
+.dynmock .dynmock-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.dynmock .dynmock-mono {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+}
+
+.dynmock .dynmock-status {
+  margin: 14px 0 0;
+  padding: 8px 12px;
+  background: #f3f2f1;
+  border-left: 3px solid #0f6cbd;
+  color: #323130;
+}
+
+.dynmock .dynmock-frame {
+  display: block;
+  width: 100%;
+  height: 760px;
+  border: 0;
+  background: #fff;
+}

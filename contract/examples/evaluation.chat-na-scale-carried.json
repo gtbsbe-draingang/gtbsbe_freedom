@@ -1,0 +1,270 @@
+{
+  "id": "ev-0002",
+  "created_at": "2026-11-07T09:30:00Z",
+  "conversation": "example:p1-ru-001",
+  "checklist_id": "official-chat",
+  "version": 1,
+  "status": "done",
+  "source": "model",
+  "model": "example-model",
+  "cost_usd": 0.0184,
+  "results": [
+    {
+      "criterion_id": "c01",
+      "answer": "yes",
+      "final_answer": "yes",
+      "kinds": [],
+      "points": 11.76,
+      "effective_weight": 11.76,
+      "explanation": "Оператор поздоровался и назвал имя в первом ответе клиенту.",
+      "evidence": [
+        {
+          "message_index": 4,
+          "quote": "Здравствуйте! Меня зовут Айгерим",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c02",
+      "answer": "na",
+      "final_answer": "na",
+      "kinds": [],
+      "points": null,
+      "effective_weight": null,
+      "explanation": "Клиент сразу назвал цель и источник средств, уточнять было нечего.",
+      "evidence": [
+        {
+          "message_index": 0,
+          "quote": "как пополнить брокерский счёт с карты другого банка",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": "Данных для ответа хватало с самого начала: клиент назвал цель и банк-источник.",
+      "confidence": "medium",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c03",
+      "answer": "yes",
+      "final_answer": "yes",
+      "kinds": [],
+      "points": 23.53,
+      "effective_weight": 23.53,
+      "explanation": "Оператор запросил кодовое слово и подтвердил личность до объяснения защищённого действия.",
+      "evidence": [
+        {
+          "message_index": 5,
+          "quote": "подтвердите, пожалуйста, кодовое слово",
+          "role": "supports"
+        },
+        {
+          "message_index": 7,
+          "quote": "личность подтверждена",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c04",
+      "answer": {
+        "step": 15
+      },
+      "final_answer": {
+        "step": 15
+      },
+      "kinds": [],
+      "points": 17.65,
+      "effective_weight": 23.53,
+      "explanation": "Основной вопрос решён: назван способ пополнения и срок зачисления. Комиссия за пополнение с чужой карты не упомянута.",
+      "evidence": [
+        {
+          "message_index": 7,
+          "quote": "в разделе «Пополнить»",
+          "role": "supports"
+        },
+        {
+          "message_index": 9,
+          "quote": "в течение одного рабочего дня",
+          "role": "supports"
+        },
+        {
+          "message_index": 9,
+          "quote": "точный срок зависит от банка-эмитента",
+          "role": "expected_here"
+        }
+      ],
+      "checked_range": {
+        "from": 4,
+        "to": 15
+      },
+      "na_reason": null,
+      "confidence": "low",
+      "needs_review": true,
+      "coaching": "Назовите комиссию или направьте клиента в раздел с тарифами: «Комиссия указана в разделе «Тарифы», пришлю ссылку».",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c05",
+      "answer": "no",
+      "final_answer": "yes",
+      "kinds": [],
+      "points": 17.65,
+      "effective_weight": 17.65,
+      "explanation": "Клиент написал, что неудобно искать срок в приложении, а оператор ответил только по срокам и не отреагировал на неудобство.",
+      "evidence": [
+        {
+          "message_index": 8,
+          "quote": "В приложении не нашёл, неудобно.",
+          "role": "supports"
+        },
+        {
+          "message_index": 9,
+          "quote": "Обычно деньги приходят в течение одного рабочего дня",
+          "role": "expected_here"
+        }
+      ],
+      "checked_range": {
+        "from": 8,
+        "to": 9
+      },
+      "na_reason": null,
+      "confidence": "medium",
+      "needs_review": false,
+      "coaching": "Признайте неудобство одной фразой: «Понимаю, искать срок в приложении неудобно».",
+      "reused": false,
+      "carried_decision": {
+        "appeal_id": "ap-0001",
+        "evaluation_id": "ev-0001"
+      }
+    },
+    {
+      "criterion_id": "c06",
+      "answer": {
+        "step": 7
+      },
+      "final_answer": {
+        "step": 7
+      },
+      "kinds": [],
+      "points": 12.35,
+      "effective_weight": 17.65,
+      "explanation": "Ответы ясные и связные, но при передаче чата коллеге оператор не предупредил, сколько придётся ждать.",
+      "evidence": [
+        {
+          "message_index": 9,
+          "quote": "точный срок зависит от банка-эмитента",
+          "role": "supports"
+        },
+        {
+          "message_index": 11,
+          "quote": "сейчас передам ваш чат коллеге",
+          "role": "expected_here"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": "При передаче чата назовите время ожидания: «Коллега ответит в течение двух минут».",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c07",
+      "answer": "yes",
+      "final_answer": "yes",
+      "kinds": [],
+      "points": 5.88,
+      "effective_weight": 5.88,
+      "explanation": "Оператор подвёл итог, предложил помощь и попрощался.",
+      "evidence": [
+        {
+          "message_index": 15,
+          "quote": "Рады были помочь. Хорошего дня, до свидания!",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c08",
+      "answer": "no",
+      "final_answer": "no",
+      "kinds": [],
+      "points": 0,
+      "effective_weight": 0,
+      "explanation": "Оскорблений, платных услуг в обход компании и раскрытия конфиденциальной информации не выявлено.",
+      "evidence": [],
+      "checked_range": {
+        "from": 4,
+        "to": 15
+      },
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    }
+  ],
+  "original_total": 71.18,
+  "final_total": 88.82,
+  "sections": [
+    {
+      "section_id": "start",
+      "points": 11.76,
+      "available": 11.76,
+      "percent": 100
+    },
+    {
+      "section_id": "safety",
+      "points": 41.18,
+      "available": 47.06,
+      "percent": 87.5
+    },
+    {
+      "section_id": "conduct",
+      "points": 35.88,
+      "available": 41.18,
+      "percent": 87.14
+    },
+    {
+      "section_id": "gross",
+      "points": null,
+      "available": null,
+      "percent": null
+    }
+  ],
+  "gross_error": {
+    "flag": false,
+    "kinds": [],
+    "explanation": null,
+    "evidence": []
+  }
+}
