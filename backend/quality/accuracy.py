@@ -75,6 +75,8 @@ def accuracy_report(reference: ReferenceSet, evaluations: list[Evaluation], *,
     return AccuracyReport(
         reference_note="Сравнение с предварительными ответами команды, а не с разметкой организаторов. Спорные ответы исключены; остальные ещё требуют проверки командой.",
         model=",".join(sorted(models)), overall=_cell(overall), missing=missing,
+        checklist=dict(checklist_id=reference.checklist_id, version=reference.version,
+                       name=getattr(checklist, "name", None)),
         disputed_excluded=disputed, disagreements=disagreements,
         by_criterion=[dict(criterion_id=k, title=titles.get(k, k), **_cell(v).model_dump()) for k, v in sorted(criteria.items())],
         by_language=[dict(language=k, **_cell(v).model_dump()) for k, v in sorted(languages.items())],

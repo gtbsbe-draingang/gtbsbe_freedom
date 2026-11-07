@@ -23,6 +23,30 @@
     "model": {
       "type": "string"
     },
+    "checklist": {
+      "type": "object",
+      "description": "The checklist version the reference answers were written for, which is the version the report measures. Optional: older servers leave it out.",
+      "required": [
+        "checklist_id",
+        "version"
+      ],
+      "properties": {
+        "checklist_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
     "overall": {
       "type": "object",
       "required": [

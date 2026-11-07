@@ -39,6 +39,7 @@ class AgreementCell(BaseModel):
 class AccuracyReport(BaseModel):
     reference_note: str
     model: str
+    checklist: dict | None = None  # {checklist_id, version, name}: the version the report measures
     overall: AgreementCell
     by_criterion: list[dict]
     by_language: list[dict]
