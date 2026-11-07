@@ -2,7 +2,7 @@
 
 `dev_labels.json` holds our reference answers for the 65 DEV dialogs and the 8 criteria of the official checklist (`official-chat` v1, criteria `c01` to `c08`): 520 answers. They are our references, not the organisers' ground truth, and the UI says so.
 
-They were drafted by Claude Opus 5.5 in Claude Code (subscription, no API cost) from the transcripts, following stream D plan Task 2, and now go to the team for review (Task 8, issue #24). They feed the accuracy report and the model choice (#26).
+These are draft labels from the transcripts, not human-reviewed ground truth. Team review is still pending (Task 8, issue #24). All 520 labels need review, including the 479 not currently marked disputed. They support the provisional accuracy report and model comparison (#26); they do not yet establish evaluator accuracy.
 
 ## Format
 
@@ -36,11 +36,13 @@ uv run pytest tests/quality
 | c03 and c08 | An account fact told to an unverified client is c03 No **and** c08 Yes `confidential_disclosure`, as the plan's planted list expects. c08 gives no points, so this flags the dialog without counting twice. | ru-009, kz-015, en-014 |
 | c04 | A wrong first suggestion that is corrected, with the request then resolved, keeps 20; the slip is scored in c02 and c06. | ru-016, kz-005, en-015 |
 | c06 | 4: the client has to re-ask or re-explain because of a wrong, vague or off-target reply. 7: one slip, such as asking once for something already given. 0: contradictory replies. | 15 at 4, 5 at 7, 1 at 0 |
-| (3) c06 | Over 3 minutes to the first reaction, or an unwarned wait over 3 minutes, would cap c06 at 7. No DEV chat crosses it (slowest first reaction 134 s, longest wait 132 s), so no label depends on it. | none |
+| (3) c06 | The official hackathon checklist excludes the 3-minute timing rule from scoring. Do not add a timing cap to c06. The older stream plan proposed one incorrectly. Timing facts can still be shown for context. No current label depends on this correction. | none |
 | (1) c07 | Read strictly: Yes needs a summary or next step, or an offer of more help, **and** a goodbye. A bare thanks and goodbye is No, disputed. A closing that waves away an open question is No. | 34 disputed No |
 | c07 | N/A when the client leaves, the line drops, or the client hangs up right after their own last line. The operator closing the chat with no goodbye is No. | 7 N/A |
 
 Question (1) is the biggest: if the team reads `c07` leniently, the 34 disputed `c07` No labels become Yes.
+
+These readings are proposals, not team decisions. Keep all 41 disputed labels excluded from agreement until #25 is settled. A's official seed is not available in the fetched branches, so guidance has not been written into it. Preserve its official wording; apply agreed guidance in a new published version and keep references versioned with that exact checklist. New admin-created criteria need their own reviewed labels.
 
 Two more are disputed because the text itself is ambiguous: `p1-ru-025` `c02` (the operator asked «С чем помочь?», which is Yes by the wording; the design's example uses N/A) and `p1-kz-014` `c04` and `c06` («Иә» may answer the Kazakh question, which would be a contradiction, or confirm the bot).
 
