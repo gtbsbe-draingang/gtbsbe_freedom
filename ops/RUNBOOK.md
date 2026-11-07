@@ -1,23 +1,21 @@
 # Control-set runbook
 
 Owner: the person presenting the demo. Record the frozen commit, checklist
-versions, exact local model IDs and run time before the rehearsal. Never push
+versions, the model IDs in use and run time before the rehearsal. Never push
 directly to `main`; submit feature branches and draft PRs for review.
 
 ## Before the control set arrives
 
 1. Start from a clean clone of the integrated demo commit. Build/install steps
    must follow that commit's README. Confirm the committed `web/dist` opens
-   without Node and the API and local inference servers are reachable.
-2. Confirm the evaluator uses only local endpoints. The older plans mentioning
-   hosted model API keys are superseded. Download weights in advance, record
-   their revision/quantization, and check offline inference before the demo.
-3. Inventory the actual GPU devices and memory with `nvidia-smi`. The limit is
-   **140 GB aggregate VRAM**, with a target peak of at most 120 GB to leave
-   headroom. Verify each GPU separately; aggregate memory is not automatically
-   pooled. Run the chosen context length and concurrency under load. Reduce
-   concurrency/context or change model placement if any device runs out of
-   memory. Do not switch to a hosted provider as an automatic fallback.
+   without Node, the API is reachable and `ANTHROPIC_API_KEY` is set on the backend.
+2. The evaluator on `main` calls the Claude API: check the model and prices in
+   `/api/config` (default `claude-haiku-5-5`, per-criterion overrides allowed).
+   The key lives only in the backend environment, never in the UI or Git.
+   Fully local models (TECH_STACK.md, 140 GB VRAM ceiling) are a later option
+   and are not wired into the evaluator; do not describe the demo as local.
+3. Check the key's rate limits against the job concurrency with a dry run and a
+   small real run, so a full DEV or control run finishes within the time slot.
 4. Configure the organizer source privately on the backend. Never put signed
    organizer/player URLs into Git, screenshots, browser config, logs or issues.
    Confirm the UI receives only our relative audio endpoint.
@@ -25,7 +23,7 @@ directly to `main`; submit feature branches and draft PRs for review.
    counts 35/15/15. Confirm the official seed has c01–c08 and exact published
    wording/scales. Build the calls draft from that seed, validate it with A's
    loader, and publish it through the checklist flow.
-6. Evaluate DEV with the actual local model. Verify `source=model`, job completion,
+6. Evaluate DEV with the configured model. Verify `source=model`, job completion,
    required result fields and evidence indices. Inspect the accuracy report's
    `n`, `missing` and `disputed_excluded`; a null agreement or a mock run is not
    a model benchmark. Team review of the 520 draft labels is still required.
@@ -79,7 +77,7 @@ directly to `main`; submit feature branches and draft PRs for review.
 | Failure | Action and honest fallback |
 |---|---|
 | Organizer API unavailable | Import only organizer-provided JSON; show the previously imported DEV set as DEV. |
-| Local inference unavailable/OOM | Check local server health, per-device memory and concurrency; retry failed items. Use a labelled saved real run for demonstration. |
+| Model API unavailable or rate-limited | Retry the failed items once the API answers; lower concurrency if rate-limited. Use a labelled saved real run for demonstration. |
 | Malformed or unsupported model answer | Keep the item failed/needs review; inspect schema and evidence validation, then retry. |
 | Audio expired | Retry once through the backend resolver, then re-import if the player source expired. Show transcript/evidence with audio marked unavailable. |
 | Poor audio alignment | Play manually and disclose that automatic jump accuracy is pending; do not claim the two-second target. |
@@ -94,7 +92,7 @@ Status: **not performed**. A code/test pass does not complete the rehearsal.
 | Field | Fill during the live rehearsal |
 |---|---|
 | Commit / participants / date | Pending |
-| Local models, GPU inventory and peak VRAM | Pending |
+| Model IDs, cost per evaluation and run time | Pending |
 | Official/calls/custom checklist versions | Pending |
 | Control import and retry checks | Pending |
 | Five calls play/seek; manually checked alignment | Pending |
