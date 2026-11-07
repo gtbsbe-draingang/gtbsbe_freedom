@@ -71,6 +71,14 @@ export async function run(page) {
   await page.waitFor(sel("theme-toggle"));
   assert.equal(await page.count(".cqa.cqa--dark"), 1, "the dark theme survives a reload");
 
+  // ---- the mock Dynamics form: a header link there, and a link back ----
+  assert.equal(await page.eval(`document.querySelector(${JSON.stringify(sel("dynamics-link"))}).getAttribute("href")`), "dynamics-mock.html");
+  await page.click(sel("dynamics-link"));
+  await page.waitFor('[data-test="cqa-frame"]');
+  await page.click('[data-test="back-to-app"]');
+  await page.waitFor(sel("dynamics-link"));
+  await page.waitFor(sel("workspace"));
+
   // ---- role switch ----
   assert.match(await page.text(sel("role-switch")), /Контролёр/);
   await page.click(sel("role-switch"));

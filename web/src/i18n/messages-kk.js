@@ -25,6 +25,7 @@ export default {
   "role.controller": "Бақылаушы",
   "role.reviewer": "Тексеруші",
   "theme.toggle": "Қараңғы тақырып",
+  "dynamics.open": "Dynamics 365 формасында ашу",
   "dataset.label": "Деректер",
   "dataset.title": "Ағымдағы деректер жиыны",
   "workspace.queue": "Кезек",

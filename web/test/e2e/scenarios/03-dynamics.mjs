@@ -41,6 +41,7 @@ export async function run(page) {
   assert.equal(await page.eval(inFrame(`doc.querySelectorAll('[data-test="nav-workspace"]').length`)), 0);
   assert.equal(await page.eval(inFrame(`doc.querySelectorAll('[data-test="queue-pane"], [data-test="queue-toggle"]').length`)), 0);
   assert.equal(await page.eval(inFrame(`doc.querySelectorAll('[data-test="role-switch"]').length`)), 1);
+  assert.equal(await page.eval(inFrame(`doc.querySelectorAll('[data-test="dynamics-link"]').length`)), 0, "no link to the form inside the form");
   assert.equal(await page.eval(inFrame(`doc.querySelectorAll('[data-test="transcript-pane"], [data-test="scorecard-pane"]').length`)), 2);
   assert.equal(await page.eval(inFrame(`doc.querySelector(".cqa").classList.contains("cqa--compact")`)), true);
 

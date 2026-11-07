@@ -310,6 +310,25 @@
   color: #fff;
 }
 
+.cqa .cqa-icon-link {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.cqa .cqa-icon-link:hover {
+  color: var(--text);
+}
+
+.cqa .cqa-icon-link:focus-visible {
+  outline: 2px solid var(--nav-on);
+  outline-offset: 2px;
+}
+
 /* ---- route outlet ---- */
 
 .cqa .cqa-main {
