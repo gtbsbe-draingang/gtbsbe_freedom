@@ -212,8 +212,11 @@ def test_analytics_shape_and_values(setup) -> None:
         "na_rate": 0,
         "n": 3,
     }
-    # every criterion of the checklist, in its order; the others were all answered well
-    assert [row["criterion_id"] for row in body["by_criterion"]] == [c.id for c in official.criteria]
+    # every scored criterion of the checklist, in its order (the gross-error one is in gross_errors);
+    # the others were all answered well
+    assert [row["criterion_id"] for row in body["by_criterion"]] == [
+        c.id for c in official.criteria if c.kind != "gross_error"
+    ]
     assert all(row["fail_rate"] == 0 and row["n"] == 3 for row in body["by_criterion"][1:])
     assert body["gross_errors"] == {"count": 0, "by_kind": [], "conversations": []}
     # totals 90, 100 and 100 (c01 weighs 10 of 100): the mean 96.67
@@ -233,7 +236,7 @@ def test_gross_errors_listed(setup) -> None:
         "by_kind": [{"kind": "insult", "count": 1}],
         "conversations": [flagged],
     }
-    assert criterion_row(body, "c08")["fail_rate"] == 0.5  # for a gross-error criterion, yes is the failure
+    assert "c08" not in [row["criterion_id"] for row in body["by_criterion"]]  # reported in gross_errors only
 
 
 def test_csv_bom_and_header(setup, fake: FakeEvaluator) -> None:
@@ -256,7 +259,7 @@ def test_csv_bom_and_header(setup, fake: FakeEvaluator) -> None:
     )
     rows = parse(response.content)
     assert len(rows) == 3 + 1
-    assert any("84.17" in row for row in rows[1:])
+    assert any("84,17" in row for row in rows[1:])  # a decimal comma, for Excel with a Russian locale
     assert {len(row) for row in rows} == {len(rows[0])}  # every row has every column
 
 
@@ -297,17 +300,57 @@ def test_fail_and_na_rates(setup) -> None:
     body = get_analytics(client, official)
     # yes/no: "no" fails
     assert criterion_row(body, "c01")["fail_rate"] == 0.25
-    # c02: two na, one no, one yes; the share is over every evaluation, na included
+    # c02: two na, one no, one yes; the failures are the share of the two it applied to, na_rate of all four
     c02 = criterion_row(body, "c02")
-    assert (c02["fail_rate"], c02["na_rate"], c02["n"]) == (0.25, 0.5, 4)
-    # a scale: any step below the top step fails; na counts as na, not as a failure
+    assert (c02["fail_rate"], c02["na_rate"], c02["n"]) == (0.5, 0.5, 4)
+    # a scale: any step below the top step fails; na is not a failure and is not in the denominator
+    # (c04: steps 20 and 15, 0, na: two failures of the three it applied to)
     c04 = criterion_row(body, "c04")
-    assert (c04["fail_rate"], c04["na_rate"], c04["n"]) == (0.5, 0.25, 4)
+    assert (c04["fail_rate"], c04["na_rate"], c04["n"]) == (0.6667, 0.25, 4)
     # the top step is 10 on c06: 10, 7 and 0, 10
     assert criterion_row(body, "c06")["fail_rate"] == 0.5
 
 
-def test_gross_error_rate_and_kinds(setup) -> None:
+def test_fail_rate_is_among_the_evaluations_the_criterion_applied_to(setup) -> None:
+    client, official = setup
+    ids = [add_conversation("G", f"x{n}") for n in range(4)]
+    for conversation, answer in zip(ids, ("no", "yes", "na", "na"), strict=True):
+        put(conversation, official, {"c02": answer})
+
+    c02 = criterion_row(get_analytics(client, official), "c02")
+    # one failure among the two evaluations where c02 applied (n - na); over all four it would be 0.25
+    assert (c02["fail_rate"], c02["na_rate"], c02["n"]) == (0.5, 0.5, 4)
+
+    # the same on a scale: step 0 fails, the top step 20 passes, na is left out of the denominator
+    for conversation, answer in zip(ids, (StepAnswer(step=0), StepAnswer(step=20), "na", "na"), strict=True):
+        put(conversation, official, {"c04": answer}, seconds=1)
+    c04 = criterion_row(get_analytics(client, official), "c04")
+    assert (c04["fail_rate"], c04["na_rate"], c04["n"]) == (0.5, 0.5, 4)
+
+
+def test_fail_rate_is_exact_and_half_up_among_applicable(setup) -> None:
+    client, official = setup
+    # 1 failure among 32 applicable evaluations (the 2 na ones are left out of the denominator):
+    # 1/32 = 0.03125, half-up 0.0313 (float rounding gives 0.0312); na_rate 2/34 = 0.0588
+    answers = ["no"] + ["yes"] * 31 + ["na"] * 2
+    for n, answer in enumerate(answers):
+        put(add_conversation("G", f"x{n}"), official, {"c02": answer})
+    c02 = criterion_row(get_analytics(client, official), "c02")
+    assert (c02["fail_rate"], c02["na_rate"], c02["n"]) == (0.0313, 0.0588, 34)
+
+
+def test_a_criterion_answered_na_everywhere_has_no_failures(setup) -> None:
+    client, official = setup
+    for n in range(3):
+        put(add_conversation("G", f"x{n}"), official, {"c03": "na"})
+    body = get_analytics(client, official)  # validates: the schema wants numbers
+    c03 = criterion_row(body, "c03")
+    assert (c03["fail_rate"], c03["na_rate"], c03["n"]) == (0, 1, 3)  # nothing applied: no failure rate
+    assert isinstance(c03["fail_rate"], int | float)
+    assert criterion_row(body, "c01")["n"] == 3  # the other criteria are untouched
+
+
+def test_gross_error_count_and_kinds(setup) -> None:
     client, official = setup
     a, b, c, d = [add_conversation("G", f"x{n}") for n in range(4)]
     put(a, official, {"c08": "yes"}, kinds={"c08": ["paid_service_outside_company", "insult"]})
@@ -316,7 +359,6 @@ def test_gross_error_rate_and_kinds(setup) -> None:
     put(d, official, {"c08": "no"})
 
     body = get_analytics(client, official)
-    assert criterion_row(body, "c08")["fail_rate"] == 0.75
     gross = body["gross_errors"]
     assert gross["count"] == 3
     # a count that ties is ordered by kind
@@ -341,6 +383,29 @@ def test_by_kind_is_ordered_by_count_then_kind(setup) -> None:
         {"kind": "alpha", "count": 1},
         {"kind": "beta", "count": 1},
     ]
+
+
+def test_the_gross_error_criterion_is_reported_in_gross_errors_only(setup) -> None:
+    client, official = setup
+    clean, flagged = three()[:2]
+    put(clean, official)
+    put(flagged, official, {"c08": "yes"}, kinds={"c08": ["insult"]})
+
+    body = get_analytics(client, official)
+    gross_error_ids = [c.id for c in official.criteria if c.kind == "gross_error"]
+    assert gross_error_ids == ["c08"]
+    listed = [row["criterion_id"] for row in body["by_criterion"]]
+    assert not set(gross_error_ids) & set(listed)
+    assert listed == [c.id for c in official.criteria if c.kind != "gross_error"]
+    # the gross_errors block still counts it
+    assert body["gross_errors"] == {
+        "count": 1,
+        "by_kind": [{"kind": "insult", "count": 1}],
+        "conversations": [flagged],
+    }
+    # the CSV is unchanged on this point: the criterion keeps its answer and points columns
+    header = parse(get_csv(client, official).content)[0]
+    assert "c08_answer" in header and "c08_points" in header
 
 
 def test_final_answers_count_not_the_models(setup) -> None:
@@ -374,7 +439,6 @@ def test_a_decision_can_clear_and_raise_a_gross_error(setup, fake: FakeEvaluator
     decide(client, appeal["id"], answer="no")
     body = get_analytics(client, official)
     assert body["gross_errors"] == {"count": 0, "by_kind": [], "conversations": []}
-    assert criterion_row(body, "c08")["fail_rate"] == 0
 
 
 def test_by_language_and_channel(setup) -> None:
@@ -645,18 +709,19 @@ def test_csv_t2_row(setup, fake: FakeEvaluator) -> None:
     rows = parse(get_csv(client, official).content)
     assert len(rows) == 2
     assert rows[1] == [
-        "p1-ru-001", "DEV", "agent chat", "RU", official.checklist_id, "1", "84.17", "84.17", "0", "",
-        "yes", "16.67",  # c01
+        "p1-ru-001", "DEV", "agent chat", "RU", official.checklist_id, "1", "84,17", "84,17", "0", "",
+        "yes", "16,67",  # c01
         "na", "",  # c02
         "na", "",  # c03
-        "15", "25.00",  # c04: the step's value
-        "yes", "25.00",  # c05
-        "7", "17.50",  # c06
+        "15", "25,00",  # c04: the step's value
+        "yes", "25,00",  # c05
+        "7", "17,50",  # c06
         "na", "",  # c07
         "no", "",  # c08: the gross-error criterion has no points
     ]  # fmt: skip
     raw = get_csv(client, official).content.decode("utf-8")
-    assert ";84.17;84.17;" in raw  # a decimal point, never a comma
+    assert ";84,17;84,17;" in raw  # a decimal comma, never a point
+    assert "." not in raw  # no decimal point anywhere in the file
 
 
 def test_csv_uses_final_answers_and_totals(setup) -> None:
@@ -672,10 +737,10 @@ def test_csv_uses_final_answers_and_totals(setup) -> None:
     def cell(conversation: str, column: str) -> str:
         return rows[conversation][header.index(column)]
 
-    assert (cell("p1-ru-001", "original_total"), cell("p1-ru-001", "final_total")) == ("100.00", "91.00")
-    assert (cell("p1-ru-001", "c06_answer"), cell("p1-ru-001", "c06_points")) == ("4", "6.00")
-    assert (cell("p1-ru-010", "c06_answer"), cell("p1-ru-010", "c06_points")) == ("10", "15.00")
-    assert cell("p1-ru-010", "final_total") == "100.00"
+    assert (cell("p1-ru-001", "original_total"), cell("p1-ru-001", "final_total")) == ("100,00", "91,00")
+    assert (cell("p1-ru-001", "c06_answer"), cell("p1-ru-001", "c06_points")) == ("4", "6,00")
+    assert (cell("p1-ru-010", "c06_answer"), cell("p1-ru-010", "c06_points")) == ("10", "15,00")
+    assert cell("p1-ru-010", "final_total") == "100,00"
 
 
 def test_csv_gross_error_columns(setup) -> None:
@@ -716,7 +781,36 @@ def test_csv_totals_have_two_decimals(setup) -> None:
         put_total(add_conversation("G", f"x{n}"), official, total)
     rows = parse(get_csv(client, official).content)
     header = rows[0]
-    assert [row[header.index("final_total")] for row in rows[1:]] == ["100.00", "0.00", "5.50", "84.17", "1.01"]
+    assert [row[header.index("final_total")] for row in rows[1:]] == ["100,00", "0,00", "5,50", "84,17", "1,01"]
+
+
+def test_csv_numbers_have_a_decimal_comma_and_are_not_quoted(setup) -> None:
+    client, official = setup
+    put(add_conversation("G", "t2"), official, T2)  # totals 84.17, points with fractions
+    put_total(add_conversation("G", "none"), official, None)  # not calculated
+    put_total(add_conversation("G", "date"), official, "10.01")  # "10.01" is a date to a ru-RU Excel
+
+    content = get_csv(client, official).content
+    raw = content[len(BOM) :].decode("utf-8")
+    lines = raw.split("\r\n")
+    assert len(lines) == 4 + 1  # the header, three rows, and the empty piece after the last CRLF
+    by_id = {line.split(";")[0]: line for line in lines[1:-1]}
+    # a decimal comma, unquoted (the delimiter is `;`, so a comma needs no quotes), exact, two decimals
+    assert by_id["t2"].startswith("t2;G;agent chat;RU;official-chat;1;84,17;84,17;0;;yes;16,67;")
+    assert by_id["date"].startswith("date;G;agent chat;RU;official-chat;1;;10,01;0;;")  # no model total stored
+    # a total that is null is an empty cell, and so are the criteria it has no results for
+    assert by_id["none"].startswith("none;G;agent chat;RU;official-chat;1;;;0;;")
+    assert '"' not in raw  # nothing was quoted
+
+    # read back as cells: the number cells carry a comma and no point
+    rows = {row[0]: dict(zip(parse(content)[0], row, strict=True)) for row in parse(content)[1:]}
+    assert (rows["t2"]["original_total"], rows["t2"]["final_total"]) == ("84,17", "84,17")
+    assert (rows["t2"]["c01_points"], rows["t2"]["c04_points"], rows["t2"]["c06_points"]) == ("16,67", "25,00", "17,50")
+    assert (rows["none"]["original_total"], rows["none"]["final_total"]) == ("", "")
+    number_columns = ("original_total", "final_total", "c01_points", "c04_points", "c05_points", "c06_points")
+    assert not [row[column] for row in rows.values() for column in number_columns if "." in row[column]]
+    # unchanged: the version is an integer, the gross-error cell 1/0, a step answer its integer value
+    assert (rows["t2"]["version"], rows["t2"]["gross_error"], rows["t2"]["c04_answer"]) == ("1", "0", "15")
 
 
 def test_csv_rows_are_ordered_by_group_then_conversation(setup) -> None:
@@ -829,8 +923,8 @@ def test_csv_numbers_are_not_prefixed(setup) -> None:
     row = dict(zip(rows[0], rows[1], strict=True))
     assert row["c04_answer"] == "0"
     assert row["version"] == "1"
-    assert (row["original_total"], row["final_total"]) == ("80.00", "80.00")  # c04 weighs 20 of 100
-    assert row["c04_points"] == "0.00"
+    assert (row["original_total"], row["final_total"]) == ("80,00", "80,00")  # c04 weighs 20 of 100
+    assert row["c04_points"] == "0,00"
     assert not any(cell.startswith("'") for cell in rows[1])
 
 

@@ -13,11 +13,13 @@ conversations' columns (`store.conversation_profiles`).
 
 **Analytics** (`analytics`):
 
-* `by_criterion`: the criteria of the checklist in their order. `n` is the number of evaluations
-  that contain the criterion, `fail_rate` the share of them whose final answer is a failure and
-  `na_rate` the share answered N/A (na counts in `n`, so the two never add up beyond 1). A failure
-  is `no`; a step below the top step of a scale; for the gross-error criterion `yes`. A criterion
-  that no evaluation contains (n = 0) is left out: the contract wants numbers there, not nulls.
+* `by_criterion`: the scored criteria of the checklist in their order; the gross-error criterion
+  is not here, gross errors are reported in `gross_errors` only. `n` is the number of evaluations
+  that have an answer for the criterion (N/A included), `na_rate` the share of those `n` answered
+  N/A, and `fail_rate` the share of the applicable evaluations (`n` minus the N/A ones) whose
+  final answer is a failure: `no`, or a step below the top step of a scale. When every answer is
+  N/A nothing applied and `fail_rate` is 0 (the contract wants a number). A criterion that no
+  evaluation contains (n = 0) is left out: the contract wants numbers there, not nulls.
 * `by_language` and `by_channel`: the evaluations by the conversation's language (RU, KZ, EN) and
   channel (agent chat, voice call), in that fixed order, only the values that occur. `n` counts the
   evaluations, `avg_total` is the mean of the final totals that are calculated (null when none is).
@@ -30,17 +32,19 @@ Rates and means are computed on exact `Fraction`s and rounded once, half-up: rat
 point.
 
 **CSV** (`export_csv`): one row per evaluation, built for Excel with a Russian locale. UTF-8 with a
-byte order mark; `;` between columns; `.` as the decimal point; CRLF line ends (what Excel and
-RFC 4180 use; the `csv` module also quotes a cell that holds `\\r`, `\\n`, `;` or a quote, so every
-row stays one row). The columns are `conversation_id;group_id;channel;language;checklist_id;
+byte order mark; `;` between columns; `,` as the decimal separator of every number (Excel with a
+Russian locale reads `84,17` as a number, but `84.17` as text, and a value like `10.01` as a date);
+CRLF line ends (what Excel and RFC 4180 use). The `csv` module quotes a cell that holds `\\r`, `\\n`,
+`;` or a quote, so every row stays one row, and it does not quote a cell for its decimal comma
+(`;` is the delimiter). The columns are `conversation_id;group_id;channel;language;checklist_id;
 version;original_total;final_total;gross_error;gross_error_kinds`, then
 `<criterion_id>_answer;<criterion_id>_points` for each criterion in the checklist's order.
 
 * `conversation_id` is the organisers' id without the group (`group_id` is its own column).
-* An answer is `yes`, `no`, `na` or the value of the step (`15`), the final answer; points are the
-  result's final points with two decimals. Totals are written with two decimals. A total, points
-  or an answer that does not exist (not calculated, a gross-error criterion, no result) is an
-  empty cell.
+* An answer is `yes`, `no`, `na` or the value of the step (`15`, an integer), the final answer;
+  points are the result's final points with two decimals and a decimal comma (`16,67`). Totals are
+  written the same way (`84,17`). A total, points or an answer that does not exist (not
+  calculated, a gross-error criterion, no result) is an empty cell. `version` is an integer.
 * `gross_error` is `1` or `0` (a number: Excel turns `true` into a locale-dependent word);
   `gross_error_kinds` are joined with `,`.
 * CSV injection: ids come from uploads and checklist ids from users, and a spreadsheet reads a text
@@ -75,7 +79,7 @@ from app.models import (
 from app.scoring import round2
 from app.store import ConversationProfile
 
-BOM = "﻿"
+BOM = "\ufeff"
 DELIMITER = ";"
 LINE_END = "\r\n"
 
@@ -122,27 +126,34 @@ def rate(count: int, n: int) -> Decimal:
     return Decimal(f"{scaled}e-4")
 
 
-def _failed(criterion: Criterion, answer: Answer, top: int | None) -> bool:
-    if criterion.kind == "gross_error":
-        return answer == "yes"
+def _failed(answer: Answer, top: int | None) -> bool:
+    """`no`, or a step below the top step of a scale (N/A and the top step pass)."""
     if isinstance(answer, StepAnswer):
         return top is not None and answer.step < top
     return answer == "no"
 
 
 def _by_criterion(criteria: list[Criterion], rows: list[Row]) -> list[AnalyticsCriterion]:
+    """The scored criteria with an answer in some evaluation; the gross-error criterion is reported
+    in `gross_errors` instead."""
     finals = [{r.criterion_id: _final_answer(r) for r in evaluation.results} for evaluation, _ in rows]
     stats = []
     for criterion in criteria:
+        if criterion.kind == "gross_error":
+            continue
         top = max((step.value for step in criterion.scale_steps), default=None)
         answers = [final[criterion.id] for final in finals if criterion.id in final]
         if answers:
+            na = sum(answer == "na" for answer in answers)
+            applicable = len(answers) - na
+            failed = sum(_failed(answer, top) for answer in answers)
             stats.append(
                 AnalyticsCriterion(
                     criterion_id=criterion.id,
                     title=criterion.title,
-                    fail_rate=rate(sum(_failed(criterion, answer, top) for answer in answers), len(answers)),
-                    na_rate=rate(sum(answer == "na" for answer in answers), len(answers)),
+                    # among the evaluations the criterion applied to; none applied: no failures
+                    fail_rate=rate(failed, applicable) if applicable else Decimal("0.0000"),
+                    na_rate=rate(na, len(answers)),
                     n=len(answers),
                 )
             )
@@ -202,8 +213,8 @@ def _text(value: str) -> str:
 
 
 def _number(value: Decimal | None) -> str:
-    """A total or points with two decimals and a decimal point (exact, half-up), "" for null."""
-    return "" if value is None else str(round2(Fraction(value)))
+    """A total or points with two decimals and a decimal comma (exact, half-up: `84,17`), "" for null."""
+    return "" if value is None else str(round2(Fraction(value))).replace(".", ",")
 
 
 def _answer_cell(answer: Answer) -> str:
