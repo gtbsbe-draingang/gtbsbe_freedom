@@ -211,6 +211,11 @@ class Judgment(BaseModel):  # what the evaluator returns for one criterion (not 
 
 
 class CriterionResult(Judgment):  # Judgment + what B's scoring and appeals add
+    # Lenient here only: the wire shape of a result never has reuse_key (dump() hides it) and
+    # the contract does not list model, so a dumped or contract evaluation must parse again.
+    # Judgment (the evaluator's type) still requires both.
+    model: str | None = None
+    reuse_key: str | None = None
     final_answer: Answer | None = None  # after decided and carried appeals
     points: Num | None
     effective_weight: Num | None

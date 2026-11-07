@@ -28,6 +28,7 @@ from app.models import (
     Evaluation,
     ImportSummary,
     Job,
+    Judgment,
     LLMCallRecord,
     Message,
     QueueItem,
@@ -333,6 +334,41 @@ def test_evaluation_dump_hides_calls() -> None:
     assert "reuse_key" not in result
     assert result["model"] == "claude-haiku-5-5"
     assert result["criterion_id"] == "c01"
+
+
+def test_evaluation_dump_round_trips_through_the_model() -> None:
+    # The wire shape has no reuse_key (hidden) and may have no model; it must parse again.
+    evaluation = _evaluation(results=[_result(), _result(criterion_id="c02")])
+    body = dump(evaluation)
+    assert all("reuse_key" not in r for r in body["results"])
+    again = Evaluation.model_validate(body)
+    assert dump(again) == body
+    assert [r.reuse_key for r in again.results] == [None, None]
+
+
+def test_result_without_model_or_reuse_key_parses() -> None:
+    wire = {
+        "criterion_id": "c01",
+        "answer": "yes",
+        "explanation": "because",
+        "confidence": "high",
+        "points": 10,
+        "effective_weight": 10,
+    }
+    result = CriterionResult.model_validate(wire)
+    assert result.model is None
+    assert result.reuse_key is None
+    body = dump(_evaluation(results=[result]))["results"][0]
+    assert body["model"] is None
+    assert "reuse_key" not in body
+
+
+def test_judgment_still_requires_model_and_reuse_key() -> None:
+    # The evaluator's own type is unchanged: only CriterionResult is lenient.
+    judgment = {"criterion_id": "c01", "answer": "yes", "explanation": "x", "confidence": "high"}
+    with pytest.raises(ValidationError):
+        Judgment.model_validate(judgment)
+    assert Judgment.model_validate({**judgment, "model": "m", "reuse_key": "k"}).reuse_key == "k"
 
 
 def test_dump_uses_aliases_for_other_models() -> None:
