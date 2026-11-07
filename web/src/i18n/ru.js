@@ -63,6 +63,7 @@ const messages = {
   "queue.group.all": "Все наборы",
   "queue.selectAll": "Выбрать все показанные",
   "queue.load": "Загрузить",
+  "queue.export": "Скачать Excel (CSV)",
   "queue.loadTitle": "Загрузить группу по group_id или файл с диалогами",
 
   "loader.title": "Загрузка диалогов",

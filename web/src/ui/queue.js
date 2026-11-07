@@ -144,6 +144,22 @@ export function createQueue(store, api) {
   });
 
   const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
+  const exportLink = h("a", {
+    class: "cqa-q-export",
+    attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
+    data: { test: "queue-export" },
+    on: {
+      click: (event) => {
+        try {
+          exportLink.href = api.exportCsvUrl(view.group);
+          exportLink.download = `cqa-${view.group ? view.group.replace(/[^A-Za-z0-9._-]/g, "_") : "all"}.csv`;
+        } catch (error) {
+          event.preventDefault();
+          toastError(store, error);
+        }
+      },
+    },
+  }, icon("download", { size: 16 }));
   const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
   const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
   const body = h("div", { class: "cqa-q-body" }, stateBox, list);
@@ -154,7 +170,7 @@ export function createQueue(store, api) {
     { class: "cqa-q-controls" },
     pillBar,
     h("div", { class: "cqa-q-sub" }, groupSelect, language),
-    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary)),
+    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink),
   );
   const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
   const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
