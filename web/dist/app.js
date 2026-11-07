@@ -40,8 +40,8 @@
         search.append(key, String(v));
       }
     }
-    const text2 = search.toString();
-    return text2 ? `?${text2}` : "";
+    const text3 = search.toString();
+    return text3 ? `?${text3}` : "";
   }
   function createHttpApi({ apiBase, role, fetchImpl = globalThis.fetch, timeoutMs = 3e4 } = {}) {
     if (typeof apiBase !== "string" || apiBase.trim() === "") {
@@ -69,11 +69,11 @@
         init.body = JSON.stringify(body);
       }
       let response;
-      let text2;
+      let text3;
       try {
         const doFetch = fetchImpl;
         response = await doFetch(`${base}/${path}`, init);
-        text2 = await response.text();
+        text3 = await response.text();
       } catch (cause) {
         if (timedOut) throw new ApiError("timeout", `Request timed out after ${timeoutMs} ms`, { cause });
         const reason = cause instanceof Error ? cause.message : String(cause);
@@ -85,7 +85,7 @@
       let data;
       let parsed = false;
       try {
-        data = JSON.parse(text2);
+        data = JSON.parse(text3);
         parsed = true;
       } catch {
       }
@@ -228,8 +228,11 @@
   }
   var orNull = (value) => value === void 0 ? null : value;
   function fingerprint(criterion) {
+    return sha256Hex(canonicalJson(fingerprintSubset(criterion)));
+  }
+  function fingerprintSubset(criterion) {
     const c = criterion || {};
-    const subset = {
+    return {
       title: orNull(c.title),
       wording: orNull(c.wording),
       answer_type: orNull(c.answer_type),
@@ -243,7 +246,6 @@
       kinds: Array.isArray(c.kinds) ? c.kinds : [],
       guidance: orNull(c.guidance)
     };
-    return sha256Hex(canonicalJson(subset));
   }
   function transcriptHash(transcript) {
     const lines = (Array.isArray(transcript) ? transcript : []).map((m) => ({
@@ -261,12 +263,12 @@
   var UNKNOWN = Object.freeze({ kind: "unknown" });
   function parseTimestamp(ts) {
     if (typeof ts !== "string") return { ...UNKNOWN };
-    const text2 = ts.trim();
-    let m = CLOCK_MS.exec(text2);
+    const text3 = ts.trim();
+    let m = CLOCK_MS.exec(text3);
     if (m) return { kind: "clock", seconds: Number(m[1]) * 60 + Number(m[2]) };
-    m = CLOCK_HMS.exec(text2);
+    m = CLOCK_HMS.exec(text3);
     if (m) return { kind: "clock", seconds: Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]) };
-    m = ISO.exec(text2);
+    m = ISO.exec(text3);
     if (!m) return { ...UNKNOWN };
     const year = Number(m[1]);
     const month = Number(m[2]);
@@ -337,10 +339,10 @@
     let ending = "normal";
     lines.forEach((m, i) => {
       if (speakerOf(m) !== "system") return;
-      const text2 = textOf(m);
-      if (handover < 0 && HANDOVER.test(text2)) handover = i;
-      if (identity < 0 && IDENTITY.test(text2)) identity = i;
-      for (const [kind, pattern] of ENDINGS) if (pattern.test(text2)) ending = kind;
+      const text3 = textOf(m);
+      if (handover < 0 && HANDOVER.test(text3)) handover = i;
+      if (identity < 0 && IDENTITY.test(text3)) identity = i;
+      for (const [kind, pattern] of ENDINGS) if (pattern.test(text3)) ending = kind;
     });
     let joined = -1;
     for (let i = handover + 1; i < lines.length; i += 1) {
@@ -381,8 +383,8 @@
   function markDuplicates(lines) {
     return lines.map((m, i) => {
       const prev = lines[i - 1];
-      const same2 = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
-      return same2 || m.duplicate === true ? { ...m, duplicate: true } : m;
+      const same3 = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
+      return same3 || m.duplicate === true ? { ...m, duplicate: true } : m;
     });
   }
   function normalizeRecord(record, groupId, options = {}) {
@@ -425,10 +427,10 @@
     if (RECORD_KEYS.some((key) => key in data)) return { list: [data], groupHint: null };
     return { list: [], groupHint: null };
   }
-  function parseUpload(text2) {
+  function parseUpload(text3) {
     let data;
     try {
-      data = JSON.parse(String(text2).replace(/^\uFEFF/, ""));
+      data = JSON.parse(String(text3).replace(/^\uFEFF/, ""));
     } catch {
       throw new UploadError("not_json");
     }
@@ -460,18 +462,18 @@
     const g = gcd(n, d);
     return g > 1n ? { n: n / g, d: d / g } : { n, d };
   }
-  function parse(text2) {
-    const m = DECIMAL.exec(text2.trim());
+  function parse(text3) {
+    const m = DECIMAL.exec(text3.trim());
     const intPart = m?.[2] ?? "";
     const fracPart = m?.[3] ?? "";
     if (!m || intPart + fracPart === "") {
-      throw new TypeError(`not a decimal number: ${JSON.stringify(text2)}`);
+      throw new TypeError(`not a decimal number: ${JSON.stringify(text3)}`);
     }
     let n = BigInt(intPart + fracPart);
     let d = 10n ** BigInt(fracPart.length);
     const exp = m[4] === void 0 ? 0 : Number(m[4]);
     if (!Number.isSafeInteger(exp) || Math.abs(exp) > 1e4) {
-      throw new RangeError(`exponent out of range: ${JSON.stringify(text2)}`);
+      throw new RangeError(`exponent out of range: ${JSON.stringify(text3)}`);
     }
     if (exp > 0) n *= 10n ** BigInt(exp);
     else if (exp < 0) d *= 10n ** BigInt(-exp);
@@ -551,14 +553,14 @@
       const applicable = scored && answer !== null && answer !== void 0 && answer !== "na" && weight.n > 0n;
       return { criterion, given, answer: answer ?? null, weight, applicable };
     });
-    let weightSum = ZERO;
-    for (const e of entries) if (e.applicable) weightSum = add(weightSum, e.weight);
+    let weightSum2 = ZERO;
+    for (const e of entries) if (e.applicable) weightSum2 = add(weightSum2, e.weight);
     let total = ZERO;
     const perSection = /* @__PURE__ */ new Map();
     for (const e of entries) {
       if (!e.applicable) continue;
       const frac = fraction(e.criterion, e.answer);
-      e.effective = div(mul(e.weight, HUNDRED), weightSum);
+      e.effective = div(mul(e.weight, HUNDRED), weightSum2);
       e.points = mul(frac, e.effective);
       total = add(total, e.points);
       const acc = perSection.get(e.criterion.section_id) ?? {
@@ -587,7 +589,7 @@
         points: e.applicable ? round2(e.points) : null,
         effective_weight: e.applicable ? round2(e.effective) : null
       })),
-      total: weightSum.n > 0n ? round2(total) : null,
+      total: weightSum2.n > 0n ? round2(total) : null,
       // In their `order`, as the backend returns them (a stable sort keeps ties in array order).
       sections: [...version2.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => {
         const acc = perSection.get(s.id);
@@ -1250,9 +1252,9 @@
   var DEMO = "\u0414\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u043A\u0430:";
   var sameAnswer = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   var sortedSteps = (criterion) => [...criterion.scale_steps ?? []].sort((a, b) => a.value - b.value);
-  var stripNaPrefix = (text2) => String(text2 ?? "").replace(/^N\/A\s*[—–-]\s*/i, "");
-  var capitalize = (text2) => text2.charAt(0).toUpperCase() + text2.slice(1);
-  var stripYesPrefix = (text2) => String(text2 ?? "").replace(/^Да\s*[—–-]\s*/, "");
+  var stripNaPrefix = (text3) => String(text3 ?? "").replace(/^N\/A\s*[—–-]\s*/i, "");
+  var capitalize = (text3) => text3.charAt(0).toUpperCase() + text3.slice(1);
+  var stripYesPrefix = (text3) => String(text3 ?? "").replace(/^Да\s*[—–-]\s*/, "");
   function answerLabel(answer) {
     if (answer === "yes") return "\u0414\u0430";
     if (answer === "no") return "\u041D\u0435\u0442";
@@ -1373,8 +1375,8 @@
     const rng = seeded(`${conversation.id}${criterion.fingerprint}|second`);
     const differs = rng() < RATES.secondOpinionDiffers;
     const answer = differs ? alternative(criterion, current2, rng()) : current2;
-    const same2 = sameAnswer(answer, current2);
-    const reasoning = same2 ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
+    const same3 = sameAnswer(answer, current2);
+    const reasoning = same3 ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
     return { answer, reasoning };
   }
   var MOODS = ["\u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u043E\u0435", "\u043F\u043E\u0437\u0438\u0442\u0438\u0432\u043D\u043E\u0435", "\u0440\u0430\u0437\u0434\u0440\u0430\u0436\u0451\u043D\u043D\u043E\u0435", "\u0442\u0440\u0435\u0432\u043E\u0436\u043D\u043E\u0435"];
@@ -1382,8 +1384,8 @@
   function mockInfo(conversation) {
     const rng = seeded(`${conversation.id}|info`);
     const first = (conversation.transcript ?? []).find((m) => m.speaker === "client" && m.text.trim() !== "");
-    const text2 = first ? first.text.trim().replace(/\s+/g, " ") : "";
-    const topic = text2.length > 80 ? `${text2.slice(0, 79).trimEnd()}\u2026` : text2 || null;
+    const text3 = first ? first.text.trim().replace(/\s+/g, " ") : "";
+    const topic = text3.length > 80 ? `${text3.slice(0, 79).trimEnd()}\u2026` : text3 || null;
     return {
       topic,
       mood_start: MOODS[Math.floor(rng() * MOODS.length)],
@@ -1588,8 +1590,8 @@
   var NEEDS_QUOTES = /[;"\r\n]/;
   function csvField(value) {
     if (value === null || value === void 0) return "";
-    const text2 = String(value);
-    return NEEDS_QUOTES.test(text2) ? `"${text2.replaceAll('"', '""')}"` : text2;
+    const text3 = String(value);
+    return NEEDS_QUOTES.test(text3) ? `"${text3.replaceAll('"', '""')}"` : text3;
   }
   function toCsv(rows, columns) {
     const cols = columns.map((c) => typeof c === "string" ? { key: c, header: c } : c);
@@ -2524,6 +2526,179 @@
     "queue.tag.grossError": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
     "queue.tag.needsReview": "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443",
     "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u0447\u0430\u0441\u0442\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "queue.groupFilter": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
+    "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
+    "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+    "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
+    "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "loader.group": "\u0413\u0440\u0443\u043F\u043F\u0430 \u043F\u043E group_id",
+    "loader.groupHint": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u0440\u0438\u0434\u0443\u0442 \u043E\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 \u043D\u0430\u0448 \u0441\u0435\u0440\u0432\u0435\u0440.",
+    "loader.groupPlaceholder": "\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, CTRL",
+    "loader.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
+    "loader.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0433\u0440\u0443\u043F\u043F\u0443 {group}\u2026",
+    "loader.file": "\u0424\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438 (JSON)",
+    "loader.fileHint": "\u041E\u0434\u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C, \u043C\u0430\u0441\u0441\u0438\u0432 \u0437\u0430\u043F\u0438\u0441\u0435\u0439 \u0438\u043B\u0438 \u0432\u0435\u0441\u044C \u043E\u0442\u0432\u0435\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432.",
+    "loader.uploading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0444\u0430\u0439\u043B {name}\u2026",
+    "loader.summary": "\u0412\u0441\u0435\u0433\u043E {total} \xB7 \u043D\u043E\u0432\u044B\u0445 {imported} \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E {updated} \xB7 \u0431\u0435\u0437 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439 {unchanged}",
+    "loader.summaryGroup": "\u041D\u0430\u0431\u043E\u0440 {group}",
+    "loader.error.not_json": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432 \u0444\u043E\u0440\u043C\u0430\u0442\u0435 JSON.",
+    "loader.error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
+    "loader.error.bad_record": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430: \u043D\u0443\u0436\u043D\u044B conversation_id, channel, language \u0438 transcript.",
+    "loader.error.read": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C.",
+    "batch.label": "\u041F\u0430\u043A\u0435\u0442\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430",
+    "batch.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043E: {n}",
+    "batch.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "batch.estimating": "\u0421\u0447\u0438\u0442\u0430\u044E, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0437\u043E\u0432\u043E\u0432\u2026",
+    "batch.estimate": "{dialogs} \xB7 {calls} \u043C\u043E\u0434\u0435\u043B\u0438 \xB7 {cached} \u0438\u0437 \u043A\u044D\u0448\u0430",
+    "batch.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435",
+    "batch.clear": "\u0421\u043D\u044F\u0442\u044C \u0432\u044B\u0431\u043E\u0440",
+    "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
+    "batch.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u044B\u0435",
+    "batch.done": "\u0413\u043E\u0442\u043E\u0432\u043E: \u043E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "batch.interrupted": "\u0421\u0432\u044F\u0437\u044C \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C \u043F\u0440\u0435\u0440\u0432\u0430\u043B\u0430\u0441\u044C \u043D\u0430 {done} \u0438\u0437 {total}: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442\u0441\u044F \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435.",
+    "batch.resume": "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0438\u0442\u044C",
+    "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "batch.calls.one": "{n} \u0432\u044B\u0437\u043E\u0432",
+    "batch.calls.few": "{n} \u0432\u044B\u0437\u043E\u0432\u0430",
+    "batch.calls.many": "{n} \u0432\u044B\u0437\u043E\u0432\u043E\u0432",
+    "checklists.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "checklists.note": "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0433\u043E \u043E\u0441\u043D\u043E\u0432\u0435. \u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 \u043C\u043E\u0436\u0435\u0442 \u043E\u0442\u043B\u0438\u0447\u0430\u0442\u044C\u0441\u044F \u043E\u0442 100 \u2014 \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "checklists.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\u2026",
+    "checklists.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "checklists.locked": "\u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D",
+    "checklists.channel.any": "\u043B\u044E\u0431\u043E\u0439 \u043A\u0430\u043D\u0430\u043B",
+    "checklists.channel.chat": "\u0447\u0430\u0442\u044B",
+    "checklists.channel.call": "\u0437\u0432\u043E\u043D\u043A\u0438",
+    "checklists.version": "v{version} (\u0432\u0435\u0440\u0441\u0438\u0439: {count})",
+    "checklists.criteria.one": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.criteria.few": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "checklists.criteria.many": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "checklists.weights": "\u0441\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 {sum}",
+    "checklists.basedOn": "\u043D\u0430 \u043E\u0441\u043D\u043E\u0432\u0435 \xAB{name}\xBB v{version}",
+    "checklists.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C",
+    "checklists.copy": "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
+    "editor.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u2026",
+    "editor.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.titleNew": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newName": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newNote": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438.",
+    "editor.newSection": "\u041D\u043E\u0432\u044B\u0439 \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.copyName": "{name} (\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0439)",
+    "editor.lockedNote": "\u0412\u0435\u0440\u0441\u0438\u044F \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430: \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0441\u0442 \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0451 \u043E\u0441\u043D\u043E\u0432\u0435.",
+    "editor.versionNote": "\u041A\u0430\u0436\u0434\u043E\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0451\u0442 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E; \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0438 \u0438\u0445 \u043E\u0446\u0435\u043D\u043A\u0438 \u043D\u0435 \u043C\u0435\u043D\u044F\u044E\u0442\u0441\u044F.",
+    "editor.back": "\u2190 \u0412\u0441\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "editor.apply": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "editor.saved": "\u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E: \xAB{name}\xBB v{version}. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u0435\u0433\u043E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438.",
+    "editor.name": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435",
+    "editor.channel": "\u041A\u0430\u043D\u0430\u043B (\u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u0435\u0434\u0432\u044B\u0431\u043E\u0440)",
+    "editor.sectionTitle": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0440\u0430\u0437\u0434\u0435\u043B\u0430",
+    "editor.critTitle": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.wording": "\u0424\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0430 \u0434\u043B\u044F \u043E\u0446\u0435\u043D\u0449\u0438\u043A\u0430",
+    "editor.type": "\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430",
+    "editor.type.yes_no": "\u0414\u0430 / \u041D\u0435\u0442",
+    "editor.type.scale": "\u0428\u043A\u0430\u043B\u0430",
+    "editor.kind": "\u0412\u0438\u0434",
+    "editor.kind.scored": "\u041E\u0446\u0435\u043D\u043E\u0447\u043D\u044B\u0439",
+    "editor.kind.gross_error": "\u0413\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430 (\u0444\u043B\u0430\u0433, \u0431\u0435\u0437 \u0431\u0430\u043B\u043B\u043E\u0432)",
+    "editor.weight": "\u0412\u0435\u0441",
+    "editor.section": "\u0420\u0430\u0437\u0434\u0435\u043B",
+    "editor.steps": "\u0428\u0430\u0433\u0438 \u0448\u043A\u0430\u043B\u044B: \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435",
+    "editor.stepValue": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.stepLabel": "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.removeStep": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0448\u0430\u0433",
+    "editor.addStep": "+ \u0448\u0430\u0433",
+    "editor.naAllowed": "\u041C\u043E\u0436\u043D\u043E \u043E\u0442\u0432\u0435\u0442\u0438\u0442\u044C N/A",
+    "editor.naCondition": "\u041A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A",
+    "editor.kinds": "\u0412\u0438\u0434\u044B \u043D\u0430\u0440\u0443\u0448\u0435\u043D\u0438\u0439 (\u0447\u0435\u0440\u0435\u0437 \u0437\u0430\u043F\u044F\u0442\u0443\u044E)",
+    "editor.more": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438 \u043C\u043E\u0434\u0435\u043B\u044C",
+    "editor.guidance": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0434\u043B\u044F \u043C\u043E\u0434\u0435\u043B\u0438",
+    "editor.model": "\u041C\u043E\u0434\u0435\u043B\u044C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "editor.modelDefault": "\u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
+    "editor.removeCriterion": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C",
+    "editor.addCriterion": "+ \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.addSection": "+ \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removeSection": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removed": "\u0423\u0434\u0430\u043B\u0435\u043D\u044B:",
+    "editor.restore": "\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
+    "editor.badge.new": "\u043D\u043E\u0432\u044B\u0439",
+    "editor.badge.reworded": "\u0438\u0437\u043C\u0435\u043D\u0451\u043D",
+    "editor.badge.weight": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441",
+    "editor.diff": "\u043D\u043E\u0432\u044B\u0445: {added} \xB7 \u0443\u0434\u0430\u043B\u0435\u043D\u043E: {removed} \xB7 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E: {reworded} \xB7 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441: {weight}",
+    "editor.weightSum": "\u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432: {sum}, \u043D\u0435 100. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E: \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "editor.errorCount": "\u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F: {n}",
+    "editor.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveAsNew": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveVersion": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E",
+    "editor.error.title_required": "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435.",
+    "editor.error.weight_invalid": "\u0412\u0435\u0441 \u2014 \u0447\u0438\u0441\u043B\u043E \u043E\u0442 0 (\u043C\u043E\u0436\u043D\u043E \u0441 \u0437\u0430\u043F\u044F\u0442\u043E\u0439: 7,5).",
+    "editor.error.scale_empty": "\u0423 \u0448\u043A\u0430\u043B\u044B \u0434\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u0445\u043E\u0442\u044F \u0431\u044B \u0434\u0432\u0430 \u0448\u0430\u0433\u0430.",
+    "editor.error.scale_value_invalid": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430 \u2014 \u0447\u0438\u0441\u043B\u043E.",
+    "editor.error.scale_duplicate": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0448\u0430\u0433\u043E\u0432 \u043D\u0435 \u0434\u043E\u043B\u0436\u043D\u044B \u043F\u043E\u0432\u0442\u043E\u0440\u044F\u0442\u044C\u0441\u044F.",
+    "editor.error.na_condition_required": "\u041E\u043F\u0438\u0448\u0438\u0442\u0435, \u043A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A.",
+    "editor.error.section_missing": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B.",
+    "editor.error.criteria_empty": "\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439.",
+    "apply.title": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "apply.what": "\xAB{name}\xBB v{version}: \u043D\u0435\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438\u0437 \u043F\u0440\u0435\u0436\u043D\u0438\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0431\u0435\u0437 \u0432\u044B\u0437\u043E\u0432\u0430 \u043C\u043E\u0434\u0435\u043B\u0438.",
+    "apply.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433\u0438\u2026",
+    "apply.targets": "\u041A\u0430\u043A\u0438\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
+    "apply.control": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 {group}",
+    "apply.controlNone": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 (\u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430)",
+    "apply.dev": "DEV",
+    "apply.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "apply.noAll": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u043E \u0432\u0441\u0435\u043C \u0441\u0440\u0430\u0437\u0443 \u043D\u0435\u043B\u044C\u0437\u044F: \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440.",
+    "apply.run": "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
+    "apply.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "apply.compare": "\u0421\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
+    "compare.title": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
+    "compare.note": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B (\u0441 \u0440\u0435\u0448\u0435\u043D\u0438\u044F\u043C\u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0445), \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u043A\u0430\u0436\u0434\u0430\u044F \u0440\u0430\u0437\u043D\u0438\u0446\u0430 \u0438\u0434\u0451\u0442 \u043E\u0442 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430.",
+    "compare.from": "\u0411\u044B\u043B\u043E",
+    "compare.to": "\u0421\u0442\u0430\u043B\u043E",
+    "compare.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "compare.group.all": "\u0412\u0441\u0435 \u0433\u0440\u0443\u043F\u043F\u044B",
+    "compare.choose": "\u2014 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044E \u2014",
+    "compare.pickTitle": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435, \u0447\u0442\u043E \u0441\u0440\u0430\u0432\u043D\u0438\u0442\u044C",
+    "compare.pickNote": "\u0414\u0432\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 (\u0438\u043B\u0438 \u0434\u0432\u0430 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430): \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438.",
+    "compare.loading": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u2026",
+    "compare.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
+    "compare.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "compare.empty": "\u041D\u0435\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438 \u0432\u0435\u0440\u0441\u0438\u044F\u043C\u0438",
+    "compare.emptyNote": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C (\xAB\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\xBB \u0432 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430), \u0438 \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
+    "compare.summary": "{changed} \u0438\u0437 {of} {verb}, \u0432 \u0441\u0440\u0435\u0434\u043D\u0435\u043C {avg}",
+    "compare.ofDialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "compare.ofDialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "compare.ofDialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "compare.changedVerb.one": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0441\u044F",
+    "compare.changedVerb.few": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
+    "compare.changedVerb.many": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
+    "compare.table": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438: \u0431\u044B\u043B\u043E, \u0441\u0442\u0430\u043B\u043E, \u0440\u0430\u0437\u043D\u0438\u0446\u0430",
+    "compare.col.id": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "compare.col.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "compare.col.old": "\u0411\u044B\u043B\u043E",
+    "compare.col.new": "\u0421\u0442\u0430\u043B\u043E",
+    "compare.col.delta": "\u0394",
+    "compare.sortBy": "\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E \u0441\u0442\u043E\u043B\u0431\u0446\u0443 \xAB{column}\xBB",
+    "compare.openTitle": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438 \u0440\u044F\u0434\u043E\u043C",
+    "compare.side.label": "\u041E\u0431\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0440\u044F\u0434\u043E\u043C",
+    "compare.side.title": "\u0414\u0438\u0430\u043B\u043E\u0433 {id}",
+    "compare.side.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433",
+    "compare.side.totals": "{old} \u2192 {new} ({delta})",
+    "compare.side.all": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
+    "compare.side.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438: \u0431\u044B\u043B\u043E \u0438 \u0441\u0442\u0430\u043B\u043E",
+    "compare.side.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0438\u2026",
+    "compare.side.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438",
+    "compare.side.none": "\u041E\u0442\u0432\u0435\u0442\u044B \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C \u043D\u0435 \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C.",
+    "compare.side.absent": "\u043D\u0435\u0442 \u0432 \u044D\u0442\u043E\u0439 \u0432\u0435\u0440\u0441\u0438\u0438",
+    "compare.side.noResult": "\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438",
+    "compare.side.onlyOld": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0411\u044B\u043B\u043E\xBB",
+    "compare.side.onlyNew": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0421\u0442\u0430\u043B\u043E\xBB",
+    "compare.side.reworded": "\u0431\u044B\u043B\u043E: {title}",
     "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
     "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
     "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
@@ -2716,6 +2891,17 @@
   function t(key, params) {
     return has(messages, key) ? format(messages[key], params) : key;
   }
+  function pluralForm(n) {
+    const abs = Math.abs(Math.trunc(Number(n)));
+    const ten = abs % 10;
+    const hundred = abs % 100;
+    if (ten === 1 && hundred !== 11) return "one";
+    if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "few";
+    return "many";
+  }
+  function tp(base, n, params = {}) {
+    return t(`${base}.${pluralForm(n)}`, { ...params, n });
+  }
 
   // src/ui/dom.js
   var SVG_NS = "http://www.w3.org/2000/svg";
@@ -2744,9 +2930,9 @@
       for (const key of Object.keys(props)) {
         if (!PROPS.has(key)) throw new TypeError(`dom: unknown prop "${key}"`);
       }
-      const { class: className, text: text2, attrs, data, on, style } = props;
+      const { class: className, text: text3, attrs, data, on, style } = props;
       if (className) el.className = Array.isArray(className) ? className.filter(Boolean).join(" ") : String(className);
-      if (text2 !== void 0 && text2 !== null) el.textContent = String(text2);
+      if (text3 !== void 0 && text3 !== null) el.textContent = String(text3);
       if (attrs) setAttrs(el, attrs);
       if (data) {
         for (const [key, value] of Object.entries(data)) {
@@ -2860,8 +3046,8 @@
           const value = params?.[key];
           if (value !== void 0 && value !== null && value !== "") query2.set(key, String(value));
         }
-        const text2 = query2.toString();
-        return text2 ? `#/compare?${text2}` : "#/compare";
+        const text3 = query2.toString();
+        return text3 ? `#/compare?${text3}` : "#/compare";
       }
       case "analytics":
         return "#/analytics";
@@ -2935,20 +3121,20 @@
     const suffix = colon < 0 ? "" : full.slice(colon + 1);
     if (code === "bad_record" && /^\d+$/.test(suffix)) return t("error.bad_record_at", { n: Number(suffix) + 1 });
     const key = `error.${code}`;
-    const text2 = code ? t(key) : key;
-    return text2 === key ? t("error.generic") : text2;
+    const text3 = code ? t(key) : key;
+    return text3 === key ? t("error.generic") : text3;
   }
   function dismissToast(store, id) {
     const toasts = store.get().toasts ?? [];
     if (!toasts.some((entry) => entry.id === id)) return;
     store.set({ toasts: toasts.filter((entry) => entry.id !== id) });
   }
-  function toast(store, { kind = "info", text: text2, retry } = {}) {
+  function toast(store, { kind = "info", text: text3, retry } = {}) {
     if (!KINDS.includes(kind)) throw new TypeError(`toast: kind must be "error" or "info", got ${JSON.stringify(kind)}`);
-    if (typeof text2 !== "string" || text2 === "") throw new TypeError("toast: text is required");
+    if (typeof text3 !== "string" || text3 === "") throw new TypeError("toast: text is required");
     const id = nextId++;
-    const entry = { id, kind, text: text2, retry: typeof retry === "function" ? retry : null };
-    const rest = (store.get().toasts ?? []).filter((old) => !(old.kind === kind && old.text === text2));
+    const entry = { id, kind, text: text3, retry: typeof retry === "function" ? retry : null };
+    const rest = (store.get().toasts ?? []).filter((old) => !(old.kind === kind && old.text === text3));
     store.set({ toasts: [...rest, entry].slice(-MAX_TOASTS) });
     if (kind === "info") {
       const timer = setTimeout(() => dismissToast(store, id), INFO_MS);
@@ -3029,12 +3215,12 @@
       select.disabled = busy;
     }
     async function send() {
-      const text2 = comment.value.trim();
-      if (busy || closed || text2 === "") return;
+      const text3 = comment.value.trim();
+      if (busy || closed || text3 === "") return;
       busy = true;
       paint();
       try {
-        const appeal = await api.fileAppeal({ evaluation_id: evaluationId, criterion_id: select.value, comment: text2 });
+        const appeal = await api.fileAppeal({ evaluation_id: evaluationId, criterion_id: select.value, comment: text3 });
         close();
         onFiled?.(appeal);
       } catch (error) {
@@ -3161,16 +3347,16 @@
   }
   function labelled(prefix, value) {
     const key = `${prefix}.${value}`;
-    const text2 = t(key);
-    return text2 === key ? String(value) : text2;
+    const text3 = t(key);
+    return text3 === key ? String(value) : text3;
   }
-  var clip = (text2, max) => {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  var clip = (text3, max) => {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > max ? `${line.slice(0, max - 1).trimEnd()}\u2026` : line;
   };
   var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  var tag = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
-  var tagLink = (kind, text2, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text2, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
+  var tag = (kind, text3, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text3, attrs: props.attrs, data: props.data });
+  var tagLink = (kind, text3, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text3, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
   function stateBox(test, title, note, extra) {
     return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
   }
@@ -3208,6 +3394,23 @@
       // the criterion id whose evidence is marked in the transcript
     };
     let destroyed = false;
+    let pendingSel = null;
+    function followShared(ref) {
+      pendingSel = null;
+      if (destroyed || !ref || id === null) return;
+      if (view.sel && view.sel.checklist_id === ref.checklist_id && view.sel.version === ref.version) return;
+      if (view.busy) {
+        pendingSel = ref;
+        return;
+      }
+      if (!view.options.some((o) => o.checklist_id === ref.checklist_id && o.version === ref.version)) {
+        boot();
+        return;
+      }
+      view.sel = { checklist_id: ref.checklist_id, version: ref.version };
+      fillSelect();
+      loadSelection();
+    }
     let loadRun = 0;
     let drawer = null;
     const unwatch = [];
@@ -3281,7 +3484,7 @@
       }
     }
     const clearMarks = () => store.get().transcript?.highlight(null, [], null);
-    const pickEvaluation = (evaluations, sel) => evaluations.find((e) => e.status === "done" && e.checklist_id === sel.checklist_id && e.version === sel.version) ?? null;
+    const pickEvaluation2 = (evaluations, sel) => evaluations.find((e) => e.status === "done" && e.checklist_id === sel.checklist_id && e.version === sel.version) ?? null;
     async function boot() {
       const mine = ++loadRun;
       view.phase = "loading";
@@ -3329,7 +3532,7 @@
         ]);
         if (destroyed || mine !== loadRun) return;
         view.version = version2;
-        view.evaluation = pickEvaluation(evaluations, sel);
+        view.evaluation = pickEvaluation2(evaluations, sel);
         view.evaluations = evaluations;
         view.appeals = appeals;
         view.conversation = conversation;
@@ -3393,6 +3596,7 @@
       } finally {
         view.busy = false;
         paintBar();
+        if (pendingSel) followShared(pendingSel);
       }
     }
     function run(mode) {
@@ -3690,6 +3894,12 @@
       transcript.highlight(criterion.id, result.evidence, result.checked_range, criterion.title);
       transcript.focusMessage(item.message_index);
     }
+    unwatch.push(
+      watch(store, (state) => state.queueRefresh, () => {
+        if (!view.busy && view.phase === "ready" && view.sel) loadSelection({ quiet: true });
+      })
+    );
+    unwatch.push(watch(store, (state) => state.checklistSel, (ref) => followShared(ref)));
     unwatch.push(store.subscribe((state, previous) => {
       if (state.role === previous.role) return;
       if (state.role !== "controller") drawer?.close();
@@ -3730,6 +3940,10 @@
     }
     return marks;
   }
+  function shownKey(conversation) {
+    const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+    return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
+  }
   function openId2(store, args) {
     if (typeof args?.id === "string" && args.id !== "") return args.id;
     const { route: route2, conversationId } = store.get();
@@ -3751,8 +3965,8 @@
       clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
       message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
     );
-    const text2 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
-    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text2);
+    const text3 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text3);
     return { el, flag };
   }
   function renderTranscript(store, api, args = {}) {
@@ -3765,6 +3979,8 @@
     let loaded = false;
     let marked = [];
     let pending2 = { highlight: null, focus: null };
+    let lastHighlight = null;
+    let shown = null;
     const flashTimers = /* @__PURE__ */ new Map();
     function clearMarks() {
       for (const i of marked) {
@@ -3777,7 +3993,8 @@
     }
     function applyHighlight(criterionId, evidence, range, label) {
       clearMarks();
-      if (criterionId === null || criterionId === void 0) return;
+      lastHighlight = criterionId === null || criterionId === void 0 ? null : [criterionId, evidence, range, label];
+      if (lastHighlight === null) return;
       const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
       const plan = highlightPlan(rows.length, evidence, range);
       plan.forEach((mark, i) => {
@@ -3835,6 +4052,7 @@
       rows = [];
       marked = [];
       loaded = true;
+      shown = shownKey(conversation);
       if (transcript.length === 0) {
         scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
       } else {
@@ -3874,15 +4092,36 @@
         showError(error);
       }
     }
+    async function refresh() {
+      if (destroyed || id === null) return;
+      if (!loaded) {
+        load2();
+        return;
+      }
+      const mine = ++run;
+      try {
+        const conversation = await api.getConversation(id);
+        if (destroyed || mine !== run || shownKey(conversation) === shown) return;
+        const top = scroller.scrollTop;
+        if (pending2.highlight === null && lastHighlight !== null) pending2.highlight = lastHighlight;
+        show(conversation);
+        scroller.scrollTop = top;
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        toastError(store, error, { retry: refresh });
+      }
+    }
     function destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopRefresh();
       flashTimers.forEach((timer) => clearTimeout(timer));
       flashTimers.clear();
       if (store.get().transcript === handle) store.set({ transcript: null });
       const hook2 = window.__cqaTest;
       if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
     }
+    const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
     if (hook?.store === store) hook.transcript = { focusMessage, highlight };
@@ -3926,12 +4165,12 @@
   }
   var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   var totalText = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : fmt2(rat(value));
-  var tag2 = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, data: props.data });
+  var tag2 = (kind, text3, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text3, data: props.data });
   function stepLabel(criterion, answer) {
-    const text2 = answerTag(criterion, answer).text;
-    if (typeof answer !== "object") return text2;
+    const text3 = answerTag(criterion, answer).text;
+    if (typeof answer !== "object") return text3;
     const step = (criterion.scale_steps ?? []).find((s) => s.value === answer.step);
-    return step?.label ? `${text2} \xB7 ${step.label}` : text2;
+    return step?.label ? `${text3} \xB7 ${step.label}` : text3;
   }
   function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
     const el = h("section", { class: "cqa-rv", attrs: { "aria-label": t("review.label") }, data: { test: "review-panel" } });
@@ -4251,14 +4490,14 @@
   // src/ui/appeals-page.js
   var FILTERS = ["open", "decided", "all"];
   var COMMENT_MAX = 120;
-  var clip2 = (text2) => {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  var clip2 = (text3) => {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > COMMENT_MAX ? `${line.slice(0, COMMENT_MAX - 1).trimEnd()}\u2026` : line;
   };
   function splitConversation(id) {
-    const text2 = String(id ?? "");
-    const at = text2.indexOf(":");
-    return at < 0 ? { group: "", conversation: text2 } : { group: text2.slice(0, at), conversation: text2.slice(at + 1) };
+    const text3 = String(id ?? "");
+    const at = text3.indexOf(":");
+    return at < 0 ? { group: "", conversation: text3 } : { group: text3.slice(0, at), conversation: text3.slice(at + 1) };
   }
   function createAppealsPage(store, api, route2) {
     const view = { filter: "open", appeals: [], phase: "loading", error: null, titles: /* @__PURE__ */ new Map() };
@@ -4400,6 +4639,1467 @@
     };
   }
 
+  // src/domain/checklist-diff.js
+  var same2 = (x, y) => canonicalJson(fingerprintSubset(x)) === canonicalJson(fingerprintSubset(y));
+  var hasId = (c) => typeof c?.id === "string" && c.id !== "";
+  function diffVersions(a, b) {
+    const before = new Map((a?.criteria ?? []).filter(hasId).map((c) => [c.id, c]));
+    const after = b?.criteria ?? [];
+    const seen = /* @__PURE__ */ new Set();
+    const out = { added: [], removed: [], reworded: [], weightOnly: [] };
+    for (const c of after) {
+      const old = hasId(c) ? before.get(c.id) : void 0;
+      if (!old) {
+        out.added.push(hasId(c) ? c.id : null);
+        continue;
+      }
+      seen.add(c.id);
+      if (!same2(old, c)) out.reworded.push(c.id);
+      else if (Number(old.weight ?? 0) !== Number(c.weight ?? 0)) out.weightOnly.push(c.id);
+    }
+    for (const id of before.keys()) if (!seen.has(id)) out.removed.push(id);
+    return out;
+  }
+
+  // src/domain/checklist-validate.js
+  var text2 = (value) => typeof value === "string" ? value.trim() : "";
+  function parseNumber(value) {
+    if (typeof value === "number") return value;
+    if (typeof value !== "string") return Number.NaN;
+    const cleaned = value.trim().replace(",", ".");
+    return /^-?\d+(\.\d+)?$/.test(cleaned) ? Number(cleaned) : Number.NaN;
+  }
+  var sumOf = (weights) => Math.round(weights.reduce((acc, w) => acc + w, 0) * 1e6) / 1e6;
+  function validateChecklist(draft) {
+    const errors = [];
+    const warnings = [];
+    const fail2 = (path, code) => errors.push({ path, code });
+    const source = draft ?? {};
+    if (text2(source.name) === "") fail2("name", "title_required");
+    const sections = Array.isArray(source.sections) ? source.sections.map((s, i) => ({ ...s, order: Number.isInteger(s?.order) ? s.order : i + 1 })) : [];
+    const sectionIds = new Set(sections.map((s) => s.id));
+    const criteria = (Array.isArray(source.criteria) ? source.criteria : []).map((raw, i) => {
+      const c = { ...raw };
+      const path = `criteria.${i}`;
+      const gross = c.kind === "gross_error";
+      c.kind = gross ? "gross_error" : "scored";
+      c.answer_type = c.answer_type === "scale" ? "scale" : "yes_no";
+      if (text2(c.title) === "") fail2(`${path}.title`, "title_required");
+      if (!sectionIds.has(c.section_id)) fail2(`${path}.section_id`, "section_missing");
+      if (gross) c.weight = 0;
+      else {
+        const weight = parseNumber(c.weight);
+        if (!Number.isFinite(weight) || weight < 0) fail2(`${path}.weight`, "weight_invalid");
+        else c.weight = weight;
+      }
+      if (c.answer_type === "scale") {
+        const steps = (Array.isArray(c.scale_steps) ? c.scale_steps : []).map((step) => ({ value: parseNumber(step?.value), label: typeof step?.label === "string" ? step.label : "" }));
+        if (steps.some((step) => !Number.isFinite(step.value))) fail2(`${path}.scale_steps`, "scale_value_invalid");
+        else if (steps.length < 2) fail2(`${path}.scale_steps`, "scale_empty");
+        else if (new Set(steps.map((step) => step.value)).size !== steps.length) fail2(`${path}.scale_steps`, "scale_duplicate");
+        c.scale_steps = steps.sort((a, b) => a.value - b.value);
+      } else c.scale_steps = [];
+      c.na_allowed = c.na_allowed === true;
+      if (c.na_allowed && text2(c.na_condition) === "") fail2(`${path}.na_condition`, "na_condition_required");
+      c.na_condition = c.na_allowed ? text2(c.na_condition) || null : null;
+      c.kinds = gross ? Array.isArray(c.kinds) ? c.kinds.map(text2).filter(Boolean) : [] : [];
+      c.wording = typeof c.wording === "string" ? c.wording : "";
+      c.guidance = text2(c.guidance) === "" ? null : c.guidance;
+      if (!Number.isInteger(c.order)) c.order = i + 1;
+      return c;
+    });
+    if (criteria.length === 0) fail2("criteria", "criteria_empty");
+    const scored = criteria.filter((c) => c.kind === "scored" && Number.isFinite(c.weight));
+    const sum = sumOf(scored.map((c) => c.weight));
+    if (scored.length > 0 && sum !== 100) warnings.push({ code: "weight_sum", sum });
+    return { value: { ...source, sections, criteria }, errors, warnings };
+  }
+
+  // src/ui/job-runner.js
+  var POLL_MS3 = 500;
+  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  async function followJob(api, first, onTick, { pollMs = POLL_MS3 } = {}) {
+    let job = first;
+    onTick(job, !jobSettled(job));
+    while (!jobSettled(job)) {
+      await sleep2(pollMs);
+      job = await api.getJob(job.id);
+      onTick(job, !jobSettled(job));
+    }
+    return job;
+  }
+  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+  function jobSlot(store, api, key, { pollMs = POLL_MS3 } = {}) {
+    const state = () => store.get().jobs?.[key] ?? null;
+    const put = (patch) => store.set((current2) => {
+      const jobs = { ...current2.jobs ?? {} };
+      if (patch === null) delete jobs[key];
+      else jobs[key] = { lock: null, job: null, meta: null, ...jobs[key], ...patch };
+      return { jobs };
+    });
+    const busy = () => (state()?.lock ?? null) !== null;
+    async function follow(first) {
+      put({ lock: "watching", job: snapshot(first, !jobSettled(first)) });
+      try {
+        const job = await followJob(api, first, (tick, running) => put({ job: snapshot(tick, running) }), { pollMs });
+        put({ lock: null, job: snapshot(job, false) });
+        store.set((current2) => ({ queueRefresh: (current2.queueRefresh ?? 0) + 1 }));
+        return job;
+      } catch (error) {
+        put({ lock: "interrupted" });
+        toastError(store, error, { retry: resume });
+        return null;
+      }
+    }
+    async function resume() {
+      const slot = state();
+      const id = slot?.job?.id;
+      if (!id || slot.lock !== "interrupted") return null;
+      put({ lock: "resuming" });
+      let job;
+      try {
+        job = await api.getJob(id);
+      } catch (error) {
+        const gone = error?.code === "not_found";
+        put(gone ? { lock: null, job: null } : { lock: "interrupted" });
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return null;
+      }
+      return follow(job);
+    }
+    async function start(request, { again, meta } = {}) {
+      if (busy()) return null;
+      put(meta === void 0 ? { lock: "starting" } : { lock: "starting", meta });
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        put({ lock: null });
+        toastError(store, error, { retry: again });
+        return null;
+      }
+      return follow(first);
+    }
+    function retry() {
+      const id = state()?.job?.id;
+      if (busy() || !id) return Promise.resolve(null);
+      return start(() => api.retryJob(id), { again: retry });
+    }
+    function reset() {
+      if (!busy() && state() !== null) put(null);
+    }
+    return { state, busy, start, resume, retry, reset, watch: (fn) => watch(store, (current2) => current2.jobs?.[key] ?? null, fn) };
+  }
+
+  // src/ui/loader.js
+  var ESTIMATE_DELAY_MS = 250;
+  var BATCH_SLOT = "batch";
+  function uploadErrorText(code) {
+    const match = /^bad_record:(\d+)$/.exec(String(code ?? ""));
+    if (match) return t("loader.error.bad_record", { n: Number(match[1]) + 1 });
+    if (code === "not_json" || code === "no_records") return t(`loader.error.${code}`);
+    return t("loader.error.read");
+  }
+  function estimateText(dry) {
+    return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
+  }
+  var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
+  function readText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+      reader.readAsText(file);
+    });
+  }
+  function openLoader({ host, store, api, onImported }) {
+    let closed = false;
+    let busy = false;
+    const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
+    const result = h("div", { class: "cqa-ld-result" });
+    const groupInput = h("input", {
+      class: "cqa-sc-select",
+      attrs: { type: "text", autocomplete: "off", spellcheck: "false", placeholder: t("loader.groupPlaceholder"), "aria-label": t("loader.group") },
+      data: { test: "group-id" },
+      on: { input: () => paint() }
+    });
+    const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
+    const fileInput = h("input", {
+      class: "cqa-ld-file",
+      attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
+      data: { test: "upload-file" },
+      on: { change: () => upload() }
+    });
+    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
+    function paint() {
+      importButton.disabled = busy || groupInput.value.trim() === "";
+      groupInput.disabled = busy;
+      fileInput.disabled = busy;
+    }
+    function showError(text3) {
+      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text3, data: { test: "loader-error" } }));
+    }
+    function showSummary(summary) {
+      clear(result).append(
+        h("p", { class: "cqa-ld-summary", text: summaryText(summary), data: { test: "import-summary" } }),
+        summary.group_id ? h("p", { class: "cqa-rv-hint", text: t("loader.summaryGroup", { group: summary.group_id }), data: { test: "import-group-name" } }) : null
+      );
+    }
+    async function run(label, action) {
+      if (busy || closed) return;
+      busy = true;
+      status.textContent = label;
+      paint();
+      try {
+        const summary = await action();
+        if (summary) {
+          if (!closed) showSummary(summary);
+          onImported?.(summary);
+        }
+      } catch (error) {
+        if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
+      } finally {
+        busy = false;
+        status.textContent = "";
+        if (!closed) paint();
+      }
+    }
+    function importGroup() {
+      const group = groupInput.value.trim();
+      if (group === "") return;
+      run(t("loader.importing", { group }), () => api.importDataset(group));
+    }
+    function upload() {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      run(t("loader.uploading", { name: file.name }), async () => {
+        try {
+          const text3 = await readText(file);
+          parseUpload(text3);
+          return await api.uploadConversations(JSON.parse(text3.replace(/^﻿/, "")));
+        } finally {
+          fileInput.value = "";
+        }
+      });
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
+      h(
+        "form",
+        {
+          class: "cqa-ap-form",
+          on: {
+            submit: (event) => {
+              event.preventDefault();
+              importGroup();
+            }
+          }
+        },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.group") }), groupInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.groupHint") }),
+        h("div", { class: "cqa-rv-acts" }, importButton)
+      ),
+      h(
+        "div",
+        { class: "cqa-ap-form" },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") })
+      ),
+      status,
+      result,
+      h("div", { class: "cqa-rv-acts" }, closeButton)
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("loader.close") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "loader" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.remove();
+    }
+    paint();
+    host.append(el);
+    groupInput.focus();
+    return { el, close };
+  }
+  var versionsOf2 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  function createBatchBar(store, api) {
+    const view = {
+      ready: false,
+      // config and checklists loaded
+      server: null,
+      options: [],
+      // [{checklist_id, version, label}]
+      estimate: null,
+      // the dry-run answer for the current selection and checklist
+      estimating: false
+    };
+    const slot = jobSlot(store, api, BATCH_SLOT);
+    const busy = () => slot.busy();
+    let destroyed = false;
+    let estimateTimer = null;
+    let estimateRun = 0;
+    let booting = null;
+    const stops = [];
+    const host = h("div", { class: "cqa-batch-host" });
+    const count = h("b", { class: "cqa-batch-count" });
+    const select = h("select", {
+      class: "cqa-sc-select",
+      attrs: { "aria-label": t("batch.checklist") },
+      data: { test: "batch-checklist" },
+      on: {
+        change: () => {
+          const option = view.options[Number(select.value)];
+          if (!option) return;
+          store.set({ checklistSel: { checklist_id: option.checklist_id, version: option.version } });
+        }
+      }
+    });
+    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "batch-estimate" } });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("batch.run"), data: { test: "batch-run" }, on: { click: () => runBatch() } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing"), data: { test: "batch-key-hint" } });
+    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "batch-progress" } });
+    const bar = h(
+      "section",
+      { class: "cqa-batch", attrs: { "aria-label": t("batch.label") }, data: { test: "batch-bar" } },
+      h(
+        "div",
+        { class: "cqa-batch-row" },
+        count,
+        h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: /* @__PURE__ */ new Set() }) } })
+      ),
+      h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
+      estimate,
+      hint,
+      h("div", { class: "cqa-batch-row" }, runButton),
+      progress
+    );
+    let checklists = [];
+    const selection = () => store.get().selection ?? /* @__PURE__ */ new Set();
+    const current2 = () => pickSelection(store.get().checklistSel, view.server, checklists);
+    function paint() {
+      if (destroyed) return;
+      const picked = selection();
+      const active = busy();
+      const show = picked.size > 0 || active;
+      if (!show) {
+        host.replaceChildren();
+        return;
+      }
+      if (!bar.isConnected) host.replaceChildren(bar);
+      count.textContent = t("batch.selected", { n: picked.size });
+      const sel = current2();
+      const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
+      if (at >= 0) select.value = String(at);
+      select.disabled = active || view.options.length === 0;
+      if (view.estimate) estimate.textContent = estimateText(view.estimate);
+      else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
+      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
+      hint.hidden = !keyMissing;
+      runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
+      clear(progress);
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } })
+        );
+      } else if (job) {
+        const running = lock === "watching";
+        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        if (job.failed > 0) {
+          progress.append(
+            h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
+            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } })
+          );
+        }
+      }
+    }
+    function boot() {
+      booting ?? (booting = Promise.all([api.getConfig(), api.listChecklists()]).then(
+        ([server, rows]) => {
+          if (destroyed) return;
+          view.server = server;
+          checklists = rows;
+          view.options = rows.flatMap(
+            (row) => [...versionsOf2(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+          );
+          clear(select);
+          view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
+          view.ready = true;
+          scheduleEstimate();
+        },
+        (error) => {
+          booting = null;
+          if (!destroyed) toastError(store, error);
+        }
+      ));
+      return booting;
+    }
+    function scheduleEstimate() {
+      clearTimeout(estimateTimer);
+      estimateRun += 1;
+      view.estimate = null;
+      const picked = [...selection()];
+      if (picked.length === 0 || !view.ready) {
+        view.estimating = false;
+        paint();
+        return;
+      }
+      view.estimating = true;
+      paint();
+      const mine = estimateRun;
+      estimateTimer = setTimeout(async () => {
+        const sel = current2();
+        if (!sel) return;
+        try {
+          const dry = await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, dry_run: true });
+          if (destroyed || mine !== estimateRun) return;
+          view.estimate = dry;
+        } catch (error) {
+          if (destroyed || mine !== estimateRun) return;
+          toastError(store, error, { retry: scheduleEstimate });
+        }
+        view.estimating = false;
+        paint();
+      }, ESTIMATE_DELAY_MS);
+    }
+    function runBatch() {
+      const sel = current2();
+      const picked = [...selection()];
+      if (busy() || !sel || picked.length === 0) return void 0;
+      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
+    }
+    stops.push(
+      watch(store, (state) => state.selection, (next) => {
+        slot.reset();
+        if ((next?.size ?? 0) > 0) boot();
+        scheduleEstimate();
+      }),
+      watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+      slot.watch((next, previous) => {
+        if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
+        else paint();
+      })
+    );
+    if (selection().size > 0) boot();
+    paint();
+    return {
+      el: host,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(estimateTimer);
+        stops.forEach((stop) => stop());
+      }
+    };
+  }
+
+  // src/ui/apply-dialog.js
+  var DEV = "DEV";
+  function compareFrom(version2) {
+    if (version2?.based_on?.checklist_id) return { checklist_id: version2.based_on.checklist_id, version: version2.based_on.version };
+    if (Number.isInteger(version2?.version) && version2.version > 1) return { checklist_id: version2.checklist_id, version: version2.version - 1 };
+    return null;
+  }
+  function controlGroup(groups, current2) {
+    if (current2 && current2 !== DEV && groups.includes(current2)) return current2;
+    const others = groups.filter((g) => g !== DEV).sort();
+    return others.length > 0 ? others[others.length - 1] : null;
+  }
+  function openApplyDialog({ host, store, api, version: version2 }) {
+    let closed = false;
+    const view = { targets: null, target: null, estimate: null, estimating: false, error: null, server: null };
+    let estimateRun = 0;
+    const slot = jobSlot(store, api, `apply:${version2.checklist_id}:${version2.version}`);
+    const busy = () => slot.busy();
+    if (busy()) view.target = slot.state()?.meta?.target ?? null;
+    else slot.reset();
+    const body = h("div", { class: "cqa-ap-form" });
+    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "apply-estimate" } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing") });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("apply.run"), data: { test: "apply-run" }, on: { click: () => run() } });
+    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "apply-progress" } });
+    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("apply.close"), data: { test: "apply-close" }, on: { click: () => close() } });
+    function targetRow(key, label, count, disabled) {
+      const input = h("input", {
+        class: "cqa-ap-radio",
+        attrs: { type: "radio", name: "cqa-apply-target", value: key, disabled: disabled || busy() ? true : null },
+        data: { test: `apply-target-${key}` },
+        on: { change: () => choose(key) }
+      });
+      input.checked = view.target === key;
+      return h("label", { class: ["cqa-ap-target", disabled && "is-disabled"] }, input, h("span", { text: label }), h("span", { class: ["cqa-q-count", "num"], text: disabled && count === 0 ? "" : String(count) }));
+    }
+    function paint() {
+      if (closed) return;
+      clear(body);
+      if (!view.targets) {
+        body.append(h("p", { class: "cqa-rv-note", text: view.error ? errorText(view.error) : t("apply.loading") }));
+        runButton.disabled = true;
+        return;
+      }
+      const { control, dev, selected } = view.targets;
+      body.append(
+        h("p", { class: "cqa-rv-label", text: t("apply.targets") }),
+        h(
+          "div",
+          { class: "cqa-ap-targets", attrs: { role: "radiogroup", "aria-label": t("apply.targets") } },
+          targetRow("control", control.group ? t("apply.control", { group: control.group }) : t("apply.controlNone"), control.ids.length, control.ids.length === 0),
+          targetRow("dev", t("apply.dev"), dev.ids.length, dev.ids.length === 0),
+          targetRow("selected", t("apply.selected"), selected.ids.length, selected.ids.length === 0)
+        ),
+        h("p", { class: "cqa-rv-hint", text: t("apply.noAll") })
+      );
+      estimate.textContent = view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "";
+      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
+      hint.hidden = !keyMissing;
+      runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
+      clear(progress);
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => slot.resume() } })
+        );
+      } else if (job) {
+        progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
+        if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => slot.retry() } }));
+        const from = compareFrom(version2);
+        if (!job.running && from) {
+          const group = view.target === "control" ? view.targets.control.group : view.target === "dev" ? DEV : null;
+          const link = href("compare", { from_checklist: from.checklist_id, from_version: from.version, to_checklist: version2.checklist_id, to_version: version2.version, group_id: group });
+          progress.append(h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta", "cqa-ap-compare"], attrs: { href: link }, text: t("apply.compare"), data: { test: "apply-compare" }, on: { click: () => close() } }));
+        }
+      }
+    }
+    async function loadTargets() {
+      try {
+        const [items, server] = await Promise.all([api.listConversations(), api.getConfig()]);
+        if (closed) return;
+        const groups = [...new Set(items.map((item) => item.group_id))];
+        const group = controlGroup(groups, store.get().groupId);
+        const selection = [...store.get().selection ?? []].filter((id) => items.some((item) => item.id === id));
+        view.server = server;
+        view.targets = {
+          control: { group, ids: group ? items.filter((item) => item.group_id === group).map((item) => item.id) : [] },
+          dev: { ids: items.filter((item) => item.group_id === DEV).map((item) => item.id) },
+          selected: { ids: selection }
+        };
+      } catch (error) {
+        view.error = error;
+      }
+      paint();
+    }
+    async function choose(key) {
+      if (busy()) return;
+      view.target = key;
+      view.estimate = null;
+      slot.reset();
+      view.estimating = true;
+      paint();
+      const mine = ++estimateRun;
+      try {
+        const dry = await api.startEvaluations({ conversations: view.targets[key].ids, checklist_id: version2.checklist_id, version: version2.version, dry_run: true });
+        if (closed || mine !== estimateRun) return;
+        view.estimate = dry;
+      } catch (error) {
+        if (closed || mine !== estimateRun) return;
+        toastError(store, error, { retry: () => choose(key) });
+      }
+      view.estimating = false;
+      paint();
+    }
+    function run() {
+      if (busy() || !view.target) return void 0;
+      const ids = view.targets[view.target].ids;
+      return slot.start(() => api.startEvaluations({ conversations: ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }), { again: run, meta: { target: view.target } });
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("apply.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("apply.title") }), h("p", { class: "cqa-rv-hint", text: t("apply.what", { name: version2.name, version: version2.version }) })),
+      body,
+      estimate,
+      hint,
+      h("div", { class: "cqa-rv-acts" }, closeButton, runButton),
+      progress
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("apply.close") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "apply-dialog" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      stopSlot();
+      el.remove();
+    }
+    const stopSlot = slot.watch(() => paint());
+    paint();
+    host.append(el);
+    loadTargets();
+    return { el, close };
+  }
+
+  // src/ui/checklists-page.js
+  var NEW_ID = "new";
+  var versionsOf3 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var weightSum = (row) => (row.criteria ?? []).filter((c) => c.kind !== "gross_error").reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
+  function createChecklistsPage(store, api) {
+    let destroyed = false;
+    const list = h("ul", { class: "cqa-ck-list", attrs: { "aria-label": t("nav.checklists") }, data: { test: "checklists-list" } });
+    const state = h("div", { class: "cqa-aps-state" });
+    const el = h(
+      "section",
+      { class: ["cqa-view", "cqa-ck"], data: { test: "checklists-page" } },
+      h(
+        "div",
+        { class: "cqa-ck-head" },
+        h("h1", { class: "cqa-view-title", text: t("nav.checklists") }),
+        h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { href: href("editor", { checklistId: NEW_ID, version: 0 }) }, text: t("checklists.create"), data: { test: "checklist-create" } })
+      ),
+      h("p", { class: "cqa-view-note", text: t("checklists.note") }),
+      state,
+      list
+    );
+    async function copy(row, button) {
+      button.disabled = true;
+      try {
+        const created = await api.createChecklist({ based_on: { checklist_id: row.checklist_id, version: row.version } });
+        if (destroyed) return;
+        window.location.hash = href("editor", { checklistId: created.checklist_id, version: created.version });
+      } catch (error) {
+        button.disabled = false;
+        toastError(store, error);
+      }
+    }
+    function rowOf(row, rows) {
+      const source = row.based_on ? rows.find((r) => r.checklist_id === row.based_on.checklist_id) : null;
+      const count = (row.criteria ?? []).length;
+      const copyButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("checklists.copy"), data: { test: "checklist-copy" } });
+      copyButton.addEventListener("click", () => copy(row, copyButton));
+      return h(
+        "li",
+        { class: "cqa-ck-row", data: { test: "checklist-row", id: row.checklist_id } },
+        h(
+          "div",
+          { class: "cqa-ck-main" },
+          h(
+            "div",
+            { class: "cqa-aps-row1" },
+            h("b", { class: "cqa-ck-name", text: row.name ?? row.checklist_id }),
+            h("span", { class: "cqa-ck-tags" }, row.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked"), data: { test: "checklist-locked" } }) : null, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t(`checklists.channel.${row.channel ?? "any"}`) }))
+          ),
+          h("span", { class: "cqa-ck-meta", text: [t("checklists.version", { version: row.version, count: versionsOf3(row).length }), tp("checklists.criteria", count), t("checklists.weights", { sum: weightSum(row) })].join(" \xB7 ") }),
+          row.based_on ? h("span", { class: "cqa-ck-based", text: t("checklists.basedOn", { name: source?.name ?? row.based_on.checklist_id, version: row.based_on.version }), data: { test: "checklist-based-on" } }) : null
+        ),
+        h(
+          "div",
+          { class: "cqa-ck-acts" },
+          h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { href: href("editor", { checklistId: row.checklist_id, version: row.version }) }, text: t("checklists.open"), data: { test: "checklist-open" } }),
+          copyButton
+        )
+      );
+    }
+    async function load2() {
+      clear(state).append(h("div", { class: "cqa-empty", attrs: { role: "status" } }, h("b", { class: "cqa-empty-title", text: t("checklists.loading") })));
+      try {
+        const rows = await api.listChecklists();
+        if (destroyed) return;
+        clear(state);
+        list.replaceChildren(...rows.map((row) => rowOf(row, rows)));
+      } catch (error) {
+        if (destroyed) return;
+        clear(state).append(
+          h("div", { class: "cqa-empty", attrs: { role: "status" } }, h("b", { class: "cqa-empty-title", text: t("checklists.loadFailed") }), h("p", { class: "cqa-empty-note", text: errorText(error) })),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("appeals.retry"), on: { click: load2 } })
+        );
+      }
+    }
+    load2();
+    return {
+      el,
+      destroy() {
+        destroyed = true;
+      }
+    };
+  }
+
+  // src/ui/checklist-editor.js
+  var CHANNELS2 = ["any", "chat", "call"];
+  var keyOf = (route2) => `${route2.params.checklistId}@${route2.params.version}`;
+  function createChecklistEditor(store, api, route2) {
+    const view = { route: route2, source: null, draft: null, models: [], phase: "loading", error: null, saving: false, savedFor: null };
+    let keySeq = 0;
+    let destroyed = false;
+    let apply = null;
+    let loadRun = 0;
+    let refs = null;
+    const el = h("section", { class: ["cqa-view", "cqa-ed"], data: { test: "editor" } });
+    const params = () => ({ id: view.route.params.checklistId, version: Number(view.route.params.version) });
+    const isNew = () => params().id === NEW_ID;
+    const withKey = (c) => ({ ...c, _key: `k${keySeq += 1}` });
+    function newCriterion(sectionId) {
+      return withKey({ id: void 0, section_id: sectionId, title: "", wording: "", answer_type: "yes_no", scale_steps: [], weight: 0, na_allowed: false, na_condition: null, kind: "scored", kinds: [], guidance: null });
+    }
+    function toDraft(source) {
+      const draft = structuredClone(source);
+      if (source.locked) draft.name = t("editor.copyName", { name: source.name });
+      draft.criteria = draft.criteria.map(withKey);
+      return draft;
+    }
+    function blankDraft() {
+      return { name: t("editor.newName"), description: null, channel: "any", guidance: "", rounding: 2, sections: [{ id: "s1", title: t("editor.newSection"), order: 1 }], criteria: [newCriterion("s1")] };
+    }
+    async function load2() {
+      const mine = ++loadRun;
+      view.phase = "loading";
+      draw();
+      try {
+        const config = await api.getConfig().catch(() => null);
+        const source = isNew() ? null : await api.getChecklistVersion(params().id, params().version);
+        if (destroyed || mine !== loadRun) return;
+        view.models = Array.isArray(config?.models) ? config.models : [];
+        view.source = source;
+        view.draft = source ? toDraft(source) : blankDraft();
+        view.phase = "ready";
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        view.phase = "error";
+        view.error = error;
+      }
+      draw();
+    }
+    const sections = () => [...view.draft.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    function addCriterion(sectionId) {
+      const list = view.draft.criteria;
+      const last = list.map((c) => c.section_id).lastIndexOf(sectionId);
+      const fresh = newCriterion(sectionId);
+      list.splice(last < 0 ? list.length : last + 1, 0, fresh);
+      draw();
+      el.querySelector(`[data-key="${fresh._key}"] [data-test="crit-title"]`)?.focus();
+    }
+    function moveCriterion(c, sectionId) {
+      const list = view.draft.criteria;
+      list.splice(list.indexOf(c), 1);
+      c.section_id = sectionId;
+      const last = list.map((x) => x.section_id).lastIndexOf(sectionId);
+      list.splice(last < 0 ? list.length : last + 1, 0, c);
+      draw();
+    }
+    function addSection() {
+      const ids = new Set(view.draft.sections.map((s) => s.id));
+      let n = view.draft.sections.length + 1;
+      while (ids.has(`s${n}`)) n += 1;
+      const order = Math.max(0, ...view.draft.sections.map((s) => s.order ?? 0)) + 1;
+      view.draft.sections.push({ id: `s${n}`, title: t("editor.newSection"), order });
+      draw();
+    }
+    function restore(id) {
+      const original = view.source?.criteria.find((c) => c.id === id);
+      if (!original) return;
+      if (!view.draft.sections.some((s) => s.id === original.section_id)) view.draft.sections.push(structuredClone(view.source.sections.find((s) => s.id === original.section_id)));
+      view.draft.criteria.push(withKey(structuredClone(original)));
+      draw();
+    }
+    function field(labelKey, control, error) {
+      return h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t(labelKey) }), control, error ?? null);
+    }
+    function errorEl() {
+      const e = h("p", { class: "cqa-ed-err", attrs: { role: "alert" }, data: { test: "field-error" } });
+      e.hidden = true;
+      return e;
+    }
+    function input(value, test, onInput, attrs = {}) {
+      const control = h("input", { class: "cqa-sc-select", attrs: { type: "text", autocomplete: "off", ...attrs }, data: { test }, on: { input: () => onInput(control.value) } });
+      control.value = value === null || value === void 0 ? "" : String(value);
+      return control;
+    }
+    function textarea(value, test, onInput, rows = 2) {
+      const control = h("textarea", { class: "cqa-ap-text", attrs: { rows: String(rows) }, data: { test }, on: { input: () => onInput(control.value) } });
+      control.value = value ?? "";
+      return control;
+    }
+    function select(value, test, options, onChange, label) {
+      const control = h(
+        "select",
+        { class: "cqa-sc-select", attrs: { "aria-label": label }, data: { test }, on: { change: () => onChange(control.value) } },
+        options.map(([v, text3]) => h("option", { attrs: { value: v }, text: text3 }))
+      );
+      control.value = value;
+      return control;
+    }
+    function cardOf(c) {
+      const errs = /* @__PURE__ */ new Map();
+      const err = (name) => {
+        const e = errorEl();
+        errs.set(name, e);
+        return e;
+      };
+      const live = (name) => (value) => {
+        c[name] = value;
+        refresh();
+      };
+      const gross = c.kind === "gross_error";
+      const badge = h("span", { class: "cqa-tag", data: { test: "criterion-badge" } });
+      const steps = c.answer_type === "scale" ? h(
+        "div",
+        { class: "cqa-ed-steps", data: { test: "crit-steps" } },
+        h("span", { class: "cqa-rv-label", text: t("editor.steps") }),
+        ...c.scale_steps.map(
+          (step, i) => h(
+            "div",
+            { class: "cqa-ed-step" },
+            input(step.value, "step-value", (v) => (step.value = v, refresh()), { inputmode: "decimal", "aria-label": t("editor.stepValue"), class: "cqa-sc-select cqa-ed-step-value" }),
+            input(step.label, "step-label", (v) => (step.label = v, refresh()), { "aria-label": t("editor.stepLabel") }),
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button", "aria-label": t("editor.removeStep") }, text: "\u2715", data: { test: "remove-step" }, on: { click: () => (c.scale_steps.splice(i, 1), draw()) } })
+          )
+        ),
+        err("scale_steps"),
+        h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addStep"), data: { test: "add-step" }, on: { click: () => (c.scale_steps.push({ value: "", label: "" }), draw()) } })
+      ) : null;
+      const naBox = h("input", {
+        class: "cqa-q-check",
+        attrs: { type: "checkbox" },
+        data: { test: "crit-na" },
+        on: {
+          change: () => {
+            c.na_allowed = naBox.checked;
+            draw();
+          }
+        }
+      });
+      naBox.checked = c.na_allowed === true;
+      const card = h(
+        "article",
+        { class: "cqa-ed-crit", data: { test: "editor-criterion", id: c.id ?? "", key: c._key, new: c.id ? null : "true" } },
+        h(
+          "div",
+          { class: "cqa-ed-crit-head" },
+          badge,
+          h("span", { class: "cqa-ed-crit-id", text: c.id ?? "" }),
+          h("button", { class: ["cqa-sc-btn", "cqa-ed-remove"], attrs: { type: "button" }, text: t("editor.removeCriterion"), data: { test: "remove-criterion" }, on: { click: () => (view.draft.criteria.splice(view.draft.criteria.indexOf(c), 1), draw()) } })
+        ),
+        field("editor.critTitle", input(c.title, "crit-title", live("title")), err("title")),
+        field("editor.wording", textarea(c.wording, "crit-wording", live("wording"))),
+        h(
+          "div",
+          { class: "cqa-ed-grid" },
+          field(
+            "editor.type",
+            select(c.answer_type, "crit-type", [["yes_no", t("editor.type.yes_no")], ["scale", t("editor.type.scale")]], (v) => {
+              c.answer_type = v;
+              if (v === "scale" && c.scale_steps.length === 0) c.scale_steps = [{ value: 0, label: "" }, { value: 10, label: "" }];
+              draw();
+            }, t("editor.type"))
+          ),
+          field("editor.kind", select(c.kind, "crit-kind", [["scored", t("editor.kind.scored")], ["gross_error", t("editor.kind.gross_error")]], (v) => (c.kind = v, draw()), t("editor.kind"))),
+          gross ? null : field("editor.weight", input(c.weight, "crit-weight", live("weight"), { inputmode: "decimal" }), err("weight")),
+          field("editor.section", select(c.section_id, "crit-section", sections().map((s) => [s.id, s.title || s.id]), (v) => moveCriterion(c, v), t("editor.section")), err("section_id"))
+        ),
+        steps,
+        h("label", { class: "cqa-q-all" }, naBox, h("span", { text: t("editor.naAllowed") })),
+        c.na_allowed ? field("editor.naCondition", input(c.na_condition, "crit-na-condition", live("na_condition")), err("na_condition")) : null,
+        gross ? field("editor.kinds", input((c.kinds ?? []).join(", "), "crit-kinds", (v) => (c.kinds = v.split(","), refresh()))) : null,
+        h(
+          "details",
+          { class: "cqa-ed-more" },
+          h("summary", { text: t("editor.more") }),
+          field("editor.guidance", textarea(c.guidance, "crit-guidance", live("guidance"), 3)),
+          view.models.length > 0 ? field("editor.model", select(c.model ?? "", "crit-model", [["", t("editor.modelDefault")], ...view.models.map((m) => [m, m])], (v) => (c.model = v === "" ? void 0 : v, refresh()), t("editor.model"))) : null
+        )
+      );
+      refs.cards.set(c._key, { badge, errs });
+      return card;
+    }
+    function sectionOf(section, count) {
+      const items = view.draft.criteria.filter((c) => c.section_id === section.id).map(cardOf);
+      const title = input(section.title, "section-title", (v) => (section.title = v, refresh()), { "aria-label": t("editor.sectionTitle"), class: "cqa-sc-select cqa-ed-section-title" });
+      return h(
+        "div",
+        { class: "cqa-ed-section", data: { test: "editor-section", id: section.id } },
+        h(
+          "div",
+          { class: "cqa-ed-section-head" },
+          title,
+          items.length === 0 && count > 1 ? h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("editor.removeSection"), data: { test: "remove-section" }, on: { click: () => (view.draft.sections.splice(view.draft.sections.indexOf(section), 1), draw()) } }) : null
+        ),
+        ...items,
+        h("button", { class: ["cqa-sc-btn", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addCriterion"), data: { test: "add-criterion" }, on: { click: () => addCriterion(section.id) } })
+      );
+    }
+    function draw() {
+      if (destroyed) return;
+      clear(el);
+      refs = { cards: /* @__PURE__ */ new Map() };
+      if (view.phase !== "ready") {
+        el.append(
+          h(
+            "div",
+            { class: "cqa-empty", attrs: { role: "status" } },
+            h("b", { class: "cqa-empty-title", text: t(view.phase === "error" ? "editor.loadFailed" : "editor.loading") }),
+            view.phase === "error" ? h("p", { class: "cqa-empty-note", text: errorText(view.error) }) : null
+          )
+        );
+        return;
+      }
+      const { source, draft } = view;
+      const head = h(
+        "div",
+        { class: "cqa-ck-head" },
+        h("h1", { class: "cqa-view-title", text: isNew() ? t("editor.titleNew") : source.name }),
+        !isNew() ? h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("editor.apply"), data: { test: "open-apply" }, on: { click: () => openApply() } }) : null
+      );
+      const meta = isNew() ? h("p", { class: "cqa-view-note", text: t("editor.newNote") }) : h(
+        "p",
+        { class: "cqa-ed-meta" },
+        h("span", { class: ["cqa-tag", "cqa-tag--out"], text: `v${source.version}` }),
+        source.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked") }) : null,
+        h("span", { class: "cqa-rv-hint", text: source.locked ? t("editor.lockedNote") : t("editor.versionNote") }),
+        h("a", { class: "cqa-link", attrs: { href: href("checklists") }, text: t("editor.back") })
+      );
+      const saved = view.savedFor === keyOf(view.route) ? h("p", { class: "cqa-ld-summary", attrs: { role: "status" }, text: t("editor.saved", { name: source?.name ?? "", version: source?.version ?? "" }), data: { test: "editor-saved" } }) : null;
+      refs.nameError = errorEl();
+      refs.global = errorEl();
+      const form = h(
+        "div",
+        { class: "cqa-ed-top" },
+        field("editor.name", input(draft.name, "editor-name", (v) => (draft.name = v, refresh())), refs.nameError),
+        field("editor.channel", select(draft.channel ?? "any", "editor-channel", CHANNELS2.map((c) => [c, t(`checklists.channel.${c}`)]), (v) => (draft.channel = v, refresh()), t("editor.channel")))
+      );
+      const list = sections();
+      refs.removed = h("div", { class: "cqa-ed-removed-host" });
+      refs.sum = h("div", { class: "cqa-ed-sum-host" });
+      refs.diff = h("p", { class: "cqa-ed-diff", data: { test: "editor-diff" } });
+      refs.count = h("p", { class: "cqa-ed-err" });
+      refs.save = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, data: { test: "editor-save" }, on: { click: () => save() } });
+      el.append(
+        head,
+        meta,
+        saved ?? "",
+        form,
+        ...list.map((s) => sectionOf(s, list.length)),
+        h("button", { class: ["cqa-sc-btn", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addSection"), data: { test: "add-section" }, on: { click: () => addSection() } }),
+        refs.removed,
+        refs.global,
+        h("div", { class: "cqa-ed-foot" }, refs.sum, refs.diff, refs.count, refs.save)
+      );
+      refresh();
+    }
+    function refresh() {
+      if (!refs || view.phase !== "ready") return;
+      const { draft, source } = view;
+      const { errors, warnings } = validateChecklist(draft);
+      const diff2 = diffVersions(source, draft);
+      const known = new Set((source?.criteria ?? []).map((c) => c.id));
+      const reworded = new Set(diff2.reworded);
+      const weightOnly = new Set(diff2.weightOnly);
+      for (const c of draft.criteria) {
+        const ref = refs.cards.get(c._key);
+        if (!ref) continue;
+        const kind = !c.id || !known.has(c.id) ? "new" : reworded.has(c.id) ? "reworded" : weightOnly.has(c.id) ? "weight" : null;
+        ref.badge.hidden = kind === null;
+        ref.badge.textContent = kind ? t(`editor.badge.${kind}`) : "";
+        ref.badge.className = `cqa-tag ${kind === "new" ? "cqa-tag--ok" : kind === "reworded" ? "cqa-tag--mid" : "cqa-tag--out"}`;
+        for (const e of ref.errs.values()) e.hidden = true;
+      }
+      refs.nameError.hidden = true;
+      refs.global.hidden = true;
+      for (const { path, code } of errors) {
+        const message = t(`editor.error.${code}`);
+        const match = /^criteria\.(\d+)\.(\w+)$/.exec(path);
+        const target = match ? refs.cards.get(draft.criteria[Number(match[1])]?._key)?.errs.get(match[2]) : path === "name" ? refs.nameError : refs.global;
+        if (!target) continue;
+        target.textContent = message;
+        target.hidden = false;
+      }
+      const sum = warnings.find((w) => w.code === "weight_sum");
+      refs.sum.replaceChildren(sum ? h("p", { class: "cqa-ed-warn", attrs: { role: "status" }, text: t("editor.weightSum", { sum: String(sum.sum).replace(".", ",") }), data: { test: "weight-sum" } }) : "");
+      const removed = diff2.removed.map((id) => source.criteria.find((c) => c.id === id)).filter(Boolean);
+      refs.removed.replaceChildren(
+        removed.length > 0 ? h(
+          "div",
+          { class: "cqa-ed-removed", data: { test: "removed-list" } },
+          h("span", { class: "cqa-rv-label", text: t("editor.removed") }),
+          ...removed.map(
+            (c) => h(
+              "span",
+              { class: "cqa-ed-removed-item" },
+              h("span", { class: ["cqa-tag", "cqa-tag--bad"], text: c.title }),
+              h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.restore"), data: { test: "restore-criterion" }, on: { click: () => restore(c.id) } })
+            )
+          )
+        ) : ""
+      );
+      refs.diff.textContent = t("editor.diff", { added: diff2.added.length, removed: diff2.removed.length, reworded: diff2.reworded.length, weight: diff2.weightOnly.length });
+      refs.count.textContent = errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "";
+      refs.count.hidden = errors.length === 0;
+      refs.save.textContent = t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion");
+      refs.save.disabled = view.saving || errors.length > 0;
+    }
+    async function save() {
+      const { value, errors } = validateChecklist(view.draft);
+      if (errors.length > 0 || view.saving) return;
+      view.saving = true;
+      refresh();
+      const body = {
+        name: String(value.name).trim(),
+        description: value.description ?? null,
+        channel: value.channel ?? "any",
+        guidance: typeof value.guidance === "string" ? value.guidance : "",
+        rounding: Number.isInteger(value.rounding) ? value.rounding : 2,
+        sections: value.sections.map((s) => ({ id: s.id, title: s.title, order: s.order })),
+        criteria: value.criteria.map(({ _key, fingerprint: fingerprint2, ...rest }, i) => ({ ...rest, order: i + 1 }))
+      };
+      try {
+        const saved = isNew() ? await api.createChecklist(body) : view.source.locked ? await api.createChecklist({ ...body, based_on: { checklist_id: view.source.checklist_id, version: view.source.version } }) : await api.saveChecklistVersion(view.source.checklist_id, body);
+        if (destroyed) return;
+        view.saving = false;
+        view.savedFor = `${saved.checklist_id}@${saved.version}`;
+        window.location.hash = href("editor", { checklistId: saved.checklist_id, version: saved.version });
+      } catch (error) {
+        if (destroyed) return;
+        view.saving = false;
+        refresh();
+        toastError(store, error, { retry: save });
+      }
+    }
+    function openApply() {
+      if (!view.source) return;
+      apply?.close();
+      apply = openApplyDialog({ host: el.closest(".cqa") ?? el, store, api, version: view.source });
+    }
+    load2();
+    return {
+      el,
+      update(next) {
+        if (keyOf(next) === keyOf(view.route) && next.name === view.route.name) return;
+        const reload = keyOf(next) !== keyOf(view.route);
+        view.route = next;
+        if (reload) load2();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        apply?.close();
+      }
+    };
+  }
+
+  // src/ui/compare-page.js
+  var DEFAULT_SORT = { key: "delta", dir: "asc" };
+  var COLUMNS = ["id", "group", "old", "new", "delta"];
+  var money2 = (value) => typeof value === "number" && Number.isFinite(value) ? fmt2(rat(value)) : "\u2014";
+  function signedText(value) {
+    if (typeof value !== "number" || !Number.isFinite(value)) return "\u2014";
+    const text3 = fmt2(rat(value));
+    if (text3 === "0.00") return text3;
+    return text3.startsWith("-") ? `\u2212${text3.slice(1)}` : `+${text3}`;
+  }
+  function summaryText2(summary) {
+    return t("compare.summary", {
+      changed: summary.changed,
+      of: tp("compare.ofDialogs", summary.total),
+      verb: tp("compare.changedVerb", summary.changed),
+      avg: signedText(summary.avg_delta)
+    });
+  }
+  var VALUE = {
+    id: (row) => String(row.conversation_id ?? row.conversation ?? ""),
+    group: (row) => String(row.group_id ?? ""),
+    old: (row) => row.old_total,
+    new: (row) => row.new_total,
+    delta: (row) => row.delta
+  };
+  var isNumber = (value) => typeof value === "number" && Number.isFinite(value);
+  function sortRows(rows, { key, dir }) {
+    const value = VALUE[key] ?? VALUE.delta;
+    const sign = dir === "desc" ? -1 : 1;
+    const byId = (a, b) => VALUE.id(a).localeCompare(VALUE.id(b), "ru", { numeric: true });
+    return [...rows].sort((a, b) => {
+      const x = value(a);
+      const y = value(b);
+      if (key === "id" || key === "group") return sign * String(x).localeCompare(String(y), "ru", { numeric: true }) || byId(a, b);
+      if (!isNumber(x) || !isNumber(y)) return (isNumber(x) ? 0 : 1) - (isNumber(y) ? 0 : 1) || byId(a, b);
+      return sign * (x - y) || byId(a, b);
+    });
+  }
+  function sideRows(fromVersion, toVersion, oldEvaluation, newEvaluation) {
+    const resultsOf = (evaluation) => new Map((evaluation?.results ?? []).map((r) => [r.criterion_id, r]));
+    const oldResults = resultsOf(oldEvaluation);
+    const newResults = resultsOf(newEvaluation);
+    const oldCriteria = new Map((fromVersion?.criteria ?? []).map((c) => [c.id, c]));
+    const newIds = new Set((toVersion?.criteria ?? []).map((c) => c.id));
+    const row = (id, oldCriterion, newCriterion) => {
+      const side = oldCriterion && newCriterion ? "both" : oldCriterion ? "old" : "new";
+      const oldResult = oldCriterion ? oldResults.get(id) ?? null : null;
+      const newResult = newCriterion ? newResults.get(id) ?? null : null;
+      const reworded = side === "both" && Boolean(oldCriterion.fingerprint && newCriterion.fingerprint) && oldCriterion.fingerprint !== newCriterion.fingerprint;
+      const same3 = side === "both" && !reworded && oldResult !== null && newResult !== null && canonicalJson(oldResult.final_answer ?? null) === canonicalJson(newResult.final_answer ?? null) && (oldResult.points ?? null) === (newResult.points ?? null);
+      return { id, side, oldCriterion: oldCriterion ?? null, newCriterion: newCriterion ?? null, oldResult, newResult, reworded, changed: !same3 };
+    };
+    return [
+      ...(toVersion?.criteria ?? []).map((c) => row(c.id, oldCriteria.get(c.id), c)),
+      ...(fromVersion?.criteria ?? []).filter((c) => !newIds.has(c.id)).map((c) => row(c.id, c, null))
+    ];
+  }
+  var pickEvaluation = (evaluations, ref) => evaluations.find((e) => e.status === "done" && e.checklist_id === ref.checklist_id && e.version === ref.version) ?? null;
+  var deltaKind = (delta) => !isNumber(delta) || delta === 0 ? "na" : delta < 0 ? "bad" : "ok";
+  var versionsOf4 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  function createComparePage(store, api, route2) {
+    let destroyed = false;
+    let params = route2?.params ?? {};
+    const view = {
+      options: null,
+      // [{checklist_id, version, label}] once the checklists are loaded
+      groups: [],
+      phase: "loading",
+      // "loading" | "pick" | "ready" | "error"
+      error: null,
+      data: null,
+      // the comparison
+      sort: { ...DEFAULT_SORT },
+      open: null,
+      // the conversation whose card is shown
+      all: false,
+      // every criterion on the card, not only the changed ones
+      side: null
+      // { phase: "loading" | "ready" | "error", rows, error }
+    };
+    let loadRun = 0;
+    let sideRun = 0;
+    const versions = /* @__PURE__ */ new Map();
+    const ref = (prefix) => {
+      const checklist_id = params[`${prefix}_checklist`];
+      const version2 = Number(params[`${prefix}_version`]);
+      return checklist_id && Number.isInteger(version2) && version2 > 0 ? { checklist_id, version: version2 } : null;
+    };
+    const fromSelect = h("select", { class: "cqa-sc-select", attrs: { "aria-label": t("compare.from") }, data: { test: "compare-from-select" }, on: { change: () => go() } });
+    const toSelect = h("select", { class: "cqa-sc-select", attrs: { "aria-label": t("compare.to") }, data: { test: "compare-to-select" }, on: { change: () => go() } });
+    const groupSelect = h("select", { class: "cqa-sc-select", attrs: { "aria-label": t("compare.group") }, data: { test: "compare-group" }, on: { change: () => go() } });
+    const fromName = h("span", { class: "cqa-cmp-side-name", data: { test: "compare-from" } });
+    const toName = h("span", { class: "cqa-cmp-side-name", data: { test: "compare-to" } });
+    const summary = h("p", { class: "cqa-cmp-summary", attrs: { "aria-live": "polite" }, data: { test: "compare-summary" } });
+    const state = h("div", { class: "cqa-cmp-state" });
+    const table = h("div", { class: "cqa-cmp-table-wrap" });
+    const card = h("div", { class: "cqa-cmp-card-host" });
+    const field = (label, control) => h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: label }), control);
+    const el = h(
+      "section",
+      { class: ["cqa-view", "cqa-cmp"], data: { test: "compare-page" } },
+      h("h1", { class: "cqa-view-title", text: t("compare.title") }),
+      h("p", { class: "cqa-view-note", text: t("compare.note"), data: { test: "compare-note" } }),
+      h("div", { class: "cqa-cmp-pick" }, field(t("compare.from"), fromSelect), field(t("compare.to"), toSelect), field(t("compare.group"), groupSelect)),
+      h("p", { class: "cqa-cmp-sides" }, fromName, h("span", { class: "cqa-cmp-arrow", attrs: { "aria-hidden": "true" }, text: "\u2192" }), toName),
+      summary,
+      state,
+      h("div", { class: "cqa-cmp-grid" }, table, card)
+    );
+    function go() {
+      const from = view.options?.[Number(fromSelect.value)];
+      const to = view.options?.[Number(toSelect.value)];
+      window.location.hash = href("compare", {
+        from_checklist: from?.checklist_id,
+        from_version: from?.version,
+        to_checklist: to?.checklist_id,
+        to_version: to?.version,
+        group_id: groupSelect.value || void 0
+      });
+    }
+    function fillPickers() {
+      const fill = (select, chosen) => {
+        clear(select).append(h("option", { attrs: { value: "" }, text: t("compare.choose") }));
+        view.options.forEach((o, i) => select.append(h("option", { attrs: { value: i }, text: o.label })));
+        const at = chosen ? view.options.findIndex((o) => o.checklist_id === chosen.checklist_id && o.version === chosen.version) : -1;
+        select.value = at >= 0 ? String(at) : "";
+      };
+      fill(fromSelect, ref("from"));
+      fill(toSelect, ref("to"));
+      const group = params.group_id ?? "";
+      const groups = view.groups.includes(group) || group === "" ? view.groups : [...view.groups, group];
+      clear(groupSelect).append(h("option", { attrs: { value: "" }, text: t("compare.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+      groupSelect.value = group;
+    }
+    const sideLabel = (side) => {
+      if (side && side.name !== void 0) return t("scorecard.checklistOption", { name: side.name || side.checklist_id, version: side.version });
+      const option = view.options?.find((o) => o.checklist_id === side?.checklist_id && o.version === side?.version);
+      return option?.label ?? "";
+    };
+    async function boot() {
+      try {
+        const [rows, items] = await Promise.all([api.listChecklists(), api.listConversations()]);
+        if (destroyed) return;
+        view.options = rows.flatMap(
+          (row) => [...versionsOf4(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+        );
+        view.groups = [...new Set(items.map((item) => item.group_id).filter((g) => typeof g === "string" && g !== ""))].sort();
+        fillPickers();
+        paintHead();
+      } catch (error) {
+        if (!destroyed) toastError(store, error, { retry: boot });
+      }
+    }
+    async function load2() {
+      const mine = ++loadRun;
+      sideRun += 1;
+      const from = ref("from");
+      const to = ref("to");
+      view.data = null;
+      view.open = null;
+      view.side = null;
+      if (!from || !to) {
+        view.phase = "pick";
+        paint();
+        return;
+      }
+      view.phase = "loading";
+      paint();
+      try {
+        const data = await api.getComparison({ from_checklist: from.checklist_id, from_version: from.version, to_checklist: to.checklist_id, to_version: to.version, group_id: params.group_id || void 0 });
+        if (destroyed || mine !== loadRun) return;
+        view.data = data;
+        view.phase = "ready";
+        view.error = null;
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        view.phase = "error";
+        view.error = error;
+      }
+      paint();
+    }
+    async function versionOf(side) {
+      const key = `${side.checklist_id}@${side.version}`;
+      if (!versions.has(key)) versions.set(key, api.getChecklistVersion(side.checklist_id, side.version));
+      try {
+        return await versions.get(key);
+      } catch (error) {
+        versions.delete(key);
+        throw error;
+      }
+    }
+    async function openRow(row) {
+      const mine = ++sideRun;
+      view.open = row.conversation;
+      view.side = { phase: "loading", rows: [], error: null, row };
+      paint();
+      const from = ref("from");
+      const to = ref("to");
+      try {
+        const [fromVersion, toVersion, fromEvals, toEvals] = await Promise.all([
+          versionOf(from),
+          versionOf(to),
+          api.listEvaluations({ conversation: row.conversation, checklist_id: from.checklist_id }),
+          from.checklist_id === to.checklist_id ? null : api.listEvaluations({ conversation: row.conversation, checklist_id: to.checklist_id })
+        ]);
+        if (destroyed || mine !== sideRun) return;
+        const rows = sideRows(fromVersion, toVersion, pickEvaluation(fromEvals, from), pickEvaluation(toEvals ?? fromEvals, to));
+        view.side = { phase: "ready", rows, error: null, row };
+      } catch (error) {
+        if (destroyed || mine !== sideRun) return;
+        view.side = { phase: "error", rows: [], error, row };
+      }
+      paintCard();
+    }
+    function paintHead() {
+      const data = view.data;
+      fromName.textContent = `${t("compare.from")}: ${data ? sideLabel(data.from) : sideLabel(ref("from"))}`;
+      toName.textContent = `${t("compare.to")}: ${data ? sideLabel(data.to) : sideLabel(ref("to"))}`;
+    }
+    function stateBox3(test, title, note, extra) {
+      return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
+    }
+    function paint() {
+      if (destroyed) return;
+      paintHead();
+      clear(state);
+      clear(table);
+      summary.textContent = "";
+      if (view.phase === "pick") state.append(stateBox3("compare-pick", t("compare.pickTitle"), t("compare.pickNote")));
+      else if (view.phase === "loading") state.append(stateBox3("compare-loading", t("compare.loading")));
+      else if (view.phase === "error") {
+        state.append(stateBox3("compare-error", t("compare.loadFailed"), errorText(view.error), h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("compare.retry"), on: { click: () => load2() } })));
+      } else if (view.data.rows.length === 0) {
+        state.append(stateBox3("compare-empty", t("compare.empty"), t("compare.emptyNote")));
+      } else {
+        summary.textContent = summaryText2(view.data.summary);
+        table.append(buildTable());
+      }
+      paintCard();
+    }
+    function buildTable() {
+      const head = h(
+        "tr",
+        {},
+        COLUMNS.map((key) => {
+          const on = view.sort.key === key;
+          return h(
+            "th",
+            { class: ["cqa-cmp-th", `cqa-cmp-col--${key}`], attrs: { scope: "col", "aria-sort": on ? view.sort.dir === "asc" ? "ascending" : "descending" : "none" } },
+            h(
+              "button",
+              {
+                class: ["cqa-cmp-sort", on && "is-on"],
+                attrs: { type: "button", title: t("compare.sortBy", { column: t(`compare.col.${key}`) }) },
+                data: { test: "compare-sort", key },
+                on: { click: () => sortBy(key) }
+              },
+              h("span", { text: t(`compare.col.${key}`) }),
+              h("span", { class: "cqa-cmp-sort-mark", attrs: { "aria-hidden": "true" }, text: on ? view.sort.dir === "asc" ? "\u2191" : "\u2193" : "" })
+            )
+          );
+        })
+      );
+      const body = sortRows(view.data.rows, view.sort).map((row) => {
+        const open = row.conversation === view.open;
+        return h(
+          "tr",
+          {
+            class: ["cqa-cmp-row", open && "is-open"],
+            data: { test: "compare-row", id: row.conversation, delta: isNumber(row.delta) ? String(row.delta) : "" },
+            on: {
+              click: (event) => {
+                if (event.target instanceof Element && event.target.closest("button, a")) return;
+                openRow(row);
+              }
+            }
+          },
+          h(
+            "td",
+            { class: "cqa-cmp-col--id" },
+            h("button", { class: "cqa-cmp-open", attrs: { type: "button", "aria-expanded": String(open), title: t("compare.openTitle") }, data: { test: "compare-open" }, on: { click: () => openRow(row) } }, h("b", { text: row.conversation_id ?? row.conversation, data: { test: "compare-id" } }))
+          ),
+          h("td", { class: "cqa-cmp-col--group", text: row.group_id ?? "" }),
+          h("td", { class: ["cqa-cmp-col--old", "num"], text: money2(row.old_total) }),
+          h("td", { class: ["cqa-cmp-col--new", "num"], text: money2(row.new_total) }),
+          h("td", { class: ["cqa-cmp-col--delta", "num"] }, h("span", { class: ["cqa-tag", `cqa-tag--${deltaKind(row.delta)}`], text: signedText(row.delta), data: { test: "compare-delta" } }))
+        );
+      });
+      return h("table", { class: "cqa-cmp-table", attrs: { "aria-label": t("compare.table") }, data: { test: "compare-table" } }, h("thead", {}, head), h("tbody", {}, body));
+    }
+    function sortBy(key) {
+      view.sort = view.sort.key === key ? { key, dir: view.sort.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" };
+      clear(table).append(buildTable());
+    }
+    function cell(test, criterion, result, present) {
+      if (!present) return h("div", { class: ["cqa-cmp-cell", "is-absent"], data: { test } }, h("span", { class: "cqa-cmp-absent", text: t("compare.side.absent") }));
+      if (!result) return h("div", { class: "cqa-cmp-cell", data: { test } }, h("span", { class: "cqa-cmp-absent", text: t("compare.side.noResult") }));
+      const tag4 = answerTag(criterion, result.final_answer ?? result.answer);
+      return h(
+        "div",
+        { class: "cqa-cmp-cell", data: { test } },
+        h("span", { class: ["cqa-tag", `cqa-tag--${tag4.kind}`], text: tag4.text, data: { test: "compare-answer" } }),
+        criterion?.kind === "gross_error" ? null : h("span", { class: ["cqa-cmp-points", "num"], text: money2(result.points) })
+      );
+    }
+    function paintCard() {
+      clear(card);
+      const side = view.side;
+      if (!side || !view.data) return;
+      const row = side.row;
+      const toggle = h("input", { attrs: { type: "checkbox" }, data: { test: "compare-all" }, on: { change: () => {
+        view.all = toggle.checked;
+        paintCard();
+      } } });
+      toggle.checked = view.all;
+      const parts = [
+        h(
+          "div",
+          { class: "cqa-cmp-card-head" },
+          h("b", { class: "cqa-cmp-card-title", text: t("compare.side.title", { id: row.conversation_id ?? row.conversation }) }),
+          h("a", { class: "cqa-link", attrs: { href: href("workspace", { id: row.conversation }) }, text: t("compare.side.open"), data: { test: "compare-link" } })
+        ),
+        h("p", { class: ["cqa-cmp-card-totals", "num"], text: t("compare.side.totals", { old: money2(row.old_total), new: money2(row.new_total), delta: signedText(row.delta) }) }),
+        h("label", { class: "cqa-cmp-all" }, toggle, h("span", { text: t("compare.side.all") }))
+      ];
+      if (side.phase === "loading") parts.push(stateBox3("compare-side-loading", t("compare.side.loading")));
+      else if (side.phase === "error") parts.push(stateBox3("compare-side-error", t("compare.side.loadFailed"), errorText(side.error), h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("compare.retry"), on: { click: () => openRow(row) } })));
+      else {
+        const shown = side.rows.filter((r) => view.all || r.changed);
+        if (shown.length === 0) parts.push(h("p", { class: "cqa-rv-note", text: t("compare.side.none"), data: { test: "compare-side-none" } }));
+        else {
+          parts.push(
+            h("div", { class: ["cqa-cmp-crit", "cqa-cmp-crit--head"], attrs: { "aria-hidden": "true" } }, h("span", {}), h("span", { text: t("compare.from") }), h("span", { text: t("compare.to") })),
+            h(
+              "ul",
+              { class: "cqa-cmp-crits", attrs: { "aria-label": t("compare.side.criteria") } },
+              shown.map((r) => {
+                const criterion = r.newCriterion ?? r.oldCriterion;
+                return h(
+                  "li",
+                  { class: ["cqa-cmp-crit", r.changed && "is-changed"], data: { test: "compare-crit", id: r.id, side: r.side, changed: String(r.changed) } },
+                  h(
+                    "div",
+                    { class: "cqa-cmp-crit-name" },
+                    h("span", { text: criterion.title ?? r.id }),
+                    r.side === "old" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyOld") }) : null,
+                    r.side === "new" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyNew") }) : null,
+                    r.reworded ? h("span", { class: "cqa-cmp-reworded", text: t("compare.side.reworded", { title: r.oldCriterion.title ?? r.id }) }) : null
+                  ),
+                  cell("compare-old", r.oldCriterion, r.oldResult, r.side !== "new"),
+                  cell("compare-new", r.newCriterion, r.newResult, r.side !== "old")
+                );
+              })
+            )
+          );
+        }
+      }
+      card.append(h("section", { class: "cqa-cmp-card", attrs: { "aria-label": t("compare.side.label") }, data: { test: "compare-side" } }, parts));
+      for (const tr of table.querySelectorAll("tr[data-id]")) {
+        const open = tr.getAttribute("data-id") === view.open;
+        tr.classList.toggle("is-open", open);
+        tr.querySelector("button")?.setAttribute("aria-expanded", String(open));
+      }
+    }
+    boot();
+    load2();
+    return {
+      el,
+      update(next) {
+        params = next?.params ?? {};
+        if (view.options) fillPickers();
+        load2();
+      },
+      destroy() {
+        destroyed = true;
+      }
+    };
+  }
+
   // src/ui/queue.js
   var IMPORT_ON_EMPTY = "DEV";
   var TOPIC_MAX = 80;
@@ -4414,8 +6114,8 @@
     disputed: (item) => item.status === "disputed",
     new: (item) => item.status === "new"
   };
-  function clip3(text2) {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  function clip3(text3) {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > TOPIC_MAX ? `${line.slice(0, TOPIC_MAX - 1).trimEnd()}\u2026` : line;
   }
   function firstClientLine(conversation) {
@@ -4428,7 +6128,7 @@
     const total = final?.total;
     return typeof total === "number" && Number.isFinite(total) ? String(total).replace(".", ",") : "\u2014";
   }
-  var tag3 = (kind, text2, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, ...extra });
+  var tag3 = (kind, text3, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text3, ...extra });
   function createQueue(store, api) {
     const subs = [];
     let destroyed = false;
@@ -4442,8 +6142,10 @@
       language: "",
       remote: null,
       // { q, ids: Set } from the server's text search
-      groups: false
+      groups: false,
       // more than one group is loaded: rows then name theirs
+      group: store.get().queueGroup ?? ""
+      // "" = every group; store `queueGroup`, set by an import
     };
     const rows = /* @__PURE__ */ new Map();
     const firstLines = /* @__PURE__ */ new Map();
@@ -4475,18 +6177,91 @@
         }
       }
     });
+    const groupSelect = h("select", {
+      class: "cqa-q-select",
+      attrs: { "aria-label": t("queue.groupFilter") },
+      data: { test: "queue-group-filter" },
+      on: { change: () => store.set({ queueGroup: groupSelect.value }) }
+    });
+    const selectAll = h("input", {
+      class: "cqa-q-check",
+      attrs: { type: "checkbox", "aria-label": t("queue.selectAll") },
+      data: { test: "queue-select-all" },
+      on: { change: () => toggleAllShown() }
+    });
+    const loadButton = h("button", {
+      class: ["cqa-sc-btn", "cqa-q-load"],
+      attrs: { type: "button", title: t("queue.loadTitle") },
+      text: t("queue.load"),
+      data: { test: "open-loader" },
+      on: { click: () => openLoaderDrawer() }
+    });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
     const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
     const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
-    const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
-    const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
+    const batch = createBatchBar(store, api);
+    const controls = h(
+      "div",
+      { class: "cqa-q-controls" },
+      pillBar,
+      h("div", { class: "cqa-q-sub" }, groupSelect, language),
+      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary))
+    );
+    const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
+    const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
+    let loader = null;
+    function openLoaderDrawer() {
+      loader?.close();
+      loader = openLoader({
+        host: el.closest(".cqa") ?? el,
+        store,
+        api,
+        onImported: (summary2) => {
+          const group = summary2?.group_id;
+          store.set((state) => ({
+            ...group ? { groupId: group, queueGroup: group } : {},
+            queueRefresh: (state.queueRefresh ?? 0) + 1,
+            importRefresh: (state.importRefresh ?? 0) + 1
+            // the open dialogue may have new lines
+          }));
+        }
+      });
+    }
+    const shownItems = () => view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, queryText()) && MATCHES[view.filter](item));
+    function toggleAllShown() {
+      const shown = shownItems().map((item) => item.id);
+      const next = new Set(store.get().selection ?? []);
+      const all = shown.length > 0 && shown.every((id) => next.has(id));
+      for (const id of shown) {
+        if (all) next.delete(id);
+        else next.add(id);
+      }
+      store.set({ selection: next });
+    }
+    function paintSelectAll(shown) {
+      const picked = store.get().selection ?? /* @__PURE__ */ new Set();
+      const on = shown.filter((item) => picked.has(item.id)).length;
+      selectAll.checked = shown.length > 0 && on === shown.length;
+      selectAll.indeterminate = on > 0 && on < shown.length;
+      selectAll.disabled = shown.length === 0;
+    }
+    function paintGroups() {
+      const groups = [...new Set(view.items.map((item) => item.group_id).filter((g) => typeof g === "string" && g !== ""))].sort();
+      if (view.group !== "" && !groups.includes(view.group)) {
+        view.group = "";
+        if ((store.get().queueGroup ?? "") !== "") store.set({ queueGroup: "" });
+      }
+      groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+      groupSelect.value = view.group;
+      groupSelect.hidden = groups.length < 2;
+    }
     const queryText = () => view.query.trim().toLowerCase();
     function matchesQuery(item, q) {
       if (q === "") return true;
       if (view.remote && view.remote.q === q && view.remote.ids.has(item.id)) return true;
       const haystack = [item.id, item.conversation_id, topicOf(item), firstLines.get(item.id) ?? ""];
-      return haystack.some((text2) => text2.toLowerCase().includes(q));
+      return haystack.some((text3) => text3.toLowerCase().includes(q));
     }
     function setFilter(name) {
       if (view.filter === name) return;
@@ -4697,7 +6472,7 @@
       let shown = [];
       if (hasItems) {
         const q = queryText();
-        const base = view.items.filter((item) => (view.language === "" || item.language === view.language) && matchesQuery(item, q));
+        const base = view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, q));
         for (const pill of pills) {
           pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
           pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
@@ -4719,6 +6494,7 @@
         clear(list);
         summary.textContent = "";
       }
+      paintSelectAll(shown);
       if (hasItems) paintState(shown.length === 0 ? "nomatch" : null);
       else paintState(view.phase === "ready" ? "empty" : view.phase);
     }
@@ -4751,6 +6527,7 @@
         view.error = null;
         view.remote = null;
         paintLanguages();
+        paintGroups();
         pruneSelection();
         if (queryText().length >= SERVER_SEARCH_MIN) scheduleServerSearch();
         paint();
@@ -4775,10 +6552,18 @@
     subs.push(
       watch(store, (state) => state.selection, (selection) => {
         for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
+        paint();
       })
     );
     subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));
     subs.push(watch(store, (state) => state.queueRefresh, () => load2()));
+    subs.push(
+      watch(store, (state) => state.queueGroup, (group) => {
+        view.group = group ?? "";
+        groupSelect.value = view.group;
+        paint();
+      })
+    );
     paint();
     load2();
     return {
@@ -4788,6 +6573,8 @@
         destroyed = true;
         clearTimeout(searchTimer);
         subs.forEach((off) => off());
+        batch.destroy();
+        loader?.close();
         observer?.disconnect();
         rows.clear();
       }
@@ -5150,7 +6937,15 @@
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
     const shell = createShell(store, api, {
       panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
-      views: { appeals: createAppealsPage, appeal: createAppealsPage, ...options.views }
+      views: {
+        appeals: createAppealsPage,
+        appeal: createAppealsPage,
+        checklists: createChecklistsPage,
+        checklist: createChecklistEditor,
+        editor: createChecklistEditor,
+        compare: createComparePage,
+        ...options.views
+      }
     });
     el.replaceChildren(shell.el);
     let destroyed = false;
