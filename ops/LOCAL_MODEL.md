@@ -24,6 +24,9 @@ evaluator code (masking, prompts, answer checking, one retry, Python scoring):
   violations (`backend/quality/planted.py`) are the model-independent check.
 - FP8 and BF16 give the same answer on 92.5% of the 520 criteria (part of the difference is
   sampling at temperature 0.7). FP8 is about 1.5× faster and needs half the weight memory.
+- **Evaluate with `official-chat` v2.** On v1, Haiku beats Qwen on c07 (87.7% vs 64.6%) because
+  v1 lacks the approved #25 goodbye rule. Qwen on v2 gets 97% on c07 and 92.9% overall on the
+  60 chats (477 labels), so the gap is the checklist version, not the model.
 - Every model-backed feature works on the local model: evaluation, dialogue information,
   translation (KZ/EN → RU), appeal with second opinion, reviewer decision, v1 → v2 comparison,
   analytics, accuracy report, CSV export, and the «Звонки» checklist with audio alignment.
