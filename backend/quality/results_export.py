@@ -2,6 +2,7 @@
 
     uv run python -m quality.results_export --group DEV --out ../results/dev/results.json --expect 65
     uv run python -m quality.results_export --group <control group> --out ../results/prod/results.json --expect 10
+    uv run python -m quality.results_export --check ../results/prod/results.json --expect 10 [--group G] [--dev PATH]
 
 One record per conversation of the group, in the group's order, under the organisers' original
 `conversation_id`. A conversation's record comes from its newest finished run of the checklist
@@ -277,6 +278,219 @@ def from_devrun(report: dict, records: list[dict], *, team: str, mode: str) -> d
             "results": results}
 
 
+# --- checking a file already written (--check) -------------------------------------------------
+# validate() sees a parsed dict; these also see the bytes (UTF-8, no BOM, strict JSON), secrets
+# that must never be pushed, and the conversations the file should cover (a group or a dataset).
+
+_BOMS = (b"\xef\xbb\xbf", b"\xff\xfe", b"\xfe\xff")
+_SIGNED = re.compile(r"sig=", re.I)
+_URL_WITH_QUERY = re.compile(r"https?://[^\s\"'<>]*\?", re.I)
+
+
+def _redact(text: str) -> str:
+    """A problem message with any URL with a query or `sig=` value masked (ids and keys are echoed)."""
+    text = re.sub(r"https?://[^\s\"'<>]*\?\S*", "[URL redacted]", text, flags=re.I)
+    return re.sub(r"sig=[^\s&,;'\"]*", "sig=[redacted]", text, flags=re.I)
+
+
+def read_strict(path: Path) -> tuple[object, list[str]]:
+    """(the parsed document, problems): UTF-8 without a BOM, strict JSON (no NaN, Infinity or
+    out-of-range numbers, no duplicate keys, no lone surrogates), an object at the top."""
+    try:
+        raw = Path(path).read_bytes()
+    except OSError as e:
+        return None, [f"cannot read the file: {e.strerror or e}"]
+    if raw.startswith(_BOMS):
+        return None, ["the file starts with a byte order mark (BOM); save it as UTF-8 without a BOM"]
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as e:
+        return None, [f"not UTF-8: invalid byte at offset {e.start}"]
+    duplicates: list[str] = []
+
+    def pairs(items):
+        seen = set()
+        for key, _ in items:
+            if key in seen:
+                duplicates.append(key)
+            seen.add(key)
+        return dict(items)
+
+    def no_constant(name):
+        raise ValueError(f"{name} is not JSON")
+
+    def finite(number):
+        f = float(number)
+        if f in (float("inf"), float("-inf")):
+            raise ValueError(f"{number} is out of range for a JSON number")
+        return f
+
+    try:
+        doc = json.loads(text, object_pairs_hook=pairs, parse_constant=no_constant, parse_float=finite)
+    except json.JSONDecodeError as e:
+        return None, [f"not valid JSON: {e.msg} at line {e.lineno} column {e.colno}"]
+    except ValueError as e:
+        return None, [f"not strict JSON: {e}"]
+    problems = [f"duplicate key {k[:80]!r} in an object" for k in dict.fromkeys(duplicates)]
+    for where, s in _strings(doc):
+        try:
+            s.encode("utf-8")
+        except UnicodeEncodeError:
+            problems.append(f"{where}: a lone surrogate escape, not valid Unicode")
+    if not isinstance(doc, dict):
+        problems.append("the top level must be a JSON object")
+    return doc, problems
+
+
+def _strings(node, where: str = "$"):
+    """Every string in a parsed document, keys included, with where it sits ($.results[3].error)."""
+    if isinstance(node, str):
+        yield where, node
+    elif isinstance(node, list):
+        for i, item in enumerate(node):
+            yield from _strings(item, f"{where}[{i}]")
+    elif isinstance(node, dict):
+        for key, item in node.items():
+            yield f"{where} (a key)", key
+            yield from _strings(item, f"{where}.{key}")
+
+
+def secret_problems(doc) -> list[str]:
+    """Places holding a signed link (`sig=`) or any URL with a query string. Only the place is
+    reported, never the text: it may be a real signed URL."""
+    return [f"{where}: contains a signed link or a URL with a query string; remove it"
+            for where, s in _strings(doc) if _SIGNED.search(s) or _URL_WITH_QUERY.search(s)]
+
+
+def shape_problems(doc: dict) -> list[str]:
+    """The JSON types validate() relies on; it would crash on a record or criterion that is not an object."""
+    problems = []
+    if "model" in doc and not isinstance(doc["model"], dict):
+        problems.append("model must be an object")
+    results = doc.get("results")
+    for i, r in enumerate(results if isinstance(results, list) else []):
+        if not isinstance(r, dict):
+            problems.append(f"results[{i}] must be an object")
+            continue
+        if "conversation_id" in r and not isinstance(r["conversation_id"], str):
+            problems.append(f"results[{i}]: conversation_id must be a string")
+        if r.get("score") is not None and not isinstance(r["score"], dict):
+            problems.append(f"results[{i}]: score must be an object or null")
+        crit = r.get("criteria")
+        if crit is not None and (not isinstance(crit, list) or not all(
+                isinstance(c, dict) and isinstance(c.get("criterion_id"), str) and "value" in c for c in crit)):
+            problems.append(f"results[{i}]: criteria must be a list of objects with a criterion_id and a value")
+    return problems
+
+
+def dataset_lengths(path: Path) -> dict[str, int]:
+    """{conversation_id: transcript length} from a dataset JSON: the API response
+    ({data: {records: [...]}}), {records: [...]} or a bare list of records."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if isinstance(data, dict):
+        data = data["data"]["records"] if isinstance(data.get("data"), dict) else data["records"]
+    return {r["conversation_id"]: len(r.get("transcript") or []) for r in data}
+
+
+def group_lengths(group: str, store=None) -> dict[str, int]:
+    """{conversation_id (the organisers' original id): transcript length} for a group in the app's
+    store. Reads only: no migration, and a missing database is an error rather than a new file."""
+    if store is None:
+        from app import store
+        from app.settings import get_settings
+
+        db = get_settings().db_path
+        if not db.exists():
+            raise LookupError(f"no app database at {db}")
+    return {c.conversation_id: len(c.transcript) for c in store.list_conversations(group_id=group)}
+
+
+def reference_problems(doc: dict, lengths: dict[str, int], source: str) -> list[str]:
+    """The file covers exactly the reference conversations, and no evidence turn is past the end
+    of its transcript (turns are 1-based, so the last line is turn == length)."""
+    results = doc.get("results")
+    records = [r for r in (results if isinstance(results, list) else []) if isinstance(r, dict)]
+    ids = [r.get("conversation_id") for r in records]
+    problems = []
+    missing = [c for c in lengths if c not in set(ids)]
+    extra = [c for c in dict.fromkeys(ids) if isinstance(c, str) and c not in lengths]
+    if missing:
+        problems.append(f"{len(missing)} conversation(s) of {source} missing from the file: {', '.join(missing)}")
+    if extra:
+        problems.append(f"{len(extra)} conversation(s) in the file not in {source}: {', '.join(extra)}")
+    for r in records:
+        n = lengths.get(r.get("conversation_id"))
+        if n is None or r.get("status") != "ok":
+            continue
+        for c in r.get("criteria") or []:
+            past = [t for t in c.get("evidence_turns") or [] if isinstance(t, int) and t > n]
+            if past:
+                problems.append(f"{r['conversation_id']}: {c.get('criterion_id')} evidence_turns {past} "
+                                f"past the end of the transcript ({n} lines)")
+    return problems
+
+
+def check(path: Path, expect: int | None = None, *, group: str | None = None, dev: Path | None = None,
+          store=None) -> tuple[object, list[str]]:
+    """(the parsed document, every problem found). Writes nothing."""
+    doc, problems = read_strict(path)
+    if not isinstance(doc, dict):
+        return doc, [_redact(p) for p in problems]
+    problems += secret_problems(doc)
+    shape = shape_problems(doc)
+    try:
+        problems += shape or validate(doc, expect)
+    except Exception as e:  # a shape shape_problems() did not foresee: report it, do not crash
+        shape = [f"cannot validate: {type(e).__name__}: {e}"]
+        problems += shape
+    references = []
+    if group:
+        try:
+            lengths = group_lengths(group, store)
+        except Exception as e:  # a missing database or table must be a reported problem, not a traceback
+            problems.append(f"cannot read group {group!r} from the app store: {e}")
+        else:
+            if lengths:
+                references.append((lengths, f"group {group}"))
+            else:
+                problems.append(f"group {group!r} has no conversations in the app store; import it first")
+    if dev:
+        try:
+            references.append((dataset_lengths(dev), f"dataset {Path(dev).name}"))
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            problems.append(f"cannot read the dataset {dev}: {type(e).__name__}: {e}")
+    if not shape:
+        for lengths, source in references:
+            problems += reference_problems(doc, lengths, source)
+    return doc, [_redact(p) for p in problems]
+
+
+def check_file(path: Path, expect: int | None = None, group: str | None = None, dev: Path | None = None,
+               store=None) -> list[str]:
+    """Every problem of a results file already written; [] means it can be pushed. Writes nothing."""
+    return check(path, expect, group=group, dev=dev, store=store)[1]
+
+
+def _check_cli(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
+    export_only = [f"--{d.replace('_', '-')}" for d in ("out", "from_devrun", "checklist_id", "version",
+                                                        "team", "mode", "answers")
+                   if getattr(args, d) != parser.get_default(d)]
+    if export_only:
+        parser.error(f"--check only reads FILE; {', '.join(export_only)} belong to the export "
+                     "(with --check, --group and --dev are cross-checks)")
+    doc, problems = check(args.check, args.expect, group=args.group, dev=args.dev)
+    if problems:
+        for p in problems:
+            print(f"  PROBLEM {p}", file=sys.stderr)
+        print(f"FAIL {args.check}: {len(problems)} problem(s)", file=sys.stderr)
+        return 1
+    errors = [r for r in doc["results"] if r["status"] == "error"]
+    print(f"OK {args.check}: {len(doc['results'])} records, {len(errors)} errors")
+    for r in errors:
+        print(f"  error {r['conversation_id']}: {r['error']}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     from app.settings import DEFAULT_CHECKLIST_ID, DEFAULT_CHECKLIST_VERSION
 
@@ -284,7 +498,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--group", help="group_id as imported, e.g. DEV (reads the app's store)")
     parser.add_argument("--from-devrun", type=Path, help="an evaluator.devrun --out report instead of the store")
     parser.add_argument("--dev", type=Path, help="the dataset JSON the devrun report was made from")
-    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--out", type=Path, help="the results file to write (required unless --check)")
+    parser.add_argument("--check", type=Path, metavar="FILE",
+                        help="only check a written results file, write nothing; with it, --group and --dev "
+                             "name the conversations the file must cover (the store's group, a dataset JSON)")
     parser.add_argument("--checklist-id", default=DEFAULT_CHECKLIST_ID)
     parser.add_argument("--version", type=int, default=DEFAULT_CHECKLIST_VERSION)
     parser.add_argument("--team", default="gtbsbe")
@@ -292,6 +509,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--answers", choices=("original", "final"), default="original")
     parser.add_argument("--expect", type=int, help="the number of records the file must have (65 DEV, 10 prod)")
     args = parser.parse_args(argv)
+    if args.check:
+        return _check_cli(parser, args)
+    if not args.out:
+        parser.error("the following arguments are required: --out (or --check FILE)")
 
     if args.from_devrun:
         if not args.dev:
