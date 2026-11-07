@@ -61,6 +61,31 @@ def error(conversation_id: str, reason: str) -> dict:
     return {"conversation_id": conversation_id, "status": "error", "criteria": [], "score": None, "error": reason}
 
 
+def evidence_turns(result, transcript) -> list[int]:
+    """1-based turns backing a result: its evidence lines, else the part of the dialogue it checked.
+
+    A skipped action has no line to quote, so the evaluator gives `checked_range` instead
+    ({from, to}: 0-based, inclusive, into the original transcript; evaluator/PLAN.md), and the
+    guide asks to "indicate the checked part of the conversation" then. Within the range only
+    the operator's lines are listed when it has any: they are the turns where the action was
+    expected and could have happened, so they are what was actually checked; the client, bot
+    and system lines between them are context. This also keeps a long range (often most of
+    the dialogue, e.g. «did the operator ever introduce themselves») from becoming a dump of
+    40 turns, while the numbers still count over the full array. A range with no operator line
+    (the operator never joined, a bot-only stretch) is listed whole. With neither evidence nor
+    a range the list stays empty: no turns are invented (an N/A's reason is text, not lines).
+    """
+    n = len(transcript)
+    turns = sorted({e.message_index + 1 for e in result.evidence if 0 <= e.message_index < n})
+    rng = result.checked_range
+    if turns or rng is None:
+        return turns
+    lo, hi = max(rng.from_, 0), min(rng.to, n - 1)
+    span = range(lo, hi + 1)  # empty when the range lies outside the transcript or is reversed
+    operator = [i + 1 for i in span if transcript[i].speaker == "operator"]
+    return operator or [i + 1 for i in span]
+
+
 def record(conv, run, answers: str = "original") -> tuple[dict, set[str]]:
     if run is None:
         return error(conv.conversation_id, "Диалог не оценён: нет запуска модели по этому чек-листу."), set()
@@ -75,11 +100,12 @@ def record(conv, run, answers: str = "original") -> tuple[dict, set[str]]:
     if missing:
         return error(conv.conversation_id, f"Нет результата по критериям: {', '.join(missing)}."), set()
     criteria, models = [], set()
-    turns = len(conv.transcript)
     for cid, code in CODES.items():
         r = by_id[cid]
         answer = r.final_answer if answers == "final" and r.final_answer is not None else r.answer
-        evidence = sorted({e.message_index + 1 for e in r.evidence if 0 <= e.message_index < turns})
+        # The same evidence and range back the answer after an appeal: a reviewer changes the
+        # value, not the lines the model looked at.
+        evidence = evidence_turns(r, conv.transcript)
         criteria.append({"criterion_id": code, "value": value(answer),
                          "rationale": " ".join((r.explanation or "").split()), "evidence_turns": evidence})
         if r.model:
