@@ -172,7 +172,7 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
       h(
         "div",
         { class: "cqa-sc-r1" },
-        h("b", { class: "cqa-sc-crit-title", text: c?.title ?? appeal.criterion_id }),
+        h("b", { class: "cqa-sc-crit-title", verbatim: true, text: c?.title ?? appeal.criterion_id }),
         r && c ? tag(answerTag(c, r.answer).kind, answerTag(c, r.answer).text, { data: { test: "review-answer" } }) : null,
         // after a decision the points follow the new answer, so show it next to the model's
         r && c && r.final_answer !== undefined && r.final_answer !== null && !same(r.final_answer, r.answer)
@@ -188,7 +188,7 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
       "div",
       { class: "cqa-rv-comment" },
       h("p", { class: "cqa-rv-label", text: t("review.comment") }),
-      h("p", { class: "cqa-rv-quote", text: appeal.comment, data: { test: "review-comment" } }),
+      h("p", { class: "cqa-rv-quote", verbatim: true, text: appeal.comment, data: { test: "review-comment" } }),
     );
 
     clear(el).append(head, disputed, comment, buildFragment(r), opinionBox, decisionBox);
@@ -212,7 +212,7 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
           "li",
           { class: ["cqa-rv-msg", `cqa-rv-msg--${kind}`, marked.has(index) && "is-evidence"], data: { test: "fragment-msg", index } },
           h("span", { class: "cqa-rv-msg-meta", text: [t("scorecard.evidenceLine", { n: index + 1 }), kind === "system" ? null : t(`transcript.speaker.${kind}`), clock].filter(Boolean).join(" · ") }),
-          h("p", { class: "cqa-rv-msg-text", text: typeof message?.text === "string" ? message.text : "" }),
+          h("p", { class: "cqa-rv-msg-text", verbatim: true, text: typeof message?.text === "string" ? message.text : "" }),
         ),
       );
     });
@@ -236,7 +236,7 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
           "div",
           { class: "cqa-rv-opinion-body" },
           c && opinion.answer !== undefined && opinion.answer !== null ? tag(answerTag(c, opinion.answer).kind, t("review.opinionAnswer", { answer: answerTag(c, opinion.answer).text })) : null,
-          opinion.reasoning ? h("p", { class: "cqa-rv-note", text: opinion.reasoning }) : null,
+          opinion.reasoning ? h("p", { class: "cqa-rv-note", verbatim: true, text: opinion.reasoning }) : null,
           h("p", { class: "cqa-rv-hint", text: t("review.opinionAdvice") }),
         ),
       );
@@ -267,7 +267,7 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
     const box = h("div", { class: "cqa-rv-decided", data: { test: "decision-done" } });
     if (decision) {
       const what = decision.outcome === "changed" && c ? t("review.decidedChanged", { answer: answerTag(c, decision.answer).text }) : t("review.decidedConfirmed");
-      box.append(h("b", { class: "cqa-rv-decided-what", text: what }), decision.reason ? h("p", { class: "cqa-rv-note", text: decision.reason }) : null);
+      box.append(h("b", { class: "cqa-rv-decided-what", text: what }), decision.reason ? h("p", { class: "cqa-rv-note", verbatim: true, text: decision.reason }) : null);
     }
     if (view.result) {
       box.append(h("p", { class: "cqa-rv-result", text: t("review.result", { from: totalText(view.result.before), to: totalText(view.result.after) }), data: { test: "decision-result" } }));

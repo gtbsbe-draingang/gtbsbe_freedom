@@ -1,481 +1,103 @@
-// Every UI string lives here and is read through t(key, params).
-// Mock-generated "model" text is not UI chrome and lives in the mock module instead.
-const messages = {
-  "player.play": "Воспроизвести",
-  "player.pause": "Пауза",
-  "player.timeline": "Позиция в записи",
-  "player.waveformLoading": "Строим звуковую волну…",
-  "player.waveformUnavailable": "Звуковая волна недоступна. Запись можно прослушать.",
-  "player.speakerNote": "Роли по расшифровке",
-  "player.speakerTitle": "Общая запись, разделённая по времени реплик в расшифровке",
-  "player.client": "Клиент",
-  "player.operator": "Оператор",
-  "player.mute": "Выключить звук",
-  "player.unmute": "Включить звук",
-  "player.speed": "Скорость воспроизведения",
-  "app.title": "Качество диалогов",
-  "brand.name": "Freedom — на главную",
-
-  "nav.label": "Разделы",
-  "nav.workspace": "Оценка",
-  "nav.checklists": "Чек-листы",
-  "nav.appeals": "Апелляции",
-  "nav.compare": "Сравнение",
-  "nav.analytics": "Отчёты",
-  "nav.accuracy": "Точность",
-
-  "role.label": "Роль",
-  "role.current": "Роль: {role}",
-  "role.controller": "Контролёр",
-  "role.reviewer": "Проверяющий",
-  "theme.toggle": "Тёмная тема",
-  "dataset.label": "Набор",
-  "dataset.title": "Текущий набор данных",
-
-  "workspace.queue": "Очередь",
-  "workspace.queueClose": "Закрыть очередь",
-  "workspace.tab.transcript": "Диалог",
-  "workspace.tab.scorecard": "Оценка",
-  "workspace.scorecard": "Оценка диалога",
-  "workspace.pick": "Выберите диалог в очереди",
-
-  "queue.search": "Поиск по ID или тексту диалога",
-  "queue.searchLabel": "Поиск по очереди",
-  "queue.filters": "Фильтры очереди",
-  "queue.filter.all": "Все",
-  "queue.filter.chats": "Чаты",
-  "queue.filter.calls": "Звонки",
-  "queue.filter.disputed": "Спорные",
-  "queue.filter.new": "Новые",
-  "queue.language": "Язык диалога",
-  "queue.language.all": "Все языки",
-  "queue.list": "Диалоги",
-  "queue.shown": "Показано {shown} из {total}",
-  "queue.loading": "Загружаю очередь…",
-  "queue.importing": "Загружаю набор {group}…",
-  "queue.loadFailed": "Не удалось загрузить очередь",
-  "queue.retry": "Повторить",
-  "queue.empty": "Очередь пуста",
-  "queue.emptyNote": "Загрузите набор данных, и диалоги появятся здесь.",
-  "queue.noMatch": "Ничего не найдено",
-  "queue.noMatchNote": "Измените поиск или фильтры.",
-  "queue.select": "Выбрать диалог {id}",
-  "queue.channel.chat": "чат",
-  "queue.channel.call": "звонок",
-  "queue.group": "Набор данных: {group}",
-  "queue.language.title": "Язык диалога",
-  "queue.score.none": "не оценён",
-  "queue.score.notCalculated": "не рассчитывается",
-  "queue.tag.appeal": "апелляция",
-  "queue.tag.appeals": "апелляции: {n}",
-  "queue.tag.grossError": "грубая ошибка",
-  "queue.tag.needsReview": "на проверку",
-  "queue.tag.needsReviewTitle": "Модель не уверена в части критериев",
-  "queue.groupFilter": "Набор данных",
-  "queue.group.all": "Все наборы",
-  "queue.selectAll": "Выбрать все показанные",
-  "queue.load": "Загрузить",
-  "queue.export": "Скачать Excel (CSV)",
-  "queue.loadTitle": "Загрузить группу по group_id или файл с диалогами",
-
-  "loader.title": "Загрузка диалогов",
-  "loader.close": "Закрыть",
-  "loader.group": "Группа по group_id",
-  "loader.groupHint": "Диалоги придут от организаторов через наш сервер.",
-  "loader.groupPlaceholder": "например, CTRL",
-  "loader.import": "Загрузить группу",
-  "loader.importing": "Загружаю группу {group}…",
-  "loader.file": "Файл с диалогами (JSON)",
-  "loader.fileHint": "Одна запись, массив записей или весь ответ организаторов.",
-  "loader.uploading": "Загружаю файл {name}…",
-  "loader.summary": "Всего {total} · новых {imported} · обновлено {updated} · без изменений {unchanged}",
-  "loader.summaryGroup": "Набор {group}",
-  "loader.error.not_json": "Файл не в формате JSON.",
-  "loader.error.no_records": "В файле нет ни одной записи.",
-  "loader.error.bad_record": "Запись №{n} в файле некорректна: нужны conversation_id, channel, language и transcript.",
-  "loader.error.read": "Файл не удалось прочитать.",
-
-  "batch.label": "Пакетная оценка",
-  "batch.selected": "Выбрано: {n}",
-  "batch.checklist": "Чек-лист",
-  "batch.estimating": "Считаю, сколько нужно вызовов…",
-  "batch.estimate": "{dialogs} · {calls} модели · {cached} из кэша",
-  "batch.run": "Оценить выбранные",
-  "batch.clear": "Снять выбор",
-  "batch.keyMissing": "нужен ключ модели: часть ответов нужно получить у модели",
-  "batch.progress": "Оценено {done} из {total}",
-  "batch.failed": "не удалось: {n}",
-  "batch.retry": "Повторить неудачные",
-  "batch.done": "Готово: оценено {done} из {total}",
-  "batch.starting": "Запускаю оценку…",
-  "batch.interrupted": "Связь с сервером прервалась на {done} из {total}: оценка продолжается на сервере.",
-  "batch.resume": "Продолжить следить",
-  "batch.dialogs.one": "{n} диалог",
-  "batch.dialogs.few": "{n} диалога",
-  "batch.dialogs.many": "{n} диалогов",
-  "batch.calls.one": "{n} вызов",
-  "batch.calls.few": "{n} вызова",
-  "batch.calls.many": "{n} вызовов",
-
-  "checklists.create": "Создать чек-лист",
-  "checklists.note": "Официальный чек-лист заблокирован: изменения сохраняются как новый чек-лист на его основе. Сумма весов может отличаться от 100 — итог всё равно пересчитывается к 100.",
-  "checklists.loading": "Загружаю чек-листы…",
-  "checklists.loadFailed": "Не удалось загрузить чек-листы",
-  "checklists.locked": "заблокирован",
-  "checklists.channel.any": "любой канал",
-  "checklists.channel.chat": "чаты",
-  "checklists.channel.call": "звонки",
-  "checklists.version": "v{version} (версий: {count})",
-  "checklists.criteria.one": "{n} критерий",
-  "checklists.criteria.few": "{n} критерия",
-  "checklists.criteria.many": "{n} критериев",
-  "checklists.weights": "сумма весов {sum}",
-  "checklists.basedOn": "на основе «{name}» v{version}",
-  "checklists.open": "Открыть",
-  "checklists.copy": "Копировать",
-
-  "editor.loading": "Загружаю чек-лист…",
-  "editor.loadFailed": "Не удалось загрузить чек-лист",
-  "editor.titleNew": "Новый чек-лист",
-  "editor.newName": "Новый чек-лист",
-  "editor.newNote": "Чек-лист создаётся при сохранении.",
-  "editor.newSection": "Новый раздел",
-  "editor.copyName": "{name} (изменённый)",
-  "editor.lockedNote": "Версия заблокирована: сохранение создаст новый чек-лист на её основе.",
-  "editor.versionNote": "Каждое сохранение создаёт новую версию; прежние версии и их оценки не меняются.",
-  "editor.back": "← Все чек-листы",
-  "editor.apply": "Применить к диалогам",
-  "editor.saved": "Сохранено: «{name}» v{version}. Примените его к диалогам, чтобы получить оценки.",
-  "editor.name": "Название",
-  "editor.channel": "Канал (только предвыбор)",
-  "editor.sectionTitle": "Название раздела",
-  "editor.critTitle": "Критерий",
-  "editor.wording": "Формулировка для оценщика",
-  "editor.type": "Тип ответа",
-  "editor.type.yes_no": "Да / Нет",
-  "editor.type.scale": "Шкала",
-  "editor.kind": "Вид",
-  "editor.kind.scored": "Оценочный",
-  "editor.kind.gross_error": "Грубая ошибка (флаг, без баллов)",
-  "editor.weight": "Вес",
-  "editor.section": "Раздел",
-  "editor.steps": "Шаги шкалы: значение и описание",
-  "editor.stepValue": "Значение шага",
-  "editor.stepLabel": "Описание шага",
-  "editor.removeStep": "Удалить шаг",
-  "editor.addStep": "+ шаг",
-  "editor.naAllowed": "Можно ответить N/A",
-  "editor.naCondition": "Когда ставится N/A",
-  "editor.kinds": "Виды нарушений (через запятую)",
-  "editor.more": "Подсказка и модель",
-  "editor.guidance": "Подсказка для модели",
-  "editor.model": "Модель для этого критерия",
-  "editor.modelDefault": "по умолчанию",
-  "editor.removeCriterion": "Удалить",
-  "editor.addCriterion": "+ критерий",
-  "editor.addSection": "+ раздел",
-  "editor.removeSection": "Удалить раздел",
-  "editor.removed": "Удалены:",
-  "editor.restore": "вернуть",
-  "editor.badge.new": "новый",
-  "editor.badge.reworded": "изменён",
-  "editor.badge.weight": "только вес",
-  "editor.diff": "новых: {added} · удалено: {removed} · изменено: {reworded} · только вес: {weight}",
-  "editor.weightSum": "Сумма весов: {sum}, не 100. Сохранить можно: итог всё равно пересчитается к 100.",
-  "editor.errorCount": "Исправьте отмеченные поля: {n}",
-  "editor.create": "Создать чек-лист",
-  "editor.saveAsNew": "Сохранить как новый чек-лист",
-  "editor.saveVersion": "Сохранить версию",
-  "editor.error.title_required": "Заполните название.",
-  "editor.error.weight_invalid": "Вес — число от 0 (можно с запятой: 7,5).",
-  "editor.error.scale_empty": "У шкалы должно быть хотя бы два шага.",
-  "editor.error.scale_value_invalid": "Значение шага — число.",
-  "editor.error.scale_duplicate": "Значения шагов не должны повторяться.",
-  "editor.error.na_condition_required": "Опишите, когда ставится N/A.",
-  "editor.error.section_missing": "Выберите раздел.",
-  "editor.error.criteria_empty": "Добавьте хотя бы один критерий.",
-
-  "apply.title": "Применить к диалогам",
-  "apply.what": "«{name}» v{version}: неизменённые критерии берутся из прежних ответов, без вызова модели.",
-  "apply.loading": "Загружаю диалоги…",
-  "apply.targets": "Какие диалоги",
-  "apply.control": "Контрольная группа {group}",
-  "apply.controlNone": "Контрольная группа (не загружена)",
-  "apply.dev": "DEV",
-  "apply.selected": "Выбранные в очереди",
-  "apply.noAll": "Применить ко всем сразу нельзя: выберите набор.",
-  "apply.run": "Запустить",
-  "apply.close": "Закрыть",
-  "apply.compare": "Сравнить до и после",
-
-  "player.label": "Запись звонка",
-  "player.needsImport": "Загрузите группу, чтобы включить запись.",
-  "player.none": "Записи этого звонка нет.",
-  "player.import": "Загрузить группу",
-  "player.failed": "Не удалось загрузить запись.",
-  "player.retry": "Повторить",
-  "player.seek": "Перейти к {time} в записи",
-  "compare.title": "Сравнение до и после",
-  "compare.note": "Сравниваются итоговые баллы (с решениями проверяющих), поэтому каждая разница идёт от изменения чек-листа.",
-  "compare.from": "Было",
-  "compare.to": "Стало",
-  "compare.group": "Группа",
-  "compare.group.all": "Все группы",
-  "compare.choose": "— выберите версию —",
-  "compare.pickTitle": "Выберите, что сравнить",
-  "compare.pickNote": "Две версии чек-листа (или два чек-листа): итоговые баллы диалогов, оценённых обеими.",
-  "compare.loading": "Сравниваю…",
-  "compare.loadFailed": "Не удалось построить сравнение",
-  "compare.retry": "Повторить",
-  "compare.empty": "Нет диалогов, оценённых обеими версиями",
-  "compare.emptyNote": "Примените новую версию к диалогам («Применить к диалогам» в редакторе чек-листа), и сравнение появится здесь.",
-  "compare.summary": "{changed} из {of} {verb}, в среднем {avg}",
-  "compare.ofDialogs.one": "{n} диалога",
-  "compare.ofDialogs.few": "{n} диалогов",
-  "compare.ofDialogs.many": "{n} диалогов",
-  "compare.changedVerb.one": "изменился",
-  "compare.changedVerb.few": "изменились",
-  "compare.changedVerb.many": "изменились",
-  "compare.table": "Диалоги: было, стало, разница",
-  "compare.col.id": "Диалог",
-  "compare.col.group": "Группа",
-  "compare.col.old": "Было",
-  "compare.col.new": "Стало",
-  "compare.col.delta": "Δ",
-  "compare.sortBy": "Сортировать по столбцу «{column}»",
-  "compare.openTitle": "Показать оценки рядом",
-  "compare.side.label": "Обе оценки диалога рядом",
-  "compare.side.title": "Диалог {id}",
-  "compare.side.open": "Открыть диалог",
-  "compare.side.totals": "{old} → {new} ({delta})",
-  "compare.side.all": "Показать все критерии",
-  "compare.side.criteria": "Критерии: было и стало",
-  "compare.side.loading": "Загружаю оценки…",
-  "compare.side.loadFailed": "Не удалось загрузить оценки",
-  "compare.side.none": "Ответы по критериям не изменились.",
-  "compare.side.absent": "нет в этой версии",
-  "compare.side.noResult": "нет оценки",
-  "compare.side.onlyOld": "только в «Было»",
-  "compare.side.onlyNew": "только в «Стало»",
-  "compare.side.reworded": "было: {title}",
-
-  "transcript.loading": "Загружаю диалог {id}…",
-  "transcript.loadFailed": "Не удалось загрузить диалог {id}",
-  "transcript.retry": "Повторить",
-  "transcript.empty": "Нет реплик",
-  "transcript.emptyNote": "В этой записи нет ни одной реплики.",
-  "transcript.label": "Диалог",
-  "transcript.lines": "Реплик: {n}",
-  "transcript.speaker.client": "Клиент",
-  "transcript.speaker.operator": "Оператор",
-  "transcript.speaker.bot": "Бот",
-  "transcript.speaker.system": "Система",
-  "transcript.speaker.other": "Другое",
-  "transcript.duplicate": "повтор",
-  "transcript.duplicateTitle": "Повтор предыдущей реплики",
-  "transcript.expectedHere": "здесь ожидалось",
-
-  "scorecard.label": "Оценка диалога",
-  "scorecard.checklist": "Чек-лист",
-  "scorecard.checklistOption": "{name} · v{version}",
-  "scorecard.run": "Оценить",
-  "scorecard.rerun": "Переоценить",
-  "scorecard.runFull": "Переоценить всё",
-  "scorecard.runFullTitle": "Заново оценить все критерии, не используя прежние результаты",
-  "scorecard.keyMissing": "нужен ключ модели",
-  "scorecard.progress": "Идёт оценка: {done}/{total}",
-  "scorecard.starting": "Запускаю оценку…",
-  "scorecard.jobFailed": "Оценить не удалось",
-  "scorecard.retry": "Повторить",
-  "scorecard.loading": "Загружаю оценку…",
-  "scorecard.loadFailed": "Не удалось загрузить оценку",
-  "scorecard.noChecklist": "Нет ни одного чек-листа",
-  "scorecard.noChecklistNote": "Создайте чек-лист в разделе «Чек-листы».",
-  "scorecard.empty": "Диалог ещё не оценён",
-  "scorecard.emptyNote": "Выберите чек-лист и нажмите «Оценить».",
-  "scorecard.demoBadge": "демо-оценка",
-  "scorecard.demoTitle": "Оценку составила демонстрационная модель, а не настоящая",
-  "scorecard.totalLabel": "Итог по чек-листу",
-  "scorecard.totalNone": "не рассчитывается",
-  "scorecard.outOf": "/ 100",
-  "scorecard.originalTotal": "было {total}",
-  "scorecard.originalTitle": "Итог по ответам модели, до решений проверяющего",
-  "scorecard.grossOn": "грубая ошибка",
-  "scorecard.grossOnKinds": "грубая ошибка: {kinds}",
-  "scorecard.grossOff": "грубых ошибок нет",
-  "scorecard.sections": "Итог по разделам",
-  "scorecard.sectionScore": "{points} из {available} · {percent} %",
-  "scorecard.sectionNone": "нет применимых критериев",
-  "scorecard.model": "Модель: {model}",
-  "scorecard.cost": "стоимость ${cost}",
-  "scorecard.criteria": "Критерии",
-  "scorecard.answer.yes": "Да",
-  "scorecard.answer.no": "Нет",
-  "scorecard.answer.na": "N/A",
-  "scorecard.answer.step": "шаг {value}",
-  "scorecard.points": "{earned} из {max}",
-  "scorecard.weight": "вес {from} → {to}",
-  "scorecard.naWeight": "вес распределён по остальным",
-  "scorecard.grossNoScore": "не влияет на итог",
-  "scorecard.modelAnswer": "модель: {answer}",
-  "scorecard.modelAnswerTitle": "Ответ модели до решения проверяющего",
-  "scorecard.evidenceLine": "реплика {n}",
-  "scorecard.evidenceShow": "Показать в диалоге: реплика {n}",
-  "scorecard.checkedRange": "Проверено: реплики {from}–{to}",
-  "scorecard.coaching": "Что улучшить",
-  "scorecard.needsReview": "проверить",
-  "scorecard.needsReviewTitle": "Модель не уверена в этом ответе",
-  "scorecard.carried": "решение проверяющего перенесено",
-  "scorecard.carriedTitle": "Решение по апелляции к прежней оценке перенесено сюда",
-  "scorecard.dispute": "Оспорить",
-  "scorecard.disputeOpenTag": "апелляция открыта",
-  "scorecard.disputeEarlierTag": "апелляция к прежней оценке",
-  "scorecard.disputeEarlierTitle": "Апелляция подана на прежнюю оценку этого диалога и ещё не решена",
-  "scorecard.disputeOpenTitle": "По этому критерию уже есть открытая апелляция",
-  "scorecard.info.title": "Не влияет на оценку",
-  "scorecard.info.topic": "Тема обращения",
-  "scorecard.info.mood": "Настроение клиента",
-  "scorecard.info.outcome": "Итог обращения",
-  "scorecard.info.firstReaction": "Первая реакция",
-  "scorecard.info.longestWait": "Самое долгое ожидание",
-  "scorecard.info.ending": "Завершение",
-  "scorecard.info.thresholdOk": "в пределах 3 минут",
-  "scorecard.info.thresholdOver": "дольше 3 минут",
-  "scorecard.info.unknown": "нет данных",
-  "scorecard.outcome.resolved": "вопрос решён",
-  "scorecard.outcome.passed_to_specialists": "передан специалистам",
-  "scorecard.outcome.unresolved": "не решён",
-  "scorecard.outcome.client_left": "клиент ушёл",
-  "scorecard.ending.operator_closed": "оператор закрыл диалог",
-  "scorecard.ending.client_left": "клиент ушёл",
-  "scorecard.ending.connection_lost": "обрыв связи",
-  "scorecard.ending.client_ended_call": "клиент завершил звонок",
-  "scorecard.ending.normal": "обычное завершение",
-
-  "history.title": "История оценки",
-  "history.original": "Исходная оценка: {total}",
-  "history.appeal": "Апелляция: «{criterion}», ответ модели «{answer}»",
-  "history.changed": "Решение: изменено на «{answer}»",
-  "history.confirmed": "Решение: оценка подтверждена",
-  "history.pending": "Ждёт решения проверяющего",
-  "history.carried": "Перенесено решение по «{criterion}»: «{answer}»",
-  "history.final": "Итоговая оценка: {total}",
-  "history.openAppeal": "открыть апелляцию",
-  "history.earlierOpen": "Апелляция к прежней оценке: «{criterion}», ждёт решения",
-  "history.decidedAfter": "Решение по «{criterion}» принято после этой оценки: переоцените, чтобы применить",
-  "history.olderVersion": "Решение по «{criterion}» относилось к прежней версии критерия",
-
-  "appeal.title": "Апелляция",
-  "appeal.criterion": "Критерий",
-  "appeal.current": "Сейчас: «{answer}»",
-  "appeal.comment": "Комментарий",
-  "appeal.commentPlaceholder": "Почему оценка неверна: что в диалоге это показывает",
-  "appeal.note": "Решение примет проверяющий; итог пересчитается после решения.",
-  "appeal.submit": "Подать апелляцию",
-  "appeal.cancel": "Отмена",
-
-  "appeals.list": "Апелляции",
-  "appeals.filters": "Фильтр апелляций",
-  "appeals.filter.open": "Открытые",
-  "appeals.filter.decided": "Решённые",
-  "appeals.filter.all": "Все",
-  "appeals.status.open": "открыта",
-  "appeals.status.decided": "решена",
-  "appeals.loading": "Загружаем апелляции…",
-  "appeals.loadFailed": "Не удалось загрузить апелляции",
-  "appeals.retry": "Повторить",
-  "appeals.empty": "Апелляций пока нет",
-  "appeals.emptyNote": "Контролёр подаёт апелляцию кнопкой «Оспорить» на карточке критерия.",
-  "appeals.noMatch": "Здесь апелляций нет",
-  "appeals.pick": "Выберите апелляцию в списке",
-  "appeals.back": "← Все апелляции",
-
-  "review.label": "Рассмотрение апелляции",
-  "review.title": "Апелляция · {id}",
-  "review.loading": "Загружаем апелляцию…",
-  "review.loadFailed": "Не удалось загрузить апелляцию",
-  "review.retry": "Повторить",
-  "review.openCard": "Открыть карточку диалога",
-  "review.criterion": "Оспоренный критерий",
-  "review.comment": "Комментарий контролёра",
-  "review.fragment": "Фрагмент диалога",
-  "review.noFragment": "Модель не указала строки; откройте карточку диалога.",
-  "review.opinion": "Второе мнение модели",
-  "review.opinionPending": "Модель перечитывает критерий с учётом комментария…",
-  "review.opinionAnswer": "Модель предлагает: «{answer}»",
-  "review.opinionAdvice": "Это совет: решение принимает проверяющий.",
-  "review.opinionUnavailable": "Второе мнение недоступно.",
-  "review.decision": "Решение",
-  "review.readOnly": "Решение принимает проверяющий. Переключите роль, чтобы решить.",
-  "review.confirmed": "Подтвердить",
-  "review.changed": "Изменить",
-  "review.newAnswer": "Новый ответ",
-  "review.reason": "Причина решения",
-  "review.reasonPlaceholder": "Обязательно: на чём основано решение",
-  "review.submit": "Сохранить решение",
-  "review.decidedConfirmed": "Оценка подтверждена",
-  "review.decidedChanged": "Ответ изменён на «{answer}»",
-  "review.result": "Итог: {from} → {to}",
-  "review.saved": "Решение сохранено.",
-  "review.reloading": "Обновляю данные панели…",
-  "review.reloadFailed": "Панель не обновилась, решение уже сохранено.",
-  "review.reload": "Обновить",
-
-  "view.soon": "Раздел ещё не готов.",
-  "notfound.title": "Страница не найдена",
-  "notfound.home": "К оценке диалогов",
-
-  "toast.retry": "Повторить",
-  "toast.close": "Закрыть",
-  "error.network": "Нет связи с сервером. Проверьте подключение и повторите.",
-  "error.timeout": "Сервер не ответил вовремя. Повторите попытку.",
-  "error.bad_response": "Сервер вернул неожиданный ответ.",
-  "error.model_key_missing": "Нужен ключ модели: новую оценку запустить нельзя.",
-  "error.invalid_request": "Запрос заполнен неверно. Проверьте данные.",
-  "error.na_not_allowed": "Для этого критерия ответ «N/A» недопустим.",
-  "error.step_not_in_scale": "Такого шага нет в шкале критерия.",
-  "error.bad_answer": "Недопустимый ответ для этого критерия.",
-  "error.reason_required": "Укажите причину решения.",
-  "error.invalid_checklist": "Чек-лист заполнен неверно. Исправьте отмеченные поля.",
-  "error.appeal_already_decided": "По этой апелляции уже принято решение.",
-  "error.appeal_already_open": "По этому критерию уже есть открытая апелляция.",
-  "error.checklist_locked": "Эта версия чек-листа заблокирована. Сохраните её как новый чек-лист.",
-  "error.organizer_url_missing": "Не задан адрес источника данных: загрузить группу нельзя.",
-  "error.role_not_allowed": "Это действие недоступно для вашей роли.",
-  "error.not_found": "Не найдено: запись удалена или ссылка устарела.",
-  "error.organizer_error": "Источник данных не ответил. Повторите попытку позже.",
-  "error.no_records": "В файле нет ни одной записи.",
-  "error.bad_record": "В файле есть некорректная запись.",
-  "error.bad_record_at": "Запись №{n} в файле некорректна.",
-  "error.internal_error": "Ошибка на сервере. Повторите попытку позже.",
-  "error.generic": "Что-то пошло не так. Повторите попытку.",
-};
-
+// Shared localization runtime; this compatibility path keeps existing UI imports stable.
+import ru from './messages-ru.js';
+import en from './messages-en.js';
+import kk from './messages-kk.js';
+export const catalogs = {ru, en, kk};
+export const languages = ['ru', 'en', 'kk'];
+const listeners = new Set();
+const recipes = new Map();
 const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
-
-// Replaces {name} with params.name. A placeholder without a parameter stays as written, and a
-// substituted value is never expanded again.
+const DATA_PARAMS = new Set(['id','name','title','criterion','kinds','model','group','time']);
+let language = 'ru';
+export function normalizeLanguage(value) {
+  if (typeof value !== 'string') return null;
+  const code = value.toLowerCase().split(/[-_]/)[0];
+  return code === 'kz' ? 'kk' : languages.includes(code) ? code : null;
+}
+export function storedLanguage() {
+  try { return normalizeLanguage(globalThis.localStorage?.getItem('cqa-language')); } catch { return null; }
+}
+export const currentLanguage = () => language;
+export const locale = () => ({ru:'ru-RU',en:'en-US',kk:'kk-KZ'})[language];
+export function setLanguage(value, {persist = true} = {}) {
+  const next = normalizeLanguage(value);
+  if (!next) return false;
+  if (persist) { try { globalThis.localStorage?.setItem('cqa-language',next); } catch { /* Session preference still works. */ } }
+  if (next === language) return true;
+  language = next;
+  for (const listener of [...listeners]) listener(next);
+  return true;
+}
+export function onLanguageChange(listener) { listeners.add(listener); return () => listeners.delete(listener); }
 export function format(template, params) {
   if (!params) return template;
-  return template.replace(/\{(\w+)\}/g, (placeholder, name) => (has(params, name) ? String(params[name]) : placeholder));
+  return template.replace(/\{(\w+)\}/g,(placeholder,name)=>has(params,name)?String(params[name]):placeholder);
 }
-
-// A missing key returns the key itself and logs nothing.
+function remember(value, read) {
+  recipes.set(value, read);
+  if (recipes.size > 12000) recipes.delete(recipes.keys().next().value);
+  return value;
+}
+export function formatNumber(value, options = {}) {
+  const read = () => new Intl.NumberFormat(locale(), {useGrouping:false,...options}).format(value);
+  return remember(read(), read);
+}
+export function formatDate(value, options = {}) {
+  if (value === null || value === undefined || value === "") return "—";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '—';
+  const read = () => new Intl.DateTimeFormat(locale(), {dateStyle:'medium',timeStyle:'short',...options}).format(date);
+  return remember(read(),read);
+}
+function messageReader(key, params, plural) {
+  const values = {...params};
+  const nested = new Map(Object.entries(values).flatMap(([name,value]) => !DATA_PARAMS.has(name) && recipes.has(value) ? [[name, recipes.get(value)]] : []));
+  return () => {
+    const selected = plural ? `${key}.${pluralForm(values.n)}` : key;
+    const catalog = catalogs[language];
+    if (!has(catalog,selected)) return selected;
+    const localized = Object.fromEntries(Object.entries(values).map(([name,value]) => [name,
+      nested.has(name) ? nested.get(name)() : !DATA_PARAMS.has(name) && typeof value === "string" && numericReader(value) ? numericReader(value)() : typeof value === 'number' && !DATA_PARAMS.has(name) ? new Intl.NumberFormat(locale(),{useGrouping:false,maximumFractionDigits:8}).format(value) : value]));
+    return format(catalog[selected],localized);
+  };
+}
 export function t(key, params) {
-  return has(messages, key) ? format(messages[key], params) : key;
+  if (!has(catalogs[language],key)) return key;
+  const read = messageReader(key,params);
+  return remember(read(),read);
 }
-
-// Russian plural form of n: "one" (1, 21, 101), "few" (2-4, 22-24) or "many" (0, 5-20, 25-30).
 export function pluralForm(n) {
-  const abs = Math.abs(Math.trunc(Number(n)));
-  const ten = abs % 10;
-  const hundred = abs % 100;
-  if (ten === 1 && hundred !== 11) return "one";
-  if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "few";
-  return "many";
+  if (language === 'kk') return 'many'; // Numerals take the same noun form in Kazakh.
+  const form = new Intl.PluralRules(locale()).select(Number(n));
+  return form === 'one' || form === 'few' ? form : 'many';
+}
+export function tp(base,n,params={}) {
+  const read = messageReader(base,{...params,n},true);
+  return remember(read(),read);
+}
+// Capture a rendered UI message's recipe at creation time, including composed status lines.
+// Capturing (rather than reverse-translating at switch time) disambiguates identical labels.
+function numericReader(text) {
+  const match = /^([+−-]?)(\d+)(?:([.,])(\d+))?( ?%?)$/.exec(text);
+  if (!match) return null;
+  const places = match[4]?.length ?? 0;
+  const value = Number(match[2]+(match[4] ? '.'+match[4] : ''));
+  return () => match[1]+new Intl.NumberFormat(locale(),{useGrouping:false,minimumFractionDigits:places,maximumFractionDigits:places}).format(value)+match[5];
+}
+export function captureMessage(value) {
+  const text = String(value ?? '');
+  if (recipes.has(text)) return recipes.get(text);
+  const number = numericReader(text);
+  if (number) return number;
+  const pieces = text.split(/( · | → )/);
+  const readers = pieces.map((part) => recipes.get(part));
+  if (readers.some(Boolean)) return () => pieces.map((part,i) => readers[i] ? readers[i]() : part).join('');
+  return () => text;
 }
 
-// t() for a counted noun: reads `${base}.one|few|many` and fills {n} (and any other params).
-export function tp(base, n, params = {}) {
-  return t(`${base}.${pluralForm(n)}`, { ...params, n });
+// Known server status notes (for example the demo-reference warning) also have catalog entries.
+for (const catalog of Object.values(catalogs)) {
+  for (const [key,value] of Object.entries(catalog)) {
+    if (!value.includes('{')) recipes.set(value,messageReader(key));
+  }
 }

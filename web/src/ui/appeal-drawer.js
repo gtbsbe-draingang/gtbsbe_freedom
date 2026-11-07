@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The appeal drawer (R7, «Контролёр»): the criterion, pre-filled with the one disputed and
 // changeable; the controller's comment, required; «Подать апелляцию». It slides in over the app
 // root, so it stays inside the component's scoped styles and works in a narrow frame.
@@ -19,7 +20,7 @@ export function openAppealDrawer({ host, store, api, evaluationId, choices, crit
   const select = h(
     "select",
     { class: ["cqa-sc-select", "cqa-ap-select"], attrs: { "aria-label": t("appeal.criterion") }, data: { test: "appeal-criterion" }, on: { change: () => paint() } },
-    choices.map((choice) => h("option", { attrs: { value: choice.id }, text: choice.title })),
+    choices.map((choice) => h("option", { attrs: { value: choice.id }, verbatim:true, text: choice.title })),
   );
   if (choices.some((choice) => choice.id === criterionId)) select.value = criterionId;
 
@@ -34,7 +35,7 @@ export function openAppealDrawer({ host, store, api, evaluationId, choices, crit
 
   function paint() {
     const choice = choices.find((c) => c.id === select.value);
-    current.textContent = choice ? t("appeal.current", { answer: choice.answer }) : "";
+    setLocalizedText(current, choice ? t("appeal.current", { answer: choice.answer }) : "");
     submit.disabled = busy || comment.value.trim() === "";
     select.disabled = busy;
   }

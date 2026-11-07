@@ -2,6 +2,1623 @@
   // package.json
   var version = "0.1.0";
 
+  // src/i18n/messages-ru.js
+  var messages_ru_default = {
+    "player.play": "\u0412\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0441\u0442\u0438",
+    "player.pause": "\u041F\u0430\u0443\u0437\u0430",
+    "player.timeline": "\u041F\u043E\u0437\u0438\u0446\u0438\u044F \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
+    "player.waveformLoading": "\u0421\u0442\u0440\u043E\u0438\u043C \u0437\u0432\u0443\u043A\u043E\u0432\u0443\u044E \u0432\u043E\u043B\u043D\u0443\u2026",
+    "player.waveformUnavailable": "\u0417\u0432\u0443\u043A\u043E\u0432\u0430\u044F \u0432\u043E\u043B\u043D\u0430 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430. \u0417\u0430\u043F\u0438\u0441\u044C \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0441\u043B\u0443\u0448\u0430\u0442\u044C.",
+    "player.speakerNote": "\u0420\u043E\u043B\u0438 \u043F\u043E \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
+    "player.speakerTitle": "\u041E\u0431\u0449\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C, \u0440\u0430\u0437\u0434\u0435\u043B\u0451\u043D\u043D\u0430\u044F \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u0440\u0435\u043F\u043B\u0438\u043A \u0432 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
+    "player.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "player.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "player.mute": "\u0412\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
+    "player.unmute": "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
+    "player.speed": "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u044F",
+    "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "brand.name": "Freedom \u2014 \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E",
+    "nav.label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B",
+    "nav.workspace": "\u041E\u0446\u0435\u043D\u043A\u0430",
+    "nav.checklists": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "nav.appeals": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "nav.compare": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
+    "nav.analytics": "\u041E\u0442\u0447\u0451\u0442\u044B",
+    "nav.accuracy": "\u0422\u043E\u0447\u043D\u043E\u0441\u0442\u044C",
+    "role.label": "\u0420\u043E\u043B\u044C",
+    "role.current": "\u0420\u043E\u043B\u044C: {role}",
+    "role.controller": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440",
+    "role.reviewer": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439",
+    "theme.toggle": "\u0422\u0451\u043C\u043D\u0430\u044F \u0442\u0435\u043C\u0430",
+    "dataset.label": "\u041D\u0430\u0431\u043E\u0440",
+    "dataset.title": "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "workspace.queue": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
+    "workspace.queueClose": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
+    "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "workspace.tab.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430",
+    "workspace.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "workspace.pick": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0438\u0430\u043B\u043E\u0433 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "queue.search": "\u041F\u043E\u0438\u0441\u043A \u043F\u043E ID \u0438\u043B\u0438 \u0442\u0435\u043A\u0441\u0442\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "queue.searchLabel": "\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "queue.filters": "\u0424\u0438\u043B\u044C\u0442\u0440\u044B \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "queue.filter.all": "\u0412\u0441\u0435",
+    "queue.filter.chats": "\u0427\u0430\u0442\u044B",
+    "queue.filter.calls": "\u0417\u0432\u043E\u043D\u043A\u0438",
+    "queue.filter.disputed": "\u0421\u043F\u043E\u0440\u043D\u044B\u0435",
+    "queue.filter.new": "\u041D\u043E\u0432\u044B\u0435",
+    "queue.language": "\u042F\u0437\u044B\u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "queue.language.all": "\u0412\u0441\u0435 \u044F\u0437\u044B\u043A\u0438",
+    "queue.list": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438",
+    "queue.shown": "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E {shown} \u0438\u0437 {total}",
+    "queue.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C\u2026",
+    "queue.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043D\u0430\u0431\u043E\u0440 {group}\u2026",
+    "queue.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
+    "queue.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "queue.empty": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043F\u0443\u0441\u0442\u0430",
+    "queue.emptyNote": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445, \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
+    "queue.noMatch": "\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E",
+    "queue.noMatchNote": "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u0435 \u043F\u043E\u0438\u0441\u043A \u0438\u043B\u0438 \u0444\u0438\u043B\u044C\u0442\u0440\u044B.",
+    "queue.select": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
+    "queue.channel.chat": "\u0447\u0430\u0442",
+    "queue.channel.call": "\u0437\u0432\u043E\u043D\u043E\u043A",
+    "queue.group": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445: {group}",
+    "queue.language.title": "\u042F\u0437\u044B\u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "queue.score.none": "\u043D\u0435 \u043E\u0446\u0435\u043D\u0451\u043D",
+    "queue.score.notCalculated": "\u043D\u0435 \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
+    "queue.tag.appeal": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "queue.tag.appeals": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438: {n}",
+    "queue.tag.grossError": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
+    "queue.tag.needsReview": "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443",
+    "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u0447\u0430\u0441\u0442\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "queue.groupFilter": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
+    "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
+    "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+    "queue.export": "\u0421\u043A\u0430\u0447\u0430\u0442\u044C Excel (CSV)",
+    "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
+    "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "loader.group": "\u0413\u0440\u0443\u043F\u043F\u0430 \u043F\u043E group_id",
+    "loader.groupHint": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u0440\u0438\u0434\u0443\u0442 \u043E\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 \u043D\u0430\u0448 \u0441\u0435\u0440\u0432\u0435\u0440.",
+    "loader.groupPlaceholder": "\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, CTRL",
+    "loader.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
+    "loader.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0433\u0440\u0443\u043F\u043F\u0443 {group}\u2026",
+    "loader.file": "\u0424\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438 (JSON)",
+    "loader.fileHint": "\u041E\u0434\u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C, \u043C\u0430\u0441\u0441\u0438\u0432 \u0437\u0430\u043F\u0438\u0441\u0435\u0439 \u0438\u043B\u0438 \u0432\u0435\u0441\u044C \u043E\u0442\u0432\u0435\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432.",
+    "loader.uploading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0444\u0430\u0439\u043B {name}\u2026",
+    "loader.summary": "\u0412\u0441\u0435\u0433\u043E {total} \xB7 \u043D\u043E\u0432\u044B\u0445 {imported} \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E {updated} \xB7 \u0431\u0435\u0437 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439 {unchanged}",
+    "loader.summaryGroup": "\u041D\u0430\u0431\u043E\u0440 {group}",
+    "loader.error.not_json": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432 \u0444\u043E\u0440\u043C\u0430\u0442\u0435 JSON.",
+    "loader.error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
+    "loader.error.bad_record": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430: \u043D\u0443\u0436\u043D\u044B conversation_id, channel, language \u0438 transcript.",
+    "loader.error.read": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C.",
+    "batch.label": "\u041F\u0430\u043A\u0435\u0442\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430",
+    "batch.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043E: {n}",
+    "batch.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "batch.estimating": "\u0421\u0447\u0438\u0442\u0430\u044E, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0437\u043E\u0432\u043E\u0432\u2026",
+    "batch.estimate": "{dialogs} \xB7 {calls} \u043C\u043E\u0434\u0435\u043B\u0438 \xB7 {cached} \u0438\u0437 \u043A\u044D\u0448\u0430",
+    "batch.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435",
+    "batch.clear": "\u0421\u043D\u044F\u0442\u044C \u0432\u044B\u0431\u043E\u0440",
+    "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
+    "batch.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u044B\u0435",
+    "batch.done": "\u0413\u043E\u0442\u043E\u0432\u043E: \u043E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "batch.interrupted": "\u0421\u0432\u044F\u0437\u044C \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C \u043F\u0440\u0435\u0440\u0432\u0430\u043B\u0430\u0441\u044C \u043D\u0430 {done} \u0438\u0437 {total}: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442\u0441\u044F \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435.",
+    "batch.resume": "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0438\u0442\u044C",
+    "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "batch.calls.one": "{n} \u0432\u044B\u0437\u043E\u0432",
+    "batch.calls.few": "{n} \u0432\u044B\u0437\u043E\u0432\u0430",
+    "batch.calls.many": "{n} \u0432\u044B\u0437\u043E\u0432\u043E\u0432",
+    "checklists.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "checklists.note": "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0433\u043E \u043E\u0441\u043D\u043E\u0432\u0435. \u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 \u043C\u043E\u0436\u0435\u0442 \u043E\u0442\u043B\u0438\u0447\u0430\u0442\u044C\u0441\u044F \u043E\u0442 100 \u2014 \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "checklists.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\u2026",
+    "checklists.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "checklists.locked": "\u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D",
+    "checklists.channel.any": "\u043B\u044E\u0431\u043E\u0439 \u043A\u0430\u043D\u0430\u043B",
+    "checklists.channel.chat": "\u0447\u0430\u0442\u044B",
+    "checklists.channel.call": "\u0437\u0432\u043E\u043D\u043A\u0438",
+    "checklists.version": "v{version} (\u0432\u0435\u0440\u0441\u0438\u0439: {count})",
+    "checklists.criteria.one": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.criteria.few": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "checklists.criteria.many": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "checklists.weights": "\u0441\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 {sum}",
+    "checklists.basedOn": "\u043D\u0430 \u043E\u0441\u043D\u043E\u0432\u0435 \xAB{name}\xBB v{version}",
+    "checklists.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C",
+    "checklists.copy": "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
+    "editor.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u2026",
+    "editor.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.titleNew": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newName": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newNote": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438.",
+    "editor.newSection": "\u041D\u043E\u0432\u044B\u0439 \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.copyName": "{name} (\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0439)",
+    "editor.lockedNote": "\u0412\u0435\u0440\u0441\u0438\u044F \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430: \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0441\u0442 \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0451 \u043E\u0441\u043D\u043E\u0432\u0435.",
+    "editor.versionNote": "\u041A\u0430\u0436\u0434\u043E\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0451\u0442 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E; \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0438 \u0438\u0445 \u043E\u0446\u0435\u043D\u043A\u0438 \u043D\u0435 \u043C\u0435\u043D\u044F\u044E\u0442\u0441\u044F.",
+    "editor.back": "\u2190 \u0412\u0441\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "editor.apply": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "editor.saved": "\u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E: \xAB{name}\xBB v{version}. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u0435\u0433\u043E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438.",
+    "editor.name": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435",
+    "editor.channel": "\u041A\u0430\u043D\u0430\u043B (\u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u0435\u0434\u0432\u044B\u0431\u043E\u0440)",
+    "editor.sectionTitle": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0440\u0430\u0437\u0434\u0435\u043B\u0430",
+    "editor.critTitle": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.wording": "\u0424\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0430 \u0434\u043B\u044F \u043E\u0446\u0435\u043D\u0449\u0438\u043A\u0430",
+    "editor.type": "\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430",
+    "editor.type.yes_no": "\u0414\u0430 / \u041D\u0435\u0442",
+    "editor.type.scale": "\u0428\u043A\u0430\u043B\u0430",
+    "editor.kind": "\u0412\u0438\u0434",
+    "editor.kind.scored": "\u041E\u0446\u0435\u043D\u043E\u0447\u043D\u044B\u0439",
+    "editor.kind.gross_error": "\u0413\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430 (\u0444\u043B\u0430\u0433, \u0431\u0435\u0437 \u0431\u0430\u043B\u043B\u043E\u0432)",
+    "editor.weight": "\u0412\u0435\u0441",
+    "editor.section": "\u0420\u0430\u0437\u0434\u0435\u043B",
+    "editor.steps": "\u0428\u0430\u0433\u0438 \u0448\u043A\u0430\u043B\u044B: \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435",
+    "editor.stepValue": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.stepLabel": "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.removeStep": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0448\u0430\u0433",
+    "editor.addStep": "+ \u0448\u0430\u0433",
+    "editor.naAllowed": "\u041C\u043E\u0436\u043D\u043E \u043E\u0442\u0432\u0435\u0442\u0438\u0442\u044C N/A",
+    "editor.naCondition": "\u041A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A",
+    "editor.kinds": "\u0412\u0438\u0434\u044B \u043D\u0430\u0440\u0443\u0448\u0435\u043D\u0438\u0439 (\u0447\u0435\u0440\u0435\u0437 \u0437\u0430\u043F\u044F\u0442\u0443\u044E)",
+    "editor.more": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438 \u043C\u043E\u0434\u0435\u043B\u044C",
+    "editor.guidance": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0434\u043B\u044F \u043C\u043E\u0434\u0435\u043B\u0438",
+    "editor.model": "\u041C\u043E\u0434\u0435\u043B\u044C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "editor.modelDefault": "\u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
+    "editor.removeCriterion": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C",
+    "editor.addCriterion": "+ \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.addSection": "+ \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removeSection": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removed": "\u0423\u0434\u0430\u043B\u0435\u043D\u044B:",
+    "editor.restore": "\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
+    "editor.badge.new": "\u043D\u043E\u0432\u044B\u0439",
+    "editor.badge.reworded": "\u0438\u0437\u043C\u0435\u043D\u0451\u043D",
+    "editor.badge.weight": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441",
+    "editor.diff": "\u043D\u043E\u0432\u044B\u0445: {added} \xB7 \u0443\u0434\u0430\u043B\u0435\u043D\u043E: {removed} \xB7 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E: {reworded} \xB7 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441: {weight}",
+    "editor.weightSum": "\u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432: {sum}, \u043D\u0435 100. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E: \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "editor.errorCount": "\u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F: {n}",
+    "editor.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveAsNew": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveVersion": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E",
+    "editor.error.title_required": "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435.",
+    "editor.error.weight_invalid": "\u0412\u0435\u0441 \u2014 \u0447\u0438\u0441\u043B\u043E \u043E\u0442 0 (\u043C\u043E\u0436\u043D\u043E \u0441 \u0437\u0430\u043F\u044F\u0442\u043E\u0439: 7,5).",
+    "editor.error.scale_empty": "\u0423 \u0448\u043A\u0430\u043B\u044B \u0434\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u0445\u043E\u0442\u044F \u0431\u044B \u0434\u0432\u0430 \u0448\u0430\u0433\u0430.",
+    "editor.error.scale_value_invalid": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430 \u2014 \u0447\u0438\u0441\u043B\u043E.",
+    "editor.error.scale_duplicate": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0448\u0430\u0433\u043E\u0432 \u043D\u0435 \u0434\u043E\u043B\u0436\u043D\u044B \u043F\u043E\u0432\u0442\u043E\u0440\u044F\u0442\u044C\u0441\u044F.",
+    "editor.error.na_condition_required": "\u041E\u043F\u0438\u0448\u0438\u0442\u0435, \u043A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A.",
+    "editor.error.section_missing": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B.",
+    "editor.error.criteria_empty": "\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439.",
+    "apply.title": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "apply.what": "\xAB{name}\xBB v{version}: \u043D\u0435\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438\u0437 \u043F\u0440\u0435\u0436\u043D\u0438\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0431\u0435\u0437 \u0432\u044B\u0437\u043E\u0432\u0430 \u043C\u043E\u0434\u0435\u043B\u0438.",
+    "apply.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433\u0438\u2026",
+    "apply.targets": "\u041A\u0430\u043A\u0438\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
+    "apply.control": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 {group}",
+    "apply.controlNone": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 (\u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430)",
+    "apply.dev": "DEV",
+    "apply.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "apply.noAll": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u043E \u0432\u0441\u0435\u043C \u0441\u0440\u0430\u0437\u0443 \u043D\u0435\u043B\u044C\u0437\u044F: \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440.",
+    "apply.run": "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
+    "apply.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "apply.compare": "\u0421\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
+    "player.label": "\u0417\u0430\u043F\u0438\u0441\u044C \u0437\u0432\u043E\u043D\u043A\u0430",
+    "player.needsImport": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0433\u0440\u0443\u043F\u043F\u0443, \u0447\u0442\u043E\u0431\u044B \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
+    "player.none": "\u0417\u0430\u043F\u0438\u0441\u0438 \u044D\u0442\u043E\u0433\u043E \u0437\u0432\u043E\u043D\u043A\u0430 \u043D\u0435\u0442.",
+    "player.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
+    "player.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
+    "player.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "player.seek": "\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A {time} \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
+    "compare.title": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
+    "compare.note": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B (\u0441 \u0440\u0435\u0448\u0435\u043D\u0438\u044F\u043C\u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0445), \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u043A\u0430\u0436\u0434\u0430\u044F \u0440\u0430\u0437\u043D\u0438\u0446\u0430 \u0438\u0434\u0451\u0442 \u043E\u0442 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430.",
+    "compare.from": "\u0411\u044B\u043B\u043E",
+    "compare.to": "\u0421\u0442\u0430\u043B\u043E",
+    "compare.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "compare.group.all": "\u0412\u0441\u0435 \u0433\u0440\u0443\u043F\u043F\u044B",
+    "compare.choose": "\u2014 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044E \u2014",
+    "compare.pickTitle": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435, \u0447\u0442\u043E \u0441\u0440\u0430\u0432\u043D\u0438\u0442\u044C",
+    "compare.pickNote": "\u0414\u0432\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 (\u0438\u043B\u0438 \u0434\u0432\u0430 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430): \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438.",
+    "compare.loading": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u2026",
+    "compare.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
+    "compare.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "compare.empty": "\u041D\u0435\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438 \u0432\u0435\u0440\u0441\u0438\u044F\u043C\u0438",
+    "compare.emptyNote": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C (\xAB\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\xBB \u0432 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430), \u0438 \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
+    "compare.summary": "{changed} \u0438\u0437 {of} {verb}, \u0432 \u0441\u0440\u0435\u0434\u043D\u0435\u043C {avg}",
+    "compare.ofDialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "compare.ofDialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "compare.ofDialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "compare.changedVerb.one": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0441\u044F",
+    "compare.changedVerb.few": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
+    "compare.changedVerb.many": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
+    "compare.table": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438: \u0431\u044B\u043B\u043E, \u0441\u0442\u0430\u043B\u043E, \u0440\u0430\u0437\u043D\u0438\u0446\u0430",
+    "compare.col.id": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "compare.col.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "compare.col.old": "\u0411\u044B\u043B\u043E",
+    "compare.col.new": "\u0421\u0442\u0430\u043B\u043E",
+    "compare.col.delta": "\u0394",
+    "compare.sortBy": "\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E \u0441\u0442\u043E\u043B\u0431\u0446\u0443 \xAB{column}\xBB",
+    "compare.openTitle": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438 \u0440\u044F\u0434\u043E\u043C",
+    "compare.side.label": "\u041E\u0431\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0440\u044F\u0434\u043E\u043C",
+    "compare.side.title": "\u0414\u0438\u0430\u043B\u043E\u0433 {id}",
+    "compare.side.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433",
+    "compare.side.totals": "{old} \u2192 {new} ({delta})",
+    "compare.side.all": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
+    "compare.side.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438: \u0431\u044B\u043B\u043E \u0438 \u0441\u0442\u0430\u043B\u043E",
+    "compare.side.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0438\u2026",
+    "compare.side.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438",
+    "compare.side.none": "\u041E\u0442\u0432\u0435\u0442\u044B \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C \u043D\u0435 \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C.",
+    "compare.side.absent": "\u043D\u0435\u0442 \u0432 \u044D\u0442\u043E\u0439 \u0432\u0435\u0440\u0441\u0438\u0438",
+    "compare.side.noResult": "\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438",
+    "compare.side.onlyOld": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0411\u044B\u043B\u043E\xBB",
+    "compare.side.onlyNew": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0421\u0442\u0430\u043B\u043E\xBB",
+    "compare.side.reworded": "\u0431\u044B\u043B\u043E: {title}",
+    "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
+    "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
+    "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "transcript.empty": "\u041D\u0435\u0442 \u0440\u0435\u043F\u043B\u0438\u043A",
+    "transcript.emptyNote": "\u0412 \u044D\u0442\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438.",
+    "transcript.label": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "transcript.lines": "\u0420\u0435\u043F\u043B\u0438\u043A: {n}",
+    "transcript.speaker.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "transcript.speaker.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "transcript.speaker.bot": "\u0411\u043E\u0442",
+    "transcript.speaker.system": "\u0421\u0438\u0441\u0442\u0435\u043C\u0430",
+    "transcript.speaker.other": "\u0414\u0440\u0443\u0433\u043E\u0435",
+    "transcript.duplicate": "\u043F\u043E\u0432\u0442\u043E\u0440",
+    "transcript.duplicateTitle": "\u041F\u043E\u0432\u0442\u043E\u0440 \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0435\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438",
+    "transcript.expectedHere": "\u0437\u0434\u0435\u0441\u044C \u043E\u0436\u0438\u0434\u0430\u043B\u043E\u0441\u044C",
+    "scorecard.label": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "scorecard.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "scorecard.checklistOption": "{name} \xB7 v{version}",
+    "scorecard.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C",
+    "scorecard.rerun": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C",
+    "scorecard.runFull": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0451",
+    "scorecard.runFullTitle": "\u0417\u0430\u043D\u043E\u0432\u043E \u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438, \u043D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u044F \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B",
+    "scorecard.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "scorecard.progress": "\u0418\u0434\u0451\u0442 \u043E\u0446\u0435\u043D\u043A\u0430: {done}/{total}",
+    "scorecard.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "scorecard.jobFailed": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C",
+    "scorecard.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "scorecard.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "scorecard.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443",
+    "scorecard.noChecklist": "\u041D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430",
+    "scorecard.noChecklistNote": "\u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B\u0435 \xAB\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\xBB.",
+    "scorecard.empty": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0446\u0435\u043D\u0451\u043D",
+    "scorecard.emptyNote": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0446\u0435\u043D\u0438\u0442\u044C\xBB.",
+    "scorecard.demoBadge": "\u0434\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u043A\u0430",
+    "scorecard.demoTitle": "\u041E\u0446\u0435\u043D\u043A\u0443 \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0430 \u0434\u0435\u043C\u043E\u043D\u0441\u0442\u0440\u0430\u0446\u0438\u043E\u043D\u043D\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C, \u0430 \u043D\u0435 \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0430\u044F",
+    "scorecard.totalLabel": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0443",
+    "scorecard.totalNone": "\u043D\u0435 \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
+    "scorecard.outOf": "/ 100",
+    "scorecard.originalTotal": "\u0431\u044B\u043B\u043E {total}",
+    "scorecard.originalTitle": "\u0418\u0442\u043E\u0433 \u043F\u043E \u043E\u0442\u0432\u0435\u0442\u0430\u043C \u043C\u043E\u0434\u0435\u043B\u0438, \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "scorecard.grossOn": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
+    "scorecard.grossOnKinds": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430: {kinds}",
+    "scorecard.grossOff": "\u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A \u043D\u0435\u0442",
+    "scorecard.sections": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u043C",
+    "scorecard.sectionScore": "{points} \u0438\u0437 {available} \xB7 {percent} %",
+    "scorecard.sectionNone": "\u043D\u0435\u0442 \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u043C\u044B\u0445 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "scorecard.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
+    "scorecard.cost": "\u0441\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C ${cost}",
+    "scorecard.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
+    "scorecard.answer.yes": "\u0414\u0430",
+    "scorecard.answer.no": "\u041D\u0435\u0442",
+    "scorecard.answer.na": "N/A",
+    "scorecard.answer.step": "\u0448\u0430\u0433 {value}",
+    "scorecard.points": "{earned} \u0438\u0437 {max}",
+    "scorecard.weight": "\u0432\u0435\u0441 {from} \u2192 {to}",
+    "scorecard.naWeight": "\u0432\u0435\u0441 \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D \u043F\u043E \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u043C",
+    "scorecard.grossNoScore": "\u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u0438\u0442\u043E\u0433",
+    "scorecard.modelAnswer": "\u043C\u043E\u0434\u0435\u043B\u044C: {answer}",
+    "scorecard.modelAnswerTitle": "\u041E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "scorecard.evidenceLine": "\u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
+    "scorecard.evidenceShow": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435: \u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
+    "scorecard.checkedRange": "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D\u043E: \u0440\u0435\u043F\u043B\u0438\u043A\u0438 {from}\u2013{to}",
+    "scorecard.coaching": "\u0427\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C",
+    "scorecard.needsReview": "\u043F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C",
+    "scorecard.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u044D\u0442\u043E\u043C \u043E\u0442\u0432\u0435\u0442\u0435",
+    "scorecard.carried": "\u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E",
+    "scorecard.carriedTitle": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0441\u044E\u0434\u0430",
+    "scorecard.dispute": "\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C",
+    "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "scorecard.disputeEarlierTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435",
+    "scorecard.disputeEarlierTitle": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043F\u043E\u0434\u0430\u043D\u0430 \u043D\u0430 \u043F\u0440\u0435\u0436\u043D\u044E\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u044D\u0442\u043E\u0433\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0438 \u0435\u0449\u0451 \u043D\u0435 \u0440\u0435\u0448\u0435\u043D\u0430",
+    "scorecard.disputeOpenTitle": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "scorecard.info.title": "\u041D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0443",
+    "scorecard.info.topic": "\u0422\u0435\u043C\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
+    "scorecard.info.mood": "\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u0438\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+    "scorecard.info.outcome": "\u0418\u0442\u043E\u0433 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
+    "scorecard.info.firstReaction": "\u041F\u0435\u0440\u0432\u0430\u044F \u0440\u0435\u0430\u043A\u0446\u0438\u044F",
+    "scorecard.info.longestWait": "\u0421\u0430\u043C\u043E\u0435 \u0434\u043E\u043B\u0433\u043E\u0435 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u0435",
+    "scorecard.info.ending": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
+    "scorecard.info.thresholdOk": "\u0432 \u043F\u0440\u0435\u0434\u0435\u043B\u0430\u0445 3 \u043C\u0438\u043D\u0443\u0442",
+    "scorecard.info.thresholdOver": "\u0434\u043E\u043B\u044C\u0448\u0435 3 \u043C\u0438\u043D\u0443\u0442",
+    "scorecard.info.unknown": "\u043D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "scorecard.outcome.resolved": "\u0432\u043E\u043F\u0440\u043E\u0441 \u0440\u0435\u0448\u0451\u043D",
+    "scorecard.outcome.passed_to_specialists": "\u043F\u0435\u0440\u0435\u0434\u0430\u043D \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u0438\u0441\u0442\u0430\u043C",
+    "scorecard.outcome.unresolved": "\u043D\u0435 \u0440\u0435\u0448\u0451\u043D",
+    "scorecard.outcome.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
+    "scorecard.ending.operator_closed": "\u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440 \u0437\u0430\u043A\u0440\u044B\u043B \u0434\u0438\u0430\u043B\u043E\u0433",
+    "scorecard.ending.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
+    "scorecard.ending.connection_lost": "\u043E\u0431\u0440\u044B\u0432 \u0441\u0432\u044F\u0437\u0438",
+    "scorecard.ending.client_ended_call": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u0437\u0432\u043E\u043D\u043E\u043A",
+    "scorecard.ending.normal": "\u043E\u0431\u044B\u0447\u043D\u043E\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
+    "history.title": "\u0418\u0441\u0442\u043E\u0440\u0438\u044F \u043E\u0446\u0435\u043D\u043A\u0438",
+    "history.original": "\u0418\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
+    "history.appeal": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F: \xAB{criterion}\xBB, \u043E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \xAB{answer}\xBB",
+    "history.changed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E \u043D\u0430 \xAB{answer}\xBB",
+    "history.confirmed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
+    "history.pending": "\u0416\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
+    "history.carried": "\u041F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB: \xAB{answer}\xBB",
+    "history.final": "\u0418\u0442\u043E\u0433\u043E\u0432\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
+    "history.openAppeal": "\u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "history.earlierOpen": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435: \xAB{criterion}\xBB, \u0436\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+    "history.decidedAfter": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u043F\u043E\u0441\u043B\u0435 \u044D\u0442\u043E\u0439 \u043E\u0446\u0435\u043D\u043A\u0438: \u043F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C",
+    "history.olderVersion": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043E\u0442\u043D\u043E\u0441\u0438\u043B\u043E\u0441\u044C \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "appeal.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "appeal.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "appeal.current": "\u0421\u0435\u0439\u0447\u0430\u0441: \xAB{answer}\xBB",
+    "appeal.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439",
+    "appeal.commentPlaceholder": "\u041F\u043E\u0447\u0435\u043C\u0443 \u043E\u0446\u0435\u043D\u043A\u0430 \u043D\u0435\u0432\u0435\u0440\u043D\u0430: \u0447\u0442\u043E \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435 \u044D\u0442\u043E \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442",
+    "appeal.note": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043C\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439; \u0438\u0442\u043E\u0433 \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u044F.",
+    "appeal.submit": "\u041F\u043E\u0434\u0430\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "appeal.cancel": "\u041E\u0442\u043C\u0435\u043D\u0430",
+    "appeals.list": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "appeals.filters": "\u0424\u0438\u043B\u044C\u0442\u0440 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439",
+    "appeals.filter.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435",
+    "appeals.filter.decided": "\u0420\u0435\u0448\u0451\u043D\u043D\u044B\u0435",
+    "appeals.filter.all": "\u0412\u0441\u0435",
+    "appeals.status.open": "\u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "appeals.status.decided": "\u0440\u0435\u0448\u0435\u043D\u0430",
+    "appeals.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438\u2026",
+    "appeals.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "appeals.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "appeals.empty": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442",
+    "appeals.emptyNote": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440 \u043F\u043E\u0434\u0430\u0451\u0442 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \xAB\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C\xBB \u043D\u0430 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
+    "appeals.noMatch": "\u0417\u0434\u0435\u0441\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043D\u0435\u0442",
+    "appeals.pick": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u0432 \u0441\u043F\u0438\u0441\u043A\u0435",
+    "appeals.back": "\u2190 \u0412\u0441\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "review.label": "\u0420\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
+    "review.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \xB7 {id}",
+    "review.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E\u2026",
+    "review.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "review.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "review.openCard": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "review.criterion": "\u041E\u0441\u043F\u043E\u0440\u0435\u043D\u043D\u044B\u0439 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "review.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440\u0430",
+    "review.fragment": "\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "review.noFragment": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043B\u0430 \u0441\u0442\u0440\u043E\u043A\u0438; \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430.",
+    "review.opinion": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "review.opinionPending": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0435\u0440\u0435\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u044F\u2026",
+    "review.opinionAnswer": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442: \xAB{answer}\xBB",
+    "review.opinionAdvice": "\u042D\u0442\u043E \u0441\u043E\u0432\u0435\u0442: \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439.",
+    "review.opinionUnavailable": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E.",
+    "review.decision": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.readOnly": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439. \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0440\u043E\u043B\u044C, \u0447\u0442\u043E\u0431\u044B \u0440\u0435\u0448\u0438\u0442\u044C.",
+    "review.confirmed": "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C",
+    "review.changed": "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C",
+    "review.newAnswer": "\u041D\u043E\u0432\u044B\u0439 \u043E\u0442\u0432\u0435\u0442",
+    "review.reason": "\u041F\u0440\u0438\u0447\u0438\u043D\u0430 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+    "review.reasonPlaceholder": "\u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E: \u043D\u0430 \u0447\u0451\u043C \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.submit": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
+    "review.decidedConfirmed": "\u041E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
+    "review.decidedChanged": "\u041E\u0442\u0432\u0435\u0442 \u0438\u0437\u043C\u0435\u043D\u0451\u043D \u043D\u0430 \xAB{answer}\xBB",
+    "review.result": "\u0418\u0442\u043E\u0433: {from} \u2192 {to}",
+    "review.saved": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
+    "review.reloading": "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u0430\u043D\u0435\u043B\u0438\u2026",
+    "review.reloadFailed": "\u041F\u0430\u043D\u0435\u043B\u044C \u043D\u0435 \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u0430\u0441\u044C, \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u0443\u0436\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
+    "review.reload": "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C",
+    "view.soon": "\u0420\u0430\u0437\u0434\u0435\u043B \u0435\u0449\u0451 \u043D\u0435 \u0433\u043E\u0442\u043E\u0432.",
+    "notfound.title": "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430",
+    "notfound.home": "\u041A \u043E\u0446\u0435\u043D\u043A\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "toast.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "toast.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "error.network": "\u041D\u0435\u0442 \u0441\u0432\u044F\u0437\u0438 \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u0438 \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435.",
+    "error.timeout": "\u0421\u0435\u0440\u0432\u0435\u0440 \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u0432\u043E\u0432\u0440\u0435\u043C\u044F. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443.",
+    "error.bad_response": "\u0421\u0435\u0440\u0432\u0435\u0440 \u0432\u0435\u0440\u043D\u0443\u043B \u043D\u0435\u043E\u0436\u0438\u0434\u0430\u043D\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442.",
+    "error.model_key_missing": "\u041D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u043D\u043E\u0432\u0443\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u043D\u0435\u043B\u044C\u0437\u044F.",
+    "error.invalid_request": "\u0417\u0430\u043F\u0440\u043E\u0441 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D \u043D\u0435\u0432\u0435\u0440\u043D\u043E. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0435.",
+    "error.na_not_allowed": "\u0414\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F \u043E\u0442\u0432\u0435\u0442 \xABN/A\xBB \u043D\u0435\u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C.",
+    "error.step_not_in_scale": "\u0422\u0430\u043A\u043E\u0433\u043E \u0448\u0430\u0433\u0430 \u043D\u0435\u0442 \u0432 \u0448\u043A\u0430\u043B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
+    "error.bad_answer": "\u041D\u0435\u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u044B\u0439 \u043E\u0442\u0432\u0435\u0442 \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
+    "error.reason_required": "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0440\u0438\u0447\u0438\u043D\u0443 \u0440\u0435\u0448\u0435\u043D\u0438\u044F.",
+    "error.invalid_checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D \u043D\u0435\u0432\u0435\u0440\u043D\u043E. \u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F.",
+    "error.appeal_already_decided": "\u041F\u043E \u044D\u0442\u043E\u0439 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u0443\u0436\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435.",
+    "error.appeal_already_open": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F.",
+    "error.checklist_locked": "\u042D\u0442\u0430 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435 \u0435\u0451 \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442.",
+    "error.organizer_url_missing": "\u041D\u0435 \u0437\u0430\u0434\u0430\u043D \u0430\u0434\u0440\u0435\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445: \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043D\u0435\u043B\u044C\u0437\u044F.",
+    "error.role_not_allowed": "\u042D\u0442\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E \u0434\u043B\u044F \u0432\u0430\u0448\u0435\u0439 \u0440\u043E\u043B\u0438.",
+    "error.not_found": "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E: \u0437\u0430\u043F\u0438\u0441\u044C \u0443\u0434\u0430\u043B\u0435\u043D\u0430 \u0438\u043B\u0438 \u0441\u0441\u044B\u043B\u043A\u0430 \u0443\u0441\u0442\u0430\u0440\u0435\u043B\u0430.",
+    "error.organizer_error": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443 \u043F\u043E\u0437\u0436\u0435.",
+    "error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
+    "error.bad_record": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u0435\u0441\u0442\u044C \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C.",
+    "error.bad_record_at": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430.",
+    "error.internal_error": "\u041E\u0448\u0438\u0431\u043A\u0430 \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443 \u043F\u043E\u0437\u0436\u0435.",
+    "error.generic": "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443.",
+    "language.label": "\u042F\u0437\u044B\u043A \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430",
+    "translate.show": "\u041F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u0438\u0439",
+    "translate.hide": "\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434",
+    "translate.loading": "\u041F\u0435\u0440\u0435\u0432\u043E\u0434\u0438\u043C\u2026",
+    "translate.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434",
+    "voice.caption": "\u041F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u0432\u044F\u0437\u0430\u043D\u043D\u044B\u0445 \u0441 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u043C",
+    "voice.segment": "\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442",
+    "voice.pitch": "\u0414\u0438\u0430\u043F\u0430\u0437\u043E\u043D \u0442\u043E\u043D\u0430, \u043F\u043E\u043B\u0443\u0442\u043E\u043D\u043E\u0432",
+    "voice.rate": "\u0422\u0435\u043C\u043F, \u0441\u043B\u043E\u0432/\u043C\u0438\u043D",
+    "voice.pauses": "\u041F\u0430\u0443\u0437\u044B, \u0441",
+    "voice.overlap": "\u041F\u0435\u0440\u0435\u0431\u0438\u0432\u0430\u043D\u0438\u044F, \u0441",
+    "voice.title": "\u0418\u0437\u043C\u0435\u0440\u0435\u043D\u043D\u044B\u0435 \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 + \u043E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "reports.emptyCell": "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "reports.refresh": "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C",
+    "reports.accuracyTitle": "\u0422\u043E\u0447\u043D\u043E\u0441\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438",
+    "reports.analyticsTitle": "\u041E\u0442\u0447\u0451\u0442\u044B: \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430",
+    "reports.accuracyNote": "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438. \u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u0430 \u0443\u043A\u0430\u0437\u0430\u043D \u043D\u0438\u0436\u0435.",
+    "reports.analyticsNote": "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043C; \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u044E\u0442\u0441\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C.",
+    "reports.referenceMissing": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D",
+    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D",
+    "reports.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
+    "reports.overall": "{agreement} \xB7 n = {n}",
+    "reports.counts": "\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438: {missing} \xB7 \u0441\u043F\u043E\u0440\u043D\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B: {disputed}",
+    "reports.noComparable": "\u041D\u0435\u0442 \u0441\u043E\u043F\u043E\u0441\u0442\u0430\u0432\u0438\u043C\u044B\u0445 \u043E\u0446\u0435\u043D\u043E\u043A",
+    "reports.byCriterion": "\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C",
+    "reports.byLanguage": "\u041F\u043E \u044F\u0437\u044B\u043A\u0430\u043C",
+    "reports.byChannel": "\u041F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C",
+    "reports.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "reports.agreement": "\u0421\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435",
+    "reports.disagreements": "\u0420\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+    "reports.conversation": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "reports.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "reports.reference": "\u042D\u0442\u0430\u043B\u043E\u043D",
+    "reports.evaluated": "\u041E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "reports.noEvaluations": "\u041D\u0435\u0442 \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432. \u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u043E\u0446\u0435\u043D\u043A\u0443 \u0432 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438.",
+    "reports.failures": "\u041E\u0448\u0438\u0431\u043A\u0438",
+    "reports.avgLanguage": "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u044F\u0437\u044B\u043A\u0430\u043C",
+    "reports.avgChannel": "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C",
+    "reports.average": "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433",
+    "reports.gross": "\u0413\u0440\u0443\u0431\u044B\u0435 \u043E\u0448\u0438\u0431\u043A\u0438: {n}",
+    "reports.grossKinds": "\u0412\u0438\u0434\u044B \u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A",
+    "reports.kind": "\u0412\u0438\u0434",
+    "reports.count": "\u041A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E",
+    "reports.loading": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043E\u0442\u0447\u0451\u0442\u0430\u2026",
+    "reports.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442. {error}",
+    "reports.channel.chat": "\u0427\u0430\u0442",
+    "reports.channel.call": "\u0417\u0432\u043E\u043D\u043E\u043A"
+  };
+
+  // src/i18n/messages-en.js
+  var messages_en_default = {
+    "player.play": "Play",
+    "player.pause": "Pause",
+    "player.timeline": "Recording position",
+    "player.waveformLoading": "Loading waveform\u2026",
+    "player.waveformUnavailable": "Waveform unavailable. You can still play the recording.",
+    "player.speakerNote": "Speakers from transcript",
+    "player.speakerTitle": "Shared recording assigned to speakers using transcript timing",
+    "player.client": "Client",
+    "player.operator": "Operator",
+    "player.mute": "Mute",
+    "player.unmute": "Unmute",
+    "player.speed": "Playback speed",
+    "app.title": "Conversation quality",
+    "brand.name": "Freedom \u2014 home",
+    "nav.label": "Sections",
+    "nav.workspace": "Evaluation",
+    "nav.checklists": "Checklists",
+    "nav.appeals": "Appeals",
+    "nav.compare": "Comparison",
+    "nav.analytics": "Reports",
+    "nav.accuracy": "Accuracy",
+    "role.label": "Role",
+    "role.current": "Role: {role}",
+    "role.controller": "Controller",
+    "role.reviewer": "Reviewer",
+    "theme.toggle": "Dark theme",
+    "dataset.label": "Dataset",
+    "dataset.title": "Current dataset",
+    "workspace.queue": "Queue",
+    "workspace.queueClose": "Close queue",
+    "workspace.tab.transcript": "Conversation",
+    "workspace.tab.scorecard": "Evaluation",
+    "workspace.scorecard": "Conversation evaluation",
+    "workspace.pick": "Select a conversation from the queue",
+    "queue.search": "Search by conversation ID or text",
+    "queue.searchLabel": "Search queue",
+    "queue.filters": "Queue filters",
+    "queue.filter.all": "All",
+    "queue.filter.chats": "Chats",
+    "queue.filter.calls": "Calls",
+    "queue.filter.disputed": "Disputed",
+    "queue.filter.new": "New",
+    "queue.language": "Conversation language",
+    "queue.language.all": "All languages",
+    "queue.list": "Conversations",
+    "queue.shown": "Showing {shown} of {total}",
+    "queue.loading": "Loading queue\u2026",
+    "queue.importing": "Loading dataset {group}\u2026",
+    "queue.loadFailed": "Could not load queue",
+    "queue.retry": "Retry",
+    "queue.empty": "The queue is empty",
+    "queue.emptyNote": "Import a dataset to see conversations here.",
+    "queue.noMatch": "No matches",
+    "queue.noMatchNote": "Change the search or filters.",
+    "queue.select": "Select conversation {id}",
+    "queue.channel.chat": "chat",
+    "queue.channel.call": "call",
+    "queue.group": "Dataset: {group}",
+    "queue.language.title": "Conversation language",
+    "queue.score.none": "not evaluated",
+    "queue.score.notCalculated": "not calculated",
+    "queue.tag.appeal": "appeal",
+    "queue.tag.appeals": "appeals: {n}",
+    "queue.tag.grossError": "gross error",
+    "queue.tag.needsReview": "needs review",
+    "queue.tag.needsReviewTitle": "The model is uncertain about some criteria",
+    "queue.groupFilter": "Dataset",
+    "queue.group.all": "All datasets",
+    "queue.selectAll": "Select all shown",
+    "queue.load": "Import",
+    "queue.export": "Download Excel (CSV)",
+    "queue.loadTitle": "Import a group by group_id or upload conversations",
+    "loader.title": "Import conversations",
+    "loader.close": "Close",
+    "loader.group": "Group by group_id",
+    "loader.groupHint": "Conversations are fetched from the organizers through our server.",
+    "loader.groupPlaceholder": "for example, CTRL",
+    "loader.import": "Import group",
+    "loader.importing": "Importing group {group}\u2026",
+    "loader.file": "Conversation file (JSON)",
+    "loader.fileHint": "A record, an array of records, or the full organizer response.",
+    "loader.uploading": "Uploading {name}\u2026",
+    "loader.summary": "Total {total} \xB7 new {imported} \xB7 updated {updated} \xB7 unchanged {unchanged}",
+    "loader.summaryGroup": "Dataset {group}",
+    "loader.error.not_json": "The file is not valid JSON.",
+    "loader.error.no_records": "The file contains no records.",
+    "loader.error.bad_record": "Record {n} is invalid: conversation_id, channel, language and transcript are required.",
+    "loader.error.read": "Could not read the file.",
+    "batch.label": "Batch evaluation",
+    "batch.selected": "Selected: {n}",
+    "batch.checklist": "Checklist",
+    "batch.estimating": "Estimating model calls\u2026",
+    "batch.estimate": "{dialogs} \xB7 {calls} to the model \xB7 {cached} cached",
+    "batch.run": "Evaluate selected",
+    "batch.clear": "Clear selection",
+    "batch.keyMissing": "model key required: some answers need model calls",
+    "batch.progress": "Evaluated {done} of {total}",
+    "batch.failed": "failed: {n}",
+    "batch.retry": "Retry failed",
+    "batch.done": "Done: evaluated {done} of {total}",
+    "batch.starting": "Starting evaluation\u2026",
+    "batch.interrupted": "Connection lost at {done} of {total}: evaluation continues on the server.",
+    "batch.resume": "Resume monitoring",
+    "batch.dialogs.one": "{n} conversation",
+    "batch.dialogs.few": "{n} conversations",
+    "batch.dialogs.many": "{n} conversations",
+    "batch.calls.one": "{n} call",
+    "batch.calls.few": "{n} calls",
+    "batch.calls.many": "{n} calls",
+    "checklists.create": "Create checklist",
+    "checklists.note": "The official checklist is locked: edits are saved as a new checklist based on it. Weights may total something other than 100; the final score is still normalized to 100.",
+    "checklists.loading": "Loading checklists\u2026",
+    "checklists.loadFailed": "Could not load checklists",
+    "checklists.locked": "locked",
+    "checklists.channel.any": "any channel",
+    "checklists.channel.chat": "chats",
+    "checklists.channel.call": "calls",
+    "checklists.version": "v{version} ({count} versions)",
+    "checklists.criteria.one": "{n} criterion",
+    "checklists.criteria.few": "{n} criteria",
+    "checklists.criteria.many": "{n} criteria",
+    "checklists.weights": "total weight {sum}",
+    "checklists.basedOn": "based on \u201C{name}\u201D v{version}",
+    "checklists.open": "Open",
+    "checklists.copy": "Copy",
+    "editor.loading": "Loading checklist\u2026",
+    "editor.loadFailed": "Could not load checklist",
+    "editor.titleNew": "New checklist",
+    "editor.newName": "New checklist",
+    "editor.newNote": "The checklist is created when you save.",
+    "editor.newSection": "New section",
+    "editor.copyName": "{name} (modified)",
+    "editor.lockedNote": "This version is locked: saving creates a new checklist based on it.",
+    "editor.versionNote": "Each save creates a new version; previous versions and evaluations are preserved.",
+    "editor.back": "\u2190 All checklists",
+    "editor.apply": "Apply to conversations",
+    "editor.saved": "Saved: \u201C{name}\u201D v{version}. Apply it to conversations to get evaluations.",
+    "editor.name": "Name",
+    "editor.channel": "Channel (default selection only)",
+    "editor.sectionTitle": "Section name",
+    "editor.critTitle": "Criterion",
+    "editor.wording": "Instructions for the evaluator",
+    "editor.type": "Answer type",
+    "editor.type.yes_no": "Yes / No",
+    "editor.type.scale": "Scale",
+    "editor.kind": "Kind",
+    "editor.kind.scored": "Scored",
+    "editor.kind.gross_error": "Gross error (flag, no points)",
+    "editor.weight": "Weight",
+    "editor.section": "Section",
+    "editor.steps": "Scale steps: value and description",
+    "editor.stepValue": "Step value",
+    "editor.stepLabel": "Step description",
+    "editor.removeStep": "Remove step",
+    "editor.addStep": "+ step",
+    "editor.naAllowed": "Allow N/A",
+    "editor.naCondition": "When N/A applies",
+    "editor.kinds": "Violation kinds (comma-separated)",
+    "editor.more": "Guidance and model",
+    "editor.guidance": "Model guidance",
+    "editor.model": "Model for this criterion",
+    "editor.modelDefault": "default",
+    "editor.removeCriterion": "Remove",
+    "editor.addCriterion": "+ criterion",
+    "editor.addSection": "+ section",
+    "editor.removeSection": "Remove section",
+    "editor.removed": "Removed:",
+    "editor.restore": "restore",
+    "editor.badge.new": "new",
+    "editor.badge.reworded": "modified",
+    "editor.badge.weight": "weight only",
+    "editor.diff": "new: {added} \xB7 removed: {removed} \xB7 modified: {reworded} \xB7 weight only: {weight}",
+    "editor.weightSum": "Weights total {sum}, not 100. You can save: the final score is still normalized to 100.",
+    "editor.errorCount": "Fix the highlighted fields: {n}",
+    "editor.create": "Create checklist",
+    "editor.saveAsNew": "Save as new checklist",
+    "editor.saveVersion": "Save version",
+    "editor.error.title_required": "Enter a name.",
+    "editor.error.weight_invalid": "Weight must be a number from 0 (a decimal comma is accepted: 7,5).",
+    "editor.error.scale_empty": "A scale needs at least two steps.",
+    "editor.error.scale_value_invalid": "Step value must be a number.",
+    "editor.error.scale_duplicate": "Step values must be unique.",
+    "editor.error.na_condition_required": "Describe when N/A applies.",
+    "editor.error.section_missing": "Select a section.",
+    "editor.error.criteria_empty": "Add at least one criterion.",
+    "apply.title": "Apply to conversations",
+    "apply.what": "\u201C{name}\u201D v{version}: unchanged criteria reuse previous answers without model calls.",
+    "apply.loading": "Loading conversations\u2026",
+    "apply.targets": "Which conversations",
+    "apply.control": "Control group {group}",
+    "apply.controlNone": "Control group (not imported)",
+    "apply.dev": "DEV",
+    "apply.selected": "Selected in the queue",
+    "apply.noAll": "Cannot apply to all datasets at once: select a dataset.",
+    "apply.run": "Start",
+    "apply.close": "Close",
+    "apply.compare": "Compare before and after",
+    "player.label": "Call recording",
+    "player.needsImport": "Import the group to enable the recording.",
+    "player.none": "There is no recording for this call.",
+    "player.import": "Import group",
+    "player.failed": "Could not load the recording.",
+    "player.retry": "Retry",
+    "player.seek": "Go to {time} in the recording",
+    "compare.title": "Before and after comparison",
+    "compare.note": "Compares final scores including reviewer decisions, so differences reflect checklist changes.",
+    "compare.from": "Before",
+    "compare.to": "After",
+    "compare.group": "Group",
+    "compare.group.all": "All groups",
+    "compare.choose": "\u2014 select a version \u2014",
+    "compare.pickTitle": "Choose what to compare",
+    "compare.pickNote": "Two checklist versions (or two checklists): final scores for conversations evaluated with both.",
+    "compare.loading": "Comparing\u2026",
+    "compare.loadFailed": "Could not build comparison",
+    "compare.retry": "Retry",
+    "compare.empty": "No conversations evaluated with both versions",
+    "compare.emptyNote": "Apply the new version to conversations using \u201CApply to conversations\u201D in the editor.",
+    "compare.summary": "{changed} of {of} {verb}, average {avg}",
+    "compare.ofDialogs.one": "{n} conversation",
+    "compare.ofDialogs.few": "{n} conversations",
+    "compare.ofDialogs.many": "{n} conversations",
+    "compare.changedVerb.one": "changed",
+    "compare.changedVerb.few": "changed",
+    "compare.changedVerb.many": "changed",
+    "compare.table": "Conversations: before, after, difference",
+    "compare.col.id": "Conversation",
+    "compare.col.group": "Group",
+    "compare.col.old": "Before",
+    "compare.col.new": "After",
+    "compare.col.delta": "\u0394",
+    "compare.sortBy": "Sort by \u201C{column}\u201D",
+    "compare.openTitle": "Show evaluations side by side",
+    "compare.side.label": "Both conversation evaluations side by side",
+    "compare.side.title": "Conversation {id}",
+    "compare.side.open": "Open conversation",
+    "compare.side.totals": "{old} \u2192 {new} ({delta})",
+    "compare.side.all": "Show all criteria",
+    "compare.side.criteria": "Criteria: before and after",
+    "compare.side.loading": "Loading evaluations\u2026",
+    "compare.side.loadFailed": "Could not load evaluations",
+    "compare.side.none": "Criterion answers have not changed.",
+    "compare.side.absent": "not in this version",
+    "compare.side.noResult": "not evaluated",
+    "compare.side.onlyOld": "only in \u201CBefore\u201D",
+    "compare.side.onlyNew": "only in \u201CAfter\u201D",
+    "compare.side.reworded": "previously: {title}",
+    "transcript.loading": "Loading conversation {id}\u2026",
+    "transcript.loadFailed": "Could not load conversation {id}",
+    "transcript.retry": "Retry",
+    "transcript.empty": "No messages",
+    "transcript.emptyNote": "This recording has no messages.",
+    "transcript.label": "Conversation",
+    "transcript.lines": "Messages: {n}",
+    "transcript.speaker.client": "Client",
+    "transcript.speaker.operator": "Operator",
+    "transcript.speaker.bot": "Bot",
+    "transcript.speaker.system": "System",
+    "transcript.speaker.other": "Other",
+    "transcript.duplicate": "duplicate",
+    "transcript.duplicateTitle": "Duplicate of the previous message",
+    "transcript.expectedHere": "expected here",
+    "scorecard.label": "Conversation evaluation",
+    "scorecard.checklist": "Checklist",
+    "scorecard.checklistOption": "{name} \xB7 v{version}",
+    "scorecard.run": "Evaluate",
+    "scorecard.rerun": "Re-evaluate",
+    "scorecard.runFull": "Re-evaluate all",
+    "scorecard.runFullTitle": "Evaluate every criterion again without reusing previous results",
+    "scorecard.keyMissing": "model key required",
+    "scorecard.progress": "Evaluating: {done}/{total}",
+    "scorecard.starting": "Starting evaluation\u2026",
+    "scorecard.jobFailed": "Evaluation failed",
+    "scorecard.retry": "Retry",
+    "scorecard.loading": "Loading evaluation\u2026",
+    "scorecard.loadFailed": "Could not load evaluation",
+    "scorecard.noChecklist": "No checklists available",
+    "scorecard.noChecklistNote": "Create a checklist in the Checklists section.",
+    "scorecard.empty": "This conversation has not been evaluated",
+    "scorecard.emptyNote": "Select a checklist and click Evaluate.",
+    "scorecard.demoBadge": "demo evaluation",
+    "scorecard.demoTitle": "This evaluation was produced by a demo model",
+    "scorecard.totalLabel": "Checklist total",
+    "scorecard.totalNone": "not calculated",
+    "scorecard.outOf": "/ 100",
+    "scorecard.originalTotal": "previously {total}",
+    "scorecard.originalTitle": "Total from model answers before reviewer decisions",
+    "scorecard.grossOn": "gross error",
+    "scorecard.grossOnKinds": "gross error: {kinds}",
+    "scorecard.grossOff": "no gross errors",
+    "scorecard.sections": "Section totals",
+    "scorecard.sectionScore": "{points} of {available} \xB7 {percent} %",
+    "scorecard.sectionNone": "no applicable criteria",
+    "scorecard.model": "Model: {model}",
+    "scorecard.cost": "cost ${cost}",
+    "scorecard.criteria": "Criteria",
+    "scorecard.answer.yes": "Yes",
+    "scorecard.answer.no": "No",
+    "scorecard.answer.na": "N/A",
+    "scorecard.answer.step": "step {value}",
+    "scorecard.points": "{earned} of {max}",
+    "scorecard.weight": "weight {from} \u2192 {to}",
+    "scorecard.naWeight": "weight redistributed to other criteria",
+    "scorecard.grossNoScore": "does not affect total",
+    "scorecard.modelAnswer": "model: {answer}",
+    "scorecard.modelAnswerTitle": "Model answer before the reviewer decision",
+    "scorecard.evidenceLine": "message {n}",
+    "scorecard.evidenceShow": "Show in conversation: message {n}",
+    "scorecard.checkedRange": "Checked: messages {from}\u2013{to}",
+    "scorecard.coaching": "What to improve",
+    "scorecard.needsReview": "review",
+    "scorecard.needsReviewTitle": "The model is uncertain about this answer",
+    "scorecard.carried": "reviewer decision carried over",
+    "scorecard.carriedTitle": "An appeal decision from a previous evaluation was carried over",
+    "scorecard.dispute": "Appeal",
+    "scorecard.disputeOpenTag": "open appeal",
+    "scorecard.disputeEarlierTag": "appeal on a previous evaluation",
+    "scorecard.disputeEarlierTitle": "An appeal on a previous evaluation of this conversation is still unresolved",
+    "scorecard.disputeOpenTitle": "This criterion already has an open appeal",
+    "scorecard.info.title": "Does not affect score",
+    "scorecard.info.topic": "Conversation topic",
+    "scorecard.info.mood": "Client mood",
+    "scorecard.info.outcome": "Conversation outcome",
+    "scorecard.info.firstReaction": "First response",
+    "scorecard.info.longestWait": "Longest wait",
+    "scorecard.info.ending": "Ending",
+    "scorecard.info.thresholdOk": "within 3 minutes",
+    "scorecard.info.thresholdOver": "over 3 minutes",
+    "scorecard.info.unknown": "no data",
+    "scorecard.outcome.resolved": "resolved",
+    "scorecard.outcome.passed_to_specialists": "passed to specialists",
+    "scorecard.outcome.unresolved": "unresolved",
+    "scorecard.outcome.client_left": "client left",
+    "scorecard.ending.operator_closed": "operator closed the conversation",
+    "scorecard.ending.client_left": "client left",
+    "scorecard.ending.connection_lost": "connection lost",
+    "scorecard.ending.client_ended_call": "client ended the call",
+    "scorecard.ending.normal": "normal ending",
+    "history.title": "Evaluation history",
+    "history.original": "Original score: {total}",
+    "history.appeal": "Appeal: \u201C{criterion}\u201D, model answer \u201C{answer}\u201D",
+    "history.changed": "Decision: changed to \u201C{answer}\u201D",
+    "history.confirmed": "Decision: score confirmed",
+    "history.pending": "Awaiting reviewer decision",
+    "history.carried": "Decision carried over for \u201C{criterion}\u201D: \u201C{answer}\u201D",
+    "history.final": "Final score: {total}",
+    "history.openAppeal": "open appeal",
+    "history.earlierOpen": "Appeal on a previous evaluation: \u201C{criterion}\u201D, awaiting decision",
+    "history.decidedAfter": "The decision on \u201C{criterion}\u201D was made after this evaluation: re-evaluate to apply it",
+    "history.olderVersion": "The decision on \u201C{criterion}\u201D applied to a previous version of the criterion",
+    "appeal.title": "Appeal",
+    "appeal.criterion": "Criterion",
+    "appeal.current": "Current: \u201C{answer}\u201D",
+    "appeal.comment": "Comment",
+    "appeal.commentPlaceholder": "Why the score is incorrect: what in the conversation supports this",
+    "appeal.note": "A reviewer will decide; the total is recalculated after the decision.",
+    "appeal.submit": "Submit appeal",
+    "appeal.cancel": "Cancel",
+    "appeals.list": "Appeals",
+    "appeals.filters": "Appeal filters",
+    "appeals.filter.open": "Open",
+    "appeals.filter.decided": "Decided",
+    "appeals.filter.all": "All",
+    "appeals.status.open": "open",
+    "appeals.status.decided": "decided",
+    "appeals.loading": "Loading appeals\u2026",
+    "appeals.loadFailed": "Could not load appeals",
+    "appeals.retry": "Retry",
+    "appeals.empty": "No appeals yet",
+    "appeals.emptyNote": "A controller submits an appeal using Appeal on a criterion card.",
+    "appeals.noMatch": "No appeals here",
+    "appeals.pick": "Select an appeal from the list",
+    "appeals.back": "\u2190 All appeals",
+    "review.label": "Appeal review",
+    "review.title": "Appeal \xB7 {id}",
+    "review.loading": "Loading appeal\u2026",
+    "review.loadFailed": "Could not load appeal",
+    "review.retry": "Retry",
+    "review.openCard": "Open conversation card",
+    "review.criterion": "Disputed criterion",
+    "review.comment": "Controller comment",
+    "review.fragment": "Conversation excerpt",
+    "review.noFragment": "The model did not cite messages; open the conversation card.",
+    "review.opinion": "Second model opinion",
+    "review.opinionPending": "The model is reviewing the criterion with the comment\u2026",
+    "review.opinionAnswer": "Model suggestion: \u201C{answer}\u201D",
+    "review.opinionAdvice": "This is advice: the reviewer makes the decision.",
+    "review.opinionUnavailable": "Second opinion unavailable.",
+    "review.decision": "Decision",
+    "review.readOnly": "A reviewer makes the decision. Switch roles to decide.",
+    "review.confirmed": "Confirm",
+    "review.changed": "Change",
+    "review.newAnswer": "New answer",
+    "review.reason": "Decision reason",
+    "review.reasonPlaceholder": "Required: explain the basis for the decision",
+    "review.submit": "Save decision",
+    "review.decidedConfirmed": "Score confirmed",
+    "review.decidedChanged": "Answer changed to \u201C{answer}\u201D",
+    "review.result": "Total: {from} \u2192 {to}",
+    "review.saved": "Decision saved.",
+    "review.reloading": "Refreshing panel data\u2026",
+    "review.reloadFailed": "Could not refresh the panel; the decision is already saved.",
+    "review.reload": "Refresh",
+    "view.soon": "This section is not ready yet.",
+    "notfound.title": "Page not found",
+    "notfound.home": "Go to conversation evaluation",
+    "toast.retry": "Retry",
+    "toast.close": "Close",
+    "error.network": "Cannot connect to the server. Check your connection and retry.",
+    "error.timeout": "The server did not respond in time. Try again.",
+    "error.bad_response": "The server returned an unexpected response.",
+    "error.model_key_missing": "A model key is required to start a new evaluation.",
+    "error.invalid_request": "Invalid request. Check your input.",
+    "error.na_not_allowed": "N/A is not allowed for this criterion.",
+    "error.step_not_in_scale": "This step is not in the criterion scale.",
+    "error.bad_answer": "Invalid answer for this criterion.",
+    "error.reason_required": "Provide a decision reason.",
+    "error.invalid_checklist": "The checklist is invalid. Fix the highlighted fields.",
+    "error.appeal_already_decided": "This appeal has already been decided.",
+    "error.appeal_already_open": "This criterion already has an open appeal.",
+    "error.checklist_locked": "This checklist version is locked. Save it as a new checklist.",
+    "error.organizer_url_missing": "The data source address is not configured; the group cannot be imported.",
+    "error.role_not_allowed": "This action is not available for your role.",
+    "error.not_found": "Not found: the record was removed or the link is outdated.",
+    "error.organizer_error": "The data source did not respond. Try again later.",
+    "error.no_records": "The file contains no records.",
+    "error.bad_record": "The file contains an invalid record.",
+    "error.bad_record_at": "Record {n} in the file is invalid.",
+    "error.internal_error": "Server error. Try again later.",
+    "error.generic": "Something went wrong. Please try again.",
+    "language.label": "Interface language",
+    "translate.show": "Translate into Russian",
+    "translate.hide": "Hide translation",
+    "translate.loading": "Translating\u2026",
+    "translate.retry": "Retry translation",
+    "voice.caption": "Features of excerpts linked to this criterion",
+    "voice.segment": "Excerpt",
+    "voice.pitch": "Pitch range, semitones",
+    "voice.rate": "Rate, words/min",
+    "voice.pauses": "Pauses, s",
+    "voice.overlap": "Overlap, s",
+    "voice.title": "Measured features + model assessment",
+    "reports.emptyCell": "No data",
+    "reports.refresh": "Refresh",
+    "reports.accuracyTitle": "Evaluation accuracy",
+    "reports.analyticsTitle": "Reports: analytics",
+    "reports.accuracyNote": "Agreement with reference answers. The reference source is shown below.",
+    "reports.analyticsNote": "Final scores including appeal decisions; the server determines the dataset and checklist version.",
+    "reports.referenceMissing": "Reference answer source not specified",
+    "reports.referenceDemo": "Demo: no reference answers loaded",
+    "reports.model": "Model: {model}",
+    "reports.overall": "{agreement} \xB7 n = {n}",
+    "reports.counts": "missing evaluations: {missing} \xB7 disputed excluded: {disputed}",
+    "reports.noComparable": "No comparable evaluations",
+    "reports.byCriterion": "By criterion",
+    "reports.byLanguage": "By language",
+    "reports.byChannel": "By channel",
+    "reports.group": "Group",
+    "reports.agreement": "Agreement",
+    "reports.disagreements": "Disagreements",
+    "reports.conversation": "Conversation",
+    "reports.criterion": "Criterion",
+    "reports.reference": "Reference",
+    "reports.evaluated": "Model answer",
+    "reports.noEvaluations": "No evaluated conversations. Start an evaluation in the workspace.",
+    "reports.failures": "Failures",
+    "reports.avgLanguage": "Average total by language",
+    "reports.avgChannel": "Average total by channel",
+    "reports.average": "Average total",
+    "reports.gross": "Gross errors: {n}",
+    "reports.grossKinds": "Gross error kinds",
+    "reports.kind": "Kind",
+    "reports.count": "Count",
+    "reports.loading": "Loading report\u2026",
+    "reports.failed": "Could not load report. {error}",
+    "reports.channel.chat": "Chat",
+    "reports.channel.call": "Call"
+  };
+
+  // src/i18n/messages-kk.js
+  var messages_kk_default = {
+    "player.play": "\u041E\u0439\u043D\u0430\u0442\u0443",
+    "player.pause": "\u041A\u0456\u0434\u0456\u0440\u0442\u0443",
+    "player.timeline": "\u0416\u0430\u0437\u0431\u0430\u0434\u0430\u0493\u044B \u043E\u0440\u044B\u043D",
+    "player.waveformLoading": "\u0414\u044B\u0431\u044B\u0441 \u0442\u043E\u043B\u049B\u044B\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "player.waveformUnavailable": "\u0414\u044B\u0431\u044B\u0441 \u0442\u043E\u043B\u049B\u044B\u043D\u044B \u049B\u043E\u043B\u0436\u0435\u0442\u0456\u043C\u0441\u0456\u0437. \u0416\u0430\u0437\u0431\u0430\u043D\u044B \u0442\u044B\u04A3\u0434\u0430\u0443\u0493\u0430 \u0431\u043E\u043B\u0430\u0434\u044B.",
+    "player.speakerNote": "\u0421\u04E9\u0439\u043B\u0435\u0443\u0448\u0456\u043B\u0435\u0440 \u043C\u04D9\u0442\u0456\u043D \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
+    "player.speakerTitle": "\u041E\u0440\u0442\u0430\u049B \u0436\u0430\u0437\u0431\u0430 \u043C\u04D9\u0442\u0456\u043D\u0434\u0435\u0433\u0456 \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440\u0434\u044B\u04A3 \u0443\u0430\u049B\u044B\u0442\u044B \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0431\u04E9\u043B\u0456\u043D\u0433\u0435\u043D",
+    "player.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "player.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "player.mute": "\u0414\u044B\u0431\u044B\u0441\u0442\u044B \u04E9\u0448\u0456\u0440\u0443",
+    "player.unmute": "\u0414\u044B\u0431\u044B\u0441\u0442\u044B \u049B\u043E\u0441\u0443",
+    "player.speed": "\u041E\u0439\u043D\u0430\u0442\u0443 \u0436\u044B\u043B\u0434\u0430\u043C\u0434\u044B\u0493\u044B",
+    "app.title": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0441\u0430\u043F\u0430\u0441\u044B",
+    "brand.name": "Freedom \u2014 \u0431\u0430\u0441\u0442\u044B \u0431\u0435\u0442",
+    "nav.label": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0435\u0440",
+    "nav.workspace": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
+    "nav.checklists": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B",
+    "nav.appeals": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440",
+    "nav.compare": "\u0421\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443",
+    "nav.analytics": "\u0415\u0441\u0435\u043F\u0442\u0435\u0440",
+    "nav.accuracy": "\u0414\u04D9\u043B\u0434\u0456\u043A",
+    "role.label": "\u0420\u04E9\u043B",
+    "role.current": "\u0420\u04E9\u043B: {role}",
+    "role.controller": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443\u0448\u044B",
+    "role.reviewer": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456",
+    "theme.toggle": "\u049A\u0430\u0440\u0430\u04A3\u0493\u044B \u0442\u0430\u049B\u044B\u0440\u044B\u043F",
+    "dataset.label": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440",
+    "dataset.title": "\u0410\u0493\u044B\u043C\u0434\u0430\u0493\u044B \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
+    "workspace.queue": "\u041A\u0435\u0437\u0435\u043A",
+    "workspace.queueClose": "\u041A\u0435\u0437\u0435\u043A\u0442\u0456 \u0436\u0430\u0431\u0443",
+    "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "workspace.tab.scorecard": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
+    "workspace.scorecard": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "workspace.pick": "\u041A\u0435\u0437\u0435\u043A\u0442\u0435\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437",
+    "queue.search": "\u0414\u0438\u0430\u043B\u043E\u0433 ID \u043D\u0435\u043C\u0435\u0441\u0435 \u043C\u04D9\u0442\u0456\u043D\u0456 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0456\u0437\u0434\u0435\u0443",
+    "queue.searchLabel": "\u041A\u0435\u0437\u0435\u043A\u0442\u0435\u043D \u0456\u0437\u0434\u0435\u0443",
+    "queue.filters": "\u041A\u0435\u0437\u0435\u043A \u0441\u04AF\u0437\u0433\u0456\u043B\u0435\u0440\u0456",
+    "queue.filter.all": "\u0411\u0430\u0440\u043B\u044B\u0493\u044B",
+    "queue.filter.chats": "\u0427\u0430\u0442\u0442\u0430\u0440",
+    "queue.filter.calls": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443\u043B\u0430\u0440",
+    "queue.filter.disputed": "\u0414\u0430\u0443\u043B\u044B",
+    "queue.filter.new": "\u0416\u0430\u04A3\u0430",
+    "queue.language": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0442\u0456\u043B\u0456",
+    "queue.language.all": "\u0411\u0430\u0440\u043B\u044B\u049B \u0442\u0456\u043B\u0434\u0435\u0440",
+    "queue.list": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440",
+    "queue.shown": "\u041A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u0433\u0435\u043D\u0456: {shown} / {total}",
+    "queue.loading": "\u041A\u0435\u0437\u0435\u043A \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "queue.importing": "{group} \u0436\u0438\u044B\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "queue.loadFailed": "\u041A\u0435\u0437\u0435\u043A\u0442\u0456 \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "queue.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "queue.empty": "\u041A\u0435\u0437\u0435\u043A \u0431\u043E\u0441",
+    "queue.emptyNote": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B \u043A\u04E9\u0440\u0443 \u04AF\u0448\u0456\u043D \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B\u043D \u0436\u04AF\u043A\u0442\u0435\u04A3\u0456\u0437.",
+    "queue.noMatch": "\u0415\u0448\u0442\u0435\u04A3\u0435 \u0442\u0430\u0431\u044B\u043B\u043C\u0430\u0434\u044B",
+    "queue.noMatchNote": "\u0406\u0437\u0434\u0435\u0443\u0434\u0456 \u043D\u0435\u043C\u0435\u0441\u0435 \u0441\u04AF\u0437\u0433\u0456\u043B\u0435\u0440\u0434\u0456 \u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u04A3\u0456\u0437.",
+    "queue.select": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u0443",
+    "queue.channel.chat": "\u0447\u0430\u0442",
+    "queue.channel.call": "\u049B\u043E\u04A3\u044B\u0440\u0430\u0443",
+    "queue.group": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B: {group}",
+    "queue.language.title": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0442\u0456\u043B\u0456",
+    "queue.score.none": "\u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0431\u0430\u0493\u0430\u043D",
+    "queue.score.notCalculated": "\u0435\u0441\u0435\u043F\u0442\u0435\u043B\u043C\u0435\u0439\u0434\u0456",
+    "queue.tag.appeal": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "queue.tag.appeals": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440: {n}",
+    "queue.tag.grossError": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435",
+    "queue.tag.needsReview": "\u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u049B\u0430\u0436\u0435\u0442",
+    "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043A\u0435\u0439\u0431\u0456\u0440 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440\u0433\u0435 \u0441\u0435\u043D\u0456\u043C\u0441\u0456\u0437",
+    "queue.groupFilter": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
+    "queue.group.all": "\u0411\u0430\u0440\u043B\u044B\u049B \u0436\u0438\u044B\u043D\u0434\u0430\u0440",
+    "queue.selectAll": "\u041A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u0433\u0435\u043D\u0434\u0435\u0440\u0434\u0456\u04A3 \u0431\u0430\u0440\u043B\u044B\u0493\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u0443",
+    "queue.load": "\u0416\u04AF\u043A\u0442\u0435\u0443",
+    "queue.export": "Excel (CSV) \u0436\u04AF\u043A\u0442\u0435\u043F \u0430\u043B\u0443",
+    "queue.loadTitle": "group_id \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0442\u043E\u043F\u0442\u044B \u043D\u0435\u043C\u0435\u0441\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u0444\u0430\u0439\u043B\u044B\u043D \u0436\u04AF\u043A\u0442\u0435\u0443",
+    "loader.title": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B \u0436\u04AF\u043A\u0442\u0435\u0443",
+    "loader.close": "\u0416\u0430\u0431\u0443",
+    "loader.group": "group_id \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0442\u043E\u043F",
+    "loader.groupHint": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u04B1\u0439\u044B\u043C\u0434\u0430\u0441\u0442\u044B\u0440\u0443\u0448\u044B\u043B\u0430\u0440\u0434\u0430\u043D \u0431\u0456\u0437\u0434\u0456\u04A3 \u0441\u0435\u0440\u0432\u0435\u0440 \u0430\u0440\u049B\u044B\u043B\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0435\u0434\u0456.",
+    "loader.groupPlaceholder": "\u043C\u044B\u0441\u0430\u043B\u044B, CTRL",
+    "loader.import": "\u0422\u043E\u043F\u0442\u044B \u0436\u04AF\u043A\u0442\u0435\u0443",
+    "loader.importing": "{group} \u0442\u043E\u0431\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "loader.file": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u0444\u0430\u0439\u043B\u044B (JSON)",
+    "loader.fileHint": "\u0411\u0456\u0440 \u0436\u0430\u0437\u0431\u0430, \u0436\u0430\u0437\u0431\u0430\u043B\u0430\u0440 \u043C\u0430\u0441\u0441\u0438\u0432\u0456 \u043D\u0435\u043C\u0435\u0441\u0435 \u04B1\u0439\u044B\u043C\u0434\u0430\u0441\u0442\u044B\u0440\u0443\u0448\u044B\u043B\u0430\u0440\u0434\u044B\u04A3 \u0442\u043E\u043B\u044B\u049B \u0436\u0430\u0443\u0430\u0431\u044B.",
+    "loader.uploading": "{name} \u0444\u0430\u0439\u043B\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "loader.summary": "\u0411\u0430\u0440\u043B\u044B\u0493\u044B {total} \xB7 \u0436\u0430\u04A3\u0430 {imported} \xB7 \u0436\u0430\u04A3\u0430\u0440\u0442\u044B\u043B\u0493\u0430\u043D {updated} \xB7 \u04E9\u0437\u0433\u0435\u0440\u0456\u0441\u0441\u0456\u0437 {unchanged}",
+    "loader.summaryGroup": "{group} \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
+    "loader.error.not_json": "\u0424\u0430\u0439\u043B JSON \u0444\u043E\u0440\u043C\u0430\u0442\u044B\u043D\u0434\u0430 \u0435\u043C\u0435\u0441.",
+    "loader.error.no_records": "\u0424\u0430\u0439\u043B\u0434\u0430 \u0436\u0430\u0437\u0431\u0430\u043B\u0430\u0440 \u0436\u043E\u049B.",
+    "loader.error.bad_record": "{n}-\u0436\u0430\u0437\u0431\u0430 \u0436\u0430\u0440\u0430\u043C\u0441\u044B\u0437: conversation_id, channel, language \u0436\u04D9\u043D\u0435 transcript \u049B\u0430\u0436\u0435\u0442.",
+    "loader.error.read": "\u0424\u0430\u0439\u043B\u0434\u044B \u043E\u049B\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B.",
+    "batch.label": "\u0422\u043E\u043F\u0442\u044B\u049B \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "batch.selected": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D\u044B: {n}",
+    "batch.checklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B",
+    "batch.estimating": "\u041C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0441\u04B1\u0440\u0430\u0443\u043B\u0430\u0440 \u0441\u0430\u043D\u044B \u0435\u0441\u0435\u043F\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "batch.estimate": "{dialogs} \xB7 \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 {calls} \xB7 \u043A\u044D\u0448\u0442\u0435\u043D {cached}",
+    "batch.run": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D\u0434\u0430\u0440\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "batch.clear": "\u0422\u0430\u04A3\u0434\u0430\u0443\u0434\u044B \u0430\u043B\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u0443",
+    "batch.keyMissing": "\u043C\u043E\u0434\u0435\u043B\u044C \u043A\u0456\u043B\u0442\u0456 \u049B\u0430\u0436\u0435\u0442: \u043A\u0435\u0439\u0431\u0456\u0440 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u04AF\u0448\u0456\u043D \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0441\u04B1\u0440\u0430\u0443 \u043A\u0435\u0440\u0435\u043A",
+    "batch.progress": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D\u044B: {done} / {total}",
+    "batch.failed": "\u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B: {n}",
+    "batch.retry": "\u041E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0493\u0430\u043D\u0434\u0430\u0440\u0434\u044B \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "batch.done": "\u0414\u0430\u0439\u044B\u043D: \u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D\u044B {done} / {total}",
+    "batch.starting": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0431\u0430\u0441\u0442\u0430\u043B\u0443\u0434\u0430\u2026",
+    "batch.interrupted": "{done} / {total} \u043A\u0435\u0437\u0456\u043D\u0434\u0435 \u0431\u0430\u0439\u043B\u0430\u043D\u044B\u0441 \u04AF\u0437\u0456\u043B\u0434\u0456: \u0431\u0430\u0493\u0430\u043B\u0430\u0443 \u0441\u0435\u0440\u0432\u0435\u0440\u0434\u0435 \u0436\u0430\u043B\u0493\u0430\u0441\u0443\u0434\u0430.",
+    "batch.resume": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443\u0434\u044B \u0436\u0430\u043B\u0493\u0430\u0441\u0442\u044B\u0440\u0443",
+    "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.calls.one": "{n} \u0441\u04B1\u0440\u0430\u0443",
+    "batch.calls.few": "{n} \u0441\u04B1\u0440\u0430\u0443",
+    "batch.calls.many": "{n} \u0441\u04B1\u0440\u0430\u0443",
+    "checklists.create": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D \u0436\u0430\u0441\u0430\u0443",
+    "checklists.note": "\u0420\u0435\u0441\u043C\u0438 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u049B\u04B1\u043B\u044B\u043F\u0442\u0430\u043B\u0493\u0430\u043D: \u04E9\u0437\u0433\u0435\u0440\u0456\u0441\u0442\u0435\u0440 \u043E\u043D\u044B\u04A3 \u043D\u0435\u0433\u0456\u0437\u0456\u043D\u0434\u0435\u0433\u0456 \u0436\u0430\u04A3\u0430 \u043F\u0430\u0440\u0430\u049B \u0440\u0435\u0442\u0456\u043D\u0434\u0435 \u0441\u0430\u049B\u0442\u0430\u043B\u0430\u0434\u044B. \u0421\u0430\u043B\u043C\u0430\u049B\u0442\u0430\u0440 \u049B\u043E\u0441\u044B\u043D\u0434\u044B\u0441\u044B 100-\u0434\u0435\u043D \u04E9\u0437\u0433\u0435\u0448\u0435 \u0431\u043E\u043B\u0443\u044B \u043C\u04AF\u043C\u043A\u0456\u043D; \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u04D9\u0440\u0456\u0431\u0456\u0440 100-\u0433\u0435 \u043A\u0435\u043B\u0442\u0456\u0440\u0456\u043B\u0435\u0434\u0456.",
+    "checklists.loading": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "checklists.loadFailed": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B\u043D \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "checklists.locked": "\u049B\u04B1\u043B\u044B\u043F\u0442\u0430\u043B\u0493\u0430\u043D",
+    "checklists.channel.any": "\u043A\u0435\u0437 \u043A\u0435\u043B\u0433\u0435\u043D \u0430\u0440\u043D\u0430",
+    "checklists.channel.chat": "\u0447\u0430\u0442\u0442\u0430\u0440",
+    "checklists.channel.call": "\u049B\u043E\u04A3\u044B\u0440\u0430\u0443\u043B\u0430\u0440",
+    "checklists.version": "v{version} (\u043D\u04B1\u0441\u049B\u0430\u043B\u0430\u0440: {count})",
+    "checklists.criteria.one": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.criteria.few": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.criteria.many": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.weights": "\u0441\u0430\u043B\u043C\u0430\u049B\u0442\u0430\u0440 \u049B\u043E\u0441\u044B\u043D\u0434\u044B\u0441\u044B {sum}",
+    "checklists.basedOn": "\xAB{name}\xBB v{version} \u043D\u0435\u0433\u0456\u0437\u0456\u043D\u0434\u0435",
+    "checklists.open": "\u0410\u0448\u0443",
+    "checklists.copy": "\u041A\u04E9\u0448\u0456\u0440\u0443",
+    "editor.loading": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "editor.loadFailed": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "editor.titleNew": "\u0416\u0430\u04A3\u0430 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B",
+    "editor.newName": "\u0416\u0430\u04A3\u0430 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B",
+    "editor.newNote": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0441\u0430\u049B\u0442\u0430\u0493\u0430\u043D \u043A\u0435\u0437\u0434\u0435 \u0436\u0430\u0441\u0430\u043B\u0430\u0434\u044B.",
+    "editor.newSection": "\u0416\u0430\u04A3\u0430 \u0431\u04E9\u043B\u0456\u043C",
+    "editor.copyName": "{name} (\u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u043B\u0433\u0435\u043D)",
+    "editor.lockedNote": "\u0411\u04B1\u043B \u043D\u04B1\u0441\u049B\u0430 \u049B\u04B1\u043B\u044B\u043F\u0442\u0430\u043B\u0493\u0430\u043D: \u0441\u0430\u049B\u0442\u0430\u0493\u0430\u043D\u0434\u0430 \u043E\u043D\u044B\u04A3 \u043D\u0435\u0433\u0456\u0437\u0456\u043D\u0434\u0435 \u0436\u0430\u04A3\u0430 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0436\u0430\u0441\u0430\u043B\u0430\u0434\u044B.",
+    "editor.versionNote": "\u04D8\u0440 \u0441\u0430\u049B\u0442\u0430\u0443 \u0436\u0430\u04A3\u0430 \u043D\u04B1\u0441\u049B\u0430 \u0436\u0430\u0441\u0430\u0439\u0434\u044B; \u0431\u04B1\u0440\u044B\u043D\u0493\u044B \u043D\u04B1\u0441\u049B\u0430\u043B\u0430\u0440 \u043C\u0435\u043D \u0431\u0430\u0493\u0430\u043B\u0430\u0440 \u0441\u0430\u049B\u0442\u0430\u043B\u0430\u0434\u044B.",
+    "editor.back": "\u2190 \u0411\u0430\u0440\u043B\u044B\u049B \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B",
+    "editor.apply": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0493\u0430 \u049B\u043E\u043B\u0434\u0430\u043D\u0443",
+    "editor.saved": "\u0421\u0430\u049B\u0442\u0430\u043B\u0434\u044B: \xAB{name}\xBB v{version}. \u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u04AF\u0448\u0456\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0493\u0430 \u049B\u043E\u043B\u0434\u0430\u043D\u044B\u04A3\u044B\u0437.",
+    "editor.name": "\u0410\u0442\u0430\u0443\u044B",
+    "editor.channel": "\u0410\u0440\u043D\u0430 (\u0442\u0435\u043A \u0431\u0430\u0441\u0442\u0430\u043F\u049B\u044B \u0442\u0430\u04A3\u0434\u0430\u0443)",
+    "editor.sectionTitle": "\u0411\u04E9\u043B\u0456\u043C \u0430\u0442\u0430\u0443\u044B",
+    "editor.critTitle": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.wording": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443\u0448\u044B\u0493\u0430 \u0430\u0440\u043D\u0430\u043B\u0493\u0430\u043D \u0442\u04B1\u0436\u044B\u0440\u044B\u043C",
+    "editor.type": "\u0416\u0430\u0443\u0430\u043F \u0442\u04AF\u0440\u0456",
+    "editor.type.yes_no": "\u0418\u04D9 / \u0416\u043E\u049B",
+    "editor.type.scale": "\u0428\u043A\u0430\u043B\u0430",
+    "editor.kind": "\u0422\u04AF\u0440\u0456",
+    "editor.kind.scored": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0430\u0442\u044B\u043D",
+    "editor.kind.gross_error": "\u04E8\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435 (\u0431\u0435\u043B\u0433\u0456, \u0431\u0430\u043B\u043B\u0441\u044B\u0437)",
+    "editor.weight": "\u0421\u0430\u043B\u043C\u0430\u049B",
+    "editor.section": "\u0411\u04E9\u043B\u0456\u043C",
+    "editor.steps": "\u0428\u043A\u0430\u043B\u0430 \u049B\u0430\u0434\u0430\u043C\u0434\u0430\u0440\u044B: \u043C\u04D9\u043D\u0456 \u0436\u04D9\u043D\u0435 \u0441\u0438\u043F\u0430\u0442\u0442\u0430\u043C\u0430\u0441\u044B",
+    "editor.stepValue": "\u049A\u0430\u0434\u0430\u043C \u043C\u04D9\u043D\u0456",
+    "editor.stepLabel": "\u049A\u0430\u0434\u0430\u043C \u0441\u0438\u043F\u0430\u0442\u0442\u0430\u043C\u0430\u0441\u044B",
+    "editor.removeStep": "\u049A\u0430\u0434\u0430\u043C\u0434\u044B \u0436\u043E\u044E",
+    "editor.addStep": "+ \u049B\u0430\u0434\u0430\u043C",
+    "editor.naAllowed": "N/A \u0436\u0430\u0443\u0430\u0431\u044B\u043D\u0430 \u0440\u04B1\u049B\u0441\u0430\u0442 \u0431\u0435\u0440\u0443",
+    "editor.naCondition": "N/A \u049B\u043E\u043B\u0434\u0430\u043D\u044B\u043B\u0430\u0442\u044B\u043D \u0436\u0430\u0493\u0434\u0430\u0439\u043B\u0430\u0440",
+    "editor.kinds": "\u0411\u04B1\u0437\u0443\u0448\u044B\u043B\u044B\u049B \u0442\u04AF\u0440\u043B\u0435\u0440\u0456 (\u04AF\u0442\u0456\u0440 \u0430\u0440\u049B\u044B\u043B\u044B)",
+    "editor.more": "\u041D\u04B1\u0441\u049B\u0430\u0443 \u0436\u04D9\u043D\u0435 \u043C\u043E\u0434\u0435\u043B\u044C",
+    "editor.guidance": "\u041C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0430\u0440\u043D\u0430\u043B\u0493\u0430\u043D \u043D\u04B1\u0441\u049B\u0430\u0443",
+    "editor.model": "\u041E\u0441\u044B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u0433\u0435 \u0430\u0440\u043D\u0430\u043B\u0493\u0430\u043D \u043C\u043E\u0434\u0435\u043B\u044C",
+    "editor.modelDefault": "\u04D9\u0434\u0435\u043F\u043A\u0456",
+    "editor.removeCriterion": "\u0416\u043E\u044E",
+    "editor.addCriterion": "+ \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.addSection": "+ \u0431\u04E9\u043B\u0456\u043C",
+    "editor.removeSection": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0456 \u0436\u043E\u044E",
+    "editor.removed": "\u0416\u043E\u0439\u044B\u043B\u0493\u0430\u043D\u0434\u0430\u0440:",
+    "editor.restore": "\u049B\u0430\u043B\u043F\u044B\u043D\u0430 \u043A\u0435\u043B\u0442\u0456\u0440\u0443",
+    "editor.badge.new": "\u0436\u0430\u04A3\u0430",
+    "editor.badge.reworded": "\u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u043B\u0433\u0435\u043D",
+    "editor.badge.weight": "\u0442\u0435\u043A \u0441\u0430\u043B\u043C\u0430\u049B",
+    "editor.diff": "\u0436\u0430\u04A3\u0430: {added} \xB7 \u0436\u043E\u0439\u044B\u043B\u0493\u0430\u043D: {removed} \xB7 \u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u043B\u0433\u0435\u043D: {reworded} \xB7 \u0442\u0435\u043A \u0441\u0430\u043B\u043C\u0430\u049B: {weight}",
+    "editor.weightSum": "\u0421\u0430\u043B\u043C\u0430\u049B\u0442\u0430\u0440 \u049B\u043E\u0441\u044B\u043D\u0434\u044B\u0441\u044B {sum}, 100 \u0435\u043C\u0435\u0441. \u0421\u0430\u049B\u0442\u0430\u0443\u0493\u0430 \u0431\u043E\u043B\u0430\u0434\u044B: \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u04D9\u0440\u0456\u0431\u0456\u0440 100-\u0433\u0435 \u043A\u0435\u043B\u0442\u0456\u0440\u0456\u043B\u0435\u0434\u0456.",
+    "editor.errorCount": "\u0411\u0435\u043B\u0433\u0456\u043B\u0435\u043D\u0433\u0435\u043D \u04E9\u0440\u0456\u0441\u0442\u0435\u0440\u0434\u0456 \u0442\u04AF\u0437\u0435\u0442\u0456\u04A3\u0456\u0437: {n}",
+    "editor.create": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D \u0436\u0430\u0441\u0430\u0443",
+    "editor.saveAsNew": "\u0416\u0430\u04A3\u0430 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0440\u0435\u0442\u0456\u043D\u0434\u0435 \u0441\u0430\u049B\u0442\u0430\u0443",
+    "editor.saveVersion": "\u041D\u04B1\u0441\u049B\u0430\u043D\u044B \u0441\u0430\u049B\u0442\u0430\u0443",
+    "editor.error.title_required": "\u0410\u0442\u0430\u0443\u044B\u043D \u0435\u043D\u0433\u0456\u0437\u0456\u04A3\u0456\u0437.",
+    "editor.error.weight_invalid": "\u0421\u0430\u043B\u043C\u0430\u049B 0-\u0434\u0435\u043D \u0431\u0430\u0441\u0442\u0430\u043B\u0430\u0442\u044B\u043D \u0441\u0430\u043D \u0431\u043E\u043B\u0443\u044B \u0442\u0438\u0456\u0441 (\u04AF\u0442\u0456\u0440 \u049B\u043E\u043B\u0434\u0430\u043D\u0443\u0493\u0430 \u0431\u043E\u043B\u0430\u0434\u044B: 7,5).",
+    "editor.error.scale_empty": "\u0428\u043A\u0430\u043B\u0430\u0434\u0430 \u043A\u0435\u043C\u0456\u043D\u0434\u0435 \u0435\u043A\u0456 \u049B\u0430\u0434\u0430\u043C \u0431\u043E\u043B\u0443\u044B \u0442\u0438\u0456\u0441.",
+    "editor.error.scale_value_invalid": "\u049A\u0430\u0434\u0430\u043C \u043C\u04D9\u043D\u0456 \u0441\u0430\u043D \u0431\u043E\u043B\u0443\u044B \u0442\u0438\u0456\u0441.",
+    "editor.error.scale_duplicate": "\u049A\u0430\u0434\u0430\u043C \u043C\u04D9\u043D\u0434\u0435\u0440\u0456 \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u043D\u0431\u0430\u0443\u044B \u0442\u0438\u0456\u0441.",
+    "editor.error.na_condition_required": "N/A \u049B\u043E\u043B\u0434\u0430\u043D\u044B\u043B\u0430\u0442\u044B\u043D \u0436\u0430\u0493\u0434\u0430\u0439\u0434\u044B \u0441\u0438\u043F\u0430\u0442\u0442\u0430\u04A3\u044B\u0437.",
+    "editor.error.section_missing": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0456 \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437.",
+    "editor.error.criteria_empty": "\u041A\u0435\u043C\u0456\u043D\u0434\u0435 \u0431\u0456\u0440 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u049B\u043E\u0441\u044B\u04A3\u044B\u0437.",
+    "apply.title": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0493\u0430 \u049B\u043E\u043B\u0434\u0430\u043D\u0443",
+    "apply.what": "\xAB{name}\xBB v{version}: \u04E9\u0437\u0433\u0435\u0440\u043C\u0435\u0433\u0435\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0441\u04B1\u0440\u0430\u0443\u0441\u044B\u0437 \u0431\u04B1\u0440\u044B\u043D\u0493\u044B \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u0434\u044B \u043F\u0430\u0439\u0434\u0430\u043B\u0430\u043D\u0430\u0434\u044B.",
+    "apply.loading": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "apply.targets": "\u049A\u0430\u0439 \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440",
+    "apply.control": "{group} \u0431\u0430\u049B\u044B\u043B\u0430\u0443 \u0442\u043E\u0431\u044B",
+    "apply.controlNone": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443 \u0442\u043E\u0431\u044B (\u0436\u04AF\u043A\u0442\u0435\u043B\u043C\u0435\u0433\u0435\u043D)",
+    "apply.dev": "DEV",
+    "apply.selected": "\u041A\u0435\u0437\u0435\u043A\u0442\u0435 \u0442\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D\u0434\u0430\u0440",
+    "apply.noAll": "\u0411\u0430\u0440\u043B\u044B\u049B \u0436\u0438\u044B\u043D\u0493\u0430 \u0431\u0456\u0440\u0434\u0435\u043D \u049B\u043E\u043B\u0434\u0430\u043D\u0443\u0493\u0430 \u0431\u043E\u043B\u043C\u0430\u0439\u0434\u044B: \u0436\u0438\u044B\u043D\u0434\u044B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437.",
+    "apply.run": "\u0411\u0430\u0441\u0442\u0430\u0443",
+    "apply.close": "\u0416\u0430\u0431\u0443",
+    "apply.compare": "\u0414\u0435\u0439\u0456\u043D \u0436\u04D9\u043D\u0435 \u043A\u0435\u0439\u0456\u043D \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443",
+    "player.label": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443 \u0436\u0430\u0437\u0431\u0430\u0441\u044B",
+    "player.needsImport": "\u0416\u0430\u0437\u0431\u0430\u043D\u044B \u049B\u043E\u0441\u0443 \u04AF\u0448\u0456\u043D \u0442\u043E\u043F\u0442\u044B \u0436\u04AF\u043A\u0442\u0435\u04A3\u0456\u0437.",
+    "player.none": "\u0411\u04B1\u043B \u049B\u043E\u04A3\u044B\u0440\u0430\u0443\u0434\u044B\u04A3 \u0436\u0430\u0437\u0431\u0430\u0441\u044B \u0436\u043E\u049B.",
+    "player.import": "\u0422\u043E\u043F\u0442\u044B \u0436\u04AF\u043A\u0442\u0435\u0443",
+    "player.failed": "\u0416\u0430\u0437\u0431\u0430\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B.",
+    "player.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "player.seek": "\u0416\u0430\u0437\u0431\u0430\u0434\u0430 {time} \u0443\u0430\u049B\u044B\u0442\u044B\u043D\u0430 \u04E9\u0442\u0443",
+    "compare.title": "\u0414\u0435\u0439\u0456\u043D \u0436\u04D9\u043D\u0435 \u043A\u0435\u0439\u0456\u043D \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443",
+    "compare.note": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456\u043B\u0435\u0440\u0434\u0456\u04A3 \u0448\u0435\u0448\u0456\u043C\u0434\u0435\u0440\u0456 \u0435\u0441\u043A\u0435\u0440\u0456\u043B\u0433\u0435\u043D \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u0430\u043B\u043B\u0434\u0430\u0440 \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u044B\u043B\u0430\u0434\u044B; \u0430\u0439\u044B\u0440\u043C\u0430\u0448\u044B\u043B\u044B\u049B\u0442\u0430\u0440 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D\u044B\u04A3 \u04E9\u0437\u0433\u0435\u0440\u0456\u0441\u0442\u0435\u0440\u0456\u043D \u043A\u04E9\u0440\u0441\u0435\u0442\u0435\u0434\u0456.",
+    "compare.from": "\u0411\u04B1\u0440\u044B\u043D",
+    "compare.to": "\u041A\u0435\u0439\u0456\u043D",
+    "compare.group": "\u0422\u043E\u043F",
+    "compare.group.all": "\u0411\u0430\u0440\u043B\u044B\u049B \u0442\u043E\u043F\u0442\u0430\u0440",
+    "compare.choose": "\u2014 \u043D\u04B1\u0441\u049B\u0430\u043D\u044B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437 \u2014",
+    "compare.pickTitle": "\u041D\u0435\u043D\u0456 \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443 \u043A\u0435\u0440\u0435\u0433\u0456\u043D \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437",
+    "compare.pickNote": "\u0415\u043A\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D\u044B\u04A3 \u043D\u04B1\u0441\u049B\u0430\u0441\u044B (\u043D\u0435\u043C\u0435\u0441\u0435 \u0435\u043A\u0456 \u043F\u0430\u0440\u0430\u049B): \u0435\u043A\u0435\u0443\u0456\u043C\u0435\u043D \u0434\u0435 \u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B\u04A3 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u0430\u043B\u043B\u0434\u0430\u0440\u044B.",
+    "compare.loading": "\u0421\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u044B\u043B\u0443\u0434\u0430\u2026",
+    "compare.loadFailed": "\u0421\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443\u0434\u044B \u049B\u04B1\u0440\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "compare.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "compare.empty": "\u0415\u043A\u0456 \u043D\u04B1\u0441\u049B\u0430\u043C\u0435\u043D \u0434\u0435 \u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u0436\u043E\u049B",
+    "compare.emptyNote": "\u0420\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0434\u0430\u0493\u044B \xAB\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0493\u0430 \u049B\u043E\u043B\u0434\u0430\u043D\u0443\xBB \u0430\u0440\u049B\u044B\u043B\u044B \u0436\u0430\u04A3\u0430 \u043D\u04B1\u0441\u049B\u0430\u043D\u044B \u049B\u043E\u043B\u0434\u0430\u043D\u044B\u04A3\u044B\u0437.",
+    "compare.summary": "{of} \u0456\u0448\u0456\u043D\u0435\u043D {changed} {verb}, \u043E\u0440\u0442\u0430\u0448\u0430 {avg}",
+    "compare.ofDialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "compare.ofDialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "compare.ofDialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "compare.changedVerb.one": "\u04E9\u0437\u0433\u0435\u0440\u0434\u0456",
+    "compare.changedVerb.few": "\u04E9\u0437\u0433\u0435\u0440\u0434\u0456",
+    "compare.changedVerb.many": "\u04E9\u0437\u0433\u0435\u0440\u0434\u0456",
+    "compare.table": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440: \u0431\u04B1\u0440\u044B\u043D, \u043A\u0435\u0439\u0456\u043D, \u0430\u0439\u044B\u0440\u043C\u0430\u0448\u044B\u043B\u044B\u049B",
+    "compare.col.id": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "compare.col.group": "\u0422\u043E\u043F",
+    "compare.col.old": "\u0411\u04B1\u0440\u044B\u043D",
+    "compare.col.new": "\u041A\u0435\u0439\u0456\u043D",
+    "compare.col.delta": "\u0394",
+    "compare.sortBy": "\xAB{column}\xBB \u0431\u0430\u0493\u0430\u043D\u044B \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0441\u04B1\u0440\u044B\u043F\u0442\u0430\u0443",
+    "compare.openTitle": "\u0411\u0430\u0493\u0430\u043B\u0430\u0440\u0434\u044B \u049B\u0430\u0442\u0430\u0440 \u043A\u04E9\u0440\u0441\u0435\u0442\u0443",
+    "compare.side.label": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u044B\u04A3 \u0435\u043A\u0456 \u0431\u0430\u0493\u0430\u0441\u044B \u049B\u0430\u0442\u0430\u0440",
+    "compare.side.title": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B",
+    "compare.side.open": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0430\u0448\u0443",
+    "compare.side.totals": "{old} \u2192 {new} ({delta})",
+    "compare.side.all": "\u0411\u0430\u0440\u043B\u044B\u049B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440\u0434\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0443",
+    "compare.side.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440: \u0431\u04B1\u0440\u044B\u043D \u0436\u04D9\u043D\u0435 \u043A\u0435\u0439\u0456\u043D",
+    "compare.side.loading": "\u0411\u0430\u0493\u0430\u043B\u0430\u0440 \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "compare.side.loadFailed": "\u0411\u0430\u0493\u0430\u043B\u0430\u0440\u0434\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "compare.side.none": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u04E9\u0437\u0433\u0435\u0440\u043C\u0435\u0433\u0435\u043D.",
+    "compare.side.absent": "\u0431\u04B1\u043B \u043D\u04B1\u0441\u049B\u0430\u0434\u0430 \u0436\u043E\u049B",
+    "compare.side.noResult": "\u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0431\u0430\u0493\u0430\u043D",
+    "compare.side.onlyOld": "\u0442\u0435\u043A \xAB\u0411\u04B1\u0440\u044B\u043D\xBB \u043D\u04B1\u0441\u049B\u0430\u0441\u044B\u043D\u0434\u0430",
+    "compare.side.onlyNew": "\u0442\u0435\u043A \xAB\u041A\u0435\u0439\u0456\u043D\xBB \u043D\u04B1\u0441\u049B\u0430\u0441\u044B\u043D\u0434\u0430",
+    "compare.side.reworded": "\u0431\u04B1\u0440\u044B\u043D: {title}",
+    "transcript.loading": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "transcript.loadFailed": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B\u043D \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "transcript.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "transcript.empty": "\u0420\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440 \u0436\u043E\u049B",
+    "transcript.emptyNote": "\u0411\u04B1\u043B \u0436\u0430\u0437\u0431\u0430\u0434\u0430 \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440 \u0436\u043E\u049B.",
+    "transcript.label": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "transcript.lines": "\u0420\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440: {n}",
+    "transcript.speaker.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "transcript.speaker.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "transcript.speaker.bot": "\u0411\u043E\u0442",
+    "transcript.speaker.system": "\u0416\u04AF\u0439\u0435",
+    "transcript.speaker.other": "\u0411\u0430\u0441\u049B\u0430",
+    "transcript.duplicate": "\u049B\u0430\u0439\u0442\u0430\u043B\u0430\u043D\u0493\u0430\u043D",
+    "transcript.duplicateTitle": "\u0410\u043B\u0434\u044B\u04A3\u0493\u044B \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043D\u044B\u04A3 \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u043D\u0443\u044B",
+    "transcript.expectedHere": "\u043E\u0441\u044B\u043D\u0434\u0430 \u043A\u04AF\u0442\u0456\u043B\u0434\u0456",
+    "scorecard.label": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "scorecard.checklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B",
+    "scorecard.checklistOption": "{name} \xB7 v{version}",
+    "scorecard.run": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
+    "scorecard.rerun": "\u049A\u0430\u0439\u0442\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "scorecard.runFull": "\u0411\u0430\u0440\u043B\u044B\u0493\u044B\u043D \u049B\u0430\u0439\u0442\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "scorecard.runFullTitle": "\u0411\u04B1\u0440\u044B\u043D\u0493\u044B \u043D\u04D9\u0442\u0438\u0436\u0435\u043B\u0435\u0440\u0434\u0456 \u043F\u0430\u0439\u0434\u0430\u043B\u0430\u043D\u0431\u0430\u0439 \u0431\u0430\u0440\u043B\u044B\u049B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440\u0434\u0456 \u049B\u0430\u0439\u0442\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
+    "scorecard.keyMissing": "\u043C\u043E\u0434\u0435\u043B\u044C \u043A\u0456\u043B\u0442\u0456 \u049B\u0430\u0436\u0435\u0442",
+    "scorecard.progress": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0443\u0434\u0430: {done}/{total}",
+    "scorecard.starting": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0431\u0430\u0441\u0442\u0430\u043B\u0443\u0434\u0430\u2026",
+    "scorecard.jobFailed": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B",
+    "scorecard.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "scorecard.loading": "\u0411\u0430\u0493\u0430 \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "scorecard.loadFailed": "\u0411\u0430\u0493\u0430\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "scorecard.noChecklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B \u0436\u043E\u049B",
+    "scorecard.noChecklistNote": "\xAB\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B\xBB \u0431\u04E9\u043B\u0456\u043C\u0456\u043D\u0434\u0435 \u043F\u0430\u0440\u0430\u049B \u0436\u0430\u0441\u0430\u04A3\u044B\u0437.",
+    "scorecard.empty": "\u0411\u04B1\u043B \u0434\u0438\u0430\u043B\u043E\u0433 \u04D9\u043B\u0456 \u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0431\u0430\u0493\u0430\u043D",
+    "scorecard.emptyNote": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u043F, \xAB\u0411\u0430\u0493\u0430\u043B\u0430\u0443\xBB \u0442\u04AF\u0439\u043C\u0435\u0441\u0456\u043D \u0431\u0430\u0441\u044B\u04A3\u044B\u0437.",
+    "scorecard.demoBadge": "\u0434\u0435\u043C\u043E\u043D\u0441\u0442\u0440\u0430\u0446\u0438\u044F\u043B\u044B\u049B \u0431\u0430\u0493\u0430",
+    "scorecard.demoTitle": "\u0411\u0430\u0493\u0430 \u0434\u0435\u043C\u043E\u043D\u0441\u0442\u0440\u0430\u0446\u0438\u044F\u043B\u044B\u049B \u043C\u043E\u0434\u0435\u043B\u044C \u0430\u0440\u049B\u044B\u043B\u044B \u0436\u0430\u0441\u0430\u043B\u0493\u0430\u043D",
+    "scorecard.totalLabel": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B",
+    "scorecard.totalNone": "\u0435\u0441\u0435\u043F\u0442\u0435\u043B\u043C\u0435\u0439\u0434\u0456",
+    "scorecard.outOf": "/ 100",
+    "scorecard.originalTotal": "\u0431\u04B1\u0440\u044B\u043D {total}",
+    "scorecard.originalTitle": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456 \u0448\u0435\u0448\u0456\u043C\u0456\u043D\u0435 \u0434\u0435\u0439\u0456\u043D\u0433\u0456 \u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u044B\u043D\u044B\u04A3 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B\u0441\u044B",
+    "scorecard.grossOn": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435",
+    "scorecard.grossOnKinds": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435: {kinds}",
+    "scorecard.grossOff": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435\u043B\u0435\u0440 \u0436\u043E\u049B",
+    "scorecard.sections": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0435\u0440 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B\u0441\u044B",
+    "scorecard.sectionScore": "{available} \u0456\u0448\u0456\u043D\u0435\u043D {points} \xB7 {percent} %",
+    "scorecard.sectionNone": "\u049B\u043E\u043B\u0434\u0430\u043D\u044B\u043B\u0430\u0442\u044B\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u0436\u043E\u049B",
+    "scorecard.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
+    "scorecard.cost": "\u049B\u04B1\u043D\u044B ${cost}",
+    "scorecard.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440",
+    "scorecard.answer.yes": "\u0418\u04D9",
+    "scorecard.answer.no": "\u0416\u043E\u049B",
+    "scorecard.answer.na": "N/A",
+    "scorecard.answer.step": "\u049B\u0430\u0434\u0430\u043C {value}",
+    "scorecard.points": "{max} \u0456\u0448\u0456\u043D\u0435\u043D {earned}",
+    "scorecard.weight": "\u0441\u0430\u043B\u043C\u0430\u049B {from} \u2192 {to}",
+    "scorecard.naWeight": "\u0441\u0430\u043B\u043C\u0430\u049B \u0431\u0430\u0441\u049B\u0430 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440\u0433\u0435 \u0431\u04E9\u043B\u0456\u043D\u0433\u0435\u043D",
+    "scorecard.grossNoScore": "\u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B\u0493\u0430 \u04D9\u0441\u0435\u0440 \u0435\u0442\u043F\u0435\u0439\u0434\u0456",
+    "scorecard.modelAnswer": "\u043C\u043E\u0434\u0435\u043B\u044C: {answer}",
+    "scorecard.modelAnswerTitle": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456 \u0448\u0435\u0448\u0456\u043C\u0456\u043D\u0435 \u0434\u0435\u0439\u0456\u043D\u0433\u0456 \u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B",
+    "scorecard.evidenceLine": "{n}-\u0440\u0435\u043F\u043B\u0438\u043A\u0430",
+    "scorecard.evidenceShow": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430 \u043A\u04E9\u0440\u0441\u0435\u0442\u0443: {n}-\u0440\u0435\u043F\u043B\u0438\u043A\u0430",
+    "scorecard.checkedRange": "\u0422\u0435\u043A\u0441\u0435\u0440\u0456\u043B\u0433\u0435\u043D\u0456: {from}\u2013{to} \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440",
+    "scorecard.coaching": "\u041D\u0435\u043D\u0456 \u0436\u0430\u049B\u0441\u0430\u0440\u0442\u0443 \u043A\u0435\u0440\u0435\u043A",
+    "scorecard.needsReview": "\u0442\u0435\u043A\u0441\u0435\u0440\u0443",
+    "scorecard.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u0431\u04B1\u043B \u0436\u0430\u0443\u0430\u043F\u049B\u0430 \u0441\u0435\u043D\u0456\u043C\u0441\u0456\u0437",
+    "scorecard.carried": "\u0442\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456\u043D\u0456\u04A3 \u0448\u0435\u0448\u0456\u043C\u0456 \u043A\u04E9\u0448\u0456\u0440\u0456\u043B\u0433\u0435\u043D",
+    "scorecard.carriedTitle": "\u0411\u04B1\u0440\u044B\u043D\u0493\u044B \u0431\u0430\u0493\u0430\u0493\u0430 \u0431\u0435\u0440\u0456\u043B\u0433\u0435\u043D \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0448\u0435\u0448\u0456\u043C\u0456 \u043A\u04E9\u0448\u0456\u0440\u0456\u043B\u0433\u0435\u043D",
+    "scorecard.dispute": "\u0414\u0430\u0443\u043B\u0430\u0443",
+    "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0430\u0448\u044B\u049B",
+    "scorecard.disputeEarlierTag": "\u0431\u04B1\u0440\u044B\u043D\u0493\u044B \u0431\u0430\u0493\u0430\u0493\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "scorecard.disputeEarlierTitle": "\u0411\u04B1\u043B \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u044B\u04A3 \u0431\u04B1\u0440\u044B\u043D\u0493\u044B \u0431\u0430\u0493\u0430\u0441\u044B\u043D\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u04D9\u043B\u0456 \u0448\u0435\u0448\u0456\u043B\u043C\u0435\u0433\u0435\u043D",
+    "scorecard.disputeOpenTitle": "\u0411\u04B1\u043B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0430\u0448\u044B\u049B \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0431\u0430\u0440",
+    "scorecard.info.title": "\u0411\u0430\u0493\u0430\u0493\u0430 \u04D9\u0441\u0435\u0440 \u0435\u0442\u043F\u0435\u0439\u0434\u0456",
+    "scorecard.info.topic": "\u04E8\u0442\u0456\u043D\u0456\u0448 \u0442\u0430\u049B\u044B\u0440\u044B\u0431\u044B",
+    "scorecard.info.mood": "\u041A\u043B\u0438\u0435\u043D\u0442\u0442\u0456\u04A3 \u043A\u04E9\u04A3\u0456\u043B \u043A\u04AF\u0439\u0456",
+    "scorecard.info.outcome": "\u04E8\u0442\u0456\u043D\u0456\u0448 \u043D\u04D9\u0442\u0438\u0436\u0435\u0441\u0456",
+    "scorecard.info.firstReaction": "\u0410\u043B\u0493\u0430\u0448\u049B\u044B \u0436\u0430\u0443\u0430\u043F",
+    "scorecard.info.longestWait": "\u0415\u04A3 \u04B1\u0437\u0430\u049B \u043A\u04AF\u0442\u0443",
+    "scorecard.info.ending": "\u0410\u044F\u049B\u0442\u0430\u043B\u0443\u044B",
+    "scorecard.info.thresholdOk": "3 \u043C\u0438\u043D\u0443\u0442 \u0456\u0448\u0456\u043D\u0434\u0435",
+    "scorecard.info.thresholdOver": "3 \u043C\u0438\u043D\u0443\u0442\u0442\u0430\u043D \u04B1\u0437\u0430\u049B",
+    "scorecard.info.unknown": "\u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u043E\u049B",
+    "scorecard.outcome.resolved": "\u043C\u04D9\u0441\u0435\u043B\u0435 \u0448\u0435\u0448\u0456\u043B\u0434\u0456",
+    "scorecard.outcome.passed_to_specialists": "\u043C\u0430\u043C\u0430\u043D\u0434\u0430\u0440\u0493\u0430 \u0431\u0435\u0440\u0456\u043B\u0434\u0456",
+    "scorecard.outcome.unresolved": "\u0448\u0435\u0448\u0456\u043B\u043C\u0435\u0434\u0456",
+    "scorecard.outcome.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0448\u044B\u0493\u044B\u043F \u043A\u0435\u0442\u0442\u0456",
+    "scorecard.ending.operator_closed": "\u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440 \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0436\u0430\u043F\u0442\u044B",
+    "scorecard.ending.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0448\u044B\u0493\u044B\u043F \u043A\u0435\u0442\u0442\u0456",
+    "scorecard.ending.connection_lost": "\u0431\u0430\u0439\u043B\u0430\u043D\u044B\u0441 \u04AF\u0437\u0456\u043B\u0434\u0456",
+    "scorecard.ending.client_ended_call": "\u043A\u043B\u0438\u0435\u043D\u0442 \u049B\u043E\u04A3\u044B\u0440\u0430\u0443\u0434\u044B \u0430\u044F\u049B\u0442\u0430\u0434\u044B",
+    "scorecard.ending.normal": "\u049B\u0430\u043B\u044B\u043F\u0442\u044B \u0430\u044F\u049B\u0442\u0430\u043B\u0443",
+    "history.title": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0442\u0430\u0440\u0438\u0445\u044B",
+    "history.original": "\u0411\u0430\u0441\u0442\u0430\u043F\u049B\u044B \u0431\u0430\u0493\u0430: {total}",
+    "history.appeal": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F: \xAB{criterion}\xBB, \u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B \xAB{answer}\xBB",
+    "history.changed": "\u0428\u0435\u0448\u0456\u043C: \xAB{answer}\xBB \u0431\u043E\u043B\u044B\u043F \u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u043B\u0434\u0456",
+    "history.confirmed": "\u0428\u0435\u0448\u0456\u043C: \u0431\u0430\u0493\u0430 \u0440\u0430\u0441\u0442\u0430\u043B\u0434\u044B",
+    "history.pending": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456\u043D\u0456\u04A3 \u0448\u0435\u0448\u0456\u043C\u0456 \u043A\u04AF\u0442\u0456\u043B\u0443\u0434\u0435",
+    "history.carried": "\xAB{criterion}\xBB \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0448\u0435\u0448\u0456\u043C \u043A\u04E9\u0448\u0456\u0440\u0456\u043B\u0434\u0456: \xAB{answer}\xBB",
+    "history.final": "\u049A\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u0430\u0493\u0430: {total}",
+    "history.openAppeal": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043D\u044B \u0430\u0448\u0443",
+    "history.earlierOpen": "\u0411\u04B1\u0440\u044B\u043D\u0493\u044B \u0431\u0430\u0493\u0430\u0493\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F: \xAB{criterion}\xBB, \u0448\u0435\u0448\u0456\u043C \u043A\u04AF\u0442\u0456\u043B\u0443\u0434\u0435",
+    "history.decidedAfter": "\xAB{criterion}\xBB \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0448\u0435\u0448\u0456\u043C \u0431\u04B1\u043B \u0431\u0430\u0493\u0430\u0434\u0430\u043D \u043A\u0435\u0439\u0456\u043D \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u043D\u0434\u044B: \u049B\u043E\u043B\u0434\u0430\u043D\u0443 \u04AF\u0448\u0456\u043D \u049B\u0430\u0439\u0442\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u04A3\u044B\u0437",
+    "history.olderVersion": "\xAB{criterion}\xBB \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0448\u0435\u0448\u0456\u043C \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u0434\u0456\u04A3 \u0431\u04B1\u0440\u044B\u043D\u0493\u044B \u043D\u04B1\u0441\u049B\u0430\u0441\u044B\u043D\u0430 \u049B\u0430\u0442\u044B\u0441\u0442\u044B \u0431\u043E\u043B\u0434\u044B",
+    "appeal.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
+    "appeal.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "appeal.current": "\u049A\u0430\u0437\u0456\u0440: \xAB{answer}\xBB",
+    "appeal.comment": "\u0422\u04AF\u0441\u0456\u043D\u0456\u043A\u0442\u0435\u043C\u0435",
+    "appeal.commentPlaceholder": "\u0411\u0430\u0493\u0430 \u043D\u0435\u043B\u0456\u043A\u0442\u0435\u043D \u0434\u04B1\u0440\u044B\u0441 \u0435\u043C\u0435\u0441: \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0493\u044B \u0434\u04D9\u043B\u0435\u043B\u0434\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u04A3\u0456\u0437",
+    "appeal.note": "\u0428\u0435\u0448\u0456\u043C\u0434\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456 \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u0439\u0434\u044B; \u0441\u043E\u0434\u0430\u043D \u043A\u0435\u0439\u0456\u043D \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u049B\u0430\u0439\u0442\u0430 \u0435\u0441\u0435\u043F\u0442\u0435\u043B\u0435\u0434\u0456.",
+    "appeal.submit": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0431\u0435\u0440\u0443",
+    "appeal.cancel": "\u0411\u0430\u0441 \u0442\u0430\u0440\u0442\u0443",
+    "appeals.list": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440",
+    "appeals.filters": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0441\u04AF\u0437\u0433\u0456\u043B\u0435\u0440\u0456",
+    "appeals.filter.open": "\u0410\u0448\u044B\u049B",
+    "appeals.filter.decided": "\u0428\u0435\u0448\u0456\u043B\u0433\u0435\u043D",
+    "appeals.filter.all": "\u0411\u0430\u0440\u043B\u044B\u0493\u044B",
+    "appeals.status.open": "\u0430\u0448\u044B\u049B",
+    "appeals.status.decided": "\u0448\u0435\u0448\u0456\u043B\u0433\u0435\u043D",
+    "appeals.loading": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440 \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "appeals.loadFailed": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440\u0434\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "appeals.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "appeals.empty": "\u04D8\u0437\u0456\u0440\u0433\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440 \u0436\u043E\u049B",
+    "appeals.emptyNote": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443\u0448\u044B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430\u0441\u044B\u043D\u0434\u0430\u0493\u044B \xAB\u0414\u0430\u0443\u043B\u0430\u0443\xBB \u0442\u04AF\u0439\u043C\u0435\u0441\u0456 \u0430\u0440\u049B\u044B\u043B\u044B \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0431\u0435\u0440\u0435\u0434\u0456.",
+    "appeals.noMatch": "\u041C\u04B1\u043D\u0434\u0430 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440 \u0436\u043E\u049B",
+    "appeals.pick": "\u0422\u0456\u0437\u0456\u043C\u043D\u0435\u043D \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043D\u044B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437",
+    "appeals.back": "\u2190 \u0411\u0430\u0440\u043B\u044B\u049B \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043B\u0430\u0440",
+    "review.label": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043D\u044B \u049B\u0430\u0440\u0430\u0443",
+    "review.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \xB7 {id}",
+    "review.loading": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "review.loadFailed": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "review.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "review.openCard": "\u0414\u0438\u0430\u043B\u043E\u0433 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430\u0441\u044B\u043D \u0430\u0448\u0443",
+    "review.criterion": "\u0414\u0430\u0443\u043B\u044B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "review.comment": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443\u0448\u044B\u043D\u044B\u04A3 \u0442\u04AF\u0441\u0456\u043D\u0456\u043A\u0442\u0435\u043C\u0435\u0441\u0456",
+    "review.fragment": "\u0414\u0438\u0430\u043B\u043E\u0433 \u04AF\u0437\u0456\u043D\u0434\u0456\u0441\u0456",
+    "review.noFragment": "\u041C\u043E\u0434\u0435\u043B\u044C \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043B\u0430\u0440\u0434\u044B \u043A\u04E9\u0440\u0441\u0435\u0442\u043F\u0435\u0434\u0456; \u0434\u0438\u0430\u043B\u043E\u0433 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430\u0441\u044B\u043D \u0430\u0448\u044B\u04A3\u044B\u0437.",
+    "review.opinion": "\u041C\u043E\u0434\u0435\u043B\u044C\u0434\u0456\u04A3 \u0435\u043A\u0456\u043D\u0448\u0456 \u043F\u0456\u043A\u0456\u0440\u0456",
+    "review.opinionPending": "\u041C\u043E\u0434\u0435\u043B\u044C \u0442\u04AF\u0441\u0456\u043D\u0456\u043A\u0442\u0435\u043C\u0435\u043D\u0456 \u0435\u0441\u043A\u0435\u0440\u0456\u043F \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u0434\u0456 \u049B\u0430\u0439\u0442\u0430 \u049B\u0430\u0440\u0430\u0443\u0434\u0430\u2026",
+    "review.opinionAnswer": "\u041C\u043E\u0434\u0435\u043B\u044C \u04B1\u0441\u044B\u043D\u044B\u0441\u044B: \xAB{answer}\xBB",
+    "review.opinionAdvice": "\u0411\u04B1\u043B \u043A\u0435\u04A3\u0435\u0441: \u0448\u0435\u0448\u0456\u043C\u0434\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456 \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u0439\u0434\u044B.",
+    "review.opinionUnavailable": "\u0415\u043A\u0456\u043D\u0448\u0456 \u043F\u0456\u043A\u0456\u0440 \u049B\u043E\u043B\u0436\u0435\u0442\u0456\u043C\u0441\u0456\u0437.",
+    "review.decision": "\u0428\u0435\u0448\u0456\u043C",
+    "review.readOnly": "\u0428\u0435\u0448\u0456\u043C\u0434\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456 \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u0439\u0434\u044B. \u0428\u0435\u0448\u0456\u043C \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u0443 \u04AF\u0448\u0456\u043D \u0440\u04E9\u043B\u0434\u0456 \u0430\u0443\u044B\u0441\u0442\u044B\u0440\u044B\u04A3\u044B\u0437.",
+    "review.confirmed": "\u0420\u0430\u0441\u0442\u0430\u0443",
+    "review.changed": "\u04E8\u0437\u0433\u0435\u0440\u0442\u0443",
+    "review.newAnswer": "\u0416\u0430\u04A3\u0430 \u0436\u0430\u0443\u0430\u043F",
+    "review.reason": "\u0428\u0435\u0448\u0456\u043C\u043D\u0456\u04A3 \u0441\u0435\u0431\u0435\u0431\u0456",
+    "review.reasonPlaceholder": "\u041C\u0456\u043D\u0434\u0435\u0442\u0442\u0456: \u0448\u0435\u0448\u0456\u043C\u043D\u0456\u04A3 \u043D\u0435\u0433\u0456\u0437\u0456\u043D \u0442\u04AF\u0441\u0456\u043D\u0434\u0456\u0440\u0456\u04A3\u0456\u0437",
+    "review.submit": "\u0428\u0435\u0448\u0456\u043C\u0434\u0456 \u0441\u0430\u049B\u0442\u0430\u0443",
+    "review.decidedConfirmed": "\u0411\u0430\u0493\u0430 \u0440\u0430\u0441\u0442\u0430\u043B\u0434\u044B",
+    "review.decidedChanged": "\u0416\u0430\u0443\u0430\u043F \xAB{answer}\xBB \u0431\u043E\u043B\u044B\u043F \u04E9\u0437\u0433\u0435\u0440\u0442\u0456\u043B\u0434\u0456",
+    "review.result": "\u049A\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B: {from} \u2192 {to}",
+    "review.saved": "\u0428\u0435\u0448\u0456\u043C \u0441\u0430\u049B\u0442\u0430\u043B\u0434\u044B.",
+    "review.reloading": "\u041F\u0430\u043D\u0435\u043B\u044C \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440\u0456 \u0436\u0430\u04A3\u0430\u0440\u0442\u044B\u043B\u0443\u0434\u0430\u2026",
+    "review.reloadFailed": "\u041F\u0430\u043D\u0435\u043B\u044C \u0436\u0430\u04A3\u0430\u0440\u0442\u044B\u043B\u043C\u0430\u0434\u044B; \u0448\u0435\u0448\u0456\u043C \u0441\u0430\u049B\u0442\u0430\u043B\u0493\u0430\u043D.",
+    "review.reload": "\u0416\u0430\u04A3\u0430\u0440\u0442\u0443",
+    "view.soon": "\u0411\u04B1\u043B \u0431\u04E9\u043B\u0456\u043C \u04D9\u043B\u0456 \u0434\u0430\u0439\u044B\u043D \u0435\u043C\u0435\u0441.",
+    "notfound.title": "\u0411\u0435\u0442 \u0442\u0430\u0431\u044B\u043B\u043C\u0430\u0434\u044B",
+    "notfound.home": "\u0414\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443\u0493\u0430 \u04E9\u0442\u0443",
+    "toast.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "toast.close": "\u0416\u0430\u0431\u0443",
+    "error.network": "\u0421\u0435\u0440\u0432\u0435\u0440\u043C\u0435\u043D \u0431\u0430\u0439\u043B\u0430\u043D\u044B\u0441 \u0436\u043E\u049B. \u049A\u043E\u0441\u044B\u043B\u044B\u043C\u0434\u044B \u0442\u0435\u043A\u0441\u0435\u0440\u0456\u043F, \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u04A3\u044B\u0437.",
+    "error.timeout": "\u0421\u0435\u0440\u0432\u0435\u0440 \u0443\u0430\u049B\u044B\u0442\u044B\u043D\u0434\u0430 \u0436\u0430\u0443\u0430\u043F \u0431\u0435\u0440\u043C\u0435\u0434\u0456. \u049A\u0430\u0439\u0442\u0430\u043B\u0430\u04A3\u044B\u0437.",
+    "error.bad_response": "\u0421\u0435\u0440\u0432\u0435\u0440 \u043A\u04AF\u0442\u043F\u0435\u0433\u0435\u043D \u0436\u0430\u0443\u0430\u043F \u049B\u0430\u0439\u0442\u0430\u0440\u0434\u044B.",
+    "error.model_key_missing": "\u0416\u0430\u04A3\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u0443\u0434\u044B \u0431\u0430\u0441\u0442\u0430\u0443 \u04AF\u0448\u0456\u043D \u043C\u043E\u0434\u0435\u043B\u044C \u043A\u0456\u043B\u0442\u0456 \u049B\u0430\u0436\u0435\u0442.",
+    "error.invalid_request": "\u0421\u04B1\u0440\u0430\u0443 \u0434\u04B1\u0440\u044B\u0441 \u0442\u043E\u043B\u0442\u044B\u0440\u044B\u043B\u043C\u0430\u0493\u0430\u043D. \u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440\u0434\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0456\u04A3\u0456\u0437.",
+    "error.na_not_allowed": "\u0411\u04B1\u043B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u04AF\u0448\u0456\u043D N/A \u0436\u0430\u0443\u0430\u0431\u044B\u043D\u0430 \u0440\u04B1\u049B\u0441\u0430\u0442 \u0435\u0442\u0456\u043B\u043C\u0435\u0439\u0434\u0456.",
+    "error.step_not_in_scale": "\u0411\u04B1\u043B \u049B\u0430\u0434\u0430\u043C \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0448\u043A\u0430\u043B\u0430\u0441\u044B\u043D\u0434\u0430 \u0436\u043E\u049B.",
+    "error.bad_answer": "\u0411\u04B1\u043B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u04AF\u0448\u0456\u043D \u0436\u0430\u0443\u0430\u043F \u0436\u0430\u0440\u0430\u043C\u0441\u044B\u0437.",
+    "error.reason_required": "\u0428\u0435\u0448\u0456\u043C \u0441\u0435\u0431\u0435\u0431\u0456\u043D \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u04A3\u0456\u0437.",
+    "error.invalid_checklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0434\u04B1\u0440\u044B\u0441 \u0442\u043E\u043B\u0442\u044B\u0440\u044B\u043B\u043C\u0430\u0493\u0430\u043D. \u0411\u0435\u043B\u0433\u0456\u043B\u0435\u043D\u0433\u0435\u043D \u04E9\u0440\u0456\u0441\u0442\u0435\u0440\u0434\u0456 \u0442\u04AF\u0437\u0435\u0442\u0456\u04A3\u0456\u0437.",
+    "error.appeal_already_decided": "\u0411\u04B1\u043B \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0448\u0435\u0448\u0456\u043C \u049B\u0430\u0431\u044B\u043B\u0434\u0430\u043D\u0493\u0430\u043D.",
+    "error.appeal_already_open": "\u0411\u04B1\u043B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0430\u0448\u044B\u049B \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0431\u0430\u0440.",
+    "error.checklist_locked": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B\u043D\u044B\u04A3 \u0431\u04B1\u043B \u043D\u04B1\u0441\u049B\u0430\u0441\u044B \u049B\u04B1\u043B\u044B\u043F\u0442\u0430\u043B\u0493\u0430\u043D. \u041E\u043D\u044B \u0436\u0430\u04A3\u0430 \u043F\u0430\u0440\u0430\u049B \u0440\u0435\u0442\u0456\u043D\u0434\u0435 \u0441\u0430\u049B\u0442\u0430\u04A3\u044B\u0437.",
+    "error.organizer_url_missing": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u043A\u04E9\u0437\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u043C\u0435\u0433\u0435\u043D; \u0442\u043E\u043F\u0442\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0435\u043C\u0435\u0441.",
+    "error.role_not_allowed": "\u0411\u04B1\u043B \u04D9\u0440\u0435\u043A\u0435\u0442 \u0441\u0456\u0437\u0434\u0456\u04A3 \u0440\u04E9\u043B\u0456\u04A3\u0456\u0437 \u04AF\u0448\u0456\u043D \u049B\u043E\u043B\u0436\u0435\u0442\u0456\u043C\u0441\u0456\u0437.",
+    "error.not_found": "\u0422\u0430\u0431\u044B\u043B\u043C\u0430\u0434\u044B: \u0436\u0430\u0437\u0431\u0430 \u0436\u043E\u0439\u044B\u043B\u0493\u0430\u043D \u043D\u0435\u043C\u0435\u0441\u0435 \u0441\u0456\u043B\u0442\u0435\u043C\u0435 \u0435\u0441\u043A\u0456\u0440\u0433\u0435\u043D.",
+    "error.organizer_error": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u043A\u04E9\u0437\u0456 \u0436\u0430\u0443\u0430\u043F \u0431\u0435\u0440\u043C\u0435\u0434\u0456. \u041A\u0435\u0439\u0456\u043D\u0456\u0440\u0435\u043A \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u04A3\u044B\u0437.",
+    "error.no_records": "\u0424\u0430\u0439\u043B\u0434\u0430 \u0436\u0430\u0437\u0431\u0430\u043B\u0430\u0440 \u0436\u043E\u049B.",
+    "error.bad_record": "\u0424\u0430\u0439\u043B\u0434\u0430 \u0436\u0430\u0440\u0430\u043C\u0441\u044B\u0437 \u0436\u0430\u0437\u0431\u0430 \u0431\u0430\u0440.",
+    "error.bad_record_at": "\u0424\u0430\u0439\u043B\u0434\u0430\u0493\u044B {n}-\u0436\u0430\u0437\u0431\u0430 \u0436\u0430\u0440\u0430\u043C\u0441\u044B\u0437.",
+    "error.internal_error": "\u0421\u0435\u0440\u0432\u0435\u0440 \u049B\u0430\u0442\u0435\u0441\u0456. \u041A\u0435\u0439\u0456\u043D\u0456\u0440\u0435\u043A \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u04A3\u044B\u0437.",
+    "error.generic": "\u049A\u0430\u0442\u0435 \u043F\u0430\u0439\u0434\u0430 \u0431\u043E\u043B\u0434\u044B. \u049A\u0430\u0439\u0442\u0430\u043B\u0430\u043F \u043A\u04E9\u0440\u0456\u04A3\u0456\u0437.",
+    "language.label": "\u0418\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441 \u0442\u0456\u043B\u0456",
+    "translate.show": "\u041E\u0440\u044B\u0441 \u0442\u0456\u043B\u0456\u043D\u0435 \u0430\u0443\u0434\u0430\u0440\u0443",
+    "translate.hide": "\u0410\u0443\u0434\u0430\u0440\u043C\u0430\u043D\u044B \u0436\u0430\u0441\u044B\u0440\u0443",
+    "translate.loading": "\u0410\u0443\u0434\u0430\u0440\u044B\u043B\u0443\u0434\u0430\u2026",
+    "translate.retry": "\u0410\u0443\u0434\u0430\u0440\u043C\u0430\u043D\u044B \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
+    "voice.caption": "\u041E\u0441\u044B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u0433\u0435 \u049B\u0430\u0442\u044B\u0441\u0442\u044B \u04AF\u0437\u0456\u043D\u0434\u0456\u043B\u0435\u0440\u0434\u0456\u04A3 \u0431\u0435\u043B\u0433\u0456\u043B\u0435\u0440\u0456",
+    "voice.segment": "\u04AE\u0437\u0456\u043D\u0434\u0456",
+    "voice.pitch": "\u0414\u0430\u0443\u044B\u0441 \u0434\u0438\u0430\u043F\u0430\u0437\u043E\u043D\u044B, \u0436\u0430\u0440\u0442\u044B \u0442\u043E\u043D",
+    "voice.rate": "\u049A\u0430\u0440\u049B\u044B\u043D, \u0441\u04E9\u0437/\u043C\u0438\u043D",
+    "voice.pauses": "\u041A\u0456\u0434\u0456\u0440\u0456\u0441\u0442\u0435\u0440, \u0441",
+    "voice.overlap": "\u049A\u0430\u0431\u0430\u0442\u0442\u0430\u0441\u0443, \u0441",
+    "voice.title": "\u04E8\u043B\u0448\u0435\u043D\u0433\u0435\u043D \u0431\u0435\u043B\u0433\u0456\u043B\u0435\u0440 + \u043C\u043E\u0434\u0435\u043B\u044C \u0431\u0430\u0493\u0430\u0441\u044B",
+    "reports.emptyCell": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u043E\u049B",
+    "reports.refresh": "\u0416\u0430\u04A3\u0430\u0440\u0442\u0443",
+    "reports.accuracyTitle": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0434\u04D9\u043B\u0434\u0456\u0433\u0456",
+    "reports.analyticsTitle": "\u0415\u0441\u0435\u043F\u0442\u0435\u0440: \u0442\u0430\u043B\u0434\u0430\u0443",
+    "reports.accuracyNote": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u043C\u0435\u043D \u0441\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A. \u042D\u0442\u0430\u043B\u043E\u043D \u043A\u04E9\u0437\u0456 \u0442\u04E9\u043C\u0435\u043D\u0434\u0435 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u0433\u0435\u043D.",
+    "reports.analyticsNote": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0448\u0435\u0448\u0456\u043C\u0434\u0435\u0440\u0456 \u0435\u0441\u043A\u0435\u0440\u0456\u043B\u0433\u0435\u043D \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0440; \u0436\u0438\u044B\u043D \u043C\u0435\u043D \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u043D\u04B1\u0441\u049B\u0430\u0441\u044B\u043D \u0441\u0435\u0440\u0432\u0435\u0440 \u0430\u043D\u044B\u049B\u0442\u0430\u0439\u0434\u044B.",
+    "reports.referenceMissing": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u0434\u044B\u04A3 \u043A\u04E9\u0437\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u043C\u0435\u0433\u0435\u043D",
+    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0436\u04AF\u043A\u0442\u0435\u043B\u043C\u0435\u0433\u0435\u043D",
+    "reports.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
+    "reports.overall": "{agreement} \xB7 n = {n}",
+    "reports.counts": "\u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0431\u0430\u0493\u0430\u043D: {missing} \xB7 \u0434\u0430\u0443\u043B\u044B\u0441\u044B \u0430\u043B\u044B\u043D\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u043B\u0434\u044B: {disputed}",
+    "reports.noComparable": "\u0421\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443\u0493\u0430 \u0431\u043E\u043B\u0430\u0442\u044B\u043D \u0431\u0430\u0493\u0430\u043B\u0430\u0440 \u0436\u043E\u049B",
+    "reports.byCriterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
+    "reports.byLanguage": "\u0422\u0456\u043B\u0434\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
+    "reports.byChannel": "\u0410\u0440\u043D\u0430\u043B\u0430\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
+    "reports.group": "\u0422\u043E\u043F",
+    "reports.agreement": "\u0421\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A",
+    "reports.disagreements": "\u0410\u0439\u044B\u0440\u043C\u0430\u0448\u044B\u043B\u044B\u049B\u0442\u0430\u0440",
+    "reports.conversation": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "reports.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "reports.reference": "\u042D\u0442\u0430\u043B\u043E\u043D",
+    "reports.evaluated": "\u041C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B",
+    "reports.noEvaluations": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 \u0436\u043E\u049B. \u0416\u04B1\u043C\u044B\u0441 \u0430\u0439\u043C\u0430\u0493\u044B\u043D\u0434\u0430 \u0431\u0430\u0493\u0430\u043B\u0430\u0443\u0434\u044B \u0431\u0430\u0441\u0442\u0430\u04A3\u044B\u0437.",
+    "reports.failures": "\u049A\u0430\u0442\u0435\u043B\u0435\u0440",
+    "reports.avgLanguage": "\u0422\u0456\u043B\u0434\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u043E\u0440\u0442\u0430\u0448\u0430 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B",
+    "reports.avgChannel": "\u0410\u0440\u043D\u0430\u043B\u0430\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u043E\u0440\u0442\u0430\u0448\u0430 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B",
+    "reports.average": "\u041E\u0440\u0442\u0430\u0448\u0430 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B",
+    "reports.gross": "\u04E8\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435\u043B\u0435\u0440: {n}",
+    "reports.grossKinds": "\u04E8\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435 \u0442\u04AF\u0440\u043B\u0435\u0440\u0456",
+    "reports.kind": "\u0422\u04AF\u0440\u0456",
+    "reports.count": "\u0421\u0430\u043D\u044B",
+    "reports.loading": "\u0415\u0441\u0435\u043F \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "reports.failed": "\u0415\u0441\u0435\u043F\u0442\u0456 \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B. {error}",
+    "reports.channel.chat": "\u0427\u0430\u0442",
+    "reports.channel.call": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443"
+  };
+
+  // src/i18n/ru.js
+  var catalogs = { ru: messages_ru_default, en: messages_en_default, kk: messages_kk_default };
+  var languages = ["ru", "en", "kk"];
+  var listeners = /* @__PURE__ */ new Set();
+  var recipes = /* @__PURE__ */ new Map();
+  var has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+  var DATA_PARAMS = /* @__PURE__ */ new Set(["id", "name", "title", "criterion", "kinds", "model", "group", "time"]);
+  var language = "ru";
+  function normalizeLanguage(value2) {
+    if (typeof value2 !== "string") return null;
+    const code = value2.toLowerCase().split(/[-_]/)[0];
+    return code === "kz" ? "kk" : languages.includes(code) ? code : null;
+  }
+  function storedLanguage() {
+    try {
+      return normalizeLanguage(globalThis.localStorage?.getItem("cqa-language"));
+    } catch {
+      return null;
+    }
+  }
+  var currentLanguage = () => language;
+  var locale = () => ({ ru: "ru-RU", en: "en-US", kk: "kk-KZ" })[language];
+  function setLanguage(value2, { persist = true } = {}) {
+    const next = normalizeLanguage(value2);
+    if (!next) return false;
+    if (persist) {
+      try {
+        globalThis.localStorage?.setItem("cqa-language", next);
+      } catch {
+      }
+    }
+    if (next === language) return true;
+    language = next;
+    for (const listener of [...listeners]) listener(next);
+    return true;
+  }
+  function onLanguageChange(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+  function format(template, params) {
+    if (!params) return template;
+    return template.replace(/\{(\w+)\}/g, (placeholder2, name) => has(params, name) ? String(params[name]) : placeholder2);
+  }
+  function remember(value2, read) {
+    recipes.set(value2, read);
+    if (recipes.size > 12e3) recipes.delete(recipes.keys().next().value);
+    return value2;
+  }
+  function formatNumber(value2, options = {}) {
+    const read = () => new Intl.NumberFormat(locale(), { useGrouping: false, ...options }).format(value2);
+    return remember(read(), read);
+  }
+  function messageReader(key, params, plural) {
+    const values = { ...params };
+    const nested = new Map(Object.entries(values).flatMap(([name, value2]) => !DATA_PARAMS.has(name) && recipes.has(value2) ? [[name, recipes.get(value2)]] : []));
+    return () => {
+      const selected = plural ? `${key}.${pluralForm(values.n)}` : key;
+      const catalog = catalogs[language];
+      if (!has(catalog, selected)) return selected;
+      const localized = Object.fromEntries(Object.entries(values).map(([name, value2]) => [
+        name,
+        nested.has(name) ? nested.get(name)() : !DATA_PARAMS.has(name) && typeof value2 === "string" && numericReader(value2) ? numericReader(value2)() : typeof value2 === "number" && !DATA_PARAMS.has(name) ? new Intl.NumberFormat(locale(), { useGrouping: false, maximumFractionDigits: 8 }).format(value2) : value2
+      ]));
+      return format(catalog[selected], localized);
+    };
+  }
+  function t(key, params) {
+    if (!has(catalogs[language], key)) return key;
+    const read = messageReader(key, params);
+    return remember(read(), read);
+  }
+  function pluralForm(n) {
+    if (language === "kk") return "many";
+    const form = new Intl.PluralRules(locale()).select(Number(n));
+    return form === "one" || form === "few" ? form : "many";
+  }
+  function tp(base, n, params = {}) {
+    const read = messageReader(base, { ...params, n }, true);
+    return remember(read(), read);
+  }
+  function numericReader(text3) {
+    const match = /^([+−-]?)(\d+)(?:([.,])(\d+))?( ?%?)$/.exec(text3);
+    if (!match) return null;
+    const places = match[4]?.length ?? 0;
+    const value2 = Number(match[2] + (match[4] ? "." + match[4] : ""));
+    return () => match[1] + new Intl.NumberFormat(locale(), { useGrouping: false, minimumFractionDigits: places, maximumFractionDigits: places }).format(value2) + match[5];
+  }
+  function captureMessage(value2) {
+    const text3 = String(value2 ?? "");
+    if (recipes.has(text3)) return recipes.get(text3);
+    const number = numericReader(text3);
+    if (number) return number;
+    const pieces = text3.split(/( · | → )/);
+    const readers = pieces.map((part) => recipes.get(part));
+    if (readers.some(Boolean)) return () => pieces.map((part, i) => readers[i] ? readers[i]() : part).join("");
+    return () => text3;
+  }
+  for (const catalog of Object.values(catalogs)) {
+    for (const [key, value2] of Object.entries(catalog)) {
+      if (!value2.includes("{")) recipes.set(value2, messageReader(key));
+    }
+  }
+
+  // src/i18n/dom.js
+  var texts = /* @__PURE__ */ new WeakMap();
+  var attributes = /* @__PURE__ */ new WeakMap();
+  var ATTRIBUTES = /* @__PURE__ */ new Set(["title", "placeholder", "aria-label", "aria-valuetext"]);
+  function bindLocalizedNode(node, value2) {
+    const read = captureMessage(value2);
+    node.textContent = read();
+    texts.set(node, { read, rendered: node.textContent });
+  }
+  function setLocalizedText(element, value2) {
+    const read = captureMessage(value2);
+    const rendered = element.closest?.("[data-i18n-verbatim]") ? String(value2 ?? "") : read();
+    element.textContent = rendered;
+    texts.set(element, { read, rendered });
+  }
+  function setLocalizedAttribute(element, name, value2) {
+    if (!ATTRIBUTES.has(name)) {
+      element.setAttribute(name, String(value2));
+      return;
+    }
+    const read = captureMessage(value2);
+    const rendered = element.closest?.("[data-i18n-verbatim]") ? String(value2) : read();
+    element.setAttribute(name, rendered);
+    let bindings = attributes.get(element);
+    if (!bindings) attributes.set(element, bindings = /* @__PURE__ */ new Map());
+    bindings.set(name, { read, rendered });
+  }
+  function localizeRoot(root) {
+    root.lang = currentLanguage();
+    for (const element of [root, ...root.querySelectorAll("*")]) {
+      if (element.closest("[data-i18n-verbatim]")) continue;
+      const text3 = texts.get(element);
+      if (text3 && element.textContent === text3.rendered) {
+        const next = text3.read();
+        if (next !== text3.rendered) element.textContent = next;
+        text3.rendered = next;
+      }
+      for (const node of element.childNodes) {
+        if (node.nodeType !== 3) continue;
+        const binding = texts.get(node);
+        if (binding && node.textContent === binding.rendered) {
+          const next = binding.read();
+          if (next !== binding.rendered) node.textContent = next;
+          binding.rendered = next;
+        }
+      }
+      for (const [name, binding] of attributes.get(element) ?? []) {
+        if (element.getAttribute(name) !== binding.rendered) continue;
+        const next = binding.read();
+        if (next !== binding.rendered) element.setAttribute(name, next);
+        binding.rendered = next;
+      }
+    }
+  }
+  function bindRootLanguage(root) {
+    const refresh = () => {
+      localizeRoot(root);
+      for (const select of root.querySelectorAll('[data-test="ui-language"]')) {
+        select.value = currentLanguage();
+        select.setAttribute("aria-label", t("language.label"));
+      }
+      if (document.querySelector(".cqa") === root && !root.classList.contains("cqa--compact")) {
+        document.documentElement.lang = currentLanguage();
+        document.title = t("app.title");
+      }
+    };
+    refresh();
+    return onLanguageChange(refresh);
+  }
+
   // src/domain/waveform.js
   function waveformPeaks(channels, bins = 220) {
     const length = channels[0]?.length ?? 0;
@@ -2063,7 +3680,7 @@
       return { ...conv, status: statusOf(conv.id) };
     }
     async function listConversations(filters = {}) {
-      const { group_id, status, channel, language, q } = filters ?? {};
+      const { group_id, status, channel, language: language2, q } = filters ?? {};
       const needle = text(q).toLowerCase();
       const items = [];
       for (const conv of allConversations()) {
@@ -2071,7 +3688,7 @@
         if (group_id && conv.group_id !== group_id) continue;
         if (status && current2 !== status) continue;
         if (channel && conv.channel !== channel) continue;
-        if (language && conv.language !== language) continue;
+        if (language2 && conv.language !== language2) continue;
         if (needle) {
           const haystack = [conv.id, conv.info?.topic ?? "", ...conv.transcript.map((m) => m.text)].join("\n").toLowerCase();
           if (!haystack.includes(needle)) continue;
@@ -2512,6 +4129,7 @@
       api: oneOf(APIS, chain("api")) ?? "http",
       apiBase: firstText(chain("apiBase")) ?? "api",
       conversationId,
+      language: [opt.language, opt.lang, urlValue("language"), urlValue("lang"), cfg.language, cfg.lang].map(normalizeLanguage).find(Boolean) ?? null,
       role: oneOf(ROLES3, chain("role")) ?? "controller",
       theme: oneOf(THEMES, chain("theme")) ?? "light",
       // true when the host or the URL named the theme: only then does it beat a stored choice
@@ -2538,15 +4156,15 @@
   // src/state/store.js
   function createStore(initial = {}) {
     let state = { ...initial };
-    const listeners = /* @__PURE__ */ new Set();
+    const listeners2 = /* @__PURE__ */ new Set();
     return {
       get: () => state,
       // `partial` is an object, or a function of the current state returning one.
       set(partial) {
         const previous = state;
         state = { ...state, ...typeof partial === "function" ? partial(state) : partial };
-        for (const listener of [...listeners]) {
-          if (!listeners.has(listener)) continue;
+        for (const listener of [...listeners2]) {
+          if (!listeners2.has(listener)) continue;
           try {
             listener(state, previous);
           } catch (error) {
@@ -2555,9 +4173,9 @@
         }
       },
       subscribe(listener) {
-        listeners.add(listener);
+        listeners2.add(listener);
         return () => {
-          listeners.delete(listener);
+          listeners2.delete(listener);
         };
       }
     };
@@ -2574,474 +4192,26 @@
   }
   var isCompact = (state) => state.mode === "embedded" && Boolean(state.conversationId);
 
-  // src/i18n/ru.js
-  var messages = {
-    "player.play": "\u0412\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0441\u0442\u0438",
-    "player.pause": "\u041F\u0430\u0443\u0437\u0430",
-    "player.timeline": "\u041F\u043E\u0437\u0438\u0446\u0438\u044F \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
-    "player.waveformLoading": "\u0421\u0442\u0440\u043E\u0438\u043C \u0437\u0432\u0443\u043A\u043E\u0432\u0443\u044E \u0432\u043E\u043B\u043D\u0443\u2026",
-    "player.waveformUnavailable": "\u0417\u0432\u0443\u043A\u043E\u0432\u0430\u044F \u0432\u043E\u043B\u043D\u0430 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430. \u0417\u0430\u043F\u0438\u0441\u044C \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0441\u043B\u0443\u0448\u0430\u0442\u044C.",
-    "player.speakerNote": "\u0420\u043E\u043B\u0438 \u043F\u043E \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
-    "player.speakerTitle": "\u041E\u0431\u0449\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C, \u0440\u0430\u0437\u0434\u0435\u043B\u0451\u043D\u043D\u0430\u044F \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u0440\u0435\u043F\u043B\u0438\u043A \u0432 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0435",
-    "player.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
-    "player.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
-    "player.mute": "\u0412\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
-    "player.unmute": "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
-    "player.speed": "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u044F",
-    "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "brand.name": "Freedom \u2014 \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E",
-    "nav.label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B",
-    "nav.workspace": "\u041E\u0446\u0435\u043D\u043A\u0430",
-    "nav.checklists": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
-    "nav.appeals": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
-    "nav.compare": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
-    "nav.analytics": "\u041E\u0442\u0447\u0451\u0442\u044B",
-    "nav.accuracy": "\u0422\u043E\u0447\u043D\u043E\u0441\u0442\u044C",
-    "role.label": "\u0420\u043E\u043B\u044C",
-    "role.current": "\u0420\u043E\u043B\u044C: {role}",
-    "role.controller": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440",
-    "role.reviewer": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439",
-    "theme.toggle": "\u0422\u0451\u043C\u043D\u0430\u044F \u0442\u0435\u043C\u0430",
-    "dataset.label": "\u041D\u0430\u0431\u043E\u0440",
-    "dataset.title": "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
-    "workspace.queue": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
-    "workspace.queueClose": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
-    "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
-    "workspace.tab.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430",
-    "workspace.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "workspace.pick": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0438\u0430\u043B\u043E\u0433 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
-    "queue.search": "\u041F\u043E\u0438\u0441\u043A \u043F\u043E ID \u0438\u043B\u0438 \u0442\u0435\u043A\u0441\u0442\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "queue.searchLabel": "\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
-    "queue.filters": "\u0424\u0438\u043B\u044C\u0442\u0440\u044B \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
-    "queue.filter.all": "\u0412\u0441\u0435",
-    "queue.filter.chats": "\u0427\u0430\u0442\u044B",
-    "queue.filter.calls": "\u0417\u0432\u043E\u043D\u043A\u0438",
-    "queue.filter.disputed": "\u0421\u043F\u043E\u0440\u043D\u044B\u0435",
-    "queue.filter.new": "\u041D\u043E\u0432\u044B\u0435",
-    "queue.language": "\u042F\u0437\u044B\u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "queue.language.all": "\u0412\u0441\u0435 \u044F\u0437\u044B\u043A\u0438",
-    "queue.list": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438",
-    "queue.shown": "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E {shown} \u0438\u0437 {total}",
-    "queue.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C\u2026",
-    "queue.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043D\u0430\u0431\u043E\u0440 {group}\u2026",
-    "queue.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
-    "queue.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "queue.empty": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043F\u0443\u0441\u0442\u0430",
-    "queue.emptyNote": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445, \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
-    "queue.noMatch": "\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E",
-    "queue.noMatchNote": "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u0435 \u043F\u043E\u0438\u0441\u043A \u0438\u043B\u0438 \u0444\u0438\u043B\u044C\u0442\u0440\u044B.",
-    "queue.select": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
-    "queue.channel.chat": "\u0447\u0430\u0442",
-    "queue.channel.call": "\u0437\u0432\u043E\u043D\u043E\u043A",
-    "queue.group": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445: {group}",
-    "queue.language.title": "\u042F\u0437\u044B\u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "queue.score.none": "\u043D\u0435 \u043E\u0446\u0435\u043D\u0451\u043D",
-    "queue.score.notCalculated": "\u043D\u0435 \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
-    "queue.tag.appeal": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
-    "queue.tag.appeals": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438: {n}",
-    "queue.tag.grossError": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
-    "queue.tag.needsReview": "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443",
-    "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u0447\u0430\u0441\u0442\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
-    "queue.groupFilter": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
-    "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
-    "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
-    "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
-    "queue.export": "\u0421\u043A\u0430\u0447\u0430\u0442\u044C Excel (CSV)",
-    "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
-    "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
-    "loader.group": "\u0413\u0440\u0443\u043F\u043F\u0430 \u043F\u043E group_id",
-    "loader.groupHint": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u0440\u0438\u0434\u0443\u0442 \u043E\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 \u043D\u0430\u0448 \u0441\u0435\u0440\u0432\u0435\u0440.",
-    "loader.groupPlaceholder": "\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, CTRL",
-    "loader.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
-    "loader.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0433\u0440\u0443\u043F\u043F\u0443 {group}\u2026",
-    "loader.file": "\u0424\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438 (JSON)",
-    "loader.fileHint": "\u041E\u0434\u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C, \u043C\u0430\u0441\u0441\u0438\u0432 \u0437\u0430\u043F\u0438\u0441\u0435\u0439 \u0438\u043B\u0438 \u0432\u0435\u0441\u044C \u043E\u0442\u0432\u0435\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432.",
-    "loader.uploading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0444\u0430\u0439\u043B {name}\u2026",
-    "loader.summary": "\u0412\u0441\u0435\u0433\u043E {total} \xB7 \u043D\u043E\u0432\u044B\u0445 {imported} \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E {updated} \xB7 \u0431\u0435\u0437 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439 {unchanged}",
-    "loader.summaryGroup": "\u041D\u0430\u0431\u043E\u0440 {group}",
-    "loader.error.not_json": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432 \u0444\u043E\u0440\u043C\u0430\u0442\u0435 JSON.",
-    "loader.error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
-    "loader.error.bad_record": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430: \u043D\u0443\u0436\u043D\u044B conversation_id, channel, language \u0438 transcript.",
-    "loader.error.read": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C.",
-    "batch.label": "\u041F\u0430\u043A\u0435\u0442\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430",
-    "batch.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043E: {n}",
-    "batch.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "batch.estimating": "\u0421\u0447\u0438\u0442\u0430\u044E, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0437\u043E\u0432\u043E\u0432\u2026",
-    "batch.estimate": "{dialogs} \xB7 {calls} \u043C\u043E\u0434\u0435\u043B\u0438 \xB7 {cached} \u0438\u0437 \u043A\u044D\u0448\u0430",
-    "batch.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435",
-    "batch.clear": "\u0421\u043D\u044F\u0442\u044C \u0432\u044B\u0431\u043E\u0440",
-    "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
-    "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
-    "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
-    "batch.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u044B\u0435",
-    "batch.done": "\u0413\u043E\u0442\u043E\u0432\u043E: \u043E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
-    "batch.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
-    "batch.interrupted": "\u0421\u0432\u044F\u0437\u044C \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C \u043F\u0440\u0435\u0440\u0432\u0430\u043B\u0430\u0441\u044C \u043D\u0430 {done} \u0438\u0437 {total}: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442\u0441\u044F \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435.",
-    "batch.resume": "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0438\u0442\u044C",
-    "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
-    "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "batch.calls.one": "{n} \u0432\u044B\u0437\u043E\u0432",
-    "batch.calls.few": "{n} \u0432\u044B\u0437\u043E\u0432\u0430",
-    "batch.calls.many": "{n} \u0432\u044B\u0437\u043E\u0432\u043E\u0432",
-    "checklists.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "checklists.note": "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0433\u043E \u043E\u0441\u043D\u043E\u0432\u0435. \u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 \u043C\u043E\u0436\u0435\u0442 \u043E\u0442\u043B\u0438\u0447\u0430\u0442\u044C\u0441\u044F \u043E\u0442 100 \u2014 \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043A 100.",
-    "checklists.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\u2026",
-    "checklists.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
-    "checklists.locked": "\u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D",
-    "checklists.channel.any": "\u043B\u044E\u0431\u043E\u0439 \u043A\u0430\u043D\u0430\u043B",
-    "checklists.channel.chat": "\u0447\u0430\u0442\u044B",
-    "checklists.channel.call": "\u0437\u0432\u043E\u043D\u043A\u0438",
-    "checklists.version": "v{version} (\u0432\u0435\u0440\u0441\u0438\u0439: {count})",
-    "checklists.criteria.one": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
-    "checklists.criteria.few": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
-    "checklists.criteria.many": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
-    "checklists.weights": "\u0441\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 {sum}",
-    "checklists.basedOn": "\u043D\u0430 \u043E\u0441\u043D\u043E\u0432\u0435 \xAB{name}\xBB v{version}",
-    "checklists.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C",
-    "checklists.copy": "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
-    "editor.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u2026",
-    "editor.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "editor.titleNew": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "editor.newName": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "editor.newNote": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438.",
-    "editor.newSection": "\u041D\u043E\u0432\u044B\u0439 \u0440\u0430\u0437\u0434\u0435\u043B",
-    "editor.copyName": "{name} (\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0439)",
-    "editor.lockedNote": "\u0412\u0435\u0440\u0441\u0438\u044F \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430: \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0441\u0442 \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0451 \u043E\u0441\u043D\u043E\u0432\u0435.",
-    "editor.versionNote": "\u041A\u0430\u0436\u0434\u043E\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0451\u0442 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E; \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0438 \u0438\u0445 \u043E\u0446\u0435\u043D\u043A\u0438 \u043D\u0435 \u043C\u0435\u043D\u044F\u044E\u0442\u0441\u044F.",
-    "editor.back": "\u2190 \u0412\u0441\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
-    "editor.apply": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
-    "editor.saved": "\u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E: \xAB{name}\xBB v{version}. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u0435\u0433\u043E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438.",
-    "editor.name": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435",
-    "editor.channel": "\u041A\u0430\u043D\u0430\u043B (\u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u0435\u0434\u0432\u044B\u0431\u043E\u0440)",
-    "editor.sectionTitle": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0440\u0430\u0437\u0434\u0435\u043B\u0430",
-    "editor.critTitle": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
-    "editor.wording": "\u0424\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0430 \u0434\u043B\u044F \u043E\u0446\u0435\u043D\u0449\u0438\u043A\u0430",
-    "editor.type": "\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430",
-    "editor.type.yes_no": "\u0414\u0430 / \u041D\u0435\u0442",
-    "editor.type.scale": "\u0428\u043A\u0430\u043B\u0430",
-    "editor.kind": "\u0412\u0438\u0434",
-    "editor.kind.scored": "\u041E\u0446\u0435\u043D\u043E\u0447\u043D\u044B\u0439",
-    "editor.kind.gross_error": "\u0413\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430 (\u0444\u043B\u0430\u0433, \u0431\u0435\u0437 \u0431\u0430\u043B\u043B\u043E\u0432)",
-    "editor.weight": "\u0412\u0435\u0441",
-    "editor.section": "\u0420\u0430\u0437\u0434\u0435\u043B",
-    "editor.steps": "\u0428\u0430\u0433\u0438 \u0448\u043A\u0430\u043B\u044B: \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435",
-    "editor.stepValue": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
-    "editor.stepLabel": "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
-    "editor.removeStep": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0448\u0430\u0433",
-    "editor.addStep": "+ \u0448\u0430\u0433",
-    "editor.naAllowed": "\u041C\u043E\u0436\u043D\u043E \u043E\u0442\u0432\u0435\u0442\u0438\u0442\u044C N/A",
-    "editor.naCondition": "\u041A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A",
-    "editor.kinds": "\u0412\u0438\u0434\u044B \u043D\u0430\u0440\u0443\u0448\u0435\u043D\u0438\u0439 (\u0447\u0435\u0440\u0435\u0437 \u0437\u0430\u043F\u044F\u0442\u0443\u044E)",
-    "editor.more": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438 \u043C\u043E\u0434\u0435\u043B\u044C",
-    "editor.guidance": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0434\u043B\u044F \u043C\u043E\u0434\u0435\u043B\u0438",
-    "editor.model": "\u041C\u043E\u0434\u0435\u043B\u044C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
-    "editor.modelDefault": "\u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
-    "editor.removeCriterion": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C",
-    "editor.addCriterion": "+ \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
-    "editor.addSection": "+ \u0440\u0430\u0437\u0434\u0435\u043B",
-    "editor.removeSection": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u0430\u0437\u0434\u0435\u043B",
-    "editor.removed": "\u0423\u0434\u0430\u043B\u0435\u043D\u044B:",
-    "editor.restore": "\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
-    "editor.badge.new": "\u043D\u043E\u0432\u044B\u0439",
-    "editor.badge.reworded": "\u0438\u0437\u043C\u0435\u043D\u0451\u043D",
-    "editor.badge.weight": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441",
-    "editor.diff": "\u043D\u043E\u0432\u044B\u0445: {added} \xB7 \u0443\u0434\u0430\u043B\u0435\u043D\u043E: {removed} \xB7 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E: {reworded} \xB7 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441: {weight}",
-    "editor.weightSum": "\u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432: {sum}, \u043D\u0435 100. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E: \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A 100.",
-    "editor.errorCount": "\u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F: {n}",
-    "editor.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "editor.saveAsNew": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "editor.saveVersion": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E",
-    "editor.error.title_required": "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435.",
-    "editor.error.weight_invalid": "\u0412\u0435\u0441 \u2014 \u0447\u0438\u0441\u043B\u043E \u043E\u0442 0 (\u043C\u043E\u0436\u043D\u043E \u0441 \u0437\u0430\u043F\u044F\u0442\u043E\u0439: 7,5).",
-    "editor.error.scale_empty": "\u0423 \u0448\u043A\u0430\u043B\u044B \u0434\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u0445\u043E\u0442\u044F \u0431\u044B \u0434\u0432\u0430 \u0448\u0430\u0433\u0430.",
-    "editor.error.scale_value_invalid": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430 \u2014 \u0447\u0438\u0441\u043B\u043E.",
-    "editor.error.scale_duplicate": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0448\u0430\u0433\u043E\u0432 \u043D\u0435 \u0434\u043E\u043B\u0436\u043D\u044B \u043F\u043E\u0432\u0442\u043E\u0440\u044F\u0442\u044C\u0441\u044F.",
-    "editor.error.na_condition_required": "\u041E\u043F\u0438\u0448\u0438\u0442\u0435, \u043A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A.",
-    "editor.error.section_missing": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B.",
-    "editor.error.criteria_empty": "\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439.",
-    "apply.title": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
-    "apply.what": "\xAB{name}\xBB v{version}: \u043D\u0435\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438\u0437 \u043F\u0440\u0435\u0436\u043D\u0438\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0431\u0435\u0437 \u0432\u044B\u0437\u043E\u0432\u0430 \u043C\u043E\u0434\u0435\u043B\u0438.",
-    "apply.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433\u0438\u2026",
-    "apply.targets": "\u041A\u0430\u043A\u0438\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
-    "apply.control": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 {group}",
-    "apply.controlNone": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 (\u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430)",
-    "apply.dev": "DEV",
-    "apply.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
-    "apply.noAll": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u043E \u0432\u0441\u0435\u043C \u0441\u0440\u0430\u0437\u0443 \u043D\u0435\u043B\u044C\u0437\u044F: \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440.",
-    "apply.run": "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
-    "apply.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
-    "apply.compare": "\u0421\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
-    "player.label": "\u0417\u0430\u043F\u0438\u0441\u044C \u0437\u0432\u043E\u043D\u043A\u0430",
-    "player.needsImport": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0433\u0440\u0443\u043F\u043F\u0443, \u0447\u0442\u043E\u0431\u044B \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
-    "player.none": "\u0417\u0430\u043F\u0438\u0441\u0438 \u044D\u0442\u043E\u0433\u043E \u0437\u0432\u043E\u043D\u043A\u0430 \u043D\u0435\u0442.",
-    "player.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
-    "player.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
-    "player.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "player.seek": "\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A {time} \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
-    "compare.title": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
-    "compare.note": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B (\u0441 \u0440\u0435\u0448\u0435\u043D\u0438\u044F\u043C\u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0445), \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u043A\u0430\u0436\u0434\u0430\u044F \u0440\u0430\u0437\u043D\u0438\u0446\u0430 \u0438\u0434\u0451\u0442 \u043E\u0442 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430.",
-    "compare.from": "\u0411\u044B\u043B\u043E",
-    "compare.to": "\u0421\u0442\u0430\u043B\u043E",
-    "compare.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
-    "compare.group.all": "\u0412\u0441\u0435 \u0433\u0440\u0443\u043F\u043F\u044B",
-    "compare.choose": "\u2014 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044E \u2014",
-    "compare.pickTitle": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435, \u0447\u0442\u043E \u0441\u0440\u0430\u0432\u043D\u0438\u0442\u044C",
-    "compare.pickNote": "\u0414\u0432\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 (\u0438\u043B\u0438 \u0434\u0432\u0430 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430): \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438.",
-    "compare.loading": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u2026",
-    "compare.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
-    "compare.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "compare.empty": "\u041D\u0435\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432, \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u043E\u0431\u0435\u0438\u043C\u0438 \u0432\u0435\u0440\u0441\u0438\u044F\u043C\u0438",
-    "compare.emptyNote": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C (\xAB\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\xBB \u0432 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430), \u0438 \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
-    "compare.summary": "{changed} \u0438\u0437 {of} {verb}, \u0432 \u0441\u0440\u0435\u0434\u043D\u0435\u043C {avg}",
-    "compare.ofDialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "compare.ofDialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "compare.ofDialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "compare.changedVerb.one": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0441\u044F",
-    "compare.changedVerb.few": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
-    "compare.changedVerb.many": "\u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C",
-    "compare.table": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438: \u0431\u044B\u043B\u043E, \u0441\u0442\u0430\u043B\u043E, \u0440\u0430\u0437\u043D\u0438\u0446\u0430",
-    "compare.col.id": "\u0414\u0438\u0430\u043B\u043E\u0433",
-    "compare.col.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
-    "compare.col.old": "\u0411\u044B\u043B\u043E",
-    "compare.col.new": "\u0421\u0442\u0430\u043B\u043E",
-    "compare.col.delta": "\u0394",
-    "compare.sortBy": "\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E \u0441\u0442\u043E\u043B\u0431\u0446\u0443 \xAB{column}\xBB",
-    "compare.openTitle": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438 \u0440\u044F\u0434\u043E\u043C",
-    "compare.side.label": "\u041E\u0431\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0440\u044F\u0434\u043E\u043C",
-    "compare.side.title": "\u0414\u0438\u0430\u043B\u043E\u0433 {id}",
-    "compare.side.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433",
-    "compare.side.totals": "{old} \u2192 {new} ({delta})",
-    "compare.side.all": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
-    "compare.side.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438: \u0431\u044B\u043B\u043E \u0438 \u0441\u0442\u0430\u043B\u043E",
-    "compare.side.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0438\u2026",
-    "compare.side.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438",
-    "compare.side.none": "\u041E\u0442\u0432\u0435\u0442\u044B \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C \u043D\u0435 \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C.",
-    "compare.side.absent": "\u043D\u0435\u0442 \u0432 \u044D\u0442\u043E\u0439 \u0432\u0435\u0440\u0441\u0438\u0438",
-    "compare.side.noResult": "\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438",
-    "compare.side.onlyOld": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0411\u044B\u043B\u043E\xBB",
-    "compare.side.onlyNew": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432 \xAB\u0421\u0442\u0430\u043B\u043E\xBB",
-    "compare.side.reworded": "\u0431\u044B\u043B\u043E: {title}",
-    "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
-    "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
-    "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "transcript.empty": "\u041D\u0435\u0442 \u0440\u0435\u043F\u043B\u0438\u043A",
-    "transcript.emptyNote": "\u0412 \u044D\u0442\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438.",
-    "transcript.label": "\u0414\u0438\u0430\u043B\u043E\u0433",
-    "transcript.lines": "\u0420\u0435\u043F\u043B\u0438\u043A: {n}",
-    "transcript.speaker.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
-    "transcript.speaker.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
-    "transcript.speaker.bot": "\u0411\u043E\u0442",
-    "transcript.speaker.system": "\u0421\u0438\u0441\u0442\u0435\u043C\u0430",
-    "transcript.speaker.other": "\u0414\u0440\u0443\u0433\u043E\u0435",
-    "transcript.duplicate": "\u043F\u043E\u0432\u0442\u043E\u0440",
-    "transcript.duplicateTitle": "\u041F\u043E\u0432\u0442\u043E\u0440 \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0435\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438",
-    "transcript.expectedHere": "\u0437\u0434\u0435\u0441\u044C \u043E\u0436\u0438\u0434\u0430\u043B\u043E\u0441\u044C",
-    "scorecard.label": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "scorecard.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
-    "scorecard.checklistOption": "{name} \xB7 v{version}",
-    "scorecard.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C",
-    "scorecard.rerun": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C",
-    "scorecard.runFull": "\u041F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0451",
-    "scorecard.runFullTitle": "\u0417\u0430\u043D\u043E\u0432\u043E \u043E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438, \u043D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u044F \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B",
-    "scorecard.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438",
-    "scorecard.progress": "\u0418\u0434\u0451\u0442 \u043E\u0446\u0435\u043D\u043A\u0430: {done}/{total}",
-    "scorecard.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
-    "scorecard.jobFailed": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C",
-    "scorecard.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "scorecard.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
-    "scorecard.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443",
-    "scorecard.noChecklist": "\u041D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430",
-    "scorecard.noChecklistNote": "\u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B\u0435 \xAB\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\xBB.",
-    "scorecard.empty": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0446\u0435\u043D\u0451\u043D",
-    "scorecard.emptyNote": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0446\u0435\u043D\u0438\u0442\u044C\xBB.",
-    "scorecard.demoBadge": "\u0434\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u043A\u0430",
-    "scorecard.demoTitle": "\u041E\u0446\u0435\u043D\u043A\u0443 \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0430 \u0434\u0435\u043C\u043E\u043D\u0441\u0442\u0440\u0430\u0446\u0438\u043E\u043D\u043D\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C, \u0430 \u043D\u0435 \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0430\u044F",
-    "scorecard.totalLabel": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0443",
-    "scorecard.totalNone": "\u043D\u0435 \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
-    "scorecard.outOf": "/ 100",
-    "scorecard.originalTotal": "\u0431\u044B\u043B\u043E {total}",
-    "scorecard.originalTitle": "\u0418\u0442\u043E\u0433 \u043F\u043E \u043E\u0442\u0432\u0435\u0442\u0430\u043C \u043C\u043E\u0434\u0435\u043B\u0438, \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
-    "scorecard.grossOn": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
-    "scorecard.grossOnKinds": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430: {kinds}",
-    "scorecard.grossOff": "\u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A \u043D\u0435\u0442",
-    "scorecard.sections": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u043C",
-    "scorecard.sectionScore": "{points} \u0438\u0437 {available} \xB7 {percent} %",
-    "scorecard.sectionNone": "\u043D\u0435\u0442 \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u043C\u044B\u0445 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
-    "scorecard.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
-    "scorecard.cost": "\u0441\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C ${cost}",
-    "scorecard.criteria": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438",
-    "scorecard.answer.yes": "\u0414\u0430",
-    "scorecard.answer.no": "\u041D\u0435\u0442",
-    "scorecard.answer.na": "N/A",
-    "scorecard.answer.step": "\u0448\u0430\u0433 {value}",
-    "scorecard.points": "{earned} \u0438\u0437 {max}",
-    "scorecard.weight": "\u0432\u0435\u0441 {from} \u2192 {to}",
-    "scorecard.naWeight": "\u0432\u0435\u0441 \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D \u043F\u043E \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u043C",
-    "scorecard.grossNoScore": "\u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u0438\u0442\u043E\u0433",
-    "scorecard.modelAnswer": "\u043C\u043E\u0434\u0435\u043B\u044C: {answer}",
-    "scorecard.modelAnswerTitle": "\u041E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
-    "scorecard.evidenceLine": "\u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
-    "scorecard.evidenceShow": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435: \u0440\u0435\u043F\u043B\u0438\u043A\u0430 {n}",
-    "scorecard.checkedRange": "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D\u043E: \u0440\u0435\u043F\u043B\u0438\u043A\u0438 {from}\u2013{to}",
-    "scorecard.coaching": "\u0427\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C",
-    "scorecard.needsReview": "\u043F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C",
-    "scorecard.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u044D\u0442\u043E\u043C \u043E\u0442\u0432\u0435\u0442\u0435",
-    "scorecard.carried": "\u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E",
-    "scorecard.carriedTitle": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0441\u044E\u0434\u0430",
-    "scorecard.dispute": "\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C",
-    "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0430",
-    "scorecard.disputeEarlierTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435",
-    "scorecard.disputeEarlierTitle": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043F\u043E\u0434\u0430\u043D\u0430 \u043D\u0430 \u043F\u0440\u0435\u0436\u043D\u044E\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u044D\u0442\u043E\u0433\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0438 \u0435\u0449\u0451 \u043D\u0435 \u0440\u0435\u0448\u0435\u043D\u0430",
-    "scorecard.disputeOpenTitle": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
-    "scorecard.info.title": "\u041D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0443",
-    "scorecard.info.topic": "\u0422\u0435\u043C\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
-    "scorecard.info.mood": "\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u0438\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
-    "scorecard.info.outcome": "\u0418\u0442\u043E\u0433 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
-    "scorecard.info.firstReaction": "\u041F\u0435\u0440\u0432\u0430\u044F \u0440\u0435\u0430\u043A\u0446\u0438\u044F",
-    "scorecard.info.longestWait": "\u0421\u0430\u043C\u043E\u0435 \u0434\u043E\u043B\u0433\u043E\u0435 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u0435",
-    "scorecard.info.ending": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
-    "scorecard.info.thresholdOk": "\u0432 \u043F\u0440\u0435\u0434\u0435\u043B\u0430\u0445 3 \u043C\u0438\u043D\u0443\u0442",
-    "scorecard.info.thresholdOver": "\u0434\u043E\u043B\u044C\u0448\u0435 3 \u043C\u0438\u043D\u0443\u0442",
-    "scorecard.info.unknown": "\u043D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445",
-    "scorecard.outcome.resolved": "\u0432\u043E\u043F\u0440\u043E\u0441 \u0440\u0435\u0448\u0451\u043D",
-    "scorecard.outcome.passed_to_specialists": "\u043F\u0435\u0440\u0435\u0434\u0430\u043D \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u0438\u0441\u0442\u0430\u043C",
-    "scorecard.outcome.unresolved": "\u043D\u0435 \u0440\u0435\u0448\u0451\u043D",
-    "scorecard.outcome.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
-    "scorecard.ending.operator_closed": "\u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440 \u0437\u0430\u043A\u0440\u044B\u043B \u0434\u0438\u0430\u043B\u043E\u0433",
-    "scorecard.ending.client_left": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0443\u0448\u0451\u043B",
-    "scorecard.ending.connection_lost": "\u043E\u0431\u0440\u044B\u0432 \u0441\u0432\u044F\u0437\u0438",
-    "scorecard.ending.client_ended_call": "\u043A\u043B\u0438\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u0437\u0432\u043E\u043D\u043E\u043A",
-    "scorecard.ending.normal": "\u043E\u0431\u044B\u0447\u043D\u043E\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u0435",
-    "history.title": "\u0418\u0441\u0442\u043E\u0440\u0438\u044F \u043E\u0446\u0435\u043D\u043A\u0438",
-    "history.original": "\u0418\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
-    "history.appeal": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F: \xAB{criterion}\xBB, \u043E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438 \xAB{answer}\xBB",
-    "history.changed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E \u043D\u0430 \xAB{answer}\xBB",
-    "history.confirmed": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
-    "history.pending": "\u0416\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
-    "history.carried": "\u041F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB: \xAB{answer}\xBB",
-    "history.final": "\u0418\u0442\u043E\u0433\u043E\u0432\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
-    "history.openAppeal": "\u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
-    "history.earlierOpen": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435: \xAB{criterion}\xBB, \u0436\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
-    "history.decidedAfter": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u043F\u043E\u0441\u043B\u0435 \u044D\u0442\u043E\u0439 \u043E\u0446\u0435\u043D\u043A\u0438: \u043F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C",
-    "history.olderVersion": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043E\u0442\u043D\u043E\u0441\u0438\u043B\u043E\u0441\u044C \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
-    "appeal.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
-    "appeal.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
-    "appeal.current": "\u0421\u0435\u0439\u0447\u0430\u0441: \xAB{answer}\xBB",
-    "appeal.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439",
-    "appeal.commentPlaceholder": "\u041F\u043E\u0447\u0435\u043C\u0443 \u043E\u0446\u0435\u043D\u043A\u0430 \u043D\u0435\u0432\u0435\u0440\u043D\u0430: \u0447\u0442\u043E \u0432 \u0434\u0438\u0430\u043B\u043E\u0433\u0435 \u044D\u0442\u043E \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442",
-    "appeal.note": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043C\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439; \u0438\u0442\u043E\u0433 \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u044F.",
-    "appeal.submit": "\u041F\u043E\u0434\u0430\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
-    "appeal.cancel": "\u041E\u0442\u043C\u0435\u043D\u0430",
-    "appeals.list": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
-    "appeals.filters": "\u0424\u0438\u043B\u044C\u0442\u0440 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439",
-    "appeals.filter.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435",
-    "appeals.filter.decided": "\u0420\u0435\u0448\u0451\u043D\u043D\u044B\u0435",
-    "appeals.filter.all": "\u0412\u0441\u0435",
-    "appeals.status.open": "\u043E\u0442\u043A\u0440\u044B\u0442\u0430",
-    "appeals.status.decided": "\u0440\u0435\u0448\u0435\u043D\u0430",
-    "appeals.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438\u2026",
-    "appeals.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
-    "appeals.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "appeals.empty": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442",
-    "appeals.emptyNote": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440 \u043F\u043E\u0434\u0430\u0451\u0442 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \xAB\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C\xBB \u043D\u0430 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
-    "appeals.noMatch": "\u0417\u0434\u0435\u0441\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0439 \u043D\u0435\u0442",
-    "appeals.pick": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E \u0432 \u0441\u043F\u0438\u0441\u043A\u0435",
-    "appeals.back": "\u2190 \u0412\u0441\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
-    "review.label": "\u0420\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438",
-    "review.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \xB7 {id}",
-    "review.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E\u2026",
-    "review.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
-    "review.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "review.openCard": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "review.criterion": "\u041E\u0441\u043F\u043E\u0440\u0435\u043D\u043D\u044B\u0439 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
-    "review.comment": "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440\u0430",
-    "review.fragment": "\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
-    "review.noFragment": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043B\u0430 \u0441\u0442\u0440\u043E\u043A\u0438; \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430.",
-    "review.opinion": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0438",
-    "review.opinionPending": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0435\u0440\u0435\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u044F\u2026",
-    "review.opinionAnswer": "\u041C\u043E\u0434\u0435\u043B\u044C \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442: \xAB{answer}\xBB",
-    "review.opinionAdvice": "\u042D\u0442\u043E \u0441\u043E\u0432\u0435\u0442: \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439.",
-    "review.opinionUnavailable": "\u0412\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E.",
-    "review.decision": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435",
-    "review.readOnly": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439. \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0440\u043E\u043B\u044C, \u0447\u0442\u043E\u0431\u044B \u0440\u0435\u0448\u0438\u0442\u044C.",
-    "review.confirmed": "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C",
-    "review.changed": "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C",
-    "review.newAnswer": "\u041D\u043E\u0432\u044B\u0439 \u043E\u0442\u0432\u0435\u0442",
-    "review.reason": "\u041F\u0440\u0438\u0447\u0438\u043D\u0430 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
-    "review.reasonPlaceholder": "\u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E: \u043D\u0430 \u0447\u0451\u043C \u043E\u0441\u043D\u043E\u0432\u0430\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
-    "review.submit": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
-    "review.decidedConfirmed": "\u041E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0430",
-    "review.decidedChanged": "\u041E\u0442\u0432\u0435\u0442 \u0438\u0437\u043C\u0435\u043D\u0451\u043D \u043D\u0430 \xAB{answer}\xBB",
-    "review.result": "\u0418\u0442\u043E\u0433: {from} \u2192 {to}",
-    "review.saved": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
-    "review.reloading": "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u0430\u043D\u0435\u043B\u0438\u2026",
-    "review.reloadFailed": "\u041F\u0430\u043D\u0435\u043B\u044C \u043D\u0435 \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u0430\u0441\u044C, \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u0443\u0436\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E.",
-    "review.reload": "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C",
-    "view.soon": "\u0420\u0430\u0437\u0434\u0435\u043B \u0435\u0449\u0451 \u043D\u0435 \u0433\u043E\u0442\u043E\u0432.",
-    "notfound.title": "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430",
-    "notfound.home": "\u041A \u043E\u0446\u0435\u043D\u043A\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "toast.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
-    "toast.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
-    "error.network": "\u041D\u0435\u0442 \u0441\u0432\u044F\u0437\u0438 \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u0438 \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435.",
-    "error.timeout": "\u0421\u0435\u0440\u0432\u0435\u0440 \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u0432\u043E\u0432\u0440\u0435\u043C\u044F. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443.",
-    "error.bad_response": "\u0421\u0435\u0440\u0432\u0435\u0440 \u0432\u0435\u0440\u043D\u0443\u043B \u043D\u0435\u043E\u0436\u0438\u0434\u0430\u043D\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442.",
-    "error.model_key_missing": "\u041D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u043D\u043E\u0432\u0443\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u043D\u0435\u043B\u044C\u0437\u044F.",
-    "error.invalid_request": "\u0417\u0430\u043F\u0440\u043E\u0441 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D \u043D\u0435\u0432\u0435\u0440\u043D\u043E. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0435.",
-    "error.na_not_allowed": "\u0414\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F \u043E\u0442\u0432\u0435\u0442 \xABN/A\xBB \u043D\u0435\u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C.",
-    "error.step_not_in_scale": "\u0422\u0430\u043A\u043E\u0433\u043E \u0448\u0430\u0433\u0430 \u043D\u0435\u0442 \u0432 \u0448\u043A\u0430\u043B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
-    "error.bad_answer": "\u041D\u0435\u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u044B\u0439 \u043E\u0442\u0432\u0435\u0442 \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F.",
-    "error.reason_required": "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0440\u0438\u0447\u0438\u043D\u0443 \u0440\u0435\u0448\u0435\u043D\u0438\u044F.",
-    "error.invalid_checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D \u043D\u0435\u0432\u0435\u0440\u043D\u043E. \u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F.",
-    "error.appeal_already_decided": "\u041F\u043E \u044D\u0442\u043E\u0439 \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u0443\u0436\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435.",
-    "error.appeal_already_open": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F.",
-    "error.checklist_locked": "\u042D\u0442\u0430 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435 \u0435\u0451 \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442.",
-    "error.organizer_url_missing": "\u041D\u0435 \u0437\u0430\u0434\u0430\u043D \u0430\u0434\u0440\u0435\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445: \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043D\u0435\u043B\u044C\u0437\u044F.",
-    "error.role_not_allowed": "\u042D\u0442\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E \u0434\u043B\u044F \u0432\u0430\u0448\u0435\u0439 \u0440\u043E\u043B\u0438.",
-    "error.not_found": "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E: \u0437\u0430\u043F\u0438\u0441\u044C \u0443\u0434\u0430\u043B\u0435\u043D\u0430 \u0438\u043B\u0438 \u0441\u0441\u044B\u043B\u043A\u0430 \u0443\u0441\u0442\u0430\u0440\u0435\u043B\u0430.",
-    "error.organizer_error": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443 \u043F\u043E\u0437\u0436\u0435.",
-    "error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
-    "error.bad_record": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u0435\u0441\u0442\u044C \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C.",
-    "error.bad_record_at": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430.",
-    "error.internal_error": "\u041E\u0448\u0438\u0431\u043A\u0430 \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443 \u043F\u043E\u0437\u0436\u0435.",
-    "error.generic": "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443."
-  };
-  var has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
-  function format(template, params) {
-    if (!params) return template;
-    return template.replace(/\{(\w+)\}/g, (placeholder2, name) => has(params, name) ? String(params[name]) : placeholder2);
-  }
-  function t(key, params) {
-    return has(messages, key) ? format(messages[key], params) : key;
-  }
-  function pluralForm(n) {
-    const abs = Math.abs(Math.trunc(Number(n)));
-    const ten = abs % 10;
-    const hundred = abs % 100;
-    if (ten === 1 && hundred !== 11) return "one";
-    if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "few";
-    return "many";
-  }
-  function tp(base, n, params = {}) {
-    return t(`${base}.${pluralForm(n)}`, { ...params, n });
-  }
-
   // src/ui/dom.js
   var SVG_NS = "http://www.w3.org/2000/svg";
-  var PROPS = /* @__PURE__ */ new Set(["class", "text", "attrs", "data", "on", "style"]);
+  var PROPS = /* @__PURE__ */ new Set(["class", "text", "attrs", "data", "on", "style", "verbatim"]);
   function append(parent, children) {
     for (const child of children) {
       if (child === null || child === void 0 || child === false || child === true) continue;
       if (Array.isArray(child)) append(parent, child);
-      else parent.append(child);
+      else if (typeof child === "string" || typeof child === "number") {
+        const node = document.createTextNode("");
+        if (parent.closest?.("[data-i18n-verbatim]")) node.textContent = String(child);
+        else bindLocalizedNode(node, child);
+        parent.append(node);
+      } else parent.append(child);
     }
   }
   function setAttrs(el, attrs) {
     for (const [name, value2] of Object.entries(attrs)) {
       if (value2 === null || value2 === void 0 || value2 === false) continue;
       if (name === "style" || /^on/i.test(name)) throw new TypeError(`dom: attribute "${name}" is not allowed`);
-      el.setAttribute(name, value2 === true ? "" : String(value2));
+      setLocalizedAttribute(el, name, value2 === true ? "" : String(value2));
     }
   }
   var kebab = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
@@ -3056,7 +4226,8 @@
       }
       const { class: className, text: text3, attrs, data, on, style } = props;
       if (className) el.className = Array.isArray(className) ? className.filter(Boolean).join(" ") : String(className);
-      if (text3 !== void 0 && text3 !== null) el.textContent = String(text3);
+      if (props.verbatim) el.setAttribute("data-i18n-verbatim", "");
+      if (text3 !== void 0 && text3 !== null) setLocalizedText(el, String(text3));
       if (attrs) setAttrs(el, attrs);
       if (data) {
         for (const [key, value2] of Object.entries(data)) {
@@ -3322,7 +4493,7 @@
     const select = h(
       "select",
       { class: ["cqa-sc-select", "cqa-ap-select"], attrs: { "aria-label": t("appeal.criterion") }, data: { test: "appeal-criterion" }, on: { change: () => paint() } },
-      choices.map((choice) => h("option", { attrs: { value: choice.id }, text: choice.title }))
+      choices.map((choice) => h("option", { attrs: { value: choice.id }, verbatim: true, text: choice.title }))
     );
     if (choices.some((choice) => choice.id === criterionId)) select.value = criterionId;
     const comment = h("textarea", {
@@ -3335,7 +4506,7 @@
     const cancel = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("appeal.cancel"), data: { test: "appeal-cancel" }, on: { click: () => close() } });
     function paint() {
       const choice = choices.find((c) => c.id === select.value);
-      current2.textContent = choice ? t("appeal.current", { answer: choice.answer }) : "";
+      setLocalizedText(current2, choice ? t("appeal.current", { answer: choice.answer }) : "");
       submit.disabled = busy || comment.value.trim() === "";
       select.disabled = busy;
     }
@@ -3431,14 +4602,14 @@
     const table2 = h(
       "table",
       { class: "cqa-voice-table" },
-      h("caption", { text: "\u041F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u0432\u044F\u0437\u0430\u043D\u043D\u044B\u0445 \u0441 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u043C" }),
-      h("thead", {}, h("tr", {}, ["\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442", "\u0414\u0438\u0430\u043F\u0430\u0437\u043E\u043D \u0442\u043E\u043D\u0430, \u043F\u043E\u043B\u0443\u0442\u043E\u043D\u043E\u0432", "\u0422\u0435\u043C\u043F, \u0441\u043B\u043E\u0432/\u043C\u0438\u043D", "\u041F\u0430\u0443\u0437\u044B, \u0441", "\u041F\u0435\u0440\u0435\u0431\u0438\u0432\u0430\u043D\u0438\u044F, \u0441"].map((text3) => h("th", { attrs: { scope: "col" }, text: text3 })))),
+      h("caption", { text: t("voice.caption") }),
+      h("thead", {}, h("tr", {}, [t("voice.segment"), t("voice.pitch"), t("voice.rate"), t("voice.pauses"), t("voice.overlap")].map((text3) => h("th", { attrs: { scope: "col" }, text: text3 })))),
       h("tbody", {}, body)
     );
     return h(
       "div",
       { class: "cqa-voice", data: { test: "voice-measurements" } },
-      h("p", { text: "\u0418\u0437\u043C\u0435\u0440\u0435\u043D\u043D\u044B\u0435 \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 + \u043E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438" }),
+      h("p", { text: t("voice.title") }),
       h("div", { class: "cqa-table-scroll" }, table2)
     );
   }
@@ -3636,11 +4807,11 @@
       const keyMissing = view.server?.model_key_configured === false;
       const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
       const off = view.busy || keyMissing || !ready;
-      runButton.textContent = t(view.evaluation ? "scorecard.rerun" : "scorecard.run");
+      setLocalizedText(runButton, t(view.evaluation ? "scorecard.rerun" : "scorecard.run"));
       for (const button of [runButton, fullButton]) {
         button.disabled = off;
-        if (keyMissing) button.setAttribute("title", t("scorecard.keyMissing"));
-        else if (button === fullButton) button.setAttribute("title", t("scorecard.runFullTitle"));
+        if (keyMissing) setLocalizedAttribute(button, "title", t("scorecard.keyMissing"));
+        else if (button === fullButton) setLocalizedAttribute(button, "title", t("scorecard.runFullTitle"));
         else button.removeAttribute("title");
       }
       hint.hidden = !keyMissing;
@@ -3824,7 +4995,7 @@
           { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } },
           h("b", { class: "cqa-sc-hist-what", text: what }),
           appealId ? h("a", { class: ["cqa-link", "cqa-sc-hist-link"], attrs: { href: href("appeal", { id: appealId }) }, text: t("history.openAppeal") }) : null,
-          note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null
+          note ? h("p", { class: "cqa-sc-hist-note", verbatim: true, text: note }) : null
         )
       );
       item("original", t("history.original", { total: totalText2(evaluation.original_total) }));
@@ -3900,7 +5071,7 @@
         return h(
           "div",
           { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
-          h("span", { class: "cqa-sc-sec-name", text: section.title }),
+          h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
           h("span", {
             class: ["cqa-sc-sec-score", "num"],
             text: has2 ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
@@ -3940,7 +5111,7 @@
       const info = conversation?.info ?? null;
       const facts = conversation?.facts ?? null;
       const rows = [];
-      const row = (key, test, ...value2) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value2)));
+      const row = (key, test, ...value2) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", { verbatim: key === "topic" || key === "mood" }, ...value2)));
       if (info?.topic) row("topic", "info-topic", info.topic);
       const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
       if (mood.length > 0) row("mood", "info-mood", mood.join(" \u2192 "));
@@ -3979,7 +5150,7 @@
           return card;
         });
         if (items.length === 0) continue;
-        list.append(h("h3", { class: "cqa-sc-sec-title", text: section.title }), ...items);
+        list.append(h("h3", { class: "cqa-sc-sec-title", verbatim: true, text: section.title }), ...items);
       }
       if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
       return list;
@@ -4017,7 +5188,7 @@
               on: { click: () => jump(criterion, result, item, activate) }
             },
             h("span", { class: "cqa-sc-ev-n", text: `\u21B3 ${t("scorecard.evidenceLine", { n: item.message_index + 1 })}${expected ? ` \xB7 ${t("transcript.expectedHere")}` : ""}` }),
-            item.quote ? h("span", { class: "cqa-sc-ev-quote", text: clip(item.quote, EVIDENCE_QUOTE_MAX) }) : null
+            item.quote ? h("span", { class: "cqa-sc-ev-quote", verbatim: true, text: clip(item.quote, EVIDENCE_QUOTE_MAX) }) : null
           )
         );
       });
@@ -4036,13 +5207,13 @@
         h(
           "div",
           { class: "cqa-sc-r1" },
-          h("b", { class: "cqa-sc-crit-title", text: criterion.title }),
+          h("b", { class: "cqa-sc-crit-title", verbatim: true, text: criterion.title }),
           tag(answer.kind, answer.text, { data: { test: "answer" } }),
           h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "points" } })
         ),
         marks.length > 0 ? h("div", { class: "cqa-sc-marks" }, marks) : null,
-        result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
-        shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
+        result.explanation ? h("p", { class: "cqa-sc-why", verbatim: true, text: result.explanation, data: { test: "why" } }) : null,
+        shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", verbatim: true, text: result.na_reason, data: { test: "na-reason" } }) : null,
         evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
         renderVoiceMeasurements(view.conversation, result, (measurement) => {
           store.set({ pane: "transcript" });
@@ -4051,7 +5222,7 @@
           transcript?.seekSeconds?.(measurement.from_seconds);
         }),
         range && Number.isInteger(range.from) && Number.isInteger(range.to) ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } }) : null,
-        result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
+        result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", verbatim: true, text: result.coaching })) : null,
         controller ? h(
           "div",
           { class: "cqa-sc-acts" },
@@ -4231,7 +5402,7 @@
     async function run(label, action) {
       if (busy || closed) return;
       busy = true;
-      status.textContent = label;
+      setLocalizedText(status, label);
       paint();
       try {
         const summary = await action();
@@ -4243,7 +5414,7 @@
         if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
       } finally {
         busy = false;
-        status.textContent = "";
+        setLocalizedText(status, "");
         if (!closed) paint();
       }
     }
@@ -4404,19 +5575,19 @@
         return;
       }
       if (!bar2.isConnected) host.replaceChildren(bar2);
-      count.textContent = t("batch.selected", { n: picked.size });
+      setLocalizedText(count, t("batch.selected", { n: picked.size }));
       const sel = current2();
       const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
       if (at >= 0) select.value = String(at);
       select.disabled = active || view.options.length === 0;
-      if (view.estimate) estimate.textContent = estimateText(view.estimate);
-      else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
+      if (view.estimate) setLocalizedText(estimate, estimateText(view.estimate));
+      else setLocalizedText(estimate, view.estimating || !view.ready ? t("batch.estimating") : "");
       const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
       hint.hidden = !keyMissing;
       runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
       clear(progress);
       const { lock = null, job = null } = slot.state() ?? {};
-      if (lock === "starting") progress.append(t("batch.starting"));
+      if (lock === "starting") progress.append(h("span", { text: t("batch.starting") }));
       else if (job && (lock === "interrupted" || lock === "resuming")) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
@@ -4424,7 +5595,7 @@
         );
       } else if (job) {
         const running = lock === "watching";
-        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        progress.append(h("span", { text: t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }) }));
         if (job.failed > 0) {
           progress.append(
             h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
@@ -4592,31 +5763,31 @@
     const duration = () => isTime(audio.duration) && audio.duration > 0 ? audio.duration : envelope?.duration ?? 0;
     function paintControls() {
       playIcon.replaceChildren(svg("path", { d: audio.paused ? "M8 5v14l11-7Z" : "M6 5h4v14H6zM14 5h4v14h-4z", fill: "currentColor" }));
-      play.setAttribute("aria-label", t(audio.paused ? "player.play" : "player.pause"));
+      setLocalizedAttribute(play, "aria-label", t(audio.paused ? "player.play" : "player.pause"));
       mute.replaceChildren(svg(
         "svg",
         { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", "stroke-width": 1.8, "stroke-linecap": "round", "aria-hidden": "true" },
         svg("path", { d: "M11 4 5 9H2v6h3l6 5Z" }),
         svg("path", { d: audio.muted ? "m16 9 6 6m0-6-6 6" : "M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14" })
       ));
-      mute.setAttribute("aria-label", t(audio.muted ? "player.unmute" : "player.mute"));
+      setLocalizedAttribute(mute, "aria-label", t(audio.muted ? "player.unmute" : "player.mute"));
       mute.setAttribute("aria-pressed", String(audio.muted));
     }
     function paintProgress() {
       const length = duration();
       const seconds = audio.currentTime || 0;
       const fraction2 = length ? Math.min(1, seconds / length) : 0;
-      clock.textContent = `${formatOffset(seconds) || "0:00"} / ${length ? formatOffset(length) : "\u2014"}`;
+      setLocalizedText(clock, `${formatOffset(seconds) || "0:00"} / ${length ? formatOffset(length) : "\u2014"}`);
       scrubber.disabled = !length;
       scrubber.max = String(length || 1);
       scrubber.value = String(seconds);
       scrubber.style.setProperty("--progress", `${fraction2 * 100}%`);
-      scrubber.setAttribute("aria-valuetext", clock.textContent);
+      setLocalizedAttribute(scrubber, "aria-valuetext", clock.textContent);
       const window2 = windows.find((part) => seconds >= part.from && seconds < part.to);
       for (const track of tracks) {
         track.plot.setAttribute("aria-valuemax", String(length));
         track.plot.setAttribute("aria-valuenow", String(seconds));
-        track.plot.setAttribute("aria-valuetext", clock.textContent);
+        setLocalizedAttribute(track.plot, "aria-valuetext", clock.textContent);
         track.cursor.style.left = `${fraction2 * 100}%`;
         track.selection.hidden = !window2 || window2.role !== track.role;
         if (window2) {
@@ -4639,17 +5810,17 @@
     }
     async function loadWaveform() {
       const mine = ++waveRun;
-      waveformNote.textContent = t("player.waveformLoading");
+      setLocalizedText(waveformNote, t("player.waveformLoading"));
       try {
         const data = await api.getAudioWaveform(src, { signal: controller.signal });
         if (destroyed || mine !== waveRun) return;
         envelope = data;
-        waveformNote.textContent = "";
+        setLocalizedText(waveformNote, "");
         el.setAttribute("data-waveform", "ready");
         drawWaves();
       } catch {
         if (destroyed || mine !== waveRun) return;
-        waveformNote.textContent = t("player.waveformUnavailable");
+        setLocalizedText(waveformNote, t("player.waveformUnavailable"));
         el.setAttribute("data-waveform", "unavailable");
       }
     }
@@ -4676,7 +5847,7 @@
         await audio.play();
       } catch {
         if (!destroyed) {
-          status.textContent = t("player.failed");
+          setLocalizedText(status, t("player.failed"));
           status.hidden = false;
         }
       }
@@ -4744,7 +5915,7 @@
     audio.addEventListener("error", () => {
       if (destroyed) return;
       status.replaceChildren(
-        t("player.failed"),
+        h("span", { text: t("player.failed") }),
         " ",
         h("button", { class: ["cqa-link", "cqa-player-retry"], attrs: { type: "button" }, text: t("player.retry"), data: { test: "player-retry" }, on: { click: () => {
           audio.load();
@@ -4830,7 +6001,7 @@
       time,
       message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
     );
-    const text3 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+    const text3 = h("p", { class: "cqa-msg-text", verbatim: true, text: typeof message?.text === "string" ? message.text : "" });
     const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text3);
     return { el, flag };
   }
@@ -4858,7 +6029,7 @@
         const row = rows[i];
         row.el.classList.remove("is-evidence", "is-expected", "is-checked");
         row.el.removeAttribute("data-criterion");
-        row.flag.textContent = "";
+        setLocalizedText(row.flag, "");
       }
       marked = [];
     }
@@ -4875,7 +6046,7 @@
         row.classList.toggle("is-expected", mark.expected);
         row.classList.toggle("is-checked", mark.checked);
         row.setAttribute("data-criterion", String(criterionId));
-        flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" \xB7 ");
+        setLocalizedText(flag, [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" \xB7 "));
         marked.push(i);
       });
     }
@@ -4938,20 +6109,20 @@
       translationCache = null;
       const translate = h("button", {
         class: "cqa-sc-btn",
-        text: "\u041F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u0438\u0439",
+        text: t("translate.show"),
         attrs: { type: "button", "aria-pressed": "false" },
         data: { test: "translate-toggle" },
         on: { click: async () => {
           if (destroyed || translationEpoch !== translationRun) return;
           translationOn = !translationOn;
           translate.setAttribute("aria-pressed", String(translationOn));
-          translate.textContent = translationOn ? "\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434" : "\u041F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u0438\u0439";
+          setLocalizedText(translate, translationOn ? t("translate.hide") : t("translate.show"));
           if (!translationOn) {
             rows.forEach(({ el: el2 }) => el2.querySelector(".msg-translation")?.remove());
             return;
           }
           translate.disabled = true;
-          translate.textContent = "\u041F\u0435\u0440\u0435\u0432\u043E\u0434\u0438\u043C\u2026";
+          setLocalizedText(translate, t("translate.loading"));
           try {
             const data = translationCache ?? await api.getTranslation(id, "ru");
             if (destroyed || translationEpoch !== translationRun) return;
@@ -4959,14 +6130,14 @@
             for (const message of data.messages ?? []) {
               const row = rows[message.message_index];
               if (!row || typeof message.text !== "string") continue;
-              row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, text: message.text }));
+              row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, verbatim: true, text: message.text }));
             }
-            translate.textContent = "\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434";
+            setLocalizedText(translate, t("translate.hide"));
           } catch (error) {
             if (destroyed || translationEpoch !== translationRun) return;
             translationOn = false;
             translate.setAttribute("aria-pressed", "false");
-            translate.textContent = "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434";
+            setLocalizedText(translate, t("translate.retry"));
             toastError(store, error);
           } finally {
             if (!destroyed && translationEpoch === translationRun) translate.disabled = false;
@@ -4974,7 +6145,7 @@
         } }
       });
       clear(head).append(
-        h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
+        h("b", { class: "cqa-tr-title", verbatim: true, text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
         h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" \xB7 "), data: { test: "transcript-meta" } })
       );
       if (["KZ", "EN"].includes(conversation?.language?.toUpperCase())) head.append(translate);
@@ -5186,7 +6357,7 @@
         h(
           "div",
           { class: "cqa-sc-r1" },
-          h("b", { class: "cqa-sc-crit-title", text: c?.title ?? appeal.criterion_id }),
+          h("b", { class: "cqa-sc-crit-title", verbatim: true, text: c?.title ?? appeal.criterion_id }),
           r && c ? tag2(answerTag(c, r.answer).kind, answerTag(c, r.answer).text, { data: { test: "review-answer" } }) : null,
           // after a decision the points follow the new answer, so show it next to the model's
           r && c && r.final_answer !== void 0 && r.final_answer !== null && !same(r.final_answer, r.answer) ? h("span", { class: "cqa-rv-then" }, h("span", { text: "\u2192", attrs: { "aria-hidden": "true" } }), tag2(answerTag(c, r.final_answer).kind, answerTag(c, r.final_answer).text, { data: { test: "review-final-answer" } })) : null,
@@ -5199,7 +6370,7 @@
         "div",
         { class: "cqa-rv-comment" },
         h("p", { class: "cqa-rv-label", text: t("review.comment") }),
-        h("p", { class: "cqa-rv-quote", text: appeal.comment, data: { test: "review-comment" } })
+        h("p", { class: "cqa-rv-quote", verbatim: true, text: appeal.comment, data: { test: "review-comment" } })
       );
       clear(el).append(head, disputed, comment, buildFragment(r), opinionBox, decisionBox);
       paintOpinion();
@@ -5221,7 +6392,7 @@
             "li",
             { class: ["cqa-rv-msg", `cqa-rv-msg--${kind}`, marked.has(index) && "is-evidence"], data: { test: "fragment-msg", index } },
             h("span", { class: "cqa-rv-msg-meta", text: [t("scorecard.evidenceLine", { n: index + 1 }), kind === "system" ? null : t(`transcript.speaker.${kind}`), clock].filter(Boolean).join(" \xB7 ") }),
-            h("p", { class: "cqa-rv-msg-text", text: typeof message?.text === "string" ? message.text : "" })
+            h("p", { class: "cqa-rv-msg-text", verbatim: true, text: typeof message?.text === "string" ? message.text : "" })
           )
         );
       });
@@ -5244,7 +6415,7 @@
             "div",
             { class: "cqa-rv-opinion-body" },
             c && opinion.answer !== void 0 && opinion.answer !== null ? tag2(answerTag(c, opinion.answer).kind, t("review.opinionAnswer", { answer: answerTag(c, opinion.answer).text })) : null,
-            opinion.reasoning ? h("p", { class: "cqa-rv-note", text: opinion.reasoning }) : null,
+            opinion.reasoning ? h("p", { class: "cqa-rv-note", verbatim: true, text: opinion.reasoning }) : null,
             h("p", { class: "cqa-rv-hint", text: t("review.opinionAdvice") })
           )
         );
@@ -5273,7 +6444,7 @@
       const box = h("div", { class: "cqa-rv-decided", data: { test: "decision-done" } });
       if (decision) {
         const what = decision.outcome === "changed" && c ? t("review.decidedChanged", { answer: answerTag(c, decision.answer).text }) : t("review.decidedConfirmed");
-        box.append(h("b", { class: "cqa-rv-decided-what", text: what }), decision.reason ? h("p", { class: "cqa-rv-note", text: decision.reason }) : null);
+        box.append(h("b", { class: "cqa-rv-decided-what", text: what }), decision.reason ? h("p", { class: "cqa-rv-note", verbatim: true, text: decision.reason }) : null);
       }
       if (view.result) {
         box.append(h("p", { class: "cqa-rv-result", text: t("review.result", { from: totalText(view.result.before), to: totalText(view.result.after) }), data: { test: "decision-result" } }));
@@ -5484,17 +6655,17 @@
       const link2 = h(
         "a",
         { class: "cqa-aps-link", attrs: { href: href("appeal", { id: appeal.id }), "aria-current": appeal.id === openId3 ? "true" : null } },
-        h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
-        h("span", { class: "cqa-aps-crit", text: view.titles.get(appeal.id) ?? appeal.criterion_id }),
-        h("span", { class: "cqa-aps-comment", text: clip2(appeal.comment) }),
-        group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: group })) : null
+        h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", verbatim: true, text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
+        h("span", { class: "cqa-aps-crit", verbatim: true, text: view.titles.get(appeal.id) ?? appeal.criterion_id }),
+        h("span", { class: "cqa-aps-comment", verbatim: true, text: clip2(appeal.comment) }),
+        group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], verbatim: true, text: group })) : null
       );
       return h("li", { class: ["cqa-aps-item", appeal.id === openId3 && "is-current"], data: { test: "appeal-row", id: appeal.id, status: appeal.status } }, link2);
     }
     function paint() {
       if (destroyed) return;
       for (const pill of pills) {
-        pill.count.textContent = String(view.appeals.filter((a) => pill.name === "all" || a.status === pill.name).length);
+        setLocalizedText(pill.count, String(view.appeals.filter((a) => pill.name === "all" || a.status === pill.name).length));
         pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
         pill.button.classList.toggle("is-on", pill.name === view.filter);
       }
@@ -5717,20 +6888,20 @@
         ),
         h("p", { class: "cqa-rv-hint", text: t("apply.noAll") })
       );
-      estimate.textContent = view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "";
+      setLocalizedText(estimate, view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "");
       const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
       hint.hidden = !keyMissing;
       runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
       clear(progress);
       const { lock = null, job = null } = slot.state() ?? {};
-      if (lock === "starting") progress.append(t("batch.starting"));
+      if (lock === "starting") progress.append(h("span", { text: t("batch.starting") }));
       else if (job && (lock === "interrupted" || lock === "resuming")) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
           h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => slot.resume() } })
         );
       } else if (job) {
-        progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        progress.append(h("span", { text: t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }) }));
         if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
         if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => slot.retry() } }));
         const from = compareFrom(version2);
@@ -5870,7 +7041,7 @@
           h(
             "div",
             { class: "cqa-aps-row1" },
-            h("b", { class: "cqa-ck-name", text: row.name ?? row.checklist_id }),
+            h("b", { class: "cqa-ck-name", verbatim: true, text: row.name ?? row.checklist_id }),
             h("span", { class: "cqa-ck-tags" }, row.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked"), data: { test: "checklist-locked" } }) : null, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t(`checklists.channel.${row.channel ?? "any"}`) }))
           ),
           h("span", { class: "cqa-ck-meta", text: [t("checklists.version", { version: row.version, count: versionsOf3(row).length }), tp("checklists.criteria", count), t("checklists.weights", { sum: weightSum(row) })].join(" \xB7 ") }),
@@ -6007,7 +7178,7 @@
       const control = h(
         "select",
         { class: "cqa-sc-select", attrs: { "aria-label": label }, data: { test }, on: { change: () => onChange(control.value) } },
-        options.map(([v, text3]) => h("option", { attrs: { value: v }, text: text3 }))
+        options.map(([v, text3]) => h("option", { verbatim: test === "crit-section", attrs: { value: v }, text: text3 }))
       );
       control.value = value2;
       return control;
@@ -6130,7 +7301,7 @@
       const head = h(
         "div",
         { class: "cqa-ck-head" },
-        h("h1", { class: "cqa-view-title", text: isNew() ? t("editor.titleNew") : source.name }),
+        h("h1", { class: "cqa-view-title", verbatim: !isNew(), text: isNew() ? t("editor.titleNew") : source.name }),
         !isNew() ? h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("editor.apply"), data: { test: "open-apply" }, on: { click: () => openApply() } }) : null
       );
       const meta = isNew() ? h("p", { class: "cqa-view-note", text: t("editor.newNote") }) : h(
@@ -6182,7 +7353,7 @@
         if (!ref) continue;
         const kind = !c.id || !known.has(c.id) ? "new" : reworded.has(c.id) ? "reworded" : weightOnly.has(c.id) ? "weight" : null;
         ref.badge.hidden = kind === null;
-        ref.badge.textContent = kind ? t(`editor.badge.${kind}`) : "";
+        setLocalizedText(ref.badge, kind ? t(`editor.badge.${kind}`) : "");
         ref.badge.className = `cqa-tag ${kind === "new" ? "cqa-tag--ok" : kind === "reworded" ? "cqa-tag--mid" : "cqa-tag--out"}`;
         for (const e of ref.errs.values()) e.hidden = true;
       }
@@ -6193,7 +7364,7 @@
         const match = /^criteria\.(\d+)\.(\w+)$/.exec(path);
         const target = match ? refs.cards.get(draft.criteria[Number(match[1])]?._key)?.errs.get(match[2]) : path === "name" ? refs.nameError : refs.global;
         if (!target) continue;
-        target.textContent = message;
+        setLocalizedText(target, message);
         target.hidden = false;
       }
       const sum = warnings.find((w) => w.code === "weight_sum");
@@ -6208,16 +7379,16 @@
             (c) => h(
               "span",
               { class: "cqa-ed-removed-item" },
-              h("span", { class: ["cqa-tag", "cqa-tag--bad"], text: c.title }),
+              h("span", { class: ["cqa-tag", "cqa-tag--bad"], verbatim: true, text: c.title }),
               h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.restore"), data: { test: "restore-criterion" }, on: { click: () => restore(c.id) } })
             )
           )
         ) : ""
       );
-      refs.diff.textContent = t("editor.diff", { added: diff2.added.length, removed: diff2.removed.length, reworded: diff2.reworded.length, weight: diff2.weightOnly.length });
-      refs.count.textContent = errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "";
+      setLocalizedText(refs.diff, t("editor.diff", { added: diff2.added.length, removed: diff2.removed.length, reworded: diff2.reworded.length, weight: diff2.weightOnly.length }));
+      setLocalizedText(refs.count, errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "");
       refs.count.hidden = errors.length === 0;
-      refs.save.textContent = t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion");
+      setLocalizedText(refs.save, t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion"));
       refs.save.disabled = view.saving || errors.length > 0;
     }
     async function save() {
@@ -6400,7 +7571,7 @@
       fill(toSelect, ref("to"));
       const group = params.group_id ?? "";
       const groups = view.groups.includes(group) || group === "" ? view.groups : [...view.groups, group];
-      clear(groupSelect).append(h("option", { attrs: { value: "" }, text: t("compare.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+      clear(groupSelect).append(h("option", { attrs: { value: "" }, text: t("compare.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, verbatim: true, text: g })));
       groupSelect.value = group;
     }
     const sideLabel = (side) => {
@@ -6485,8 +7656,8 @@
     }
     function paintHead() {
       const data = view.data;
-      fromName.textContent = `${t("compare.from")}: ${data ? sideLabel(data.from) : sideLabel(ref("from"))}`;
-      toName.textContent = `${t("compare.to")}: ${data ? sideLabel(data.to) : sideLabel(ref("to"))}`;
+      setLocalizedText(fromName, `${t("compare.from")}: ${data ? sideLabel(data.from) : sideLabel(ref("from"))}`);
+      setLocalizedText(toName, `${t("compare.to")}: ${data ? sideLabel(data.to) : sideLabel(ref("to"))}`);
     }
     function stateBox3(test, title, note, extra) {
       return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
@@ -6496,7 +7667,7 @@
       paintHead();
       clear(state);
       clear(table2);
-      summary.textContent = "";
+      setLocalizedText(summary, "");
       if (view.phase === "pick") state.append(stateBox3("compare-pick", t("compare.pickTitle"), t("compare.pickNote")));
       else if (view.phase === "loading") state.append(stateBox3("compare-loading", t("compare.loading")));
       else if (view.phase === "error") {
@@ -6504,7 +7675,7 @@
       } else if (view.data.rows.length === 0) {
         state.append(stateBox3("compare-empty", t("compare.empty"), t("compare.emptyNote")));
       } else {
-        summary.textContent = summaryText2(view.data.summary);
+        setLocalizedText(summary, summaryText2(view.data.summary));
         table2.append(buildTable());
       }
       paintCard();
@@ -6549,9 +7720,9 @@
           h(
             "td",
             { class: "cqa-cmp-col--id" },
-            h("button", { class: "cqa-cmp-open", attrs: { type: "button", "aria-expanded": String(open), title: t("compare.openTitle") }, data: { test: "compare-open" }, on: { click: () => openRow(row) } }, h("b", { text: row.conversation_id ?? row.conversation, data: { test: "compare-id" } }))
+            h("button", { class: "cqa-cmp-open", attrs: { type: "button", "aria-expanded": String(open), title: t("compare.openTitle") }, data: { test: "compare-open" }, on: { click: () => openRow(row) } }, h("b", { verbatim: true, text: row.conversation_id ?? row.conversation, data: { test: "compare-id" } }))
           ),
-          h("td", { class: "cqa-cmp-col--group", text: row.group_id ?? "" }),
+          h("td", { class: "cqa-cmp-col--group", verbatim: true, text: row.group_id ?? "" }),
           h("td", { class: ["cqa-cmp-col--old", "num"], text: money2(row.old_total) }),
           h("td", { class: ["cqa-cmp-col--new", "num"], text: money2(row.new_total) }),
           h("td", { class: ["cqa-cmp-col--delta", "num"] }, h("span", { class: ["cqa-tag", `cqa-tag--${deltaKind(row.delta)}`], text: signedText(row.delta), data: { test: "compare-delta" } }))
@@ -6613,7 +7784,7 @@
                   h(
                     "div",
                     { class: "cqa-cmp-crit-name" },
-                    h("span", { text: criterion.title ?? r.id }),
+                    h("span", { verbatim: true, text: criterion.title ?? r.id }),
                     r.side === "old" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyOld") }) : null,
                     r.side === "new" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyNew") }) : null,
                     r.reworded ? h("span", { class: "cqa-cmp-reworded", text: t("compare.side.reworded", { title: r.oldCriterion.title ?? r.id }) }) : null
@@ -6650,18 +7821,18 @@
 
   // src/ui/reports-page.js
   var numeric = (value2) => typeof value2 === "number" && Number.isFinite(value2);
-  var percentText = (value2) => numeric(value2) ? `${(value2 * 100).toLocaleString("ru-RU", { maximumFractionDigits: 2 })} %` : "\u2014";
-  var averageText = (value2) => numeric(value2) ? value2.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "\u2014";
+  var percentText = (value2) => numeric(value2) ? `${formatNumber(value2 * 100, { maximumFractionDigits: 2 })} %` : "\u2014";
+  var averageText = (value2) => numeric(value2) ? formatNumber(value2, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "\u2014";
   function reportAnswer(value2) {
-    if (value2 === "yes") return "\u0414\u0430";
-    if (value2 === "no") return "\u041D\u0435\u0442";
+    if (value2 === "yes") return t("scorecard.answer.yes");
+    if (value2 === "no") return t("scorecard.answer.no");
     if (value2 === "na") return "N/A";
-    if (numeric(value2?.step)) return `\u0448\u0430\u0433 ${value2.step}`;
+    if (numeric(value2?.step)) return t("scorecard.answer.step", { value: value2.step });
     return typeof value2 === "string" ? value2 : "\u2014";
   }
-  var channelText = (value2) => ({ "agent chat": "\u0427\u0430\u0442", "voice call": "\u0417\u0432\u043E\u043D\u043E\u043A" })[value2] ?? value2;
-  var cell = (text3) => h("td", { text: text3 });
-  var link = (id, label) => h("a", { class: "cqa-link", attrs: { href: href("workspace", { id }) }, text: label ?? id });
+  var channelText = (value2) => ({ "agent chat": t("reports.channel.chat"), "voice call": t("reports.channel.call") })[value2] ?? value2;
+  var cell = (text3, verbatim = false) => h("td", { text: text3, verbatim });
+  var link = (id, label) => h("a", { class: "cqa-link", attrs: { href: href("workspace", { id }) }, verbatim: true, text: label ?? id });
   function bar(value2) {
     const el = h(
       "div",
@@ -6686,46 +7857,46 @@
         h("caption", { class: "cqa-report-caption", text: title }),
         h("thead", {}, h("tr", {}, headings.map((text3) => h("th", { attrs: { scope: "col" }, text: text3 })))),
         h("tbody", {}, rows.map((cells) => h("tr", { data: { test } }, cells)))
-      )) : h("p", { class: "cqa-report-muted", text: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445" })
+      )) : h("p", { class: "cqa-report-muted", text: t("reports.emptyCell") })
     );
   }
   function createReportsPage(store, api, route2 = store.get().route) {
     const accuracy = route2.name === "accuracy";
     const body = h("div", { attrs: { "aria-live": "polite" } });
-    const refresh = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C", data: { test: "reports-refresh" }, on: { click: () => load2() } });
+    const refresh = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("reports.refresh"), data: { test: "reports-refresh" }, on: { click: () => load2() } });
     const el = h(
       "div",
       { class: "cqa-reports", data: { test: accuracy ? "accuracy-page" : "analytics-page" } },
-      h("div", { class: "cqa-report-head" }, h("h1", { text: accuracy ? "\u0422\u043E\u0447\u043D\u043E\u0441\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438" : "\u041E\u0442\u0447\u0451\u0442\u044B: \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }), refresh),
-      h("p", { class: "cqa-report-muted", text: accuracy ? "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438. \u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u0430 \u0443\u043A\u0430\u0437\u0430\u043D \u043D\u0438\u0436\u0435." : "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043C; \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u044E\u0442\u0441\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C." }),
+      h("div", { class: "cqa-report-head" }, h("h1", { text: accuracy ? t("reports.accuracyTitle") : t("reports.analyticsTitle") }), refresh),
+      h("p", { class: "cqa-report-muted", text: accuracy ? t("reports.accuracyNote") : t("reports.analyticsNote") }),
       body
     );
     let destroyed = false;
     let run = 0;
     function accuracyReport(data) {
       body.append(
-        h("p", { class: "cqa-report-reference", text: data.reference_note || "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D", data: { test: "accuracy-reference" } }),
-        h("p", { text: `\u041C\u043E\u0434\u0435\u043B\u044C: ${data.model ?? "\u2014"}` }),
-        h("div", { class: "cqa-report-brand", data: { test: "accuracy-overall" }, text: `${percentText(data.overall?.agreement)} \xB7 n = ${data.overall?.n ?? 0}` }),
-        h("p", { data: { test: "accuracy-counts" }, text: `\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438: ${data.missing ?? 0} \xB7 \u0441\u043F\u043E\u0440\u043D\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B: ${data.disputed_excluded ?? 0}` })
+        h("p", { class: "cqa-report-reference", verbatim: Boolean(data.reference_note) && data.reference_note !== catalogs.ru["reports.referenceDemo"], text: data.reference_note || t("reports.referenceMissing"), data: { test: "accuracy-reference" } }),
+        h("p", { text: t("reports.model", { model: data.model ?? "\u2014" }) }),
+        h("div", { class: "cqa-report-brand", data: { test: "accuracy-overall" }, text: t("reports.overall", { agreement: percentText(data.overall?.agreement), n: data.overall?.n ?? 0 }) }),
+        h("p", { data: { test: "accuracy-counts" }, text: t("reports.counts", { missing: data.missing ?? 0, disputed: data.disputed_excluded ?? 0 }) })
       );
-      if (!data.overall?.n) body.append(h("p", { text: "\u041D\u0435\u0442 \u0441\u043E\u043F\u043E\u0441\u0442\u0430\u0432\u0438\u043C\u044B\u0445 \u043E\u0446\u0435\u043D\u043E\u043A", data: { test: "reports-empty" } }));
-      for (const [key, label, field] of [["by_criterion", "\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C", "title"], ["by_language", "\u041F\u043E \u044F\u0437\u044B\u043A\u0430\u043C", "language"], ["by_channel", "\u041F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C", "channel"]]) {
-        body.append(table(label, ["\u0413\u0440\u0443\u043F\u043F\u0430", "\u0421\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435", "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field]), bar(r.agreement), cell(r.n)]), `accuracy-${key.slice(3)}`));
+      if (!data.overall?.n) body.append(h("p", { text: t("reports.noComparable"), data: { test: "reports-empty" } }));
+      for (const [key, label, field] of [["by_criterion", t("reports.byCriterion"), "title"], ["by_language", t("reports.byLanguage"), "language"], ["by_channel", t("reports.byChannel"), "channel"]]) {
+        body.append(table(label, [t("reports.group"), t("reports.agreement"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), bar(r.agreement), cell(r.n)]), `accuracy-${key.slice(3)}`));
       }
-      body.append(table("\u0420\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F", ["\u0414\u0438\u0430\u043B\u043E\u0433", "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439", "\u042D\u0442\u0430\u043B\u043E\u043D", "\u041E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438"], (data.disagreements ?? []).map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(r.criterion_id), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]), "disagreement"));
+      body.append(table(t("reports.disagreements"), [t("reports.conversation"), t("reports.criterion"), t("reports.reference"), t("reports.evaluated")], (data.disagreements ?? []).map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(r.criterion_id), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]), "disagreement"));
     }
     function analyticsReport(data) {
       const criteria = data.by_criterion ?? [];
-      if (!criteria.length) body.append(h("p", { text: "\u041D\u0435\u0442 \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432. \u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u043E\u0446\u0435\u043D\u043A\u0443 \u0432 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438.", data: { test: "reports-empty" } }));
-      body.append(table("\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C", ["\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439", "\u041E\u0448\u0438\u0431\u043A\u0438", "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id), bar(r.fail_rate), bar(r.na_rate), cell(r.n)]), "analytics-criterion"));
-      for (const [key, label, field] of [["by_language", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u044F\u0437\u044B\u043A\u0430\u043C", "language"], ["by_channel", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C", "channel"]]) {
-        body.append(table(label, ["\u0413\u0440\u0443\u043F\u043F\u0430", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433", "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field]), cell(averageText(r.avg_total)), cell(r.n)]), `analytics-${field}`));
+      if (!criteria.length) body.append(h("p", { text: t("reports.noEvaluations"), data: { test: "reports-empty" } }));
+      body.append(table(t("reports.byCriterion"), [t("reports.criterion"), t("reports.failures"), "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id, true), bar(r.fail_rate), bar(r.na_rate), cell(r.n)]), "analytics-criterion"));
+      for (const [key, label, field] of [["by_language", t("reports.avgLanguage"), "language"], ["by_channel", t("reports.avgChannel"), "channel"]]) {
+        body.append(table(label, [t("reports.group"), t("reports.average"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), cell(averageText(r.avg_total)), cell(r.n)]), `analytics-${field}`));
       }
       const gross = data.gross_errors ?? {};
       body.append(
-        h("h2", { text: `\u0413\u0440\u0443\u0431\u044B\u0435 \u043E\u0448\u0438\u0431\u043A\u0438: ${gross.count ?? 0}`, data: { test: "analytics-gross" } }),
-        table("\u0412\u0438\u0434\u044B \u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A", ["\u0412\u0438\u0434", "\u041A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E"], (gross.by_kind ?? []).map((r) => [cell(r.kind), cell(r.count)])),
+        h("h2", { text: t("reports.gross", { n: gross.count ?? 0 }), data: { test: "analytics-gross" } }),
+        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(r.kind), cell(r.count)])),
         h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id))))
       );
     }
@@ -6733,7 +7904,7 @@
       const mine = ++run;
       refresh.disabled = true;
       body.removeAttribute("data-test");
-      clear(body).append(h("p", { text: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043E\u0442\u0447\u0451\u0442\u0430\u2026", data: { test: "reports-loading" } }));
+      clear(body).append(h("p", { text: t("reports.loading"), data: { test: "reports-loading" } }));
       try {
         const data = await (accuracy ? api.getAccuracy() : api.getAnalytics());
         if (destroyed || mine !== run) return;
@@ -6747,8 +7918,8 @@
         clear(body).append(h(
           "div",
           { attrs: { role: "alert" }, data: { test: "reports-error" } },
-          h("p", { text: `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442. ${errorText(error)}` }),
-          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C", data: { test: "reports-retry" }, on: { click: () => load2() } })
+          h("p", { text: t("reports.failed", { error: errorText(error) }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("toast.retry"), data: { test: "reports-retry" }, on: { click: () => load2() } })
         ));
       } finally {
         if (!destroyed && mine === run) refresh.disabled = false;
@@ -6829,13 +8000,13 @@
       return { name, button, count };
     });
     const pillBar = h("div", { class: "cqa-q-pills", attrs: { role: "group", "aria-label": t("queue.filters") } }, pills.map((pill) => pill.button));
-    const language = h("select", {
+    const language2 = h("select", {
       class: "cqa-q-select",
       attrs: { "aria-label": t("queue.language") },
       data: { test: "queue-language" },
       on: {
         change: () => {
-          view.language = language.value;
+          view.language = language2.value;
           paint();
         }
       }
@@ -6884,7 +8055,7 @@
       "div",
       { class: "cqa-q-controls" },
       pillBar,
-      h("div", { class: "cqa-q-sub" }, groupSelect, language),
+      h("div", { class: "cqa-q-sub" }, groupSelect, language2),
       h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), h("span", { data: { test: "queue-export" } }, exportLink))
     );
     const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
@@ -6918,7 +8089,7 @@
         view.group = "";
         if ((store.get().queueGroup ?? "") !== "") store.set({ queueGroup: "" });
       }
-      groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+      groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, verbatim: true, text: g })));
       groupSelect.value = view.group;
       groupSelect.hidden = groups.length < 2;
     }
@@ -6984,7 +8155,7 @@
       if (flags?.gross_error) tags.push(tag3("bad", t("queue.tag.grossError"), { data: { test: "queue-tag-gross" } }));
       if (flags?.needs_review) tags.push(tag3("out", t("queue.tag.needsReview"), { attrs: { title: t("queue.tag.needsReviewTitle") }, data: { test: "queue-tag-review" } }));
       const scoreTitle = flags ? typeof flags.total === "number" ? null : t("queue.score.notCalculated") : t("queue.score.none");
-      const topic = h("span", { class: "cqa-q-topic", data: { test: "queue-topic" } });
+      const topic = h("span", { class: "cqa-q-topic", verbatim: true, data: { test: "queue-topic" } });
       const check = h("input", {
         class: "cqa-q-check",
         attrs: { type: "checkbox", "aria-label": t("queue.select", { id: item.conversation_id }) },
@@ -6994,14 +8165,14 @@
       const link2 = h(
         "a",
         { class: "cqa-q-link", attrs: { href: href("workspace", { id: item.id }) }, on: { click: closeDrawer } },
-        h("b", { class: "cqa-q-id", text: item.conversation_id }),
+        h("b", { class: "cqa-q-id", verbatim: true, text: item.conversation_id }),
         h("span", { class: ["cqa-q-score", "num", flags && typeof flags.total === "number" ? "" : "is-none"], text: scoreText(flags), attrs: { title: scoreTitle }, data: { test: "queue-score" } }),
         topic,
         h(
           "span",
           { class: "cqa-q-meta" },
-          view.groups ? tag3("out", item.group_id, { attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
-          tag3("out", item.language, { attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
+          view.groups ? tag3("out", item.group_id, { verbatim: true, attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
+          tag3("out", item.language, { verbatim: true, attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
           h("span", { class: "cqa-q-channel", text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }),
           tags
         )
@@ -7030,7 +8201,7 @@
     }
     function paintTopic(row) {
       const topic = topicOf(row.item);
-      row.topic.textContent = topic !== "" ? topic : firstLines.get(row.item.id) ?? "";
+      setLocalizedText(row.topic, topic !== "" ? topic : firstLines.get(row.item.id) ?? "");
     }
     function paintCurrent(row) {
       const on = row.item.id === currentId();
@@ -7124,11 +8295,11 @@
     function paintLanguages() {
       const codes = [...new Set(view.items.map((item) => item.language).filter((code) => typeof code === "string" && code !== ""))].sort();
       if (view.language !== "" && !codes.includes(view.language)) view.language = "";
-      language.replaceChildren(
+      language2.replaceChildren(
         h("option", { attrs: { value: "" }, text: t("queue.language.all") }),
         ...codes.map((code) => h("option", { attrs: { value: code }, text: code }))
       );
-      language.value = view.language;
+      language2.value = view.language;
     }
     function paint() {
       if (destroyed) return;
@@ -7140,7 +8311,7 @@
         const q = queryText();
         const base = view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, q));
         for (const pill of pills) {
-          pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
+          setLocalizedText(pill.count, String(base.filter(MATCHES[pill.name]).length));
           pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
           pill.button.classList.toggle("is-on", pill.name === view.filter);
         }
@@ -7155,10 +8326,10 @@
             return row.el;
           })
         );
-        summary.textContent = t("queue.shown", { shown: shown.length, total: view.items.length });
+        setLocalizedText(summary, t("queue.shown", { shown: shown.length, total: view.items.length }));
       } else {
         clear(list);
-        summary.textContent = "";
+        setLocalizedText(summary, "");
       }
       paintSelectAll(shown);
       if (hasItems) paintState(shown.length === 0 ? "nomatch" : null);
@@ -7344,8 +8515,8 @@
     document.addEventListener("pointerdown", onOutside);
     track(() => document.removeEventListener("pointerdown", onOutside));
     const paint = (role) => {
-      label.textContent = t(`role.${role}`);
-      button.setAttribute("aria-label", t("role.current", { role: t(`role.${role}`) }));
+      setLocalizedText(label, t(`role.${role}`));
+      setLocalizedAttribute(button, "aria-label", t("role.current", { role: t(`role.${role}`) }));
       for (const item of items) item.setAttribute("aria-checked", String(item.getAttribute("data-role") === role));
     };
     paint(store.get().role);
@@ -7376,7 +8547,7 @@
     return button;
   }
   function datasetBadge(store, track) {
-    const value2 = h("b", { class: "cqa-badge-value" });
+    const value2 = h("b", { class: "cqa-badge-value", verbatim: true });
     const badge = h(
       "span",
       { class: "cqa-badge", attrs: { title: t("dataset.title") }, data: { test: "dataset-badge" } },
@@ -7385,7 +8556,7 @@
       value2
     );
     const paint = (groupId) => {
-      value2.textContent = groupId ?? "";
+      setLocalizedText(value2, groupId ?? "");
     };
     paint(store.get().groupId);
     track(watch(store, (state) => state.groupId, paint));
@@ -7393,7 +8564,14 @@
   }
   function buildHeader(store, compact, track) {
     const prod = h("span", { class: "cqa-prod", text: t("app.title") });
-    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), roleSwitch(store, track), themeToggle(store, track));
+    const language2 = h("select", {
+      class: "cqa-language",
+      attrs: { "aria-label": t("language.label") },
+      data: { test: "ui-language" },
+      on: { change: () => setLanguage(language2.value) }
+    }, [["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430 (KAZ)"], ["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (RU)"], ["en", "English (EN)"]].map(([value2, label]) => h("option", { verbatim: true, attrs: { value: value2 }, text: label })));
+    language2.value = currentLanguage();
+    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language2, roleSwitch(store, track), themeToggle(store, track));
     if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
     const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));
     const paint = (route2) => {
@@ -7587,6 +8765,7 @@
     const config = options.config ?? window.CQA_CONFIG ?? {};
     const ctx = readContext(options.search ?? window.location.search, config, options);
     const theme = ctx.themeExplicit || ctx.mode === "embedded" ? ctx.theme : readStoredTheme() ?? ctx.theme;
+    setLanguage(ctx.language ?? storedLanguage() ?? "ru", { persist: false });
     const compactRoute = (id) => ({ name: "workspace", params: { id } });
     const store = createStore({
       config,
@@ -7646,6 +8825,7 @@
       }
     });
     el.replaceChildren(shell.el);
+    stops.push(bindRootLanguage(el));
     let destroyed = false;
     return {
       // Opens a conversation. Embedded: the page becomes the compact view of that record.
@@ -7660,6 +8840,7 @@
           goTo(parseRoute(window.location.hash));
         }
       },
+      setLanguage,
       setRole(role) {
         if (role === "controller" || role === "reviewer") store.set({ role });
       },
