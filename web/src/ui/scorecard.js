@@ -21,6 +21,7 @@ import { clear, h } from "./dom.js";
 import { href } from "./router.js";
 import { toastError } from "./toast.js";
 import { renderVoiceMeasurements } from "./voice-measurements.js";
+import { latestVersion, versionNumbers } from "../domain/checklist-versions.js";
 
 export const POLL_MS = 500;
 export const JOB_TIMEOUT_MS = 15 * 60 * 1000;
@@ -103,8 +104,8 @@ export function cardAppeals(evaluation, appeals, evaluations) {
   return { own, earlierOpen, notCarried };
 }
 
-const versionsOf = (row) => (Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version]);
-const latestOf = (row) => Math.max(...versionsOf(row));
+const versionsOf = versionNumbers;
+const latestOf = latestVersion;
 
 /**
  * The checklist version to show: the stored choice, else the server's default, else the default

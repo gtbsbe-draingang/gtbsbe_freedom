@@ -18,6 +18,7 @@ import { clear, h } from "./dom.js";
 import { href } from "./router.js";
 import { answerTag } from "./scorecard.js";
 import { errorText, toastError } from "./toast.js";
+import { versionNumbers } from "../domain/checklist-versions.js";
 
 export const DEFAULT_SORT = { key: "delta", dir: "asc" };
 const COLUMNS = ["id", "group", "old", "new", "delta"];
@@ -109,7 +110,7 @@ export function sideRows(fromVersion, toVersion, oldEvaluation, newEvaluation) {
 const pickEvaluation = (evaluations, ref) => evaluations.find((e) => e.status === "done" && e.checklist_id === ref.checklist_id && e.version === ref.version) ?? null;
 
 const deltaKind = (delta) => (!isNumber(delta) || delta === 0 ? "na" : delta < 0 ? "bad" : "ok");
-const versionsOf = (row) => (Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version]);
+const versionsOf = versionNumbers;
 
 // ---- the page ---------------------------------------------------------------------------------
 

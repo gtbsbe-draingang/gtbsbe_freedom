@@ -1826,7 +1826,7 @@
       return [...byId.values()];
     }
     const findChecklist = (id) => state.checklists.find((c) => c.checklist_id === id);
-    const latestVersion = (row) => row.versions[row.versions.length - 1];
+    const latestVersion2 = (row) => row.versions[row.versions.length - 1];
     function findVersion(checklistId, version2) {
       const row = findChecklist(checklistId);
       const number = Number(version2);
@@ -1997,8 +1997,9 @@
       }
     }
     const summaryOf = (row) => ({
-      ...latestVersion(row),
-      versions: row.versions.map((v) => ({ version: v.version, created_at: v.created_at, author_role: v.author_role }))
+      ...latestVersion2(row),
+      versions: row.versions.map((v) => v.version)
+      // plain numbers, as the backend sends them
     });
     function withWarnings(version2) {
       const warnings = weightWarnings(version2.criteria);
@@ -2044,7 +2045,7 @@
       const authorRole = currentRole();
       const row = findChecklist(checklistId);
       if (!row) throw fail("not_found", `No checklist ${checklistId}`);
-      const previous = latestVersion(row);
+      const previous = latestVersion2(row);
       if (previous.locked) throw fail("checklist_locked", `Checklist ${checklistId} is locked; save a copy with based_on instead`);
       const completed = await bodyOrReject(body, previous);
       const version2 = {
@@ -3327,6 +3328,17 @@
     );
   }
 
+  // src/domain/checklist-versions.js
+  function versionNumbers(row) {
+    const raw = Array.isArray(row?.versions) && row.versions.length > 0 ? row.versions : [row?.version];
+    const numbers = raw.map((v) => typeof v === "object" && v !== null ? v.version : v).filter((v) => Number.isInteger(v));
+    return [...new Set(numbers)];
+  }
+  function latestVersion(row) {
+    const numbers = versionNumbers(row);
+    return numbers.length > 0 ? Math.max(...numbers) : null;
+  }
+
   // src/ui/scorecard.js
   var POLL_MS = 500;
   var JOB_TIMEOUT_MS = 15 * 60 * 1e3;
@@ -3381,8 +3393,8 @@
     }
     return { own, earlierOpen, notCarried };
   }
-  var versionsOf = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
-  var latestOf = (row) => Math.max(...versionsOf(row));
+  var versionsOf = versionNumbers;
+  var latestOf = latestVersion;
   function pickSelection(stored, server, checklists) {
     const has2 = (ref) => Boolean(ref) && checklists.some((row2) => row2.checklist_id === ref.checklist_id && versionsOf(row2).includes(ref.version));
     if (has2(stored)) return { checklist_id: stored.checklist_id, version: stored.version };
@@ -4212,7 +4224,7 @@
       }
     });
   }
-  var versionsOf2 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var versionsOf2 = versionNumbers;
   function createBatchBar(store, api) {
     const view = {
       ready: false,
@@ -5522,7 +5534,7 @@
 
   // src/ui/checklists-page.js
   var NEW_ID = "new";
-  var versionsOf3 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var versionsOf3 = versionNumbers;
   var weightSum = (row) => (row.criteria ?? []).filter((c) => c.kind !== "gross_error").reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
   function createChecklistsPage(store, api) {
     let destroyed = false;
@@ -6024,7 +6036,7 @@
   }
   var pickEvaluation = (evaluations, ref) => evaluations.find((e) => e.status === "done" && e.checklist_id === ref.checklist_id && e.version === ref.version) ?? null;
   var deltaKind = (delta) => !isNumber(delta) || delta === 0 ? "na" : delta < 0 ? "bad" : "ok";
-  var versionsOf4 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var versionsOf4 = versionNumbers;
   function createComparePage(store, api, route2) {
     let destroyed = false;
     let params = route2?.params ?? {};
