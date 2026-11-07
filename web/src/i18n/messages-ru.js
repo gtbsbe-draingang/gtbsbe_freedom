@@ -28,6 +28,8 @@ export default {
   "dataset.label": "Набор",
   "dataset.title": "Текущий набор данных",
   "workspace.queue": "Очередь",
+  "workspace.resize.left": "Ширина очереди",
+  "workspace.resize.right": "Ширина оценки",
   "workspace.queueClose": "Закрыть очередь",
   "workspace.tab.transcript": "Диалог",
   "workspace.tab.scorecard": "Оценка",

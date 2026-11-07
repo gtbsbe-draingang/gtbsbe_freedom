@@ -28,6 +28,8 @@ export default {
   "dataset.label": "Dataset",
   "dataset.title": "Current dataset",
   "workspace.queue": "Queue",
+  "workspace.resize.left": "Resize queue",
+  "workspace.resize.right": "Resize scorecard",
   "workspace.queueClose": "Close queue",
   "workspace.tab.transcript": "Conversation",
   "workspace.tab.scorecard": "Evaluation",

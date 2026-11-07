@@ -271,13 +271,14 @@
 }
 
 .cqa .cqa-ws-grid {
+  position: relative;
   display: grid;
   flex: 1;
-  grid-template-columns: 300px minmax(0, 1fr) 390px;
+  grid-template-columns: var(--ws-left, 300px) minmax(0, 1fr) var(--ws-right, 390px);
 }
 
 .cqa .cqa-ws--compact .cqa-ws-grid {
-  grid-template-columns: minmax(0, 1fr) 390px;
+  grid-template-columns: minmax(0, 1fr) var(--ws-right, 390px);
 }
 
 .cqa .cqa-pane {
@@ -355,7 +356,15 @@
   display: none;
 }
 
+/* drag handles between the panes; they sit on the pane borders and are hidden when the layout stacks */
+.cqa .cqa-resizer { position: absolute; top: 0; bottom: 0; z-index: 6; width: 10px; cursor: col-resize; touch-action: none; outline: none; }
+.cqa .cqa-resizer--left { left: calc(var(--ws-left, 300px) - 5px); }
+.cqa .cqa-resizer--right { right: calc(var(--ws-right, 390px) - 5px); }
+.cqa .cqa-resizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; transition: background-color 0.15s; }
+.cqa .cqa-resizer:hover::after, .cqa .cqa-resizer:focus-visible::after, .cqa .cqa-resizer.is-drag::after { background: var(--accent); }
+
 @media (max-width: 899.98px) {
+  .cqa .cqa-resizer { display: none; }
   .cqa .cqa-top {
     flex-wrap: wrap;
     gap: 4px 14px;

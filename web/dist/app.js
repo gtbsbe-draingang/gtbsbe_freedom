@@ -33,6 +33,8 @@
     "dataset.label": "\u041D\u0430\u0431\u043E\u0440",
     "dataset.title": "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
     "workspace.queue": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
+    "workspace.resize.left": "\u0428\u0438\u0440\u0438\u043D\u0430 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "workspace.resize.right": "\u0428\u0438\u0440\u0438\u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0438",
     "workspace.queueClose": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
     "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "workspace.tab.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430",
@@ -552,6 +554,8 @@
     "dataset.label": "Dataset",
     "dataset.title": "Current dataset",
     "workspace.queue": "Queue",
+    "workspace.resize.left": "Resize queue",
+    "workspace.resize.right": "Resize scorecard",
     "workspace.queueClose": "Close queue",
     "workspace.tab.transcript": "Conversation",
     "workspace.tab.scorecard": "Evaluation",
@@ -1071,6 +1075,8 @@
     "dataset.label": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440",
     "dataset.title": "\u0410\u0493\u044B\u043C\u0434\u0430\u0493\u044B \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
     "workspace.queue": "\u041A\u0435\u0437\u0435\u043A",
+    "workspace.resize.left": "\u041A\u0435\u0437\u0435\u043A \u0435\u043D\u0456",
+    "workspace.resize.right": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0435\u043D\u0456",
     "workspace.queueClose": "\u041A\u0435\u0437\u0435\u043A\u0442\u0456 \u0436\u0430\u0431\u0443",
     "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "workspace.tab.scorecard": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
@@ -9172,6 +9178,68 @@
       right
     );
   }
+  var PANE_LIMITS = { left: [200, 520, 300], right: [300, 640, 390] };
+  var paneKey = (side) => `cqa-pane-${side}`;
+  function savedWidth(side) {
+    try {
+      const n = Number(globalThis.localStorage?.getItem(paneKey(side)));
+      if (n) return n;
+    } catch {
+    }
+    return PANE_LIMITS[side][2];
+  }
+  function paneResizer(root, side) {
+    const [min, max, fallback] = PANE_LIMITS[side];
+    let width = Math.min(max, Math.max(min, savedWidth(side)));
+    const apply = () => root.style.setProperty(`--ws-${side}`, `${width}px`);
+    let handle;
+    const set = (next, save) => {
+      width = Math.round(Math.min(max, Math.max(min, next)));
+      apply();
+      handle.setAttribute("aria-valuenow", String(width));
+      if (save) {
+        try {
+          globalThis.localStorage?.setItem(paneKey(side), String(width));
+        } catch {
+        }
+      }
+    };
+    const sign = side === "left" ? 1 : -1;
+    let start = null;
+    handle = h("div", {
+      class: ["cqa-resizer", `cqa-resizer--${side}`],
+      attrs: { role: "separator", "aria-orientation": "vertical", tabindex: "0", "aria-label": t(`workspace.resize.${side}`), "aria-valuemin": String(min), "aria-valuemax": String(max), "aria-valuenow": String(width) },
+      data: { test: `resize-${side}` },
+      on: {
+        pointerdown: (e) => {
+          start = { x: e.clientX, width };
+          handle.setPointerCapture(e.pointerId);
+          handle.classList.add("is-drag");
+          e.preventDefault();
+        },
+        pointermove: (e) => {
+          if (start) set(start.width + sign * (e.clientX - start.x), false);
+        },
+        pointerup: () => {
+          if (start) {
+            start = null;
+            handle.classList.remove("is-drag");
+            set(width, true);
+          }
+        },
+        dblclick: () => set(fallback, true),
+        keydown: (e) => {
+          const step = e.shiftKey ? 48 : 16;
+          const move = { ArrowLeft: -step, ArrowRight: step }[e.key];
+          if (move === void 0) return;
+          e.preventDefault();
+          set(width + sign * move, true);
+        }
+      }
+    });
+    apply();
+    return handle;
+  }
   function workspaceView(store, api, route2, panes) {
     const compact = isCompact(store.get());
     const subs = [];
@@ -9225,6 +9293,7 @@
     );
     const bar2 = h("div", { class: "cqa-ws-bar" }, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
     const scrim = compact ? null : h("button", { class: "cqa-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("workspace.queueClose") }, data: { test: "queue-scrim" }, on: { click: () => store.set({ queueOpen: false }) } });
+    const grid2 = h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost);
     const el = h(
       "div",
       {
@@ -9241,8 +9310,9 @@
       },
       bar2,
       scrim,
-      h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost)
+      grid2
     );
+    grid2.append(...[queueHost ? paneResizer(el, "left") : null, paneResizer(el, "right")].filter(Boolean));
     const paint = () => {
       const { queueOpen, pane } = store.get();
       const open = Boolean(queueOpen) && !compact;

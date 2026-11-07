@@ -172,6 +172,49 @@ function buildHeader(store, compact, track) {
 
 // ---- workspace --------------------------------------------------------------------------------
 
+// Drag (or arrow-key) handles between the workspace panes, like VS Code's sidebars. The widths live as
+// CSS variables on the workspace root and are remembered per browser; narrow layouts hide the handles.
+const PANE_LIMITS = { left: [200, 520, 300], right: [300, 640, 390] };
+const paneKey = (side) => `cqa-pane-${side}`;
+function savedWidth(side) {
+  try { const n = Number(globalThis.localStorage?.getItem(paneKey(side))); if (n) return n; } catch { /* default width */ }
+  return PANE_LIMITS[side][2];
+}
+function paneResizer(root, side) {
+  const [min, max, fallback] = PANE_LIMITS[side];
+  let width = Math.min(max, Math.max(min, savedWidth(side)));
+  const apply = () => root.style.setProperty(`--ws-${side}`, `${width}px`);
+  let handle;
+  const set = (next, save) => {
+    width = Math.round(Math.min(max, Math.max(min, next)));
+    apply();
+    handle.setAttribute("aria-valuenow", String(width));
+    if (save) { try { globalThis.localStorage?.setItem(paneKey(side), String(width)); } catch { /* not remembered */ } }
+  };
+  const sign = side === "left" ? 1 : -1;
+  let start = null;
+  handle = h("div", {
+    class: ["cqa-resizer", `cqa-resizer--${side}`],
+    attrs: { role: "separator", "aria-orientation": "vertical", tabindex: "0", "aria-label": t(`workspace.resize.${side}`), "aria-valuemin": String(min), "aria-valuemax": String(max), "aria-valuenow": String(width) },
+    data: { test: `resize-${side}` },
+    on: {
+      pointerdown: (e) => { start = { x: e.clientX, width }; handle.setPointerCapture(e.pointerId); handle.classList.add("is-drag"); e.preventDefault(); },
+      pointermove: (e) => { if (start) set(start.width + sign * (e.clientX - start.x), false); },
+      pointerup: () => { if (start) { start = null; handle.classList.remove("is-drag"); set(width, true); } },
+      dblclick: () => set(fallback, true),
+      keydown: (e) => {
+        const step = e.shiftKey ? 48 : 16;
+        const move = { ArrowLeft: -step, ArrowRight: step }[e.key];
+        if (move === undefined) return;
+        e.preventDefault();
+        set(width + sign * move, true);
+      },
+    },
+  });
+  apply();
+  return handle;
+}
+
 // Returns { el, update(route), destroy() }. The queue is built once; the transcript and the
 // scorecard are rebuilt only when the conversation changes.
 function workspaceView(store, api, route, panes) {
@@ -238,6 +281,7 @@ function workspaceView(store, api, route, panes) {
     ? null
     : h("button", { class: "cqa-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("workspace.queueClose") }, data: { test: "queue-scrim" }, on: { click: () => store.set({ queueOpen: false }) } });
 
+  const grid = h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost);
   const el = h(
     "div",
     {
@@ -254,8 +298,9 @@ function workspaceView(store, api, route, panes) {
     },
     bar,
     scrim,
-    h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost),
+    grid,
   );
+  grid.append(...[queueHost ? paneResizer(el, "left") : null, paneResizer(el, "right")].filter(Boolean));
 
   const paint = () => {
     const { queueOpen, pane } = store.get();

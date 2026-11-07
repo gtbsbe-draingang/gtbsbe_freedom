@@ -28,6 +28,8 @@ export default {
   "dataset.label": "Деректер",
   "dataset.title": "Ағымдағы деректер жиыны",
   "workspace.queue": "Кезек",
+  "workspace.resize.left": "Кезек ені",
+  "workspace.resize.right": "Бағалау ені",
   "workspace.queueClose": "Кезекті жабу",
   "workspace.tab.transcript": "Диалог",
   "workspace.tab.scorecard": "Бағалау",
