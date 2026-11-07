@@ -13,6 +13,7 @@
   "properties": {
     "by_criterion": {
       "type": "array",
+      "description": "Scored criteria only; the gross-error criterion is reported in gross_errors.",
       "items": {
         "type": "object",
         "required": [
@@ -33,16 +34,19 @@
           "fail_rate": {
             "type": "number",
             "minimum": 0,
-            "maximum": 1
+            "maximum": 1,
+            "description": "Share of applicable evaluations (n − na) whose final answer is no or a scale step below the top; 0 when every answer is N/A."
           },
           "na_rate": {
             "type": "number",
             "minimum": 0,
-            "maximum": 1
+            "maximum": 1,
+            "description": "Share of the n evaluations answered N/A."
           },
           "n": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Evaluations with an answer for this criterion, N/A included."
           }
         }
       }

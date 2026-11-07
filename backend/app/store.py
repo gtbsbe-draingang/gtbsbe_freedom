@@ -25,8 +25,8 @@ on, with the criterion fingerprint and graded transcript hash that carry-forward
 partial unique index keeps at most one open appeal per criterion per evaluation.
 
 Reads for the UI's lists (`list_conversations`, `list_evaluations`, `find_evaluations`,
-`count_open_appeals`, `conversation_keys`): each is one query (or one per call), so the queue costs
-the same for ten conversations as for a thousand.
+`count_open_appeals`, `conversation_keys`, `conversation_profiles`): each is one query (or one per
+call), so the queue costs the same for ten conversations as for a thousand.
 """
 
 import json
@@ -34,7 +34,7 @@ import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
-from typing import Literal
+from typing import Literal, NamedTuple
 
 from app.db import connect, register_migration
 from app.errors import ApiError
@@ -343,6 +343,36 @@ def conversation_keys(conversations: list[str]) -> dict[str, tuple[str, str]]:
     finally:
         conn.close()
     return {row["id"]: (row["group_id"], row["conversation_id"]) for row in rows}
+
+
+class ConversationProfile(NamedTuple):
+    """The columns of a stored conversation that reports group and describe it by."""
+
+    group_id: str
+    conversation_id: str
+    channel: str
+    language: str
+
+
+def conversation_profiles(conversations: list[str]) -> dict[str, ConversationProfile]:
+    """`{conversation id: ConversationProfile}` for the stored conversations among those given; an
+    id that is not stored is absent. One query on the key columns (no transcripts are read),
+    however many ids: they travel as one JSON array parameter."""
+    if not conversations:
+        return {}
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT id, group_id, conversation_id, channel, language FROM conversations "
+            "WHERE id IN (SELECT value FROM json_each(?))",
+            (json.dumps(conversations),),
+        ).fetchall()
+    finally:
+        conn.close()
+    return {
+        row["id"]: ConversationProfile(row["group_id"], row["conversation_id"], row["channel"], row["language"])
+        for row in rows
+    }
 
 
 def get_audio_url(conversation: str) -> str | None:
