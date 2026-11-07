@@ -8,6 +8,10 @@
 conversations yet, loads the results snapshot the repo ships, so a fresh clone shows results with no
 model key. It then runs the app with uvicorn. It never prints the model key or the organisers' URL.
 
+Both commands first import the other streams' router modules, as the app does when it starts: those
+modules register their migrations and snapshot tables (`app.snapshot.register_snapshot_table`) at
+import, and both must be known before the database is migrated, restored or exported.
+
 Both commands work the same from any directory: `backend/.env` is found from the package path (see
 app/settings.py) and a relative `DB_PATH` (the default is `cqa.db`) is resolved against `backend/`.
 """
@@ -25,7 +29,7 @@ import uvicorn
 from app import snapshot as snapshots
 from app.checklists import seed_into_db
 from app.db import migrate
-from app.main import create_app
+from app.main import create_app, optional_routers
 from app.settings import BACKEND_DIR, get_settings
 
 logger = logging.getLogger(__name__)
@@ -69,6 +73,12 @@ def _anchor_db_path() -> Path:
     return get_settings().db_path
 
 
+def _load_other_streams() -> None:
+    """Import the other streams' routers (the modules the app mounts), so the migrations and the
+    snapshot tables they register at import are known before the database is touched."""
+    optional_routers()
+
+
 def _address(host: str, port: int) -> str:
     shown = f"[{host}]" if ":" in host and not host.startswith("[") else host
     return f"http://{shown}:{port}/"
@@ -106,6 +116,7 @@ def serve(argv: list[str] | None = None) -> None:
     """`cqa-serve`: prepare the database, load the snapshot into an empty one, run the app."""
     args = parse_serve_args(argv)
     db_path = _anchor_db_path()
+    _load_other_streams()
     migrate()
     seed_into_db()
     _restore_snapshot()
@@ -143,6 +154,7 @@ def snapshot(argv: list[str] | None = None) -> None:
     db_path = _anchor_db_path()
     if not db_path.is_file():
         _fail(f"No database at {db_path}. Nothing to export.")
+    _load_other_streams()
     migrate()
     if not snapshots.has_conversations():
         _fail(

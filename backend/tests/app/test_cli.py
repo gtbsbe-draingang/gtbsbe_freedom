@@ -3,9 +3,13 @@
 uvicorn.run is replaced by a recorder, so nothing binds a port. Every URL and key here is fake.
 """
 
+import importlib
+import json
 import logging
 import sqlite3
+import sys
 import tomllib
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -410,3 +414,121 @@ def test_snapshot_refuses_when_there_is_no_database(
     assert "no database" in capsys.readouterr().err.lower()
     assert not missing.exists()  # looking must not create it
     assert not (tmp_path / "cqa-snapshot.json").exists()
+
+
+# --- the other streams' snapshot tables (final review I2) ----------------------------------
+#
+# A test-only package stands in for stream C: like `evaluator/translation.py` (imported by
+# `evaluator/router.py`), its router module registers a migration and a snapshot table when it is
+# imported. Each test starts as a new process would: nothing of it is imported or registered yet.
+
+FAKE_STREAM = "cqa_fake_stream"
+FAKE_STREAM_ROUTER = f'''
+from fastapi import APIRouter
+
+from app.db import register_migration
+from app.snapshot import Table, register_snapshot_table
+
+register_migration(
+    "t_001_fake_stream",
+    "CREATE TABLE t_fake_stream (conversation TEXT NOT NULL, lang TEXT NOT NULL, payload TEXT NOT NULL, "
+    "created_at TEXT NOT NULL, PRIMARY KEY (conversation, lang));",
+)
+register_snapshot_table(
+    Table("t_fake_stream", "t_fake_stream", ("conversation", "lang", "created_at"), "payload", "payload",
+          list[str], order="conversation, lang")
+)
+router = APIRouter()
+'''
+FAKE_ROW = ("DEV:p1-ru-001", "ru", '["Добрый день"]', "2026-11-07T12:00:00+00:00")
+
+
+class FakeStream:
+    def __init__(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        from app import db
+
+        self._registries = (dict(snapshot_store._REGISTERED), dict(db._MIGRATIONS))
+        monkeypatch.setattr(snapshot_store, "_REGISTERED", dict(self._registries[0]))
+        monkeypatch.setattr(db, "_MIGRATIONS", dict(self._registries[1]))
+
+    def new_process(self) -> None:
+        """Forget the package and what it registered, as a fresh `cqa-serve` / `cqa-snapshot` would."""
+        from app import db
+
+        for name in (f"{FAKE_STREAM}.router", FAKE_STREAM):
+            sys.modules.pop(name, None)
+        snapshot_store._REGISTERED.clear()
+        snapshot_store._REGISTERED.update(self._registries[0])
+        db._MIGRATIONS.clear()
+        db._MIGRATIONS.update(self._registries[1])
+
+    def source_database(self, monkeypatch: pytest.MonkeyPatch, path: Path) -> None:
+        """A database with the six DEV dialogues and one row in the package's table."""
+        importlib.import_module(f"{FAKE_STREAM}.router")
+        use_database(monkeypatch, path)
+        migrate()
+        seed_into_db()
+        load_dev_subset()
+        conn = sqlite3.connect(path)
+        try:
+            conn.execute("INSERT INTO t_fake_stream VALUES (?, ?, ?, ?)", FAKE_ROW)
+            conn.commit()
+        finally:
+            conn.close()
+
+
+@pytest.fixture
+def fake_stream(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[FakeStream]:
+    from app import main
+
+    package = tmp_path / "packages" / FAKE_STREAM
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text("", encoding="utf-8")
+    (package / "router.py").write_text(FAKE_STREAM_ROUTER, encoding="utf-8")
+    monkeypatch.syspath_prepend(str(package.parent))
+    monkeypatch.setattr(main, "OPTIONAL_ROUTER_PACKAGES", (FAKE_STREAM,))
+    stream = FakeStream(monkeypatch)
+    yield stream
+    for name in (f"{FAKE_STREAM}.router", FAKE_STREAM):
+        sys.modules.pop(name, None)
+
+
+def fake_rows(path: Path) -> list[tuple]:
+    conn = sqlite3.connect(path)
+    try:
+        return [tuple(row) for row in conn.execute("SELECT * FROM t_fake_stream ORDER BY conversation, lang")]
+    finally:
+        conn.close()
+
+
+def test_serve_restores_a_table_another_stream_registers(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, uvicorn_calls: list[dict], fake_stream: FakeStream
+) -> None:
+    fake_stream.source_database(monkeypatch, tmp_path / "source.db")
+    path = tmp_path / "snapshot" / "cqa-snapshot.json"
+    document = snapshot_store.export_snapshot(path)
+    assert document["t_fake_stream"] == [
+        {"conversation": FAKE_ROW[0], "lang": "ru", "created_at": FAKE_ROW[3], "payload": ["Добрый день"]}
+    ]
+    monkeypatch.setattr(snapshot_store, "SNAPSHOT", path)
+    fake_stream.new_process()
+    use_database(monkeypatch, tmp_path / "serve.db")
+
+    cli.serve([])  # loads the other streams' modules before it migrates and restores
+
+    assert len(store.list_conversations()) == 6
+    assert fake_rows(tmp_path / "serve.db") == [FAKE_ROW]
+
+
+def test_cqa_snapshot_exports_a_table_another_stream_registers(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, fake_stream: FakeStream
+) -> None:
+    fake_stream.source_database(monkeypatch, tmp_path / "source.db")
+    fake_stream.new_process()
+
+    cli.snapshot([])
+
+    written = json.loads(snapshot_store.SNAPSHOT.read_text(encoding="utf-8"))
+    assert written["t_fake_stream"] == [
+        {"conversation": FAKE_ROW[0], "lang": "ru", "created_at": FAKE_ROW[3], "payload": ["Добрый день"]}
+    ]

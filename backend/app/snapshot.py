@@ -18,9 +18,28 @@ What is in the file (`format: 1`), each part a list of rows:
 * `judgments`: the judgment cache, so re-applying a checklist whose results are stored needs no
   model call (and no key).
 
-The other streams' tables (C's and D's) are not exported. Each row keeps its table columns as
-they are, and the JSON column as a nested object under its own key (`conversation`, `checklist`,
-`evaluation`, `appeal`, `judgment`).
+Each row keeps its table columns as they are, and the JSON column as a nested object under its own
+key (`conversation`, `checklist`, `evaluation`, `appeal`, `judgment`).
+
+**Other streams' tables** (C's translations, D's results) ship through `register_snapshot_table`,
+which mirrors `app.db.register_migration`: call it once, at import time, in the module that
+registers the table's migration, which must be the stream's `<package>.router` module or one it
+imports (`cqa-serve` and `cqa-snapshot` import those before they touch the database). For example,
+in `evaluator/translation.py`:
+
+    from app.snapshot import Table, register_snapshot_table
+
+    register_snapshot_table(Table(
+        "c_translations", "c_translations", ("conversation", "lang", "created_at"),
+        "payload", "payload", list[str], order="conversation, lang",
+    ))
+
+The export writes a registered table that exists under its own key, with the same sorted
+serialisation and signed-URL checks as B's parts; the import loads its rows in the same transaction,
+and refuses (like for B's tables) when the table already holds rows. A key the importing machine has
+not registered (its package is missing) is skipped with a warning naming it; a registered table the
+file does not mention stays empty. `format` stays 1: the parts are additive. Registering a key
+twice, or one of B's keys or tables, raises ValueError.
 
 No signed URL may be in the file, and none is: the text is checked (`assert_no_signed_urls`) before
 anything is written, and again before anything is loaded. The check is blunt on purpose: any
@@ -46,7 +65,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from app import store
 from app.checklists import load_checklist_file, seed_files
@@ -99,7 +118,9 @@ class Table:
     columns: tuple[str, ...]  # exported as they are
     json_column: str  # exported as a nested object, under `json_key`
     json_key: str
-    model: type[BaseModel]  # what the JSON column is checked against on import
+    # What the JSON column is checked against on import, and written back as (the type's canonical,
+    # compact JSON): a Pydantic model or any type a pydantic.TypeAdapter takes (e.g. list[str]).
+    model: Any
     order: str  # makes the file the same every time
     where: str = ""  # which rows are exported
     skip_if_present: tuple[str, ...] = ()  # columns that identify a row that is not inserted twice
@@ -177,10 +198,41 @@ TABLES: tuple[Table, ...] = (
 # Stored columns that are deliberately not exported (the guard test checks every other column is).
 NOT_EXPORTED: dict[str, tuple[str, ...]] = {"conversations": ("audio_url",)}
 
+# Every key of the document that is B's, and B's tables: a registered table may use neither.
+_B_PARTS = frozenset({"format", "jobs", *(table.key for table in TABLES)})
+_B_TABLES = frozenset(table.table for table in TABLES)
+
+# The other streams' tables, by key, in the order they were registered (and are loaded in).
+_REGISTERED: dict[str, Table] = {}
+
+
+def register_snapshot_table(table: Table) -> None:
+    """Ship another stream's table in the snapshot (see the module docstring).
+
+    Raises ValueError when the key is already registered, when the table is already registered
+    under another key, or when the key or the table is one of B's."""
+    if table.key in _B_PARTS or table.table in _B_TABLES:
+        raise ValueError(f"snapshot part {table.key!r} (table {table.table!r}) would replace one of B's own parts")
+    if table.key in _REGISTERED:
+        raise ValueError(f"snapshot part {table.key!r} is already registered")
+    if any(other.table == table.table for other in _REGISTERED.values()):
+        raise ValueError(f"table {table.table!r} is already registered under another snapshot part")
+    _REGISTERED[table.key] = table
+
+
+def registered_snapshot_tables() -> tuple[Table, ...]:
+    """The other streams' tables, in the order they were registered."""
+    return tuple(_REGISTERED.values())
+
 
 def row_count(document: dict) -> int:
-    """The number of rows in a snapshot document."""
-    return sum(len(document[table.key]) for table in TABLES)
+    """The number of rows in a snapshot document: B's parts and the registered ones it holds."""
+    parts = (*TABLES, *(table for table in registered_snapshot_tables() if table.key in document))
+    return sum(len(document[table.key]) for table in parts)
+
+
+def _existing_tables(conn: sqlite3.Connection) -> set[str]:
+    return {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
 
 
 # --- export --------------------------------------------------------------------------------
@@ -249,25 +301,30 @@ def _check_seeded_checklists(exported: list[dict[str, Any]]) -> None:
 def _check_rows_for_signed_urls(document: dict[str, Any]) -> None:
     """The same check as the whole text gets, one row at a time, so a refusal can say where the
     problem is. The whole-text check still runs after this one: it covers everything."""
-    for table in TABLES:
-        for i, row in enumerate(document[table.key]):
+    for key, part in document.items():
+        if not isinstance(part, list):
+            continue  # `format`
+        for i, row in enumerate(part):
             try:
                 assert_no_signed_urls(json.dumps(row, ensure_ascii=False))
             except SnapshotError as exc:
-                raise SnapshotError(f"{table.key}[{i}]: {exc}") from None
+                raise SnapshotError(f"{key}[{i}]: {exc}") from None
 
 
 def export_snapshot(path: Path) -> dict:
     """Write the snapshot of the current database to `path` and return the document written.
 
-    Sorted keys, `ensure_ascii=False`, indent 1. Two things refuse the export (SnapshotError):
-    a seeded checklist version that differs from its seed file, and a signed URL anywhere in the
-    text (the message names the part and the row, never the text). The checks run before anything
-    is written: on a refusal nothing is written (an existing file stays as it is)."""
+    B's parts, then every registered table that exists in the database, under its key. Sorted keys,
+    `ensure_ascii=False`, indent 1. Two things refuse the export (SnapshotError): a seeded checklist
+    version that differs from its seed file, and a signed URL anywhere in the text (the message
+    names the part and the row, never the text). The checks run before anything is written: on a
+    refusal nothing is written (an existing file stays as it is)."""
     conn = connect()
     try:
         conn.execute("BEGIN")  # one read snapshot, so every part describes the same moment
-        document: dict[str, Any] = {"format": FORMAT, **{t.key: _dump(conn, t) for t in TABLES}, "jobs": []}
+        existing = _existing_tables(conn)
+        parts = (*TABLES, *(t for t in registered_snapshot_tables() if t.table in existing))
+        document: dict[str, Any] = {"format": FORMAT, **{t.key: _dump(conn, t) for t in parts}, "jobs": []}
     finally:
         conn.close()
     _check_seeded_checklists(document["checklists"])
@@ -324,8 +381,9 @@ def _check_references(document: dict) -> None:
 
 
 def _prepare(text: str) -> list[tuple[Table, list[tuple[tuple, str]]]]:
-    """Check the whole file and turn it into rows to insert: (column values, JSON text) per table.
-    Nothing is written here."""
+    """Check the whole file and turn it into rows to insert: (column values, JSON text) per table,
+    B's tables first, then the registered ones the file holds. A part nobody registered here is
+    skipped with a warning. Nothing is written here."""
     try:
         document = json.loads(text)
     except ValueError:
@@ -334,27 +392,37 @@ def _prepare(text: str) -> list[tuple[Table, list[tuple[tuple, str]]]]:
         raise SnapshotError("The snapshot must be a JSON object.")
     if document.get("format") != FORMAT:
         raise SnapshotError(f"Unsupported snapshot format (this version reads format {FORMAT}).")
-    rows = {table.key: _rows(document, table) for table in TABLES}
+    for key in sorted(set(document) - _B_PARTS - set(_REGISTERED)):
+        logger.warning(
+            "The snapshot part %r is not registered on this machine (the package that owns it is missing "
+            "or did not register it), so its rows were not loaded.",
+            key,
+        )
+    tables = (*TABLES, *(table for table in registered_snapshot_tables() if table.key in document))
+    rows = {table.key: _rows(document, table) for table in tables}
     _check_references(rows)
 
     prepared = []
-    for table in TABLES:
+    for table in tables:
         restore = _RESTORE.get(table.key)
+        adapter = TypeAdapter(table.model)
         items = []
         for i, item in enumerate(rows[table.key]):
             try:
-                model = table.model.model_validate_json(json.dumps(item[table.json_key], ensure_ascii=False))
+                value = adapter.validate_json(json.dumps(item[table.json_key], ensure_ascii=False))
             except ValidationError as exc:
                 raise SnapshotError(f"{table.key}[{i}]: {_describe(exc)}") from None
-            payload = (restore(model) if restore else model).model_dump_json()
+            payload = adapter.dump_json(restore(value) if restore else value).decode("utf-8")
             items.append((tuple(item[column] for column in table.columns), payload))
         prepared.append((table, items))
     return prepared
 
 
-def _require_empty(conn: sqlite3.Connection) -> None:
-    for noun in ("conversations", "evaluations", "appeals"):
-        if conn.execute(f"SELECT 1 FROM {noun} LIMIT 1").fetchone() is not None:
+def _require_empty(conn: sqlite3.Connection, existing: set[str]) -> None:
+    """Refuse a database that holds results: B's, or rows of a registered table."""
+    nouns = ("conversations", "evaluations", "appeals", *(t.table for t in registered_snapshot_tables()))
+    for noun in nouns:
+        if noun in existing and conn.execute(f"SELECT 1 FROM {noun} LIMIT 1").fetchone() is not None:
             raise SnapshotError(
                 f"A snapshot can only be loaded into an empty database, and this one already has {noun}."
             )
@@ -388,18 +456,29 @@ def _insert(conn: sqlite3.Connection, table: Table, items: list[tuple[tuple, str
 def import_snapshot(path: Path) -> int:
     """Load the snapshot at `path` into the current database and return the number of rows inserted.
 
-    Only into a database without conversations, evaluations and appeals (SnapshotError, a
-    ValueError, otherwise). The whole file is checked first and the rows go in as one transaction:
-    on any error nothing is stored. Checklist versions that are already stored (the seeded official
-    one) are skipped, not duplicated and not counted; the seeded one stays authoritative, and a
-    warning names it when the snapshot's copy differs in anything scored or shown. Voice calls come
-    back without audio, with the reason `needs_import`. The schema must already be migrated
-    (`app.db.migrate`)."""
+    Only into a database without conversations, evaluations, appeals and rows in a registered table
+    (SnapshotError, a ValueError, otherwise). The whole file is checked first and the rows go in as
+    one transaction: on any error nothing is stored. Checklist versions that are already stored (the
+    seeded official one) are skipped, not duplicated and not counted; the seeded one stays
+    authoritative, and a warning names it when the snapshot's copy differs in anything scored or
+    shown. Voice calls come back without audio, with the reason `needs_import`. A part that is not
+    registered here, or whose table this database lacks, is skipped with a warning. The schema must
+    already be migrated (`app.db.migrate`)."""
     text = Path(path).read_text(encoding="utf-8")
     assert_no_signed_urls(text)
     prepared = _prepare(text)
     with store.write_transaction() as conn:
-        _require_empty(conn)
-        inserted = sum(_insert(conn, table, items) for table, items in prepared)
+        existing = _existing_tables(conn)
+        _require_empty(conn, existing)
+        inserted = 0
+        for table, items in prepared:
+            if table.table not in existing:  # only a registered table can be missing (B's are migrated)
+                logger.warning(
+                    "The snapshot part %r was not loaded: this database has no table %r (its migration did "
+                    "not run).",
+                    table.key, table.table,
+                )  # fmt: skip
+                continue
+            inserted += _insert(conn, table, items)
     logger.info("Loaded snapshot %s (%d rows)", path, inserted)
     return inserted

@@ -9,6 +9,7 @@ official checklist and one weight-only copy of it, both applied to every dialogu
 the app on a second, empty database, which is what a jury machine has.
 """
 
+import dataclasses
 import json
 import logging
 import re
@@ -20,7 +21,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app import checklists, jobs, snapshot as snapshots, store
+from app import checklists, db, jobs, snapshot as snapshots, store
 from app.checklists import criterion_fingerprint
 from app.db import connect, migrate
 from app.models import Appeal, ChecklistVersion, Evaluation, StepAnswer
@@ -893,3 +894,205 @@ def test_an_error_message_never_repeats_the_data(source: Source, fresh, tmp_path
         import_snapshot(path)
     assert "SECRETVALUE" not in str(caught.value)
     assert "channel" in str(caught.value)
+
+
+# --- tables other streams register (final review I2) ---------------------------------------
+#
+# A stand-in for stream C's `c_translations` (conversation, lang, payload = a JSON list of strings,
+# created_at; PRIMARY KEY (conversation, lang)), under a test-only name. The registries are
+# process-global: `registry` gives each test private copies, so nothing leaks into other tests.
+
+FAKE_PART = "t_fake_translations"
+FAKE_TABLE_SQL = f"""
+    CREATE TABLE {FAKE_PART} (
+        conversation TEXT NOT NULL,
+        lang TEXT NOT NULL,
+        payload TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        PRIMARY KEY (conversation, lang)
+    );
+"""
+FAKE_TABLE = snapshots.Table(
+    FAKE_PART, FAKE_PART, ("conversation", "lang", "created_at"), "payload", "payload", list[str],
+    order="conversation, lang",
+)  # fmt: skip
+
+
+@pytest.fixture
+def registry(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(snapshots, "_REGISTERED", dict(snapshots._REGISTERED))
+    monkeypatch.setattr(db, "_MIGRATIONS", dict(db._MIGRATIONS))
+
+
+@pytest.fixture
+def translations(registry: None) -> snapshots.Table:
+    """The stand-in table, registered for migrations and for the snapshot, and created now."""
+    db.register_migration("t_001_fake_translations", FAKE_TABLE_SQL)
+    snapshots.register_snapshot_table(FAKE_TABLE)
+    migrate()
+    return FAKE_TABLE
+
+
+def add_translation(conversation: str, lang: str, lines: list[str], created_at: str = "2026-11-07T12:00:00+00:00") -> None:
+    conn = connect()
+    try:
+        conn.execute(
+            f"INSERT INTO {FAKE_PART} (conversation, lang, payload, created_at) VALUES (?, ?, ?, ?)",
+            (conversation, lang, json.dumps(lines, ensure_ascii=False), created_at),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def translation_rows() -> list[tuple]:
+    """The rows with the payload parsed: it comes back as the canonical (compact) JSON of its type."""
+    found = rows(f"SELECT conversation, lang, payload, created_at FROM {FAKE_PART} ORDER BY conversation, lang")
+    return [(conversation, lang, json.loads(payload), created_at) for conversation, lang, payload, created_at in found]
+
+
+def test_a_registered_table_round_trips(source: Source, fresh, translations, tmp_path: Path) -> None:
+    add_translation(VOICE, "ru", ["Здравствуйте", "Спасибо"])
+    add_translation(CHAT, "ru", ["Добрый день"], created_at="2026-11-07T11:00:00+00:00")
+    before = translation_rows()
+
+    path, document = exported(source, tmp_path)
+    assert document["format"] == 1  # the part is additive
+    assert document[FAKE_PART] == [  # sorted by the table's order, the JSON column nested
+        {"conversation": CHAT, "lang": "ru", "created_at": "2026-11-07T11:00:00+00:00", "payload": ["Добрый день"]},
+        {"conversation": VOICE, "lang": "ru", "created_at": "2026-11-07T12:00:00+00:00",
+         "payload": ["Здравствуйте", "Спасибо"]},
+    ]  # fmt: skip
+    text = path.read_text(encoding="utf-8")
+    assert text == json.dumps(document, sort_keys=True, ensure_ascii=False, indent=1) + "\n"
+    assert row_count(document) == sum(len(document[t.key]) for t in TABLES) + 2
+    again, _ = exported(source, tmp_path / "again")
+    assert again.read_bytes() == path.read_bytes()  # deterministic
+
+    fresh()
+    assert translation_rows() == []
+    assert import_snapshot(path) == row_count(document) - 1  # the seeded official checklist is skipped
+    assert translation_rows() == before
+    assert len(store.list_conversations()) == 6  # B's parts in the same import
+
+
+def test_a_registered_table_that_does_not_exist_is_not_exported(source: Source, registry, tmp_path: Path) -> None:
+    snapshots.register_snapshot_table(FAKE_TABLE)  # registered, but no migration created it
+    _, document = exported(source, tmp_path)
+    assert FAKE_PART not in document
+
+
+def test_a_signed_url_in_a_registered_table_refuses_the_export(source: Source, translations, tmp_path: Path) -> None:
+    add_translation(CHAT, "en", ["fine"])
+    add_translation(VOICE, "ru", ["see https://files.example.invalid/a?sig=SECRETSIGNATURE"])
+    target = tmp_path / "snapshot.json"
+    with pytest.raises(SnapshotError) as caught:
+        export_snapshot(target)
+    message = str(caught.value)
+    assert f"{FAKE_PART}[1]" in message  # the part and the row
+    assert "SECRETSIGNATURE" not in message and "files.example.invalid" not in message
+    assert not target.exists()
+
+
+def test_the_whole_text_check_covers_registered_tables(
+    source: Source, translations, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    add_translation(CHAT, "ru", ["https://files.example.invalid/a?sig=SECRETSIGNATURE"])
+    monkeypatch.setattr(snapshots, "_check_rows_for_signed_urls", lambda document: None)  # the last line of defence
+    target = tmp_path / "snapshot.json"
+    with pytest.raises(SnapshotError):
+        export_snapshot(target)
+    assert not target.exists()
+
+
+def test_a_part_not_registered_here_is_skipped_with_a_warning(
+    source: Source, fresh, translations, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    add_translation(CHAT, "ru", ["Добрый день"])
+    path, document = exported(source, tmp_path)
+    expected = row_count(document) - 1 - len(document[FAKE_PART])  # no seeded checklist, no unknown part
+    monkeypatch.setattr(snapshots, "_REGISTERED", {})  # the importing machine lacks that package
+    fresh()
+
+    with caplog.at_level(logging.WARNING, logger="app.snapshot"):
+        count = import_snapshot(path)
+
+    assert count == expected
+    assert len(store.list_conversations()) == 6
+    assert translation_rows() == []  # its table exists here (the migration ran), but nothing went in
+    warned = [r.getMessage() for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warned) == 1 and FAKE_PART in warned[0]
+    assert "Добрый день" not in caplog.text  # names the part, never the data
+
+
+def test_a_registered_table_missing_from_the_snapshot_stays_empty(
+    source: Source, fresh, registry, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    path, document = exported(source, tmp_path)  # made before the table was registered
+    assert FAKE_PART not in document
+    db.register_migration("t_001_fake_translations", FAKE_TABLE_SQL)
+    snapshots.register_snapshot_table(FAKE_TABLE)
+    fresh()
+    with caplog.at_level(logging.WARNING, logger="app.snapshot"):
+        import_snapshot(path)
+    assert translation_rows() == []
+    assert len(store.list_conversations()) == 6
+    assert [r for r in caplog.records if r.levelno >= logging.WARNING] == []
+
+
+def test_a_registered_part_whose_table_is_missing_here_is_skipped_with_a_warning(
+    source: Source, fresh, translations, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    add_translation(CHAT, "ru", ["Добрый день"])
+    path, _ = exported(source, tmp_path)
+    monkeypatch.setattr(db, "_MIGRATIONS", {k: v for k, v in db._MIGRATIONS.items() if not k.startswith("t_")})
+    fresh()  # registered for the snapshot, but its migration never ran here
+    with caplog.at_level(logging.WARNING, logger="app.snapshot"):
+        import_snapshot(path)
+    assert len(store.list_conversations()) == 6  # B's parts still load
+    warned = [r.getMessage() for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warned) == 1 and FAKE_PART in warned[0]
+
+
+def test_a_non_empty_registered_table_refuses_the_import(source: Source, fresh, translations, tmp_path: Path) -> None:
+    add_translation(CHAT, "ru", ["Добрый день"])
+    path, _ = exported(source, tmp_path)
+    fresh()
+    add_translation("DEV:other", "ru", ["already here"])
+    with pytest.raises(ValueError, match="empty"):
+        import_snapshot(path)
+    assert store.list_conversations() == []  # nothing of the snapshot went in
+    assert translation_rows() == [("DEV:other", "ru", ["already here"], "2026-11-07T12:00:00+00:00")]
+
+
+def test_a_bad_row_of_a_registered_table_is_refused_and_stores_nothing(
+    source: Source, fresh, translations, tmp_path: Path
+) -> None:
+    add_translation(CHAT, "ru", ["Добрый день"])
+    _, document = exported(source, tmp_path)
+    document[FAKE_PART][0]["payload"] = {"not": "a list SECRETVALUE"}
+    path = write_doc(tmp_path / "bad.json", document)
+    fresh()
+    with pytest.raises(SnapshotError) as caught:
+        import_snapshot(path)
+    assert f"{FAKE_PART}[0]" in str(caught.value) and "SECRETVALUE" not in str(caught.value)
+    assert store.list_conversations() == []
+
+
+@pytest.mark.parametrize(
+    "table",
+    [
+        FAKE_TABLE,  # the same key twice
+        dataclasses.replace(FAKE_TABLE, table="t_other"),  # the same key for another table
+        *(dataclasses.replace(FAKE_TABLE, key=key) for key in ("conversations", "judgments", "format", "jobs")),
+        dataclasses.replace(FAKE_TABLE, key="t_elsewhere", table="appeals"),  # one of B's tables
+    ],
+    ids=["duplicate", "same key", "conversations", "judgments", "format", "jobs", "b table"],
+)
+def test_registration_refuses_a_duplicate_or_one_of_bs_parts(registry, table: snapshots.Table) -> None:
+    snapshots.register_snapshot_table(FAKE_TABLE)
+    with pytest.raises(ValueError):
+        snapshots.register_snapshot_table(table)
+    assert snapshots.registered_snapshot_tables() == (FAKE_TABLE,)
