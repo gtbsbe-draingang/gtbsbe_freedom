@@ -22,7 +22,7 @@ otherwise the challenger must also pass its planted checks. `write_models`
 changes only model fields on an unpublished seed copy; publish any live change
 as a new checklist version through the normal admin flow.
 
-One DEV run has been measured against the references: the 7 November run (Claude Haiku 5.5, 65 dialogues) agrees with 79.75% of the 479 undisputed labels and catches 21 of the 25 planted violations (`data/reference/agreement-dev-2026-11-07.json`, made with `python -m quality.devrun_accuracy`). It is one model, so no per-criterion model choice has been made and no defaults have changed.
+One DEV run has been measured against the references: the 7 November run (Claude Haiku 5.5, 65 dialogues) agrees with 80.66% of the 517 undisputed labels (79.75% on the 479 that the #25 guidance does not affect) and catches 21 of the 25 planted violations (`data/reference/agreement-dev-2026-11-07.json`, made with `python -m quality.devrun_accuracy`). It is one model, so no per-criterion model choice has been made and no defaults have changed.
 The user requires fully local inference with a total VRAM ceiling of 140 GB;
 the server and its GPU topology are not yet available here. The older hosted
 model comparison in #26 is superseded by that requirement. Record actual model

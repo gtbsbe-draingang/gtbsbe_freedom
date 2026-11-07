@@ -15,20 +15,20 @@
   "labels": 520,
   "status": "drafts; team review pending (#73)"
  },
- "version_note": "The run graded v1; the references are for v2, which only adds guidance on c01, c03, c06 and c07. Every label that guidance affects is disputed and excluded, so the undisputed labels are compared as they stand.",
+ "version_note": "The run graded v1; the references are for v2, which only adds guidance on c01, c03, c06 and c07. Labels that follow that guidance (the approved #25 readings) are compared too, although the run never saw it; a v2 run would replace this report.",
  "report": {
   "reference_note": "Сравнение с предварительными ответами команды, а не с разметкой организаторов. Спорные ответы исключены; остальные ещё требуют проверки командой.",
   "model": "claude-haiku-5-5",
   "overall": {
-   "agreement": 0.7975,
-   "n": 479
+   "agreement": 0.8066,
+   "n": 517
   },
   "by_criterion": [
    {
     "criterion_id": "c01",
     "title": "Установление контакта",
-    "agreement": 0.9365,
-    "n": 63
+    "agreement": 0.9385,
+    "n": 65
    },
    {
     "criterion_id": "c02",
@@ -39,8 +39,8 @@
    {
     "criterion_id": "c03",
     "title": "Идентификация",
-    "agreement": 0.6825,
-    "n": 63
+    "agreement": 0.6769,
+    "n": 65
    },
    {
     "criterion_id": "c04",
@@ -63,8 +63,8 @@
    {
     "criterion_id": "c07",
     "title": "Завершение",
-    "agreement": 0.8065,
-    "n": 31
+    "agreement": 0.8769,
+    "n": 65
    },
    {
     "criterion_id": "c08",
@@ -76,34 +76,34 @@
   "by_language": [
    {
     "language": "EN",
-    "agreement": 0.7909,
-    "n": 110
+    "agreement": 0.8083,
+    "n": 120
    },
    {
     "language": "KZ",
-    "agreement": 0.8182,
-    "n": 110
+    "agreement": 0.8305,
+    "n": 118
    },
    {
     "language": "RU",
-    "agreement": 0.7915,
-    "n": 259
+    "agreement": 0.7957,
+    "n": 279
    }
   ],
   "by_channel": [
    {
     "channel": "agent chat",
-    "agreement": 0.8126,
-    "n": 443
+    "agreement": 0.8218,
+    "n": 477
    },
    {
     "channel": "voice call",
-    "agreement": 0.6111,
-    "n": 36
+    "agreement": 0.625,
+    "n": 40
    }
   ],
   "missing": 0,
-  "disputed_excluded": 41,
+  "disputed_excluded": 3,
   "disagreements": [
    {
     "conversation": "DEV:p1-en-002",
@@ -647,6 +647,13 @@
     }
    },
    {
+    "conversation": "DEV:p1-ru-016",
+    "conversation_id": "p1-ru-016",
+    "criterion_id": "c07",
+    "reference": "yes",
+    "evaluated": "no"
+   },
+   {
     "conversation": "DEV:p1-ru-017",
     "conversation_id": "p1-ru-017",
     "criterion_id": "c03",
@@ -728,6 +735,13 @@
     "evaluated": {
      "step": 7
     }
+   },
+   {
+    "conversation": "DEV:p1-ru-023",
+    "conversation_id": "p1-ru-023",
+    "criterion_id": "c07",
+    "reference": "yes",
+    "evaluated": "no"
    },
    {
     "conversation": "DEV:p1-ru-024",
@@ -932,6 +946,13 @@
     "criterion_id": "c08",
     "reference": "no",
     "evaluated": "yes"
+   },
+   {
+    "conversation": "DEV:p4-ru-005",
+    "conversation_id": "p4-ru-005",
+    "criterion_id": "c03",
+    "reference": "na",
+    "evaluated": "no"
    },
    {
     "conversation": "DEV:p4-ru-005",

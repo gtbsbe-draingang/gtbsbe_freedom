@@ -7,9 +7,9 @@ Uses `quality.accuracy.accuracy_report`, the same code as `/api/reports/accuracy
 are left out and counted, a missing answer is counted as missing, never as a disagreement.
 
 The 7 November run graded the official checklist v1; the references are written for
-`official-chat` v2. v2 is v1 plus guidance on c01, c03, c06 and c07, and every label that guidance
-affects is disputed (#25), so the undisputed labels mean the same under both versions. The run is
-therefore compared with the undisputed labels as if it were a v2 run; the output says so.
+`official-chat` v2, which is v1 plus guidance on c01, c03, c06 and c07 (#25). The run is compared
+with every undisputed label as if it were a v2 run, including the labels that follow that
+guidance; the output says so.
 """
 from __future__ import annotations
 
@@ -62,8 +62,8 @@ def build(report: dict, records: list[dict], reference_path: Path = REFERENCE) -
         "references": {"file": "data/reference/dev_labels.json", "checklist": f"{reference.checklist_id} v{reference.version}",
                        "labels": len(reference.labels), "status": "drafts; team review pending (#73)"},
         "version_note": ("The run graded v1; the references are for v2, which only adds guidance on c01, c03, c06 "
-                         "and c07. Every label that guidance affects is disputed and excluded, so the undisputed "
-                         "labels are compared as they stand."),
+                         "and c07. Labels that follow that guidance (the approved #25 readings) are compared too, "
+                         "although the run never saw it; a v2 run would replace this report."),
         "report": result.model_dump(),
     }
 

@@ -60,7 +60,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-001",
@@ -128,7 +128,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-002",
@@ -196,7 +196,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-003",
@@ -264,7 +264,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-004",
@@ -332,7 +332,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-005",
@@ -536,7 +536,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#18], оператор попрощался [#19]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-008",
@@ -672,7 +672,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-010",
@@ -740,7 +740,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-011",
@@ -808,7 +808,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-012",
@@ -1016,7 +1016,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-en-015",
@@ -1084,7 +1084,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-001",
@@ -1152,7 +1152,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-002",
@@ -1288,7 +1288,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-004",
@@ -1424,7 +1424,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-006",
@@ -1492,7 +1492,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-007",
@@ -1628,7 +1628,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#18], оператор попрощался [#19]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-009",
@@ -1696,7 +1696,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-010",
@@ -1970,7 +1970,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-kz-014",
@@ -2108,7 +2108,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-001",
@@ -2140,7 +2140,7 @@
    "answer": "na",
    "kinds": [],
    "note": "Идентификацию предложил [#11], клиент отказался [#12]; данные счёта не раскрыты, поэтому N/A. Уточнение #25: N/A.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-002",
@@ -2312,7 +2312,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-004",
@@ -2584,7 +2584,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-008",
@@ -2790,7 +2790,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-011",
@@ -2994,7 +2994,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-014",
@@ -3130,7 +3130,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#14], оператор попрощался [#15]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-016",
@@ -3198,7 +3198,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#13], оператор попрощался [#14]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-017",
@@ -3334,7 +3334,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-019",
@@ -3402,7 +3402,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-020",
@@ -3470,7 +3470,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-021",
@@ -3608,7 +3608,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-023",
@@ -3678,7 +3678,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-024",
@@ -3880,7 +3880,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#22], оператор попрощался [#23]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-027",
@@ -3948,7 +3948,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#14], оператор попрощался [#15]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-028",
@@ -4086,7 +4086,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p1-ru-030",
@@ -4170,7 +4170,7 @@
    "answer": "no",
    "kinds": [],
    "note": "[#2] «Да компания федеброкер меня зовут [Имя скрыто]»: имя есть, приветствия в тексте нет; по тексту: Нет (уточнение #25).",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
@@ -4222,7 +4222,7 @@
    "answer": "yes",
    "kinds": [],
    "note": "Клиент подтвердил решение [#69], оператор попрощался [#70]; по уточнению #25 это Да.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p4-ru-002",
@@ -4374,7 +4374,7 @@
    "answer": "no",
    "kinds": [],
    "note": "[#16] «Компания fernetbark и операции Здравствуйте»: приветствие есть, имя в тексте не распознано; по тексту: Нет (уточнение #25).",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
@@ -4390,7 +4390,7 @@
    "answer": "na",
    "kinds": [],
    "note": "Удаление счёта перенесено на завтра [#43], в звонке не выполнено; данные счёта не раскрыты. Уточнение #25: N/A.",
-   "disputed": true
+   "disputed": false
   },
   {
    "conversation_id": "p4-ru-005",
