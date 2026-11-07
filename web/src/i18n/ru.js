@@ -2,7 +2,7 @@
 // Mock-generated "model" text is not UI chrome and lives in the mock module instead.
 const messages = {
   "app.title": "Качество диалогов",
-  "brand.name": "FREEDOM",
+  "brand.name": "Freedom — на главную",
 
   "nav.label": "Разделы",
   "nav.workspace": "Оценка",
