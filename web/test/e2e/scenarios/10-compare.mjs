@@ -110,4 +110,18 @@ export async function run(page) {
   await until(page, `document.querySelectorAll(${quote(`${sel("compare-side")} ${sel("compare-crit")}`)}).length > ${changedOnly}`, "every criterion after «Показать все критерии»");
   assert.equal(await page.count(`${sel("compare-side")} ${sel("compare-crit")}[data-side="both"][data-changed="false"]`) > 0, true, "unchanged criteria are shown on both sides");
   assert.match(await page.eval(`document.querySelector(${quote(`${sel("compare-side")} ${sel("compare-link")}`)}).getAttribute("href")`), new RegExp(`^#/c/${encodeURIComponent(first).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`), "the card links to the dialogue");
+
+  // ---- a card still loading when the comparison changes is dropped, not drawn under the new one ----
+  await page.eval(`(() => {
+    const api = window.__cqaTest.api;
+    const real = api.listEvaluations;
+    api.listEvaluations = (filters) => new Promise((r) => setTimeout(r, 600)).then(() => real(filters));
+  })()`);
+  const second = (await tableRows(page))[1].id;
+  await page.click(`${sel("compare-row")}[data-id="${second}"] ${sel("compare-open")}`);
+  await page.waitFor(sel("compare-side-loading"));
+  await page.eval(`(() => { const s = document.querySelector(${quote(sel("compare-group"))}); s.value = "DEV"; s.dispatchEvent(new Event("change", { bubbles: true })); })()`);
+  await until(page, `location.hash.includes("group_id=DEV") && document.querySelectorAll(${quote(sel("compare-row"))}).length === 3`, "the comparison for DEV");
+  await page.sleep(900); // the held card request has come back by now
+  assert.equal(await page.count(sel("compare-side")), 0, "the card of the previous comparison is not drawn");
 }

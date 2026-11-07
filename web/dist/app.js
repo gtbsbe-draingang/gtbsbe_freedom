@@ -5875,6 +5875,7 @@
     }
     async function load2() {
       const mine = ++loadRun;
+      sideRun += 1;
       const from = ref("from");
       const to = ref("to");
       view.data = null;

@@ -212,6 +212,7 @@ export function createComparePage(store, api, route) {
 
   async function load() {
     const mine = ++loadRun;
+    sideRun += 1; // a card still loading belongs to the previous comparison
     const from = ref("from");
     const to = ref("to");
     view.data = null;
