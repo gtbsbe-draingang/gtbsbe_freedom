@@ -1,10 +1,9 @@
 # Accuracy against a versioned reference
 
 `GET /api/reports/accuracy` reports agreement on the DEV references for
-`official-chat` version 1. References and B's conversation/checklist storage are
-integrated on `gyat`; B's evaluation storage (`list_evaluations`) is still pending.
-Until it lands the endpoint returns `evaluations_unavailable` once a checklist is
-installed. The router is discovered automatically by `app.main`.
+`official-chat` version 2. References and conversation/checklist/evaluation storage
+are integrated. Mock runs are filtered before selecting the latest completed model
+run. The router is discovered automatically by `app.main`.
 Other groups or checklist versions return `reference_mismatch`: admin-created
 criteria need their own reviewed references, never recycled DEV scores.
 

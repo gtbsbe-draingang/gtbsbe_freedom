@@ -14,27 +14,29 @@ These are draft labels from the transcripts, not human-reviewed ground truth. Te
 - `answer` is `yes`, `no`, `na` or `{"step": value}`, as in the contract.
 - `kinds` is filled only for `c08` = yes: `insult`, `paid_service_outside_company` or `confidential_disclosure`.
 - `note` is Russian, at most 200 characters, cites lines as `[#index]` (the index in the transcript) and quotes at most 60 characters in «». No links.
-- `disputed: true` marks an answer whose reading the team has not settled. Disputed labels are left out of the agreement and counted separately. The four #25 questions are now settled in the seed (below); three labels remain disputed.
+- `disputed: true` marks an answer whose reading the team has not settled. All 41 disputed labels remain excluded: 38 affected by the unapproved #25 interpretations and three other ambiguous labels. Publishing a version does not constitute team approval.
 
 Check it from `backend/`:
 
 ```sh
-uv run python -m quality.reference_tools validate ../data/reference/dev_labels.json --seed ../checklists/official-chat-v1.json --dev ../data/dev.json
+uv run python -m quality.reference_tools validate ../data/reference/dev_labels.json --seed ../checklists/official-chat-v2.json --dev ../data/dev.json
 uv run python -m quality.reference_tools export-csv ../data/reference/dev_labels.json /tmp/labels.csv   # for the review
 uv run python -m quality.reference_tools import-csv /tmp/labels.csv ../data/reference/dev_labels.json
 uv run pytest tests/quality
 ```
 
-## Readings applied (#25)
+## Proposed Readings (#25)
 
 The four #25 questions are published as a new immutable version, `checklists/official-chat-v2.json`: v1 with per-criterion `guidance` that starts with «Уточнение команды: » on c01, c03, c06 and c07. v1 stays exactly as published, and a database that already holds v1 keeps it; startup adds v2 next to it. The official `wording` is unchanged. Guidance is part of the criterion fingerprint, so v1 judgments of those four criteria are not reused for v2 (the other four can be). The labels are for v2, and the accuracy report defaults to v2. The app's default checklist is still v1 (`DEFAULT_CHECKLIST_VERSION` in `backend/app/settings.py`); moving it to v2 is stream B's call. If the team overrules a decision, publish v3 and relabel; never edit a published version.
 
-| Question | Decision (in the seed) | Labels it touches |
+These are proposals, not approved scoring policy. Keep #25 open and all 38 affected labels disputed until the team decides. To populate the report, explicitly evaluate DEV with `checklist_id=official-chat, version=2`; existing v1 evaluations never count toward this v2 report. All 520 labels still require human review under #24.
+
+| Question | Proposal (in v2, pending approval) | Labels it touches |
 |---|---|---|
-| (1) c07 | A polite goodbye after the client has confirmed the answer or the fix is Yes: the confirmed answer is the summary. No when there is no goodbye, or the goodbye leaves a client question or complaint unanswered. | 34 labels move from disputed No to Yes |
-| (2) c03 | Identification declined or deferred, no account data disclosed and no protected action: N/A. Data disclosed or an action taken without verification: No. | p1-ru-002, p4-ru-005 stay N/A, no longer disputed |
+| (1) c07 | A polite goodbye after the client has confirmed the answer or the fix is Yes: the confirmed answer is the summary. No when there is no goodbye, or the goodbye leaves a client question or complaint unanswered. | 34 proposed Yes labels stay disputed |
+| (2) c03 | Identification declined or deferred, no account data disclosed and no protected action: N/A. Data disclosed or an action taken without verification: No. | p1-ru-002, p4-ru-005 stay disputed N/A |
 | (3) c06 | The official checklist excludes the 3-minute first-reaction threshold, so response time alone never lowers the level. Only an explicit wait without a warning blocks level 10. | none |
-| (4) c01 on calls | The first reply is the operator's first line after joining. Judge from the transcript text: the greeting and the introduction (a name or `[Имя скрыто]`) must both be readable; if either is missing, No. | p4-ru-002, p4-ru-005 stay No, no longer disputed |
+| (4) c01 on calls | The first reply is the operator's first line after joining. Judge from the transcript text: the greeting and the introduction (a name or `[Имя скрыто]`) must both be readable; if either is missing, No. | p4-ru-002, p4-ru-005 stay disputed No |
 
 Other readings used in the draft:
 
@@ -57,4 +59,4 @@ All 520 labels still need the team review (#24). New admin-created criteria need
 
 ## Totals with these answers
 
-Using the official procedure (N/A weight redistributed, half up rounding): mean 85.21, 40 of 65 dialogs at 100.00, lowest `p1-ru-018` at 12.50 (after the #25 decisions; before them: mean 81.36, 12 at 100.00). Eight dialogs carry the gross-error flag.
+Including the disputed proposed answers and using the official procedure: mean 85.21, 40 of 65 dialogs at 100.00, lowest `p1-ru-018` at 12.50. These are provisional draft totals, not validated accuracy or approved #25 decisions. Eight dialogs carry the gross-error flag.
