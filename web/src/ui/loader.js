@@ -18,7 +18,8 @@ import { setLocalizedText } from "../i18n/dom.js";
 //     Shown while dialogues are selected in the queue (store `selection`) or a batch runs. Its
 //     «Выбрано: N» opens the basket: one row per selected dialogue in the order picked, with a link
 //     to it and a button that takes it out of the selection (`describe(id)` gives the row's queue
-//     item, for its group, language and channel). Then the
+//     item, for its group, language and channel). A press anywhere but its rows and the toggle
+//     closes it, including the empty parts of the basket and the bar. Then the
 //     checklist (store `checklistSel`, shared with the scorecard), the dry-run estimate
 //     «N диалогов · M вызовов модели · K из кэша», «Оценить выбранные», then the job's progress
 //     with «Повторить неудачные». The job is in the "batch" slot of job-runner.js (store `jobs`),
@@ -459,8 +460,13 @@ export function createBatchBar(store, api, { describe = () => null } = {}) {
     else if (basketButton.isConnected) basketButton.focus();
   }
 
+  // Any press closes the basket except one on its own rows (links, remove buttons, the list's
+  // scrollbar) or on the toggle, whose click does the toggling. A press on an empty part of the
+  // basket card or the bar closes it like a press anywhere else on the page.
   const onOutside = (event) => {
-    if (!bar.contains(event.target)) closeBasket();
+    const target = event.target;
+    if (target instanceof Node && (basketList.contains(target) || basketButton.contains(target))) return;
+    closeBasket();
   };
   function openBasket() {
     if (selection().size === 0) return;
