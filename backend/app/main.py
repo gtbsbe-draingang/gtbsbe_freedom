@@ -19,6 +19,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from starlette.websockets import WebSocketClose
 
+from app.checklists import seed_into_db
 from app.db import migrate
 from app.errors import install_error_handlers
 from app.routes import all_routers
@@ -137,6 +138,7 @@ def optional_routers() -> list[APIRouter]:
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     migrate()
+    seed_into_db()
     yield
 
 
