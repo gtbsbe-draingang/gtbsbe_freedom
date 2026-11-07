@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 AnswerOut = Literal["yes", "no", "na", "step"]
 Mood = Literal["спокойный", "обеспокоенный", "раздражённый", "довольный", "нейтральный"]
@@ -61,7 +61,7 @@ class CriterionOutput(_Out):
 
 # --- dialog info (#21, S9) -----------------------------------------------------------------
 class InfoOutput(_Out):
-    topic: str = Field(max_length=80)
+    topic: str  # about 8 words (prompt); info.dialog_info truncates to 80 chars, no maxLength sent
     mood_start: Mood
     mood_end: Mood
     outcome: Outcome
@@ -87,4 +87,22 @@ class TranslationOutput(_Out):
 def json_schema_for(model: type[BaseModel]) -> dict:
     """Pydantic JSON schema with additionalProperties:false on every object (incl. $defs) and
     UNSUPPORTED_SCHEMA_KEYS removed. S3 (#17)."""
-    raise NotImplementedError("S3 (#17): json_schema_for")
+    return _clean(model.model_json_schema())
+
+
+def _clean(node):
+    if isinstance(node, list):
+        return [_clean(v) for v in node]
+    if not isinstance(node, dict):
+        return node
+    out = {}
+    for key, value in node.items():
+        if key in UNSUPPORTED_SCHEMA_KEYS:
+            continue
+        if key in ("properties", "$defs") and isinstance(value, dict):
+            out[key] = {name: _clean(sub) for name, sub in value.items()}  # names are not keywords
+        else:
+            out[key] = _clean(value)
+    if out.get("type") == "object":
+        out["additionalProperties"] = False
+    return out
