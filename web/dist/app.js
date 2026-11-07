@@ -5083,8 +5083,12 @@
   }
   function openApplyDialog({ host, store, api, version: version2 }) {
     let closed = false;
-    const view = { targets: null, target: null, estimate: null, estimating: false, job: null, lock: null, error: null, server: null };
+    const view = { targets: null, target: null, estimate: null, estimating: false, error: null, server: null };
     let estimateRun = 0;
+    const slot = jobSlot(store, api, `apply:${version2.checklist_id}:${version2.version}`);
+    const busy = () => slot.busy();
+    if (busy()) view.target = slot.state()?.meta?.target ?? null;
+    else slot.reset();
     const body = h("div", { class: "cqa-ap-form" });
     const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "apply-estimate" } });
     const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing") });
@@ -5106,6 +5110,7 @@
       clear(body);
       if (!view.targets) {
         body.append(h("p", { class: "cqa-rv-note", text: view.error ? errorText(view.error) : t("apply.loading") }));
+        runButton.disabled = true;
         return;
       }
       const { control, dev, selected } = view.targets;
@@ -5125,17 +5130,17 @@
       hint.hidden = !keyMissing;
       runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
       clear(progress);
-      const job = view.job;
-      if (view.lock === "starting") progress.append(t("batch.starting"));
-      else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
-          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => resume() } })
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => slot.resume() } })
         );
       } else if (job) {
         progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
         if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
-        if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => retry() } }));
+        if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => slot.retry() } }));
         const from = compareFrom(version2);
         if (!job.running && from) {
           const group = view.target === "control" ? view.targets.control.group : view.target === "dev" ? DEV : null;
@@ -5166,7 +5171,7 @@
       if (busy()) return;
       view.target = key;
       view.estimate = null;
-      view.job = null;
+      slot.reset();
       view.estimating = true;
       paint();
       const mine = ++estimateRun;
@@ -5181,66 +5186,10 @@
       view.estimating = false;
       paint();
     }
-    const busy = () => view.lock !== null;
-    async function watchJob(first) {
-      view.lock = "watching";
-      try {
-        const job = await followJob(api, first, (tick, running) => {
-          view.job = { id: tick.id, done: tick.done, total: tick.total, failed: tick.failed ?? 0, running };
-          paint();
-        });
-        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
-        view.lock = null;
-        paint();
-        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-      } catch (error) {
-        view.lock = "interrupted";
-        paint();
-        toastError(store, error, { retry: resume });
-      }
-    }
-    async function resume() {
-      const id = view.job?.id;
-      if (!id || view.lock !== "interrupted") return;
-      view.lock = "resuming";
-      paint();
-      let job;
-      try {
-        job = await api.getJob(id);
-      } catch (error) {
-        const gone = error?.code === "not_found";
-        view.lock = gone ? null : "interrupted";
-        if (gone) view.job = null;
-        paint();
-        toastError(store, error, { retry: gone ? void 0 : resume });
-        return;
-      }
-      await watchJob(job);
-    }
-    async function start(request, again) {
-      if (busy()) return;
-      view.lock = "starting";
-      paint();
-      let first;
-      try {
-        first = await request();
-      } catch (error) {
-        view.lock = null;
-        paint();
-        toastError(store, error, { retry: again });
-        return;
-      }
-      await watchJob(first);
-    }
     function run() {
       if (busy() || !view.target) return void 0;
       const ids = view.targets[view.target].ids;
-      return start(() => api.startEvaluations({ conversations: ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }), run);
-    }
-    function retry() {
-      const id = view.job?.id;
-      if (busy() || !id) return void 0;
-      return start(() => api.retryJob(id), retry);
+      return slot.start(() => api.startEvaluations({ conversations: ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }), { again: run, meta: { target: view.target } });
     }
     const panel = h(
       "aside",
@@ -5273,8 +5222,10 @@
     function close() {
       if (closed) return;
       closed = true;
+      stopSlot();
       el.remove();
     }
+    const stopSlot = slot.watch(() => paint());
     paint();
     host.append(el);
     loadTargets();

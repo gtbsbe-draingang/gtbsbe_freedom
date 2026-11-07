@@ -1,6 +1,7 @@
 // The apply dialog's guards (same review points as the batch bar in #64): one click on «Запустить»
-// starts one job even while the start request is pending, and a failed progress poll resumes the
-// same job instead of starting another. The mock API is wrapped in the page; no dialogue text.
+// starts one job even while the start request is pending, a failed progress poll resumes the same
+// job instead of starting another, and the dialog closed and opened again while its job runs shows
+// that job and cannot start another. The mock API is wrapped in the page; no dialogue text.
 import assert from "node:assert/strict";
 
 export const name = "apply";
@@ -87,4 +88,29 @@ export async function run(page) {
   await page.waitFor(sel("apply-compare"), 15000);
   assert.equal(await page.eval(`window.__starts`), 1, "recovery did not start another evaluation");
   assert.equal(await page.eval(`window.__polls.every((id) => id === window.__jobId)`), true, "recovery polled the original job");
+  await closeDialog(page);
+
+  // ---- closed and opened again while the job runs: the same job, no second start ----
+  // A synthetic job that stays at 1 of 2 until the test releases it.
+  await openOnSelection(page);
+  await page.eval(`(() => {
+    const api = window.__cqaTest.api;
+    window.__starts = 0; window.__release = false;
+    const held = { id: "job-held", status: "running", mode: "reuse", total: 2, done: 1, failed: 0, items: [] };
+    api.startEvaluations = (args) => (args && args.dry_run ? window.__realStart(args) : (window.__starts += 1, Promise.resolve(held)));
+    api.getJob = (id) => Promise.resolve(window.__release ? { ...held, id, status: "done", done: 2 } : { ...held, id });
+  })()`);
+  await page.click(sel("apply-run"));
+  await until(page, `/1 из 2/.test(document.querySelector(${quote(sel("apply-progress"))})?.textContent ?? "")`, "the held job at 1 of 2");
+  await closeDialog(page);
+  await page.click(sel("open-apply"));
+  await page.waitFor(sel("apply-target-selected"));
+  await until(page, `/1 из 2/.test(document.querySelector(${quote(sel("apply-progress"))})?.textContent ?? "")`, "the reopened dialog to show the same job");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("apply-run"))}).disabled`), true, "the reopened dialog cannot start another job");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("apply-target-selected"))}).checked`), true, "it shows the job's target");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("apply-target-dev"))}).disabled`), true, "and the targets cannot change");
+  await page.eval(`(() => { const b = document.querySelector(${quote(sel("apply-run"))}); b.disabled = false; b.click(); })()`); // forced: the handler must refuse too
+  await page.eval(`window.__release = true`);
+  await page.waitFor(sel("apply-compare"), 15000);
+  assert.equal(await page.eval(`window.__starts`), 1, "exactly one evaluation was started");
 }

@@ -5,9 +5,13 @@
 //
 //   openApplyDialog({host, store, api, version}) -> { el, close }
 //     version: the saved checklist version {checklist_id, version, name, based_on}
+//
+// The job is in a slot of job-runner.js, one per checklist version (store `jobs`): closing the
+// dialog, or leaving the page, never drops a running job, and the dialog opened again for the same
+// version shows that job, with its target, and cannot start another until it is over.
 import { t } from "../i18n/ru.js";
 import { clear, h } from "./dom.js";
-import { followJob } from "./job-runner.js";
+import { jobSlot } from "./job-runner.js";
 import { estimateText } from "./loader.js";
 import { href } from "./router.js";
 import { errorText, toastError } from "./toast.js";
@@ -30,8 +34,12 @@ export function controlGroup(groups, current) {
 
 export function openApplyDialog({ host, store, api, version }) {
   let closed = false;
-  const view = { targets: null, target: null, estimate: null, estimating: false, job: null, lock: null, error: null, server: null };
+  const view = { targets: null, target: null, estimate: null, estimating: false, error: null, server: null };
   let estimateRun = 0;
+  const slot = jobSlot(store, api, `apply:${version.checklist_id}:${version.version}`);
+  const busy = () => slot.busy();
+  if (busy()) view.target = slot.state()?.meta?.target ?? null; // opened again while its job runs
+  else slot.reset(); // a fresh dialog
 
   const body = h("div", { class: "cqa-ap-form" });
   const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "apply-estimate" } });
@@ -56,6 +64,7 @@ export function openApplyDialog({ host, store, api, version }) {
     clear(body);
     if (!view.targets) {
       body.append(h("p", { class: "cqa-rv-note", text: view.error ? errorText(view.error) : t("apply.loading") }));
+      runButton.disabled = true;
       return;
     }
     const { control, dev, selected } = view.targets;
@@ -76,17 +85,17 @@ export function openApplyDialog({ host, store, api, version }) {
     runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
 
     clear(progress);
-    const job = view.job;
-    if (view.lock === "starting") progress.append(t("batch.starting"));
-    else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+    const { lock = null, job = null } = slot.state() ?? {};
+    if (lock === "starting") progress.append(t("batch.starting"));
+    else if (job && (lock === "interrupted" || lock === "resuming")) {
       progress.append(
         h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
-        h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => resume() } }),
+        h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => slot.resume() } }),
       );
     } else if (job) {
       progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
       if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
-      if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => retry() } }));
+      if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => slot.retry() } }));
       const from = compareFrom(version);
       if (!job.running && from) {
         const group = view.target === "control" ? view.targets.control.group : view.target === "dev" ? DEV : null;
@@ -119,7 +128,7 @@ export function openApplyDialog({ host, store, api, version }) {
     if (busy()) return; // the targets are disabled while a job starts or runs
     view.target = key;
     view.estimate = null;
-    view.job = null;
+    slot.reset(); // a new target starts a new run
     view.estimating = true;
     paint();
     const mine = ++estimateRun;
@@ -135,74 +144,12 @@ export function openApplyDialog({ host, store, api, version }) {
     paint();
   }
 
-  // One job at a time, as in the batch bar: view.lock is taken before the first await
-  // ("starting"), held while polling ("watching"), and kept after a failed poll ("interrupted",
-  // then "resuming"), when recovery polls the same job id again and never starts another job.
-  const busy = () => view.lock !== null;
-
-  async function watchJob(first) {
-    view.lock = "watching";
-    try {
-      const job = await followJob(api, first, (tick, running) => {
-        view.job = { id: tick.id, done: tick.done, total: tick.total, failed: tick.failed ?? 0, running };
-        paint();
-      });
-      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
-      view.lock = null;
-      paint();
-      store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-    } catch (error) {
-      view.lock = "interrupted";
-      paint();
-      toastError(store, error, { retry: resume });
-    }
-  }
-
-  async function resume() {
-    const id = view.job?.id;
-    if (!id || view.lock !== "interrupted") return;
-    view.lock = "resuming";
-    paint();
-    let job;
-    try {
-      job = await api.getJob(id);
-    } catch (error) {
-      const gone = error?.code === "not_found";
-      view.lock = gone ? null : "interrupted";
-      if (gone) view.job = null;
-      paint();
-      toastError(store, error, { retry: gone ? undefined : resume });
-      return;
-    }
-    await watchJob(job);
-  }
-
-  async function start(request, again) {
-    if (busy()) return;
-    view.lock = "starting";
-    paint();
-    let first;
-    try {
-      first = await request();
-    } catch (error) {
-      view.lock = null;
-      paint();
-      toastError(store, error, { retry: again });
-      return;
-    }
-    await watchJob(first);
-  }
-
+  // One job at a time, as in the batch bar: the slot takes its lock before the first await and keeps
+  // it while the job may still run (a failed poll is resumed on the same job id, never restarted).
   function run() {
     if (busy() || !view.target) return undefined;
     const ids = view.targets[view.target].ids;
-    return start(() => api.startEvaluations({ conversations: ids, checklist_id: version.checklist_id, version: version.version, mode: "reuse" }), run);
-  }
-
-  function retry() {
-    const id = view.job?.id;
-    if (busy() || !id) return undefined;
-    return start(() => api.retryJob(id), retry);
+    return slot.start(() => api.startEvaluations({ conversations: ids, checklist_id: version.checklist_id, version: version.version, mode: "reuse" }), { again: run, meta: { target: view.target } });
   }
 
   const panel = h(
@@ -237,9 +184,11 @@ export function openApplyDialog({ host, store, api, version }) {
   function close() {
     if (closed) return;
     closed = true;
+    stopSlot();
     el.remove();
   }
 
+  const stopSlot = slot.watch(() => paint());
   paint();
   host.append(el);
   loadTargets();
