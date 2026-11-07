@@ -301,7 +301,7 @@ export function createMockApi(options = {}) {
 
   const summaryOf = (row) => ({
     ...latestVersion(row),
-    versions: row.versions.map((v) => ({ version: v.version, created_at: v.created_at, author_role: v.author_role })),
+    versions: row.versions.map((v) => v.version), // plain numbers, as the backend sends them
   });
 
   // The response of a save may carry `warnings`; the stored version does not.

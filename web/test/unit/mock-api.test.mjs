@@ -808,7 +808,7 @@ describe("checklists", () => {
     assert.equal(list[0].checklist_id, "official-chat");
     assert.equal(list[0].locked, true);
     assert.equal(list[0].based_on, null);
-    assert.deepEqual(list[0].versions.map((v) => v.version), [1]);
+    assert.deepEqual(list[0].versions, [1]);
     const v1 = await api.getChecklistVersion("official-chat", 1);
     assertValid("checklist-version", v1);
     assert.equal(v1.criteria.length, seed.criteria.length);
@@ -849,7 +849,7 @@ describe("checklists", () => {
     assert.equal((await api.getChecklistVersion(copy.checklist_id, 1)).name, "Мой чек-лист", "versions are immutable");
     const listed = (await api.listChecklists()).find((c) => c.checklist_id === copy.checklist_id);
     assert.equal(listed.version, 2);
-    assert.deepEqual(listed.versions.map((v) => v.version), [1, 2]);
+    assert.deepEqual(listed.versions, [1, 2]);
     await rejects(api.saveChecklistVersion("nope", {}), "not_found");
     await rejects(api.createChecklist({ based_on: { checklist_id: "nope", version: 1 }, name: "x" }), "not_found");
   });

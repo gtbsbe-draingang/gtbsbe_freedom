@@ -101,6 +101,16 @@ describe("pickSelection", () => {
     assert.deepEqual(pickSelection(null, { default_checklist: { checklist_id: "a", version: 7 } }, checklists), { checklist_id: "a", version: 2 });
     assert.deepEqual(pickSelection(null, { default_checklist: { checklist_id: "gone", version: 1 } }, checklists), { checklist_id: "a", version: 2 });
   });
+  test("rows as the backend sends them (plain version numbers) never give NaN", () => {
+    const real = [
+      { checklist_id: "official-chat", version: 2, versions: [1, 2] },
+      { checklist_id: "calls", version: 1, versions: [1] },
+    ];
+    const server = { default_checklist: { checklist_id: "official-chat", version: 1 } };
+    assert.deepEqual(pickSelection(null, server, real), { checklist_id: "official-chat", version: 1 });
+    assert.deepEqual(pickSelection({ checklist_id: "calls", version: 1 }, server, real), { checklist_id: "calls", version: 1 });
+    assert.deepEqual(pickSelection(null, { default_checklist: { checklist_id: "official-chat", version: 9 } }, real), { checklist_id: "official-chat", version: 2 });
+  });
   test("no checklists, no selection", () => {
     assert.equal(pickSelection(null, {}, []), null);
   });
