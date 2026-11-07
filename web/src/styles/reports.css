@@ -76,9 +76,7 @@
 .cqa .cqa-hb-row:hover .cqa-hb-val { color: var(--accent-2); }
 .cqa .cqa-hb-row.is-hot:hover .cqa-hb-val { color: var(--bad-ink); }
 /* the table rows get the same gentle response */
-.cqa .cqa-report-track { transition: height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .cqa .cqa-report-fill { transition: background-color 0.3s ease, box-shadow 0.3s ease; }
-.cqa .cqa-report-bar:hover .cqa-report-track { height: 9px; }
 .cqa .cqa-report-bar:hover .cqa-report-fill { background: var(--accent-2); box-shadow: 0 0 10px rgba(79, 184, 78, 0.4); }
 .cqa .cqa-hb-ref { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 1.5px dashed var(--text-3); }
 
@@ -134,7 +132,7 @@
   .cqa .cqa-hb-row { grid-template-columns: minmax(70px, 34%) 1fr 48px; gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cqa .cqa-hb-row, .cqa .cqa-hb-track, .cqa .cqa-report-track, .cqa .cqa-ring-arc, .cqa .cqa-hb-fill, .cqa .cqa-radar-data, .cqa .cqa-donut-arc, .cqa .cqa-stack-part { transition: none; }
+  .cqa .cqa-hb-row, .cqa .cqa-hb-track, .cqa .cqa-ring-arc, .cqa .cqa-hb-fill, .cqa .cqa-radar-data, .cqa .cqa-donut-arc, .cqa .cqa-stack-part { transition: none; }
 }
 
 .cqa .cqa-chart-col { display: grid; gap: 16px; align-content: start; min-width: 0; }
