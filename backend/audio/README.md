@@ -33,8 +33,12 @@ A person listened to 30 lines sampled from the five DEV calls (6 per call,
 2 s** of where playback started (the miss was `p4-ru-002` line 21). Some passing lines have
 transcript text that the organisers' recognition got wrong; their timing was still right.
 That check tested the **previous** method (length guess plus faster-whisper snapping), which
-#93 replaced with the recogniser-free method below. The current method needs its own check
-before `CQA_AUDIO_ALIGNMENT=on` becomes the default.
+#93 replaced with the recogniser-free method below.
+
+The **#93 method** was checked the same way on the same 30 lines on 7 November: **28 of 30
+start within about 2 s**. The misses are `p4-ru-001` line 18 (1.7 s later than the old method
+put it) and `p4-ru-002` line 21 (missed by both). Offsets and voice measurements are therefore
+published by default; `CQA_AUDIO_ALIGNMENT=off` turns them off and clears stored ones.
 
 ### Browser playback check (#27)
 
@@ -74,8 +78,8 @@ lines whose words matched clearly.
 Per call (within 2 s): p4-ru-001 92%, -002 97%, -003 78%, -004 83%, -005 79%.
 What remains are lines said slowly with long pauses (34 characters over 11 s),
 which length cannot predict. The reference is a recogniser, not human ground
-truth, and covers only matched lines: #28 still needs the listening check
-(`tests/manual/alignment_check.py`) before `CQA_AUDIO_ALIGNMENT=on`.
+truth, and covers only matched lines; the listening check above (28 of 30) is the
+independent check.
 
 The earlier `calls_v1.json` used invented IDs and was not derived from A's seed;
 it has been removed. Once A's authoritative seed is available, generate a draft:

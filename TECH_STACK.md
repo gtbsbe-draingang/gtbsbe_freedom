@@ -26,7 +26,7 @@ through the Claude API**. Results files say `mode: external_api`; never present 
 | Ear (audio questions) | Qolda-AVL-9B, local | Not built |
 | Emotion specialist | emotion2vec+ large plus a trained head | Training script only (`training/emotion/`); the first full Kaggle run stopped on missing Dusha podcast audio, a fixed run is in progress; not used by the app |
 | Measurements | Silero VAD, Parselmouth | Voiced speech detection (Praat pitch, 6 dB above the floor) plus Parselmouth pitch, rate and pauses; stored when alignment is on; overlap is null; the evaluator does not read them, so c09 is not scored |
-| Transcript to audio alignment | Per-call shift, checked against hand-labelled boundaries | Recording clock, separate delays for people and the bot, 15.4 chars/s, nearest voiced onset (#93): 86% of 168 lines within 2 s against an offline Whisper reference. Off by default until a listening check of this method passes |
+| Transcript to audio alignment | Per-call shift, checked against hand-labelled boundaries | Recording clock, separate delays for people and the bot, 15.4 chars/s, nearest voiced onset (#93): 86% of 168 lines within 2 s against an offline Whisper reference; listening check 28 of 30 within about 2 s; on by default |
 | STT fallback, diarization | Whisper-family ASR, pyannote | Not built (the brief supplies transcripts) |
 | Scoring | Plain Python | As planned: exact fractions, N/A redistribution, half-up rounding, gross error as a separate flag |
 | Admin checklists | Versions, fingerprints, reuse | As planned: immutable versions, fingerprint reuse, weight-only change makes zero model calls, dry run, comparison |
