@@ -22,6 +22,7 @@ from app import store
 from app.checklists import new_checklist_id, validate_checklist, weight_warnings, with_fingerprints
 from app.errors import ApiError
 from app.models import ChecklistVersion, Criterion, Role, Section, dump
+from app.settings import get_settings
 
 router = APIRouter()
 
@@ -97,8 +98,24 @@ def _saved(version: ChecklistVersion, warnings: list[str]) -> dict[str, Any]:
 
 @router.get("/checklists")
 def list_checklists() -> list[dict[str, Any]]:
-    """The latest version of every checklist, each with `versions`: all its version numbers."""
-    return [{**dump(version), "versions": numbers} for version, numbers in store.list_checklists()]
+    """The latest version of every checklist, each with `versions`: all its version numbers.
+
+    Versions named in HIDDEN_CHECKLIST_VERSIONS are left out: of `versions`, and as the version
+    returned (the latest visible one stands in for a hidden latest). A checklist whose versions are
+    all hidden is not listed. Hidden versions are still readable by id and number."""
+    hidden = set(get_settings().hidden_checklist_versions)
+    listing = []
+    for version, numbers in store.list_checklists():
+        visible = [n for n in numbers if f"{version.checklist_id}:{n}" not in hidden]
+        if not visible:
+            continue
+        if visible[-1] != version.version:
+            shown = store.get_checklist_version(version.checklist_id, visible[-1])
+            if shown is None:  # cannot happen: the number came from the same table
+                continue
+            version = shown
+        listing.append({**dump(version), "versions": visible})
+    return listing
 
 
 @router.get("/checklists/{checklist_id}/versions/{version}")

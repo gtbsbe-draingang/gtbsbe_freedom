@@ -147,8 +147,8 @@ def test_official_is_seeded_and_locked(client: TestClient) -> None:
     assert r.status_code == 200
     official = [c for c in r.json() if c["checklist_id"] == "official-chat"]
     assert len(official) == 1
-    assert official[0]["version"] == 2 and official[0]["locked"] is True
-    assert official[0]["versions"] == [1, 2]
+    assert official[0]["version"] == 3 and official[0]["locked"] is True
+    assert official[0]["versions"] == [1, 2, 3]
     assert client.get("/api/checklists/official-chat/versions/1").json()["locked"] is True
 
 
@@ -998,3 +998,82 @@ def test_concurrent_posts_of_a_new_version(client: TestClient) -> None:
         t.join()
     assert sorted(statuses) == [(201, 2), (201, 3), (201, 4), (201, 5)]
     assert listed(client, cid)["versions"] == [1, 2, 3, 4, 5]
+
+
+# --- Hidden checklist versions (HIDDEN_CHECKLIST_VERSIONS) ---------------------------------------
+
+
+def _hide_setup() -> None:
+    """x has versions 1-3, y has one version; both stored before the client starts."""
+    db.migrate()
+    for version in (1, 2, 3):
+        store.save_checklist_version(stored_version("x-hide", version))
+    store.save_checklist_version(stored_version("y-hide", 1))
+
+
+def _listing(client: TestClient) -> dict[str, tuple[int, list[int]]]:
+    return {c["checklist_id"]: (c["version"], c["versions"]) for c in client.get("/api/checklists").json()}
+
+
+def test_nothing_hidden_by_default(make_client: MakeClient) -> None:
+    _hide_setup()
+    listing = _listing(make_client())
+    assert listing["x-hide"] == (3, [1, 2, 3])
+    assert listing["y-hide"] == (1, [1])
+
+
+def test_a_hidden_older_version_leaves_the_numbers(make_client: MakeClient) -> None:
+    _hide_setup()
+    listing = _listing(make_client(HIDDEN_CHECKLIST_VERSIONS='["x-hide:2"]'))
+    assert listing["x-hide"] == (3, [1, 3])
+
+
+def test_a_hidden_latest_version_is_replaced_by_the_latest_visible(make_client: MakeClient) -> None:
+    _hide_setup()
+    client = make_client(HIDDEN_CHECKLIST_VERSIONS='["x-hide:3"]')
+    entry = next(c for c in client.get("/api/checklists").json() if c["checklist_id"] == "x-hide")
+    assert (entry["version"], entry["versions"]) == (2, [1, 2])
+    assert {k: v for k, v in entry.items() if k != "versions"} == client.get(
+        "/api/checklists/x-hide/versions/2"
+    ).json()
+
+
+def test_a_checklist_with_every_version_hidden_is_not_listed(make_client: MakeClient) -> None:
+    _hide_setup()
+    listing = _listing(make_client(HIDDEN_CHECKLIST_VERSIONS='["y-hide:1"]'))
+    assert "y-hide" not in listing
+    assert listing["x-hide"] == (3, [1, 2, 3])
+
+
+def test_a_hidden_version_stays_readable_and_stored(make_client: MakeClient) -> None:
+    _hide_setup()
+    client = make_client(HIDDEN_CHECKLIST_VERSIONS='["x-hide:3", "y-hide:1"]')
+    assert client.get("/api/checklists/x-hide/versions/3").status_code == 200
+    assert client.get("/api/checklists/y-hide/versions/1").status_code == 200
+    assert store.get_checklist_version("y-hide", 1) is not None
+
+
+def test_hiding_an_unknown_version_changes_nothing(make_client: MakeClient) -> None:
+    _hide_setup()
+    listing = _listing(make_client(HIDDEN_CHECKLIST_VERSIONS='["x-hide:9", "nope:1"]'))
+    assert listing["x-hide"] == (3, [1, 2, 3])
+    assert listing["y-hide"] == (1, [1])
+
+
+@pytest.mark.parametrize("entry", ["official-chat", "x:0", "x:-1", "x:1.5", ":1", "a b:1", "x:1:2"])
+def test_a_malformed_hidden_entry_is_rejected(entry: str) -> None:
+    from pydantic import ValidationError
+
+    from app.settings import Settings
+
+    with pytest.raises(ValidationError):
+        Settings(hidden_checklist_versions=[entry])
+
+
+def test_the_default_checklist_version_cannot_be_hidden() -> None:
+    from pydantic import ValidationError
+
+    from app.settings import DEFAULT_CHECKLIST_ID, DEFAULT_CHECKLIST_VERSION, Settings
+
+    with pytest.raises(ValidationError, match="cannot be hidden"):
+        Settings(hidden_checklist_versions=[f"{DEFAULT_CHECKLIST_ID}:{DEFAULT_CHECKLIST_VERSION}"])

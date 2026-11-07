@@ -24,14 +24,16 @@ evaluator code (masking, prompts, answer checking, one retry, Python scoring):
   violations (`backend/quality/planted.py`) are the model-independent check.
 - FP8 and BF16 give the same answer on 92.5% of the 520 criteria (part of the difference is
   sampling at temperature 0.7). FP8 is about 1.5× faster and needs half the weight memory.
-- **Evaluate with `official-chat` v2.** On v1, Haiku beats Qwen on c07 (87.7% vs 64.6%) because
-  v1 lacks the approved #25 goodbye rule. Qwen on v2 gets 97% on c07 and 92.9% overall on the
-  60 chats (477 labels), so the gap is the checklist version, not the model.
+- **Evaluate with `official-chat` v3.** On v1, Haiku beats Qwen on c07 (87.7% vs 64.6%) because
+  v1 lacks the approved #25 goodbye rule; Qwen FP8 on v2 gets 91.3% overall on 517 labels.
+  v3 adds the c08 rule below. Qwen FP8 with it: c08 100% (all 8 planted gross errors, 0 false
+  flags, against 5 of 8 on v2), planted violations 23 of 25, overall 90.9%.
 - Every model-backed feature works on the local model: evaluation, dialogue information,
   translation (KZ/EN → RU), appeal with second opinion, reviewer decision, v1 → v2 comparison,
   analytics, accuracy report, CSV export, and the «Звонки» checklist with audio alignment.
-- Still to fix for every model, not a reason to pick one: confidential disclosures are marked
-  c03 «Нет» but missed as c08 gross errors (`p1-kz-015` by all; `p1-en-014`, `p1-ru-009` by Qwen).
+- Fixed in v3: confidential disclosures were marked c03 «Нет» but missed as c08 gross errors
+  (`p1-kz-015` by every model; `p1-en-014`, `p1-ru-009` by Qwen). v3's c08 guidance names the
+  case.
 
 Where the comparison ran: the JupyterHub pod `jupyter-amirizimov`, one NVIDIA H200 shared with
 other pods (55 GB and 99–100% use held by them).
