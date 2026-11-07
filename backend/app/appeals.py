@@ -4,7 +4,9 @@ design sections 6 and 7).
 * **Filing** (`file_appeal`): a controller disputes one criterion of a done evaluation. At most
   one open appeal per criterion per evaluation (the database enforces it). Filing never needs a
   model key and never waits for the model: the second opinion is asked for in the background and
-  the UI polls `GET /appeals/{id}`. The conversation becomes `disputed`.
+  the UI polls `GET /appeals/{id}`. The conversation becomes `disputed` when the appealed
+  evaluation graded its current transcript (after a re-import it stays `new`); only appeals on the
+  current transcript keep it disputed.
 * **Second opinion**: `unavailable` without a key or an evaluator; otherwise `pending` until a
   background task stores C's `second_opinion` (`done`) or fails (`unavailable`). Failures are
   logged by exception class only (an exception's text may carry a URL).
@@ -265,7 +267,7 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
             if store.has_open_appeal(conn, evaluation.id, criterion_id):
                 raise already_open
             store.insert_appeal(appeal, fingerprint=criterion.fingerprint, transcript_hash=graded_hash, conn=conn)
-            store.set_conversation_status(conn, evaluation.conversation, "disputed")
+            store.mark_disputed(conn, evaluation.conversation, graded_hash)
     except store.AppealAlreadyOpen:
         raise already_open from None
     logger.info("Appeal %s filed by %s on %s of evaluation %s", appeal.id, role, criterion_id, evaluation.id)
@@ -381,7 +383,8 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
     recalculation that fails is 422 with the scoring code, and nothing is stored.
 
     The decision, the recalculated evaluation and the conversation's status (`evaluated` once no
-    appeal on it is open) are written in one transaction. Blocking: call it off the event loop."""
+    appeal on its current transcript is open) are written in one transaction. Blocking: call it off
+    the event loop."""
     found = store.get_appeal(appeal_id)
     if found is None:
         raise _not_found(f"No appeal {appeal_id!r}.")

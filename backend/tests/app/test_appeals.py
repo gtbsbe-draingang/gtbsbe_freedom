@@ -627,3 +627,51 @@ def test_pending_second_opinions_become_unavailable_at_startup(
     assert r.json()["second_opinion_status"] == "pending"
     restarted = make_client(**KEY)
     assert restarted.get(f"/api/appeals/{r.json()['id']}").json()["second_opinion_status"] == "unavailable"
+
+
+# --- final review: appeals on a superseded transcript --------------------------------------
+
+
+def queue_item(client: TestClient, conversation: str = CHAT) -> dict:
+    return next(i for i in client.get("/api/conversations").json() if i["id"] == conversation)
+
+
+def test_an_appeal_on_a_superseded_transcript_leaves_the_status_new(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    reimport(edit_first_line)
+    assert status_of(client) == "new"  # no evaluation of the current text
+
+    appeal = file(client, first["id"])
+    assert status_of(client) == "new"  # the appeal is about text the conversation no longer holds
+    assert queue_item(client)["final"]["open_appeals"] == 0
+    decide(client, appeal["id"], answer={"step": 20})
+    assert status_of(client) == "new"
+
+
+def test_only_appeals_on_the_current_transcript_count(setup) -> None:
+    """The status and the queue's `open_appeals` count only the open appeals on the conversation's
+    current transcript, so the two always agree."""
+    client, official = setup
+    first = grade(client, official)
+    file(client, first["id"])  # stays open, on the transcript `first` graded
+    assert status_of(client) == "disputed"
+    assert queue_item(client)["final"]["open_appeals"] == 1
+
+    reimport(edit_first_line)
+    item = queue_item(client)
+    assert item["status"] == "new"
+    assert item["final"]["open_appeals"] == 0  # `final` still shows `first`, whose transcript is gone
+
+    second = grade(client, official)  # the current transcript
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("evaluated", 0)
+
+    current = file(client, second["id"])
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("disputed", 1)
+
+    decide(client, current["id"], answer={"step": 20})
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("evaluated", 0)  # the old one does not count
+    assert item["final"]["total"] == 92.5

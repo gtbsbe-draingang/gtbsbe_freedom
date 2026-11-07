@@ -544,9 +544,9 @@ def update_conversation_info(conversation: str, info: DialogInfo, expected_hash:
 
 
 def mark_conversation_evaluated(conversation: str, expected_hash: str) -> bool:
-    """A done evaluation: the status becomes "disputed" while any appeal on the conversation's
-    evaluations is open, else "evaluated". Nothing changes when the transcript is no longer the
-    evaluated one. True when the status was written."""
+    """A done evaluation: the status becomes "disputed" while an appeal on the conversation's
+    current transcript is open, else "evaluated". Nothing changes when the transcript is no longer
+    the evaluated one. True when the status was written."""
     with write_transaction() as conn:
         row = conn.execute(
             "SELECT transcript_hash FROM conversations WHERE id = ?", (conversation,)
@@ -704,18 +704,21 @@ def find_evaluations(conversation: str | None = None, checklist_id: str | None =
 
 
 def count_open_appeals(evaluation_ids: list[str]) -> dict[str, int]:
-    """The number of open appeals of each evaluation, as `{evaluation id: count}` with an entry for
-    every id given (0 when it has none). One query, however many ids: they travel as one JSON
-    array parameter, so SQLite's limit on bound parameters never applies."""
+    """The number of open appeals of each evaluation on its conversation's current transcript, as
+    `{evaluation id: count}` with an entry for every id given (0 when it has none). An evaluation
+    of a transcript that a re-import replaced counts 0, like the conversation's status does (see
+    `_open_appeals_on`). One query, however many ids: they travel as one JSON array parameter, so
+    SQLite's limit on bound parameters never applies."""
     counts = dict.fromkeys(evaluation_ids, 0)
     if not counts:
         return counts
     conn = connect()
     try:
         rows = conn.execute(
-            "SELECT evaluation_id, COUNT(*) AS n FROM appeals "
-            "WHERE status = 'open' AND evaluation_id IN (SELECT value FROM json_each(?)) "
-            "GROUP BY evaluation_id",
+            "SELECT a.evaluation_id, COUNT(*) AS n FROM appeals a "
+            "JOIN conversations c ON c.id = a.conversation AND c.transcript_hash = a.transcript_hash "
+            "WHERE a.status = 'open' AND a.evaluation_id IN (SELECT value FROM json_each(?)) "
+            "GROUP BY a.evaluation_id",
             (json.dumps(list(counts)),),
         ).fetchall()
     finally:
@@ -1088,26 +1091,37 @@ def latest_decisions(
 
 
 def _open_appeals_on(conn: sqlite3.Connection, conversation: str) -> int:
+    # Only appeals on the transcript the conversation holds now: one filed on an evaluation of a
+    # text a re-import replaced is about something the conversation no longer shows.
     row = conn.execute(
-        "SELECT COUNT(*) AS n FROM appeals WHERE conversation = ? AND status = 'open'", (conversation,)
+        "SELECT COUNT(*) AS n FROM appeals a JOIN conversations c ON c.id = a.conversation "
+        "WHERE a.conversation = ? AND a.status = 'open' AND a.transcript_hash = c.transcript_hash",
+        (conversation,),
     ).fetchone()
     return int(row["n"])
 
 
 def open_appeals_on(conn: sqlite3.Connection, conversation: str) -> int:
-    """The open appeals on any evaluation of the conversation (inside the caller's transaction)."""
+    """The open appeals on any evaluation of the conversation's current transcript (inside the
+    caller's transaction)."""
     return _open_appeals_on(conn, conversation)
 
 
-def set_conversation_status(conn: sqlite3.Connection, conversation: str, status: str) -> bool:
-    """Write the conversation's status inside the caller's transaction. True when it changed."""
-    return _set_conversation_status(conn, conversation, status)
+def mark_disputed(conn: sqlite3.Connection, conversation: str, graded_hash: str) -> bool:
+    """A new appeal: the conversation becomes "disputed", but only when the appealed evaluation
+    graded the transcript it holds now (`graded_hash`); after a re-import it keeps its status
+    ("new"). Inside the caller's transaction. True when the status changed."""
+    row = conn.execute("SELECT transcript_hash FROM conversations WHERE id = ?", (conversation,)).fetchone()
+    if row is None or row["transcript_hash"] != graded_hash:
+        return False
+    return _set_conversation_status(conn, conversation, "disputed")
 
 
 def settle_dispute(conn: sqlite3.Connection, conversation: str) -> bool:
-    """A "disputed" conversation with no open appeal left becomes "evaluated" (inside the caller's
-    transaction). Any other status stays: "new" means the transcript was re-imported since, so it
-    has no evaluation of its current text. True when it changed."""
+    """A "disputed" conversation with no open appeal on its current transcript left becomes
+    "evaluated" (inside the caller's transaction). Any other status stays: "new" means the
+    transcript was re-imported since, so it has no evaluation of its current text. True when it
+    changed."""
     if _open_appeals_on(conn, conversation):
         return False
     row = conn.execute(
