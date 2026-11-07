@@ -9,3 +9,12 @@ graphify-out/
 # Build and tooling
 node_modules/
 .DS_Store
+
+# Backend (Python)
+backend/.env
+backend/.venv/
+*.db
+*.db-wal
+*.db-shm
+__pycache__/
+.pytest_cache/
