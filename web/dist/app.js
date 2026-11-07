@@ -5435,7 +5435,13 @@
         h(
           "div",
           { class: "cqa-sc-tot" },
-          h("b", { class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"], text: totalText2, data: { test: "total" } }),
+          h("b", {
+            class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"],
+            text: totalText2,
+            // 0..100 -> 0..1: the CSS mixes red (0) into mint (100)
+            style: none ? null : { "--score": Math.max(0, Math.min(100, evaluation.final_total)) / 100 },
+            data: { test: "total" }
+          }),
           none ? null : h("span", { class: "cqa-sc-outof", text: t("scorecard.outOf") }),
           changed ? h("s", {
             class: ["cqa-sc-was", "num"],
@@ -5482,22 +5488,33 @@
       const cards = /* @__PURE__ */ new Map();
       const activate = (criterionId) => {
         view.active = criterionId;
-        for (const [key, card] of cards) card.classList.toggle("is-open", key === criterionId);
+        for (const [key, card] of cards) {
+          card.classList.toggle("is-open", key === criterionId);
+          card.setAttribute("aria-expanded", String(key === criterionId));
+        }
+      };
+      const toggle = (criterionId, event) => {
+        if (event.target.closest("button, a, input, select, textarea")) return;
+        if (event.type === "keydown") {
+          if (event.target !== event.currentTarget || event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+        }
+        activate(view.active === criterionId ? null : criterionId);
       };
       const list = h("div", { class: "cqa-sc-crits", data: { test: "criteria" } });
       for (const { section, criteria } of groups) {
         const items = criteria.filter((c) => byResult.has(c.id)).map((c) => {
-          const card = buildCard(c, byResult.get(c.id), { evaluation, controller, activate });
+          const card = buildCard(c, byResult.get(c.id), { evaluation, controller, activate, toggle });
           cards.set(c.id, card);
           return card;
         });
         if (items.length === 0) continue;
         list.append(h("h3", { class: "cqa-sc-sec-title", verbatim: true, text: section.title }), ...items);
       }
-      if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
+      if (view.active && cards.has(view.active)) activate(view.active);
       return list;
     }
-    function buildCard(criterion, result, { evaluation, controller, activate }) {
+    function buildCard(criterion, result, { evaluation, controller, activate, toggle }) {
       const gross = criterion.kind === "gross_error";
       const shown = result.final_answer ?? result.answer;
       const answer = answerTag(criterion, shown);
@@ -5545,7 +5562,12 @@
       ].filter(Boolean);
       return h(
         "article",
-        { class: "cqa-sc-crit", data: { test: "crit", criterion: criterion.id, answer: typeof shown === "string" ? shown : "step" } },
+        {
+          class: ["cqa-sc-crit", `cqa-sc-crit--${answer.kind}`],
+          attrs: { tabindex: "0", "aria-expanded": "false" },
+          data: { test: "crit", criterion: criterion.id, answer: typeof shown === "string" ? shown : "step" },
+          on: { click: (event) => toggle(criterion.id, event), keydown: (event) => toggle(criterion.id, event) }
+        },
         h(
           "div",
           { class: "cqa-sc-r1" },
