@@ -27,9 +27,13 @@ try {
         const metadata = event('loadedmetadata');
         audio.src = ${JSON.stringify(path)};
         await metadata;
+        // Wait for the clock to move (headless Chrome starts slowly), at most 8 s.
+        const advance = async (from) => {
+          for (let i = 0; i < 80 && audio.currentTime < from + 0.3; i++) await new Promise(r => setTimeout(r, 100));
+          return audio.currentTime;
+        };
         await audio.play();
-        await new Promise(resolve => setTimeout(resolve, 600));
-        const played = audio.currentTime;
+        const played = await advance(0);
         audio.pause();
         const target = Math.min(30, audio.duration / 2);
         const seeking = event('seeked');
@@ -37,8 +41,7 @@ try {
         await seeking;
         const sought = audio.currentTime;
         await audio.play();
-        await new Promise(resolve => setTimeout(resolve, 600));
-        const resumed = audio.currentTime;
+        const resumed = await advance(sought);
         audio.pause();
         const ranges = [];
         for (const range of ['bytes=1024-2047', 'bytes=-512', 'bytes=999999999-']) {

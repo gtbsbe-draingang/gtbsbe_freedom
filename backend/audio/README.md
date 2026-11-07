@@ -24,7 +24,23 @@ The import hook schedules audio processing. All five cached DEV recordings were
 processed with the locked environment and persisted through B's real SQLite
 store in an isolated verification database: 374 offsets and 130 operator
 measurements. This verifies decoding, analysis and persistence, not alignment
-accuracy or browser playback. Live browser play/seek checks remain pending.
+accuracy or browser playback.
+
+The import no longer produces offsets or voice measurements (PR #56 review): they
+stay withheld until alignment passes an independent check, and migration
+`d_001_withhold_unvalidated_audio` clears stored ones. Playback is unchanged.
+
+### Browser playback check (#27)
+
+Run on 2026-11-07 with Chrome 156 (headless) against the real API and the five
+private DEV recordings, the organiser's player and MP3 host replaced by a local
+replay (`tests/manual/audio_browser_server.py`, then
+`CHROME=<path> node web/test/e2e/audio.mjs` from the repo root). All five calls
+(312 to 620 s long) loaded metadata, played, sought to 30 s and resumed from
+there. Range requests returned 206 for `bytes=1024-2047` and `bytes=-512` and
+416 past the end. Each call's first MP3 link was answered as expired and the
+endpoint resolved a fresh one exactly once. This checks the browser and our
+endpoint, not the live organiser links or the product UI's player.
 
 Offsets still use transcript timing, recording pauses and speech energy.
 They are estimates. Mono audio does not establish which speakers overlap;
