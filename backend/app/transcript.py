@@ -211,19 +211,26 @@ def _message(line: Any) -> Message:
     return Message(timestamp="", speaker="", text=_text(line))
 
 
+def _conversation_id(value: Any) -> Any:
+    """An integer id (an export may write one as a number) as its text; anything else as it is."""
+    return str(value) if isinstance(value, int) and not isinstance(value, bool) else value
+
+
 def normalize_record(record: dict, group_id: str) -> tuple[Conversation, str | None]:
     """An organisers' record as `(Conversation, audio_url)`.
 
     The Conversation has `id` = "{group_id}:{conversation_id}", status "new", duplicates marked
-    and facts computed; `created_at` is left for the store. `audio` is our own endpoint path when
-    the record has an audio_url, else None with the reason "needs_import" (a call) or "none" (a
-    chat). The signed audio_url is returned as the second value and is not in the Conversation.
-    The input record is not changed.
+    and facts computed; `created_at` is left for the store. An integer `conversation_id` becomes
+    its text; `language` is kept exactly as given (any string); a missing or null transcript is
+    empty. `audio` is our own endpoint path when the record has an audio_url, else None with the
+    reason "needs_import" (a call) or "none" (a chat). The signed audio_url is returned as the
+    second value and is not in the Conversation. The input record is not changed.
 
-    Raises pydantic.ValidationError when conversation_id, channel or language is missing or not
-    one of the contract's values.
+    Raises pydantic.ValidationError when conversation_id, channel or language is missing, when
+    conversation_id or language is not a string (an integer id aside) or when channel is not one
+    of the contract's values.
     """
-    conversation_id = record.get("conversation_id")
+    conversation_id = _conversation_id(record.get("conversation_id"))
     channel = record.get("channel")
     id_ = f"{group_id}:{conversation_id}"
 

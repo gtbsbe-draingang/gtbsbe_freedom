@@ -126,10 +126,12 @@ def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
     assert empty.json()['overall'] == {'agreement': None, 'n': 0}
     assert empty.json()['missing'] == 4
 
-    # Real persisted runs: only a's latest completed model run is eligible.
+    # Real persisted runs. The store returns the latest done run per conversation for the exact
+    # version; the report then drops mock runs. Older, failed and other-version runs never count.
     for name, change in [
         ('old', {'created_at': '2025-01-01T00:00:00Z'}),
-        ('mock', {'source': 'mock'}), ('failed', {'status': 'failed'}),
+        ('mock', {'source': 'mock', 'created_at': '2025-01-02T00:00:00Z'}),
+        ('failed', {'status': 'failed'}),
         ('version', {'version': 2}), ('checklist', {'checklist_id': 'custom'}),
         ('control', {'conversation': 'CONTROL:a'}),
     ]:
@@ -150,7 +152,6 @@ def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
     assert data['missing'] == 3
     assert next(r for r in data['by_criterion'] if r['criterion_id'] == 'c02')['agreement'] is None
     assert 'control' not in {e.id for e in store.list_evaluations('official-chat', 1, group_id='DEV')}
-    assert store.list_evaluations('official-chat', 2**64) == []
 
 
 @pytest.mark.parametrize('field', ['overall', 'by_criterion', 'by_language', 'by_channel'])

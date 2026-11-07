@@ -13,10 +13,17 @@ node_modules/
 # Backend (Python)
 backend/.env
 backend/.venv/
+backend/cqa.db*
 *.db
 *.db-wal
 *.db-shm
+# data/snapshot/cqa-snapshot.json is committed; only a half-written export is ignored
+data/snapshot/*.tmp
 __pycache__/
 .pytest_cache/
 # Stream D: reference-label batches stay local
 data/reference/batches/
+
+# evaluator run reports (real dialogues, never committed)
+eval-runs/
+backend/runs/
