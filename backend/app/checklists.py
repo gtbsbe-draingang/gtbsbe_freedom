@@ -1,0 +1,109 @@
+"""Checklist helpers: criterion fingerprints and the checklist files that seed the database.
+
+Shared names (shared-interfaces.md): `criterion_fingerprint`, `load_seed`. Later tasks (#9) add
+the checklist endpoints and the editing rules on top of these.
+
+A checklist file (`checklists/*.json`) is a `ChecklistVersion` without fingerprints: they are
+derived data, computed here on load, so the files never carry a stale one. Web (stream A) computes
+the same fingerprint in `fingerprint.js`; the test vector in tests/app/test_checklists_seed.py
+is the shared contract.
+"""
+
+import hashlib
+import json
+import logging
+from pathlib import Path
+from typing import Any
+
+from app.errors import ApiError
+from app.models import ChecklistVersion, Criterion
+from app.store import get_checklist_version, save_checklist_version
+
+logger = logging.getLogger(__name__)
+
+REPO_ROOT = Path(__file__).resolve().parents[2]  # backend/app/checklists.py -> the repo root
+OFFICIAL_SEED = REPO_ROOT / "checklists" / "official-chat-v1.json"  # stream A; the default checklist
+CALLS_SEED = REPO_ROOT / "checklists" / "calls_v1.json"  # stream D; optional
+
+# The fields a fingerprint covers. Not weight, order, model, id, section_id or the fingerprint
+# itself: changing those does not change what the criterion asks, so a stored judgment stays valid.
+_REQUIRED_FIELDS = ("title", "wording", "answer_type", "na_allowed")
+
+
+def criterion_fingerprint(c: Criterion | dict[str, Any]) -> str:
+    """sha256 hex of the canonical JSON of the fields that define what a criterion asks:
+    title, wording, answer_type, scale_steps (value and label), na_allowed, na_condition, kind,
+    kinds and guidance.
+
+    Canonical JSON is sorted keys, no spaces and non-ASCII kept as is, hashed as UTF-8. A dict may
+    leave out the fields `Criterion` defaults (scale_steps, na_condition, kind, kinds, guidance);
+    one that lacks title, wording, answer_type or na_allowed is a ValueError."""
+    data = c.model_dump() if isinstance(c, Criterion) else c
+    missing = [name for name in _REQUIRED_FIELDS if name not in data]
+    if missing:
+        raise ValueError(f"cannot fingerprint a criterion without {', '.join(missing)}")
+    subset = {
+        "title": data["title"],
+        "wording": data["wording"],
+        "answer_type": data["answer_type"],
+        "scale_steps": [
+            {"value": step["value"], "label": step["label"]} for step in data.get("scale_steps") or []
+        ],
+        "na_allowed": data["na_allowed"],
+        "na_condition": data.get("na_condition"),
+        "kind": data.get("kind", "scored"),
+        "kinds": list(data.get("kinds") or []),
+        "guidance": data.get("guidance"),
+    }
+    canonical = json.dumps(subset, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def load_checklist_file(path: Path) -> ChecklistVersion:
+    """Read a checklist file: every criterion's fingerprint is computed (one in the file is
+    replaced) and the id is `"{checklist_id}:{version}"`. `locked` is as the file says, False
+    when it says nothing. Invalid JSON or a file that is not a checklist raises ValueError."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"{path.name}: expected a JSON object")
+    data.pop("id", None)  # derived from checklist_id and version by ChecklistVersion
+    criteria = data.get("criteria")
+    if isinstance(criteria, list):
+        for criterion in criteria:
+            if isinstance(criterion, dict):
+                criterion["fingerprint"] = criterion_fingerprint(criterion)
+    return ChecklistVersion.model_validate(data)
+
+
+def load_seed(path: Path) -> ChecklistVersion:
+    """The official checklist (`checklists/official-chat-v1.json`), id `official-chat:1`."""
+    return load_checklist_file(path)
+
+
+def _insert_if_missing(path: Path) -> None:
+    version = load_checklist_file(path)
+    if get_checklist_version(version.checklist_id, version.version) is not None:
+        return
+    try:
+        save_checklist_version(version)
+    except ApiError as exc:
+        # Another process seeded between our check and our insert: that is the same outcome.
+        if exc.code != "version_exists":
+            raise
+        return
+    logger.info("Seeded checklist %s from %s", version.id, path.name)
+
+
+def seed_into_db() -> None:
+    """Insert the checklists that ship as files, each only when its (checklist_id, version) is not
+    stored yet: the official chat checklist, and stream D's calls checklist when that file exists.
+
+    Never changes a stored version, so it is safe on every startup. The official seed missing is a
+    warning, not an error (CI and early development run without it). A file that exists but is
+    not a valid checklist raises: a broken seed must not be silently dropped."""
+    if OFFICIAL_SEED.is_file():
+        _insert_if_missing(OFFICIAL_SEED)
+    else:
+        logger.warning("Official checklist seed %s not found; not seeding it.", OFFICIAL_SEED)
+    if CALLS_SEED.is_file():
+        _insert_if_missing(CALLS_SEED)

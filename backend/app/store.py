@@ -8,8 +8,11 @@ set that reuses a DEV conversation_id is a different conversation). The row keep
 `conversation_json` and is only handed out by `get_audio_url` (to the audio package, never to the
 UI).
 
-Shared names (shared-interfaces.md): `get_conversation`, `get_audio_url`, `save_audio_results`.
-Later tasks add the checklist and evaluation parts of this module.
+Checklist versions: one row per (checklist_id, version), the whole `ChecklistVersion` as JSON plus
+the `locked` flag as a column (the flag is the part that changes after a version is saved).
+
+Shared names (shared-interfaces.md): `get_conversation`, `get_audio_url`, `save_audio_results`,
+`get_checklist_version`. Later tasks add the rest of the checklist part and the evaluation part.
 """
 
 import sqlite3
@@ -19,7 +22,8 @@ from datetime import UTC, datetime
 from typing import Literal
 
 from app.db import connect, register_migration
-from app.models import AudioOffset, Conversation, VoiceMeasurement
+from app.errors import ApiError
+from app.models import AudioOffset, ChecklistVersion, Conversation, VoiceMeasurement
 from app.transcript import transcript_hash
 
 register_migration(
@@ -38,6 +42,20 @@ register_migration(
         updated_at        TEXT NOT NULL
     );
     CREATE INDEX conversations_group ON conversations (group_id);
+    """,
+)
+
+register_migration(
+    "b_002_checklist_versions",
+    """
+    CREATE TABLE checklist_versions (
+        checklist_id TEXT NOT NULL,
+        version      INTEGER NOT NULL,
+        json         TEXT NOT NULL,
+        locked       INTEGER NOT NULL,
+        created_at   TEXT NOT NULL,
+        PRIMARY KEY (checklist_id, version)
+    );
     """,
 )
 
@@ -191,3 +209,47 @@ def save_audio_results(
             "UPDATE conversations SET conversation_json = ?, updated_at = ? WHERE id = ?",
             (updated.model_dump_json(), _stamp(_now()), conversation),
         )
+
+
+def get_checklist_version(checklist_id: str, version: int) -> ChecklistVersion | None:
+    """The stored checklist version, or None. `created_at` is always set; `locked` is the column's
+    current value."""
+    conn = connect()
+    try:
+        row = conn.execute(
+            "SELECT json, locked FROM checklist_versions WHERE checklist_id = ? AND version = ?",
+            (checklist_id, version),
+        ).fetchone()
+    finally:
+        conn.close()
+    if row is None:
+        return None
+    stored = ChecklistVersion.model_validate_json(row["json"])
+    return stored.model_copy(update={"locked": bool(row["locked"])})
+
+
+def save_checklist_version(v: ChecklistVersion) -> ChecklistVersion:
+    """Store a new checklist version and return it as stored: `created_at` is filled with the
+    current UTC time when missing, `id` is `"{checklist_id}:{version}"`.
+
+    A stored version is never overwritten (editing a checklist makes a new version): an existing
+    (checklist_id, version) raises ApiError(409, "version_exists")."""
+    created = v.created_at or _now().replace(microsecond=0)
+    stored = v.model_copy(update={"id": f"{v.checklist_id}:{v.version}", "created_at": created})
+    with write_transaction() as conn:
+        if conn.execute(
+            "SELECT 1 FROM checklist_versions WHERE checklist_id = ? AND version = ?",
+            (v.checklist_id, v.version),
+        ).fetchone():
+            raise ApiError(
+                409,
+                "version_exists",
+                f"Checklist {v.checklist_id!r} version {v.version} already exists; "
+                "save the changes as a new version.",
+            )
+        conn.execute(
+            "INSERT INTO checklist_versions (checklist_id, version, json, locked, created_at) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (v.checklist_id, v.version, stored.model_dump_json(), int(v.locked), _stamp(created)),
+        )
+    return stored
