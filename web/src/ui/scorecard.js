@@ -509,11 +509,18 @@ export function createScorecard(store, api, args = {}) {
     );
   }
 
-  // «Оспорить» (R7): the drawer offers every criterion of this evaluation without an open appeal.
+  // The one eligibility rule for «Оспорить» and the drawer: a criterion with an open appeal on this
+  // evaluation, or on an earlier one of this dialogue, cannot be disputed again.
+  function blockedCriteria(evaluation) {
+    const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
+    return new Set([...own.filter((a) => a.status === "open"), ...earlierOpen].map((a) => a.criterion_id));
+  }
+
+  // «Оспорить» (R7): the drawer offers every criterion of this evaluation that blockedCriteria allows.
   function openDrawer(criterionId, button) {
     const { evaluation, version } = view;
     if (!evaluation || !version || destroyed) return;
-    const open = new Set(view.appeals.filter((a) => a.status === "open" && a.evaluation_id === evaluation.id).map((a) => a.criterion_id));
+    const open = blockedCriteria(evaluation);
     const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
     const sections = new Map(version.sections.map((s) => [s.id, s.order ?? 0]));
     const choices = [...version.criteria]
@@ -680,7 +687,7 @@ export function createScorecard(store, api, args = {}) {
     const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
     const ownOpen = own.find((a) => a.status === "open" && a.criterion_id === criterion.id) ?? null;
     const earlier = earlierOpen.find((a) => a.criterion_id === criterion.id) ?? null;
-    const openAppeal = Boolean(ownOpen || earlier);
+    const openAppeal = blockedCriteria(evaluation).has(criterion.id);
 
     const evidence = (result.evidence ?? []).map((item) => {
       const expected = item.role === "expected_here";
