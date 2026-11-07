@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/analytics",
+  "title": "Analytics",
+  "description": "By criterion, language and channel. There is no per-operator view: the data has no operator ids.",
+  "type": "object",
+  "required": [
+    "by_criterion",
+    "by_language",
+    "by_channel",
+    "gross_errors"
+  ],
+  "properties": {
+    "by_criterion": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "title",
+          "fail_rate",
+          "na_rate",
+          "n"
+        ],
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "fail_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "na_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "by_language": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "language",
+          "avg_total",
+          "n"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Same code as conversation.language (RU, KZ, EN)."
+          },
+          "avg_total": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "by_channel": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "channel",
+          "avg_total",
+          "n"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "avg_total": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "gross_errors": {
+      "type": "object",
+      "required": [
+        "count",
+        "by_kind",
+        "conversations"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_kind": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "count"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "conversations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^.+:.+$"
+          },
+          "description": "Conversation ids."
+        }
+      }
+    }
+  }
+}

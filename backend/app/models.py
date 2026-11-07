@@ -299,6 +299,12 @@ class JobItem(BaseModel):
     evaluation_id: str | None = None
 
 
+class JobRetry(BaseModel):  # one POST /jobs/{id}/retry (beyond the contract; extra fields are allowed)
+    role: Role
+    at: datetime
+    items: list[str]  # the conversations put back in the queue
+
+
 class Job(BaseModel):
     id: str
     created_at: datetime
@@ -308,6 +314,7 @@ class Job(BaseModel):
     done: int
     failed: int
     items: list[JobItem]
+    retries: list[JobRetry] = []
 
 
 class DryRun(BaseModel):  # POST /evaluations with dry_run: true

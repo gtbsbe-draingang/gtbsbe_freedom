@@ -1,0 +1,156 @@
+{
+  "id": "example:p4-ru-001",
+  "created_at": "2026-11-07T08:55:00Z",
+  "group_id": "example",
+  "conversation_id": "p4-ru-001",
+  "channel": "voice call",
+  "language": "RU",
+  "transcript": [
+    {
+      "timestamp": "2026-11-02T10:15:03+05:00",
+      "speaker": "operator",
+      "text": "Алло."
+    },
+    {
+      "timestamp": "2026-11-02T10:15:05+05:00",
+      "speaker": "client",
+      "text": "Здравствуйте, подскажите, какая у вас комиссия за сделки с акциями?"
+    },
+    {
+      "timestamp": "2026-11-02T10:15:11+05:00",
+      "speaker": "operator",
+      "text": "Уточните, пожалуйста, вас интересуют сделки на внутреннем или на зарубежном рынке?"
+    },
+    {
+      "timestamp": "2026-11-02T10:15:18+05:00",
+      "speaker": "client",
+      "text": "На зарубежном. Сколько составит комиссия?"
+    },
+    {
+      "timestamp": "2026-11-02T10:15:26+05:00",
+      "speaker": "operator",
+      "text": "Комиссия зависит от тарифного плана. Точных цифр у меня сейчас нет."
+    },
+    {
+      "timestamp": "2026-11-02T10:15:34+05:00",
+      "speaker": "client",
+      "text": "А где на сайте посмотреть тарифы?"
+    },
+    {
+      "timestamp": "2026-11-02T10:15:38+05:00",
+      "speaker": "operator",
+      "text": "Вы сами не понимаете, что спрашиваете. Это глупый вопрос, найдите сами."
+    },
+    {
+      "timestamp": "2026-11-02T10:15:46+05:00",
+      "speaker": "client",
+      "text": "Не надо так со мной разговаривать."
+    },
+    {
+      "timestamp": "2026-11-02T10:15:49+05:00",
+      "speaker": "operator",
+      "text": "Всё, у меня другие звонки. До свидания."
+    }
+  ],
+  "audio": null,
+  "audio_unavailable_reason": "needs_import",
+  "status": "disputed",
+  "facts": {
+    "operator_joined_index": 0,
+    "first_reaction_seconds": 6,
+    "longest_wait_seconds": 8,
+    "identity_verified_index": null,
+    "ending": "normal"
+  },
+  "info": {
+    "topic": "Комиссия за сделки на зарубежном рынке",
+    "mood_start": "нейтральное",
+    "mood_end": "раздражённое",
+    "outcome": "unresolved"
+  },
+  "audio_offsets": [
+    {
+      "message_index": 0,
+      "seconds": 0
+    },
+    {
+      "message_index": 1,
+      "seconds": 2
+    },
+    {
+      "message_index": 2,
+      "seconds": 8
+    },
+    {
+      "message_index": 3,
+      "seconds": 15
+    },
+    {
+      "message_index": 4,
+      "seconds": 23
+    },
+    {
+      "message_index": 5,
+      "seconds": 31
+    },
+    {
+      "message_index": 6,
+      "seconds": 35
+    },
+    {
+      "message_index": 7,
+      "seconds": 43
+    },
+    {
+      "message_index": 8,
+      "seconds": 46
+    }
+  ],
+  "voice_measurements": [
+    {
+      "message_index": 0,
+      "from_seconds": 0,
+      "to_seconds": 1.4,
+      "pitch_range": 2.4,
+      "rate_wpm": 60,
+      "pauses": 0,
+      "overlap": 0
+    },
+    {
+      "message_index": 2,
+      "from_seconds": 8,
+      "to_seconds": 13.6,
+      "pitch_range": 5.8,
+      "rate_wpm": 142,
+      "pauses": 0.6,
+      "overlap": 0
+    },
+    {
+      "message_index": 4,
+      "from_seconds": 23,
+      "to_seconds": 28.8,
+      "pitch_range": 4.1,
+      "rate_wpm": 131,
+      "pauses": 1.3,
+      "overlap": 0
+    },
+    {
+      "message_index": 6,
+      "from_seconds": 35,
+      "to_seconds": 41.2,
+      "pitch_range": 9.6,
+      "rate_wpm": 168,
+      "pauses": 0,
+      "overlap": 0.8
+    },
+    {
+      "message_index": 8,
+      "from_seconds": 46,
+      "to_seconds": 49.5,
+      "pitch_range": 7.2,
+      "rate_wpm": 176,
+      "pauses": 0,
+      "overlap": 0
+    }
+  ]
+}

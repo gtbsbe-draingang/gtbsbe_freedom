@@ -1,0 +1,61 @@
+/* CoFo Sans is a variable font (weight 100-900, slant 0-12deg), inlined into app.css by the
+   build because web resources have no font file type. The stack below falls back to the system
+   sans-serif when a host blocks the inlined font. */
+@font-face {
+  font-family: "CoFo Sans";
+  src: url("../assets/fonts/CoFoSans-VF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: oblique 0deg 12deg;
+  font-display: swap;
+}
+
+.cqa {
+  font-family: "CoFo Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--page);
+}
+
+.cqa *,
+.cqa *::before,
+.cqa *::after {
+  box-sizing: border-box;
+}
+
+/* Tabular figures only on numbers: the font's tnum also widens spaces. */
+.cqa .num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Form controls and links inherit the component's type; nothing outside .cqa is touched. */
+.cqa button,
+.cqa input,
+.cqa select,
+.cqa textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.cqa a {
+  color: inherit;
+}
+
+.cqa :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The hidden attribute must win over any display a component sets. */
+.cqa [hidden] {
+  display: none !important;
+}
+
+/* Standalone page only: the page body belongs to us, an embedding host's does not. */
+.cqa-page {
+  margin: 0;
+}
+
+.cqa-page .cqa {
+  min-height: 100vh;
+}
