@@ -25,8 +25,8 @@ on, with the criterion fingerprint and graded transcript hash that carry-forward
 partial unique index keeps at most one open appeal per criterion per evaluation.
 
 Reads for the UI's lists (`list_conversations`, `list_evaluations`, `find_evaluations`,
-`count_open_appeals`): each is one query (or one per call), so the queue costs the same for ten
-conversations as for a thousand.
+`count_open_appeals`, `conversation_keys`): each is one query (or one per call), so the queue costs
+the same for ten conversations as for a thousand.
 """
 
 import json
@@ -325,6 +325,24 @@ def _mentions(conv: Conversation, needle: str) -> bool:
     if conv.info is not None and needle in conv.info.topic.casefold():
         return True
     return any(needle in message.text.casefold() for message in conv.transcript)
+
+
+def conversation_keys(conversations: list[str]) -> dict[str, tuple[str, str]]:
+    """`{conversation id: (group_id, conversation_id)}` for the stored conversations among those
+    given; an id that is not stored is absent. One query on the key columns (no transcripts are
+    read), however many ids: they travel as one JSON array parameter."""
+    if not conversations:
+        return {}
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT id, group_id, conversation_id FROM conversations "
+            "WHERE id IN (SELECT value FROM json_each(?))",
+            (json.dumps(conversations),),
+        ).fetchall()
+    finally:
+        conn.close()
+    return {row["id"]: (row["group_id"], row["conversation_id"]) for row in rows}
 
 
 def get_audio_url(conversation: str) -> str | None:

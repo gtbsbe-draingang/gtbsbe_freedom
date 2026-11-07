@@ -7,6 +7,7 @@ from app.routes.conversations import router as conversations_router
 from app.routes.datasets import router as datasets_router
 from app.routes.evaluations import router as evaluations_router
 from app.routes.jobs import router as jobs_router
+from app.routes.reports import router as reports_router
 
 
 def all_routers() -> list[APIRouter]:
@@ -19,4 +20,5 @@ def all_routers() -> list[APIRouter]:
         evaluations_router,
         jobs_router,
         appeals_router,
+        reports_router,
     ]
