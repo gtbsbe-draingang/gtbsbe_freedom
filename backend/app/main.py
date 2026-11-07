@@ -21,6 +21,7 @@ from starlette.websockets import WebSocketClose
 
 from app.checklists import seed_into_db
 from app.db import migrate
+from app.jobs import recover_interrupted, shutdown as stop_jobs
 from app.errors import install_error_handlers
 from app.routes import all_routers
 from app.settings import get_settings
@@ -139,7 +140,9 @@ def optional_routers() -> list[APIRouter]:
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     migrate()
     seed_into_db()
+    recover_interrupted()  # nothing runs yet: what a previous process left running was cut off
     yield
+    await stop_jobs()
 
 
 def create_app() -> FastAPI:
