@@ -11,7 +11,8 @@
 //
 // Store state used: `selection` (Set of ids, replaced on every change), `route` (the open row),
 // `queueOpen` (closed again after a click, for the narrow drawer) and `queueRefresh` (any number
-// that changes: the queue reloads; other views bump it after an import or an evaluation).
+// that changes: the queue reloads; other views bump it after an import or an evaluation). An
+// import from the loader also bumps `importRefresh`: the open transcript checks its dialogue.
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
@@ -167,7 +168,11 @@ export function createQueue(store, api) {
       api,
       onImported: (summary) => {
         const group = summary?.group_id;
-        store.set((state) => ({ ...(group ? { groupId: group, queueGroup: group } : {}), queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+        store.set((state) => ({
+          ...(group ? { groupId: group, queueGroup: group } : {}),
+          queueRefresh: (state.queueRefresh ?? 0) + 1,
+          importRefresh: (state.importRefresh ?? 0) + 1, // the open dialogue may have new lines
+        }));
       },
     });
   }
