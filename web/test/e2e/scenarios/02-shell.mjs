@@ -48,29 +48,29 @@ export async function run(page) {
   assert.match(await page.text(sel("dataset-badge")), /CTRL/);
   await page.eval(`location.hash = "#/"`);
 
-  // ---- theme toggle: adds and removes cqa--dark, persists across reload ----
-  assert.equal(await page.count(".cqa--dark"), 0);
-  assert.equal(await page.eval(`getComputedStyle(document.querySelector(".cqa")).backgroundColor`), "rgb(245, 246, 247)");
-  await page.click(sel("theme-toggle"));
+  // ---- theme toggle: dark by default, toggles cqa--dark, persists across reload ----
   assert.equal(await page.count(".cqa.cqa--dark"), 1);
   assert.equal(await page.eval(`getComputedStyle(document.querySelector(".cqa")).backgroundColor`), "rgb(25, 25, 25)");
-  assert.equal(await page.eval(`localStorage.getItem("cqa-theme")`), "dark");
-  await page.goto("/");
-  await page.waitFor(sel("theme-toggle"));
-  assert.equal(await page.count(".cqa.cqa--dark"), 1, "the dark theme survives a reload");
-  assert.equal(await page.eval(`document.querySelector(${JSON.stringify(sel("theme-toggle"))}).getAttribute("aria-checked")`), "true");
-  // an explicit ?theme= beats the stored choice
-  await page.goto("/?theme=light");
-  await page.waitFor(sel("theme-toggle"));
-  assert.equal(await page.count(".cqa--dark"), 0);
-  await page.goto("/");
-  await page.waitFor(sel("theme-toggle"));
   await page.click(sel("theme-toggle"));
   assert.equal(await page.count(".cqa--dark"), 0);
+  assert.equal(await page.eval(`getComputedStyle(document.querySelector(".cqa")).backgroundColor`), "rgb(245, 246, 247)");
   assert.equal(await page.eval(`localStorage.getItem("cqa-theme")`), "light");
   await page.goto("/");
   await page.waitFor(sel("theme-toggle"));
   assert.equal(await page.count(".cqa--dark"), 0, "the light theme survives a reload");
+  assert.equal(await page.eval(`document.querySelector(${JSON.stringify(sel("theme-toggle"))}).getAttribute("aria-checked")`), "false");
+  // an explicit ?theme= beats the stored choice
+  await page.goto("/?theme=dark");
+  await page.waitFor(sel("theme-toggle"));
+  assert.equal(await page.count(".cqa.cqa--dark"), 1);
+  await page.goto("/");
+  await page.waitFor(sel("theme-toggle"));
+  await page.click(sel("theme-toggle"));
+  assert.equal(await page.count(".cqa.cqa--dark"), 1);
+  assert.equal(await page.eval(`localStorage.getItem("cqa-theme")`), "dark");
+  await page.goto("/");
+  await page.waitFor(sel("theme-toggle"));
+  assert.equal(await page.count(".cqa.cqa--dark"), 1, "the dark theme survives a reload");
 
   // ---- role switch ----
   assert.match(await page.text(sel("role-switch")), /Контролёр/);

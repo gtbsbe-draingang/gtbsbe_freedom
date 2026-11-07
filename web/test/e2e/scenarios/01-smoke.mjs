@@ -12,9 +12,9 @@ export async function run(page) {
   await page.waitFor(".cqa");
   assert.match(await page.text(".cqa"), /Qualio/);
 
-  // Light theme by default.
-  assert.equal(await page.count(".cqa--dark"), 0);
-  assert.equal(await page.eval(`getComputedStyle(document.querySelector(".cqa")).backgroundColor`), "rgb(245, 246, 247)");
+  // Dark theme by default on the standalone page.
+  assert.equal(await page.count(".cqa--dark"), 1);
+  assert.equal(await page.eval(`getComputedStyle(document.querySelector(".cqa")).backgroundColor`), "rgb(25, 25, 25)");
 
   // The font comes from a data: URL in app.css; load() rejects if the CSP or the data is bad.
   const faces = await page.eval(`document.fonts.load('14px "CoFo Sans"').then((faces) => faces.length)`);

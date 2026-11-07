@@ -4250,16 +4250,18 @@
       mockFault = parseMockFault(params.getAll("mockFault"));
     }
     const delay = Number(cfg.mockDelayMs);
+    const mode = conversationId ? "embedded" : oneOf(MODES, chain("mode")) ?? "standalone";
     return {
       api: oneOf(APIS, chain("api")) ?? "http",
       apiBase: firstText(chain("apiBase")) ?? "api",
       conversationId,
       language: [opt.language, opt.lang, urlValue("language"), urlValue("lang"), cfg.language, cfg.lang].map(normalizeLanguage).find(Boolean) ?? null,
       role: oneOf(ROLES3, chain("role")) ?? "controller",
-      theme: oneOf(THEMES, chain("theme")) ?? "light",
+      // Dark by default on our own page; light when embedded in a Dynamics form.
+      theme: oneOf(THEMES, chain("theme")) ?? (mode === "embedded" ? "light" : "dark"),
       // true when the host or the URL named the theme: only then does it beat a stored choice
       themeExplicit: oneOf(THEMES, [opt.theme, urlValue("theme")]) !== void 0,
-      mode: conversationId ? "embedded" : oneOf(MODES, chain("mode")) ?? "standalone",
+      mode,
       devDataUrl: firstText([cfg.devDataUrl]) ?? null,
       devAudioBase: firstText([cfg.devAudioBase]) ?? null,
       mockModelKey,
