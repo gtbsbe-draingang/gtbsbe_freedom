@@ -7,9 +7,12 @@ design sections 6 and 7).
   the UI polls `GET /appeals/{id}`. The conversation becomes `disputed` when the appealed
   evaluation graded its current transcript (after a re-import it stays `new`); only appeals on the
   current transcript keep it disputed.
-* **Second opinion**: `unavailable` without a key or an evaluator; otherwise `pending` until a
-  background task stores C's `second_opinion` (`done`) or fails (`unavailable`). Failures are
-  logged by exception class only (an exception's text may carry a URL).
+* **Second opinion**: `unavailable` without a key or an evaluator, and when the appealed
+  evaluation graded a transcript a re-import has replaced since (C would judge today's text, and
+  its evidence indices would point at other lines); no model call is made then. Otherwise
+  `pending` until a background task stores C's `second_opinion` (`done`) or fails (`unavailable`,
+  also when the re-import happens before it asks). Failures are logged by exception class only (an
+  exception's text may carry a URL).
 * **Deciding** (`decide`): a reviewer confirms or changes the answer, with a reason. A
   confirmation keeps the score that was under appeal: it stores the evaluation's final answer (and
   gross-error kinds) at that moment, which is a carried or an earlier decision's when there is one,
@@ -57,6 +60,7 @@ from app.models import (
 )
 from app.scoring import ScoringError, score, validate_answer
 from app.settings import get_settings
+from app.transcript import transcript_hash as hash_of  # carry_forward has a parameter of that name
 
 __all__ = [
     "apply_decisions",
@@ -317,7 +321,11 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
         raise _not_found(
             f"No criterion {criterion_id!r} in checklist {evaluation.checklist_id!r} v{evaluation.version}."
         )
-    graded_hash = evaluation.transcript_hash or store.get_transcript_hash(evaluation.conversation) or ""
+    current_hash = store.get_transcript_hash(evaluation.conversation)
+    graded_hash = evaluation.transcript_hash or current_hash or ""
+    superseded = graded_hash != current_hash  # re-imported since: no second opinion on other text
+    if superseded:
+        logger.info("No second opinion for an appeal on evaluation %s: its transcript was re-imported", evaluation.id)
 
     appeal = Appeal(
         id=uuid.uuid4().hex,
@@ -329,7 +337,7 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
         role=role,
         status="open",
         second_opinion=None,
-        second_opinion_status="pending" if _second_opinion_possible() else "unavailable",
+        second_opinion_status="pending" if not superseded and _second_opinion_possible() else "unavailable",
         decision=None,
     )
     already_open = ApiError(
@@ -387,6 +395,8 @@ def _context(appeal_id: str):
     result = _result(evaluation, appeal.criterion_id)
     if conv is None or version is None or criterion is None or result is None:
         raise _Unavailable()
+    if evaluation.transcript_hash is not None and evaluation.transcript_hash != hash_of(conv.transcript):
+        raise _Unavailable()  # re-imported since the appeal was filed: not the text that was graded
     return appeal, conv, version, criterion, result
 
 

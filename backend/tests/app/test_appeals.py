@@ -877,3 +877,43 @@ def test_an_empty_kinds_list_is_no_kinds(setup) -> None:
     ev = grade(client, official)
     decided = decide(client, file(client, ev["id"])["id"], answer={"step": 20}, kinds=[])
     assert decided["final_total"] == 92.5
+
+
+# --- final review: no second opinion on a superseded transcript ----------------------------
+
+
+def test_no_second_opinion_when_the_transcript_was_reimported(setup, fake: FakeEvaluator) -> None:
+    """The evidence indices of a second opinion on today's text would point at other lines."""
+    client, official = setup
+    first = grade(client, official)
+    reimport(edit_first_line)
+    r = client.post(
+        "/api/appeals",
+        json={"evaluation_id": first["id"], "criterion_id": "c04", "comment": "x", "role": "controller"},
+    )
+    assert r.status_code == 201
+    assert (r.json()["second_opinion_status"], r.json()["second_opinion"]) == ("unavailable", None)
+    client.portal.call(appeals.wait_for_second_opinions)
+    assert fake.second_opinions == 0
+    stored = client.get(f"/api/appeals/{r.json()['id']}").json()
+    assert stored["second_opinion_status"] == "unavailable"
+    validate("appeal", stored)
+
+
+def test_no_second_opinion_when_the_transcript_is_reimported_before_it_is_asked(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    scheduled: list[str] = []
+    monkeypatch.setattr(appeals, "_schedule_second_opinion", scheduled.append)
+    r = client.post(
+        "/api/appeals", json={"evaluation_id": ev["id"], "criterion_id": "c04", "comment": "x", "role": "controller"}
+    )
+    assert r.json()["second_opinion_status"] == "pending" and scheduled == [r.json()["id"]]
+
+    reimport(edit_first_line)  # between filing and asking
+    client.portal.call(appeals._second_opinion, r.json()["id"])
+
+    assert fake.second_opinions == 0
+    assert client.get(f"/api/appeals/{r.json()['id']}").json()["second_opinion_status"] == "unavailable"
