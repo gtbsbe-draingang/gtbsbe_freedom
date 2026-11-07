@@ -24,7 +24,6 @@ describe("router", () => {
       ["#/appeals", { name: "appeals", params: {} }],
       ["#/appeals/ap-7", { name: "appeal", params: { id: "ap-7" } }],
       ["#/analytics", { name: "analytics", params: {} }],
-      ["#/accuracy", { name: "accuracy", params: {} }],
     ];
     for (const [hash, expected] of cases) assert.deepEqual(parseRoute(hash), expected, hash);
   });
@@ -63,7 +62,6 @@ describe("router", () => {
       ["compare", {}],
       ["compare", { from_checklist: "a/b", from_version: "1", to_checklist: "c:d", to_version: "2", group_id: "DEV" }],
       ["analytics", {}],
-      ["accuracy", {}],
     ];
     for (const [name, params] of routes) {
       const link = href(name, params);
@@ -94,12 +92,19 @@ describe("router", () => {
 });
 
 describe("readContext", () => {
-  test("defaults: http api, light, controller, standalone", () => {
+  test("embedded defaults to light, standalone to dark", () => {
+    assert.equal(readContext("?conversationId=c1", {}).theme, "light");
+    assert.equal(readContext("?mode=embedded", {}).theme, "light");
+    assert.equal(readContext("", {}).theme, "dark");
+    assert.equal(readContext("?theme=light", {}).theme, "light");
+  });
+
+  test("defaults: http api, dark, controller, standalone", () => {
     const ctx = readContext("", {});
     assert.equal(ctx.api, "http");
     assert.equal(ctx.apiBase, "api");
     assert.equal(ctx.role, "controller");
-    assert.equal(ctx.theme, "light");
+    assert.equal(ctx.theme, "dark");
     assert.equal(ctx.themeExplicit, false);
     assert.equal(ctx.mode, "standalone");
     assert.equal(ctx.conversationId, null);
