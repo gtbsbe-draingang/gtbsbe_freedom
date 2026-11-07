@@ -99,6 +99,9 @@
     "batch.estimate": "{dialogs} \xB7 {calls} \u043C\u043E\u0434\u0435\u043B\u0438 \xB7 {cached} \u0438\u0437 \u043A\u044D\u0448\u0430",
     "batch.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435",
     "batch.clear": "\u0421\u043D\u044F\u0442\u044C \u0432\u044B\u0431\u043E\u0440",
+    "batch.basket.label": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
+    "batch.basket.toggle": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
+    "batch.basket.remove": "\u0423\u0431\u0440\u0430\u0442\u044C {id} \u0438\u0437 \u0432\u044B\u0431\u043E\u0440\u0430",
     "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
     "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
     "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
@@ -618,6 +621,9 @@
     "batch.estimate": "{dialogs} \xB7 {calls} to the model \xB7 {cached} cached",
     "batch.run": "Evaluate selected",
     "batch.clear": "Clear selection",
+    "batch.basket.label": "Selected conversations",
+    "batch.basket.toggle": "Show the selected conversations",
+    "batch.basket.remove": "Remove {id} from the selection",
     "batch.keyMissing": "model key required: some answers need model calls",
     "batch.progress": "Evaluated {done} of {total}",
     "batch.failed": "failed: {n}",
@@ -1137,6 +1143,9 @@
     "batch.estimate": "{dialogs} \xB7 \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 {calls} \xB7 \u043A\u044D\u0448\u0442\u0435\u043D {cached}",
     "batch.run": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D\u0434\u0430\u0440\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443",
     "batch.clear": "\u0422\u0430\u04A3\u0434\u0430\u0443\u0434\u044B \u0430\u043B\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u0443",
+    "batch.basket.label": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440",
+    "batch.basket.toggle": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B \u043A\u04E9\u0440\u0441\u0435\u0442\u0443",
+    "batch.basket.remove": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u0443\u0434\u0430\u043D \u0430\u043B\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u0443",
     "batch.keyMissing": "\u043C\u043E\u0434\u0435\u043B\u044C \u043A\u0456\u043B\u0442\u0456 \u049B\u0430\u0436\u0435\u0442: \u043A\u0435\u0439\u0431\u0456\u0440 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u04AF\u0448\u0456\u043D \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0441\u04B1\u0440\u0430\u0443 \u043A\u0435\u0440\u0435\u043A",
     "batch.progress": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D\u044B: {done} / {total}",
     "batch.failed": "\u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B: {n}",
@@ -4382,6 +4391,15 @@
     el.replaceChildren();
     return el;
   }
+  function placeChildren(parent, nodes) {
+    const wanted = new Set(nodes);
+    for (const child of [...parent.children]) if (!wanted.has(child)) child.remove();
+    nodes.forEach((node, i) => {
+      const there = parent.children[i] ?? null;
+      if (there !== node) parent.insertBefore(node, there);
+    });
+    return parent;
+  }
 
   // src/ui/router.js
   var COMPARE_KEYS = ["from_checklist", "from_version", "to_checklist", "to_version", "group_id"];
@@ -5906,7 +5924,8 @@
     });
   }
   var versionsOf2 = versionNumbers;
-  function createBatchBar(store, api) {
+  var basketUid = 0;
+  function createBatchBar(store, api, { describe = () => null } = {}) {
     const view = {
       ready: false,
       // config and checklists loaded
@@ -5925,7 +5944,28 @@
     let booting = null;
     const stops = [];
     const host = h("div", { class: "cqa-batch-host" });
+    const basketId = `cqa-basket-${++basketUid}`;
     const count = h("b", { class: "cqa-batch-count" });
+    const basketButton = h(
+      "button",
+      {
+        class: "cqa-basket-btn",
+        attrs: { type: "button", "aria-expanded": "false", "aria-controls": basketId, title: t("batch.basket.toggle") },
+        data: { test: "batch-basket" },
+        on: { click: () => basket.hidden ? openBasket() : closeBasket() }
+      },
+      count,
+      icon("chevron", { size: 14 })
+    );
+    const basketList = h("ul", { class: "cqa-basket-list", attrs: { "aria-label": t("batch.basket.label") }, data: { test: "batch-basket-list" } });
+    const basket = h(
+      "div",
+      { class: ["cqa-menu", "cqa-basket"], attrs: { id: basketId }, data: { test: "batch-basket-panel" } },
+      h("span", { class: "cqa-rv-label", text: t("batch.basket.label") }),
+      basketList
+    );
+    basket.hidden = true;
+    const basketRows = /* @__PURE__ */ new Map();
     const select = h("select", {
       class: "cqa-sc-select",
       attrs: { "aria-label": t("batch.checklist") },
@@ -5948,9 +5988,10 @@
       h(
         "div",
         { class: "cqa-batch-row" },
-        count,
+        basketButton,
         h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: /* @__PURE__ */ new Set() }) } })
       ),
+      basket,
       h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
       estimate,
       hint,
@@ -5966,11 +6007,13 @@
       const active = busy();
       const show = picked.size > 0 || active;
       if (!show) {
+        closeBasket();
         host.replaceChildren();
         return;
       }
       if (!bar2.isConnected) host.replaceChildren(bar2);
       setLocalizedText(count, t("batch.selected", { n: picked.size }));
+      paintBasket(picked);
       const sel = current2();
       const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
       if (at >= 0) select.value = String(at);
@@ -5999,6 +6042,66 @@
         }
       }
     }
+    function basketRow(id) {
+      const item = describe(id);
+      const name = item?.conversation_id ?? id.slice(id.indexOf(":") + 1);
+      const group = item?.group_id ?? (id.includes(":") ? id.slice(0, id.indexOf(":")) : "");
+      const meta = h("span", { class: "cqa-basket-meta" }, h("span", { verbatim: true, text: group }));
+      if (item?.language) meta.append(" \xB7 ", h("span", { verbatim: true, text: item.language }));
+      if (item?.channel) meta.append(" \xB7 ", h("span", { text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }));
+      return h(
+        "li",
+        { class: "cqa-basket-item", data: { test: "batch-basket-item", id } },
+        h("a", { class: "cqa-basket-link", attrs: { href: href("workspace", { id }) }, on: { click: () => closeBasket() } }, h("b", { class: "cqa-basket-id", verbatim: true, text: name }), meta),
+        h(
+          "button",
+          { class: "cqa-basket-remove", attrs: { type: "button", "aria-label": t("batch.basket.remove", { id: name }), title: t("batch.basket.remove", { id: name }) }, data: { test: "batch-basket-remove" }, on: { click: () => unpick(id) } },
+          icon("close", { size: 14 })
+        )
+      );
+    }
+    function paintBasket(picked) {
+      for (const id of basketRows.keys()) if (!picked.has(id)) basketRows.delete(id);
+      const nodes = [...picked].map((id) => {
+        if (!basketRows.has(id)) basketRows.set(id, basketRow(id));
+        return basketRows.get(id);
+      });
+      if (!basket.hidden) placeChildren(basketList, nodes);
+      if (picked.size === 0) closeBasket();
+    }
+    function unpick(id) {
+      const order = [...selection()];
+      const at = order.indexOf(id);
+      const next = new Set(order);
+      next.delete(id);
+      store.set({ selection: next });
+      const rest = order.filter((other) => other !== id);
+      const follow = rest[Math.min(at, rest.length - 1)];
+      if (follow !== void 0) basketRows.get(follow)?.querySelector(".cqa-basket-remove")?.focus();
+      else if (basketButton.isConnected) basketButton.focus();
+    }
+    const onOutside = (event) => {
+      if (!bar2.contains(event.target)) closeBasket();
+    };
+    function openBasket() {
+      if (selection().size === 0) return;
+      basket.hidden = false;
+      basketButton.setAttribute("aria-expanded", "true");
+      paintBasket(selection());
+      document.addEventListener("pointerdown", onOutside);
+    }
+    function closeBasket() {
+      if (basket.hidden) return;
+      basket.hidden = true;
+      basketButton.setAttribute("aria-expanded", "false");
+      document.removeEventListener("pointerdown", onOutside);
+    }
+    bar2.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || basket.hidden) return;
+      event.stopPropagation();
+      closeBasket();
+      basketButton.focus();
+    });
     function boot() {
       booting ?? (booting = Promise.all([api.getConfig(), api.listChecklists()]).then(
         ([server, rows]) => {
@@ -6074,6 +6177,7 @@
         if (destroyed) return;
         destroyed = true;
         clearTimeout(estimateTimer);
+        closeBasket();
         stops.forEach((stop) => stop());
       }
     };
@@ -8761,7 +8865,7 @@
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
     const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
     const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
-    const batch = createBatchBar(store, api);
+    const batch = createBatchBar(store, api, { describe: (id) => view.items.find((item) => item.id === id) ?? null });
     const controls = h(
       "div",
       { class: "cqa-q-controls" },
@@ -9012,14 +9116,6 @@
       );
       language2.value = view.language;
     }
-    function placeRows(nodes) {
-      const wanted = new Set(nodes);
-      for (const child of [...list.children]) if (!wanted.has(child)) child.remove();
-      nodes.forEach((node, i) => {
-        const there = list.children[i] ?? null;
-        if (there !== node) list.insertBefore(node, there);
-      });
-    }
     function paint() {
       if (destroyed) return;
       const hasItems = view.items.length > 0;
@@ -9035,7 +9131,9 @@
           pill.button.classList.toggle("is-on", pill.name === view.filter);
         }
         shown = base.filter(MATCHES[view.filter]);
-        placeRows(
+        placeChildren(
+          // not replaceChildren: a ticked row's checkbox keeps its focus and the list its scroll
+          list,
           shown.map((item) => {
             let row = rows.get(item.id);
             if (!row) {
