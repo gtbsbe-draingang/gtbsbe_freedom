@@ -504,6 +504,7 @@ export default {
   "reports.chart.matrix": "Где модель расходится с эталоном",
   "reports.chart.matrixNote": "Строки — эталон, столбцы — ответ модели; только расхождения.",
   "reports.chart.step": "Шаг шкалы",
+  "reports.chart.grossLinks": "Диалоги с грубыми ошибками ({n})",
   "reports.chart.tipFail": "{title}: провалы {fail}, N/A {na}, n={n}",
   "reports.chart.tipValue": "{title}: {value}, n={n}",
   "reports.chart.tipCell": "Эталон «{from}» → модель «{to}»: {n}",

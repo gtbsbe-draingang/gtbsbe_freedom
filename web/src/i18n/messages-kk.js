@@ -504,6 +504,7 @@ export default {
   "reports.chart.matrix": "Модель эталоннан қайда алшақтайды",
   "reports.chart.matrixNote": "Жолдар — эталон, бағандар — модель жауабы; тек алшақтықтар.",
   "reports.chart.step": "Шкала қадамы",
+  "reports.chart.grossLinks": "Өрескел қателері бар диалогтар ({n})",
   "reports.chart.tipFail": "{title}: сәтсіздік {fail}, N/A {na}, n={n}",
   "reports.chart.tipValue": "{title}: {value}, n={n}",
   "reports.chart.tipCell": "Эталон «{from}» → модель «{to}»: {n}",

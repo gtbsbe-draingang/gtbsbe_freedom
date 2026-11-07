@@ -86,7 +86,6 @@
 .cqa .cqa-donut { position: relative; width: 168px; height: 168px; margin: 8px auto 16px; }
 .cqa .cqa-donut svg { width: 100%; height: 100%; display: block; }
 .cqa .cqa-donut-track { fill: none; stroke: var(--line); stroke-width: 14; }
-.cqa .cqa-donut-arcs { transform-box: view-box; transform-origin: 50% 50%; }
 .cqa .cqa-donut-arc { fill: none; stroke: var(--tone); stroke-width: 14; opacity: 0; transition: opacity 0.6s; }
 .cqa .is-in .cqa-donut-arc { opacity: 1; }
 .cqa .cqa-donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
@@ -125,3 +124,9 @@
 @media (prefers-reduced-motion: reduce) {
   .cqa .cqa-ring-arc, .cqa .cqa-hb-fill, .cqa .cqa-radar-data, .cqa .cqa-donut-arc, .cqa .cqa-stack-part { transition: none; }
 }
+
+.cqa .cqa-chart-col { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.cqa .cqa-chart-col .cqa-hb-row { grid-template-columns: minmax(60px, 30%) 1fr auto; }
+.cqa .cqa-gross-links { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; }
+.cqa .cqa-gross-links summary { cursor: pointer; color: var(--accent-2); font-weight: 600; }
+.cqa .cqa-gross-links .cqa-report-links { margin: 10px 0 0; max-height: 160px; overflow: auto; }

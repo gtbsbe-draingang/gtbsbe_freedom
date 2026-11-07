@@ -16,7 +16,7 @@ import { logoMark, logoWord } from "./logo.js";
 import { href, navFor } from "./router.js";
 import { renderToasts } from "./toast.js";
 
-const NAV = ["workspace", "checklists", "appeals", "analytics", "accuracy"];
+const NAV = ["workspace", "checklists", "appeals", "analytics"];
 const ROLES = ["controller", "reviewer"];
 
 const normalise = (made) => (made instanceof Node ? { el: made } : made);

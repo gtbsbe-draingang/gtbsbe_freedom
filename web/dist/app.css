@@ -3108,10 +3108,6 @@
   stroke: var(--line);
   stroke-width: 14;
 }
-.cqa .cqa-donut-arcs {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-}
 .cqa .cqa-donut-arc {
   fill: none;
   stroke: var(--tone);
@@ -3269,6 +3265,31 @@
   .cqa .cqa-stack-part {
     transition: none;
   }
+}
+.cqa .cqa-chart-col {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-width: 0;
+}
+.cqa .cqa-chart-col .cqa-hb-row {
+  grid-template-columns: minmax(60px, 30%) 1fr auto;
+}
+.cqa .cqa-gross-links {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.cqa .cqa-gross-links summary {
+  cursor: pointer;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+.cqa .cqa-gross-links .cqa-report-links {
+  margin: 10px 0 0;
+  max-height: 160px;
+  overflow: auto;
 }
 
 /* src/styles/index.css */
