@@ -43,7 +43,7 @@ As of `main` on 7 November 2026.
 | UI loading, batch runs, checklist editor, "apply to dialogues" | On branch `a/36-loader`, not merged yet ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36)) |
 | UI comparison view, analytics and accuracy pages, call player, translation toggle, CSV button | Not built yet ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36), [#37](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/37)). The backend endpoints for comparison, analytics and CSV already work |
 | Call audio streaming, accuracy report, reference answers, checklist interpretations | Draft PR [#56](https://github.com/gtbsbe-draingang/gtbsbe_freedom/pull/56) (stream D) |
-| Results snapshot for the jury (`data/snapshot/cqa-snapshot.json`) | Not committed yet ([#15](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/15)). A fresh clone starts without stored results |
+| Results snapshot for the jury (`data/snapshot/cqa-snapshot.json`) | Committed: the 65 DEV dialogues with the 7 November run (Claude Haiku 5.5, official checklist v1), 520 cached answers, no signed URLs. Built without model calls by `python -m quality.snapshot_from_run` ([#15](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/15)). A fresh clone shows every score without a key |
 
 Details in [In progress](#in-progress).
 
@@ -139,7 +139,7 @@ Key decisions:
 ├── contract/                    JSON Schemas and example payloads of the API contract
 │   ├── schemas/
 │   └── examples/
-├── data/                        Not in git yet: dev.json and audio/ are private; snapshot/ arrives with #15
+├── data/                        dev.json and audio/ are private (not in git); snapshot/ holds the jury snapshot
 ├── .github/workflows/backend.yml   CI: backend and evaluator tests
 ├── CLAUDE.md                    Project rules: Dynamics constraints, secrets, design language
 ├── EXTRA_FEATURES.md            Agreed features beyond the brief
