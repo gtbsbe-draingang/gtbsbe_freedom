@@ -415,7 +415,9 @@ def test_first_handover_and_first_identity_win():
     assert f.identity_verified_index == 3
 
 
-def test_operator_before_handover_is_the_fallback_but_has_no_reaction_time():
+def test_handover_without_a_later_operator_line_gives_no_operator_facts():
+    # "Else the first operator line" applies only when there is no handover (the UI's mock agrees):
+    # an operator line before the handover is not the operator joining at it.
     f = compute_facts(
         lines(
             ("00:00", "operator", "hello"),
@@ -423,9 +425,36 @@ def test_operator_before_handover_is_the_fallback_but_has_no_reaction_time():
             ("00:20", "client", "bye"),
         )
     )
-    assert f.operator_joined_index == 0
-    assert f.first_reaction_seconds is None  # negative: not a reaction time
+    assert f.operator_joined_index is None
+    assert f.first_reaction_seconds is None
     assert f.longest_wait_seconds is None
+
+
+def test_handover_then_only_client_lines_gives_no_operator_facts():
+    f = compute_facts(
+        lines(
+            ("00:00", "client", "help"),
+            ("00:10", "system", "Chat transferred to an agent."),
+            ("00:20", "client", "anyone?"),
+            ("00:30", "system", "Connection to customer lost."),
+        )
+    )
+    assert f.operator_joined_index is None
+    assert f.first_reaction_seconds is None
+    assert f.longest_wait_seconds is None
+    assert f.ending == "connection_lost"
+
+
+def test_operator_lines_before_and_after_the_handover_use_the_one_after():
+    f = compute_facts(
+        lines(
+            ("00:00", "operator", "first operator"),
+            ("00:10", "system", "Эскалация на оператора."),
+            ("00:40", "operator", "second operator"),
+        )
+    )
+    assert f.operator_joined_index == 2
+    assert f.first_reaction_seconds == 30.0
 
 
 def test_waits_start_after_the_handover_and_stay_unanswered_until_an_operator_line():

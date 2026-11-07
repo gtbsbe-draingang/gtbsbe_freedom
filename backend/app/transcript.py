@@ -138,9 +138,17 @@ def compute_facts(transcript: list[Message]) -> Facts:
             if pattern.match(text):
                 ending = kind  # the last match wins
 
-    operator_lines = [i for i, m in enumerate(transcript) if m.speaker == "operator"]
-    after_handover = [i for i in operator_lines if handover is None or i > handover]
-    joined = (after_handover or operator_lines or [None])[0]
+    # The first operator line after the handover. Only without a handover is it the first operator
+    # line anywhere: an operator who spoke before a handover that nobody follows up did not "join"
+    # at it, and the UI's mock (web/src/domain/normalize.js) gives null there too.
+    joined = next(
+        (
+            i
+            for i, m in enumerate(transcript)
+            if m.speaker == "operator" and (handover is None or i > handover)
+        ),
+        None,
+    )
 
     first_reaction = None
     if handover is not None and joined is not None:
