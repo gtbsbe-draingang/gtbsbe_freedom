@@ -71,6 +71,24 @@ def test_serve_arguments_can_be_overridden() -> None:
     assert (args.host, args.port) == ("0.0.0.0", 8765)
 
 
+def test_llm_api_flag_is_off_by_default_and_parsed() -> None:
+    assert cli.parse_serve_args([]).llm_api is False
+    assert cli.parse_serve_args(["--llm-api"]).llm_api is True
+
+
+def test_llm_api_forces_the_claude_api_with_haiku(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A .env set up for the local model (base URL + Qwen) is overridden by LLM_API."""
+    from app.settings import Settings
+
+    monkeypatch.setenv("ANTHROPIC_BASE_URL", "http://127.0.0.1:8038")
+    monkeypatch.setenv("DEFAULT_MODEL", "Qwen/Qwen3.8-27B-FP8")
+    local = Settings()
+    assert (local.anthropic_base_url, local.default_model) == ("http://127.0.0.1:8038", "Qwen/Qwen3.8-27B-FP8")
+    monkeypatch.setenv("LLM_API", "1")
+    claude = Settings()
+    assert (claude.anthropic_base_url, claude.default_model) == (None, "claude-haiku-5-5")
+
+
 @pytest.mark.parametrize("argv", [["--port", "abc"], ["--port", "0"], ["--port", "70000"], ["--nope"], ["8000"]])
 def test_bad_serve_arguments_are_refused(argv: list[str], capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as caught:
