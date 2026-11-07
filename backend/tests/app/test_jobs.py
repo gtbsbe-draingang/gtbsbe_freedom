@@ -17,7 +17,8 @@ from fastapi.testclient import TestClient
 from app import evaluator_port, jobs, store
 from app.models import ChecklistVersion, Evaluation, Job, JobItem, StepAnswer
 from app.settings import get_settings
-from tests.app.fakes import FakeEvaluator, copy_body, ensure_official, load_dev_subset
+from tests.app.fakes import FakeEvaluator, ensure_official, load_dev_subset
+from tests.app.helpers import criterion, save_copy
 
 MakeClient = Callable[..., TestClient]
 KEY = {"ANTHROPIC_API_KEY": "test-key"}
@@ -97,19 +98,6 @@ def evaluation(client: TestClient, evaluation_id: str) -> dict:
 
 def evaluations_of(client: TestClient, job: dict) -> dict[str, dict]:
     return {item["conversation"]: evaluation(client, item["evaluation_id"]) for item in job["items"]}
-
-
-def save_copy(client: TestClient, version: ChecklistVersion, change: Callable[[dict], None]) -> ChecklistVersion:
-    copied = copy_body(version)
-    change(copied)
-    r = client.post("/api/checklists", json={"role": "controller", "checklist": copied})
-    assert r.status_code == 201, r.text
-    saved = r.json()
-    return ChecklistVersion.model_validate({k: v for k, v in saved.items() if k != "warnings"})
-
-
-def criterion(copied: dict, criterion_id: str) -> dict:
-    return next(c for c in copied["criteria"] if c["id"] == criterion_id)
 
 
 # --- the brief's tests ---------------------------------------------------------------------

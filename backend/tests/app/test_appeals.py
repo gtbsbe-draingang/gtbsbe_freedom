@@ -5,11 +5,9 @@ fake answers with the T2 pattern of the front-end design (section 6): c01 yes, c
 c04 = 15, c05 yes, c06 = 7, c07 N/A, c08 no, which totals 84.17 on the official checklist.
 """
 
-import json
 import logging
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -19,15 +17,13 @@ from app.models import Appeal, ChecklistVersion, Evaluation, StepAnswer
 from app.scoring import ScoringError
 from app.settings import get_settings
 from app.transcript import normalize_record
-from tests.app.fakes import FakeEvaluator, copy_body, dev_records, ensure_official, load_dev_subset
+from tests.app.fakes import FakeEvaluator, dev_records, ensure_official, load_dev_subset
+from tests.app.helpers import criterion, decide, file, save_copy, validate
 
 MakeClient = Callable[..., TestClient]
 KEY = {"ANTHROPIC_API_KEY": "test-key"}
 CHAT = "DEV:p1-ru-001"
 OTHER = "DEV:p1-ru-010"
-
-REPO_ROOT = Path(__file__).resolve().parents[3]
-SCHEMAS_DIR = REPO_ROOT / "contract" / "schemas"
 
 T2 = {
     "c01": "yes",
@@ -93,49 +89,12 @@ def grade(client: TestClient, version: ChecklistVersion, conversation: str = CHA
     return ev
 
 
-def file(client: TestClient, evaluation_id: str, criterion_id: str = "c04", **extra) -> dict:
-    body = {"evaluation_id": evaluation_id, "criterion_id": criterion_id, "comment": "Не согласен.",
-            "role": "controller", **extra}  # fmt: skip
-    r = client.post("/api/appeals", json=body)
-    assert r.status_code == 201, r.text
-    client.portal.call(appeals.wait_for_second_opinions)
-    return client.get(f"/api/appeals/{r.json()['id']}").json()
-
-
-def decide(client: TestClient, appeal_id: str, outcome: str = "changed", answer=None, **extra) -> dict:
-    body = {"outcome": outcome, "reason": "Оператор ответил полностью.", "role": "reviewer", **extra}
-    if answer is not None:
-        body["answer"] = answer
-    r = client.post(f"/api/appeals/{appeal_id}/decision", json=body)
-    assert r.status_code == 200, r.text
-    return r.json()
-
-
 def result(ev: dict, criterion_id: str) -> dict:
     return next(r for r in ev["results"] if r["criterion_id"] == criterion_id)
 
 
-def save_copy(client: TestClient, version: ChecklistVersion, change: Callable[[dict], None]) -> ChecklistVersion:
-    copied = copy_body(version)
-    change(copied)
-    r = client.post("/api/checklists", json={"role": "controller", "checklist": copied})
-    assert r.status_code == 201, r.text
-    return ChecklistVersion.model_validate({k: v for k, v in r.json().items() if k != "warnings"})
-
-
-def criterion(copied: dict, criterion_id: str) -> dict:
-    return next(c for c in copied["criteria"] if c["id"] == criterion_id)
-
-
 def heavier_c01(copied: dict) -> None:
     criterion(copied, "c01")["weight"] = 20
-
-
-def validate(name: str, body: dict) -> None:
-    from jsonschema import Draft202012Validator
-
-    schema = json.loads((SCHEMAS_DIR / f"{name}.schema.json").read_text(encoding="utf-8"))
-    Draft202012Validator(schema).validate(body)
 
 
 def reimport(transcript_edit: Callable[[list[dict]], None] | None = None, conversation_id: str = "p1-ru-001") -> None:
