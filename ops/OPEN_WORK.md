@@ -7,7 +7,7 @@ reviewer's request until the team approves the interpretations.
 | Issue | Done | Left to do | Who / where |
 |---|---|---|---|
 | #24 Reference answers | 520 draft labels, review CSV tools, planted check (26 of 26) | Team review of all 520; 41 stay disputed and out of the agreement until then | Team; `data/reference/README.md` |
-| #25 Interpretations | Proposals for c01, c03, c06, c07 in `official-chat` v2 | Team yes or no on each, c07 first (34 labels). Then set `disputed: false` on the agreed labels | Team; stays open |
+| #25 Interpretations | Approved 7 November: c01, c03, c06, c07 readings in `official-chat` v2; 38 labels settled, 3 stay disputed | Nothing (closes with PR #95) | Done |
 | #26 Accuracy and model choice | `/api/reports/accuracy` on the real store, latest real run per dialogue, null for empty cohorts; model selection rule | One DEV run with the configured model on `official-chat` v2, then read the report and pick per-criterion defaults; put the numbers on deck slide 06 | Whoever runs the demo machine; needs the model key |
 | #27 Call audio | Streaming with Range and expiry retry; browser check passed on all 5 calls | Nothing | Closed by PR #56 |
 | #28 Line-to-audio offsets | Length guess retuned; recogniser snapping (90% of 190 lines within 2 s against Whisper); opt-in switch `CQA_AUDIO_ALIGNMENT=on` | Listening check: `backend/tests/manual/alignment_check.py` makes a page with 30 samples. If at least 27 are "yes", turn the switch on for the demo (it is what makes the `p4-ru-001` jump on deck slide 03 work) | Anyone with the private recordings, 5 minutes |
