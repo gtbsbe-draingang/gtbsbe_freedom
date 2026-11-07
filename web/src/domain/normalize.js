@@ -51,12 +51,13 @@ export function computeFacts(transcript) {
     }
   }
 
-  // Waits count only from the moment the operator is in the chat: the bot phase and the queue
-  // wait (that is first_reaction_seconds) are left out.
+  // Waits count only after the handover (the bot phase is left out), so a client line between the
+  // handover and the operator's first reply is a wait. Without a handover the scan starts at the
+  // operator's first line. A client line no operator answers is not a wait.
   let longestWait = null;
   if (joined >= 0) {
     let pending = -1;
-    for (let i = joined; i < lines.length; i += 1) {
+    for (let i = handover >= 0 ? handover + 1 : joined; i < lines.length; i += 1) {
       const speaker = speakerOf(lines[i]);
       if (speaker === "client" && pending < 0) {
         pending = i;
@@ -169,7 +170,7 @@ function locate(data) {
 export function parseUpload(text) {
   let data;
   try {
-    data = JSON.parse(String(text).replace(/^﻿/, ""));
+    data = JSON.parse(String(text).replace(/^\uFEFF/, ""));
   } catch {
     throw new UploadError("not_json");
   }

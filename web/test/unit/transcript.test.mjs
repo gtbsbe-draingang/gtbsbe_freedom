@@ -26,7 +26,7 @@ function chatRecord() {
       line("00:05", "bot", "Здравствуйте! Я помощник. Чем могу помочь?"), // 1
       line("00:20", "client", "Нужен оператор"), // 2
       line("00:22", "system", "Эскалация на оператора"), // 3
-      line("00:30", "client", "Алло?"), // 4 (before the operator joined: not counted)
+      line("00:30", "client", "Алло?"), // 4 (waits 29 s for the operator's first reply)
       line("00:59", "operator", "Здравствуйте, меня зовут Айгерим"), // 5
       line("01:10", "client", "Не открывается приложение"), // 6
       line("01:50", "operator", "Сейчас проверим"), // 7  (waited 40 s)
@@ -279,21 +279,56 @@ describe("normalizeRecord", () => {
       language: "RU",
       transcript: [
         line("00:00", "client", "вопрос"), // 0
-        line("00:10", "bot", "ответ бота"), // 1  (bot phase wait: 10 s)
+        line("00:10", "bot", "ответ бота"), // 1  (bot phase: not an operator reply)
         line("01:00", "client", "ещё вопрос"), // 2  (bot phase: ignored even though 100 s pass)
         line("01:30", "system", "Эскалация на оператора"), // 3
-        line("01:40", "operator", "Здравствуйте"), // 4
-        line("01:50", "client", "проблема"), // 5
-        line("01:55", "operator", "понял"), // 6  (waited 5 s)
+        line("01:32", "client", "жду оператора"), // 4  (after the handover: waits 8 s)
+        line("01:40", "operator", "Здравствуйте"), // 5
+        line("01:50", "client", "проблема"), // 6
+        line("01:55", "operator", "понял"), // 7  (waited 5 s)
       ],
     };
     const f = normalizeRecord(rec, "G").facts;
-    assert.equal(f.longest_wait_seconds, 5);
+    assert.equal(f.longest_wait_seconds, 8);
     assert.equal(f.first_reaction_seconds, 10);
   });
 
-  test("a client line that the operator never answers is not a wait", () => {
+  test("a client line between the handover and the operator's first reply counts as waiting", () => {
     const rec = {
+      conversation_id: "w3",
+      channel: "agent chat",
+      language: "RU",
+      transcript: [
+        line("00:05", "client", "вопрос"), // 0  (before the handover: ignored)
+        line("00:10", "system", "Эскалация на оператора"), // 1
+        line("00:11", "client", "я жду"), // 2
+        line("00:47", "operator", "Здравствуйте"), // 3
+      ],
+    };
+    const f = normalizeRecord(rec, "G").facts;
+    assert.equal(f.longest_wait_seconds, 36);
+    assert.equal(f.first_reaction_seconds, 37);
+  });
+
+  test("without a handover the scan starts at the operator's first line", () => {
+    const rec = {
+      conversation_id: "w4",
+      channel: "agent chat",
+      language: "RU",
+      transcript: [
+        line("00:00", "client", "вопрос"), // 0  (before the first operator line: not counted)
+        line("00:50", "operator", "Здравствуйте"), // 1
+        line("01:00", "client", "ещё"), // 2
+        line("01:07", "operator", "да"), // 3  (waited 7 s)
+      ],
+    };
+    const f = normalizeRecord(rec, "G").facts;
+    assert.equal(f.operator_joined_index, 1);
+    assert.equal(f.longest_wait_seconds, 7);
+  });
+
+  test("a client line that no operator answers is not a wait", () => {
+    const answeredNever = {
       conversation_id: "w2",
       channel: "agent chat",
       language: "RU",
@@ -304,9 +339,24 @@ describe("normalizeRecord", () => {
         line("00:30", "system", "Соединение с клиентом прервано"),
       ],
     };
-    const f = normalizeRecord(rec, "G").facts;
+    const f = normalizeRecord(answeredNever, "G").facts;
     assert.equal(f.longest_wait_seconds, null);
     assert.equal(f.ending, "connection_lost");
+    // A client line after the handover with no operator line at all: still no wait.
+    const noOperator = {
+      conversation_id: "w5",
+      channel: "agent chat",
+      language: "RU",
+      transcript: [
+        line("00:00", "system", "Эскалация на оператора"),
+        line("00:05", "client", "алло"),
+        line("00:30", "system", "Клиент покинул чат"),
+      ],
+    };
+    const g = normalizeRecord(noOperator, "G").facts;
+    assert.equal(g.longest_wait_seconds, null);
+    assert.equal(g.operator_joined_index, null);
+    assert.equal(g.ending, "client_left");
   });
 
   test("defensive: odd lines and missing transcript never throw", () => {
@@ -351,7 +401,7 @@ describe("parseUpload", () => {
   });
 
   test("tolerates a BOM and surrounding whitespace", () => {
-    const out = parseUpload("﻿  " + JSON.stringify(rec("a")) + "\n");
+    const out = parseUpload("\uFEFF  " + JSON.stringify(rec("a")) + "\n");
     assert.equal(out.records.length, 1);
   });
 
