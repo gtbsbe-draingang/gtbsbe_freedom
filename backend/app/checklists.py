@@ -113,19 +113,23 @@ def _insert_if_missing(path: Path) -> None:
     logger.info("Seeded checklist %s from %s", version.id, path.name)
 
 
+def seed_files() -> list[Path]:
+    """The checklist files that ship with the repo and exist now, in the order they are seeded:
+    the official chat checklist, then stream D's calls checklist."""
+    return [path for path in (OFFICIAL_SEED, CALLS_SEED) if path.is_file()]
+
+
 def seed_into_db() -> None:
-    """Insert the checklists that ship as files, each only when its (checklist_id, version) is not
-    stored yet: the official chat checklist, and stream D's calls checklist when that file exists.
+    """Insert the checklists that ship as files (`seed_files`), each only when its
+    (checklist_id, version) is not stored yet.
 
     Never changes a stored version, so it is safe on every startup. The official seed missing is a
     warning, not an error (CI and early development run without it). A file that exists but is
     not a valid checklist raises: a broken seed must not be silently dropped."""
-    if OFFICIAL_SEED.is_file():
-        _insert_if_missing(OFFICIAL_SEED)
-    else:
+    if not OFFICIAL_SEED.is_file():
         logger.warning("Official checklist seed %s not found; not seeding it.", OFFICIAL_SEED)
-    if CALLS_SEED.is_file():
-        _insert_if_missing(CALLS_SEED)
+    for path in seed_files():
+        _insert_if_missing(path)
 
 
 # --- editing rules -------------------------------------------------------------------------

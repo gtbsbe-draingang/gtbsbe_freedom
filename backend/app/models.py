@@ -82,7 +82,9 @@ class Conversation(BaseModel):
     conversation_id: str
     group_id: str
     channel: Literal["agent chat", "voice call"]
-    language: Literal["RU", "KZ", "EN"]
+    # RU, KZ or EN by convention; the contract keeps any other code exactly as given (no
+    # upper-casing, no trimming), so one unexpected code never fails an import.
+    language: str
     transcript: list[Message]
     status: Literal["new", "evaluated", "disputed"] = "new"
     facts: Facts | None = None
@@ -272,12 +274,15 @@ class Evaluation(BaseModel):
 
 class Decision(BaseModel):
     outcome: Literal["confirmed", "changed"]
-    answer: Answer  # "confirmed": the model's original answer; "changed": the reviewer's
+    # "confirmed": the answer under appeal (the evaluation's final answer when it was decided, a
+    # carried or earlier decision included); "changed": the reviewer's.
+    answer: Answer
     reason: str
     role: Role
     decided_at: datetime
-    # Beyond the contract: the gross-error kinds that go with `answer` (the model's kinds when the
-    # answer is the model's, else none), so a carried decision scores exactly like the original.
+    # Beyond the contract: the gross-error kinds that go with `answer`, so a carried decision scores
+    # exactly like the original. "confirmed": the kinds under appeal; "changed": none, or the
+    # model's when the answer is the model's.
     kinds: list[str] = []
 
 
@@ -393,7 +398,7 @@ class AnalyticsCriterion(BaseModel):
 
 
 class AnalyticsLanguage(BaseModel):
-    language: Literal["RU", "KZ", "EN"]
+    language: str  # the conversations' code, as stored (see Conversation.language)
     avg_total: Num | None
     n: int
 

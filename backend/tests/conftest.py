@@ -7,6 +7,8 @@ Isolation rules, all enforced by the autouse fixture below:
 * Settings never read a .env file during tests.
 * Every test gets its own SQLite file under tmp_path.
 * The get_settings() cache is cleared before and after each test.
+* app.snapshot.SNAPSHOT (the repo's data/snapshot/cqa-snapshot.json) points into tmp_path, so no
+  test can write the shipped snapshot. A test that needs a snapshot file patches it again.
 """
 
 import os
@@ -16,6 +18,7 @@ from contextlib import ExitStack
 import pytest
 from fastapi.testclient import TestClient
 
+from app import snapshot
 from app.settings import Settings, get_settings
 
 
@@ -36,6 +39,12 @@ def isolated_settings(monkeypatch: pytest.MonkeyPatch, tmp_path) -> Iterator[Non
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
+
+
+@pytest.fixture(autouse=True)
+def isolated_snapshot_path(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+    # cli.py reads `snapshot.SNAPSHOT` when it runs, so this one attribute is the only copy to patch.
+    monkeypatch.setattr(snapshot, "SNAPSHOT", tmp_path / "shipped-snapshot" / "cqa-snapshot.json")
 
 
 @pytest.fixture

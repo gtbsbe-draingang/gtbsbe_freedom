@@ -2,7 +2,7 @@
 
 `POST /appeals` answers 201 with the Appeal (its second opinion `pending` or `unavailable`; poll
 `GET /appeals/{id}` for it). `POST /appeals/{id}/decision` answers 200 with the recalculated
-Evaluation. `GET /appeals` lists newest first; `status`, `evaluation_id` and `conversation` are
+Evaluation; besides `outcome`, `answer`, `reason` and `role` it takes optional gross-error `kinds`. `GET /appeals` lists newest first; `status`, `evaluation_id` and `conversation` are
 optional exact filters (a blank one is no filter).
 """
 
@@ -29,9 +29,12 @@ class AppealRequest(BaseModel):
 
 class DecisionRequest(BaseModel):
     outcome: Literal["confirmed", "changed"]
-    answer: Answer | None = None  # required for "changed"; ignored for "confirmed"
+    answer: Answer | None = None  # required for "changed"; ignored for "confirmed" (it keeps the appealed one)
     reason: str = ""  # a blank reason is 422 reason_required, checked after 404/403/409
     role: Role
+    # Optional: the gross-error kinds, only with a `yes` on the gross-error criterion (else 422
+    # invalid_request). Omitted: "confirmed" keeps the appealed kinds, "changed" has none.
+    kinds: list[str] | None = None
 
 
 @router.post("/appeals", status_code=201)
@@ -63,4 +66,6 @@ def get_appeal(appeal_id: str) -> dict[str, Any]:
 @router.post("/appeals/{appeal_id}/decision")
 def decide(appeal_id: str, request: DecisionRequest) -> dict[str, Any]:
     """The reviewer's decision; the evaluation as recalculated (runs in the thread pool)."""
-    return dump(appeals.decide(appeal_id, request.outcome, request.answer, request.reason, request.role))
+    return dump(
+        appeals.decide(appeal_id, request.outcome, request.answer, request.reason, request.role, request.kinds)
+    )

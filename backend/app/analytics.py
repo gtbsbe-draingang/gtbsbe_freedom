@@ -20,9 +20,11 @@ conversations' columns (`store.conversation_profiles`).
   final answer is a failure: `no`, or a step below the top step of a scale. When every answer is
   N/A nothing applied and `fail_rate` is 0 (the contract wants a number). A criterion that no
   evaluation contains (n = 0) is left out: the contract wants numbers there, not nulls.
-* `by_language` and `by_channel`: the evaluations by the conversation's language (RU, KZ, EN) and
-  channel (agent chat, voice call), in that fixed order, only the values that occur. `n` counts the
-  evaluations, `avg_total` is the mean of the final totals that are calculated (null when none is).
+* `by_language` and `by_channel`: the evaluations by the conversation's language and channel, only
+  the values that occur, each exactly as stored. Languages: RU, KZ, EN first, in that order, then
+  any other code (the contract keeps codes as given, e.g. "ru" or "KK"), sorted. Channels: agent
+  chat, then voice call. `n` counts the evaluations, `avg_total` is the mean of the final totals
+  that are calculated (null when none is).
 * `gross_errors`: `count` evaluations with the flag on, `by_kind` the number of those that carry
   each kind (a kind counts once per evaluation), ordered by count descending and then kind, and the
   `conversations` ids, ordered by group id and conversation id.
@@ -83,7 +85,7 @@ BOM = "\ufeff"
 DELIMITER = ";"
 LINE_END = "\r\n"
 
-_LANGUAGES = ("RU", "KZ", "EN")
+_LANGUAGES = ("RU", "KZ", "EN")  # listed first, in this order; any other code follows, sorted
 _CHANNELS = ("agent chat", "voice call")
 _HALF = Fraction(1, 2)
 # A spreadsheet reads a text cell that starts with one of these as a formula (OWASP's list).
@@ -165,10 +167,14 @@ def _average_total(evaluations: list[Evaluation]) -> Decimal | None:
     return round2(sum(totals, Fraction(0)) / len(totals)) if totals else None
 
 
-def _by_value(rows: list[Row], column: str, order: tuple[str, ...]) -> list[tuple[str, Decimal | None, int]]:
-    """`(value, average total, n)` for each value of the profile's `column` that occurs, in `order`."""
-    groups = {value: [e for e, profile in rows if getattr(profile, column) == value] for value in order}
-    return [(value, _average_total(group), len(group)) for value, group in groups.items() if group]
+def _by_value(rows: list[Row], column: str, first: tuple[str, ...]) -> list[tuple[str, Decimal | None, int]]:
+    """`(value, average total, n)` for each value of the profile's `column` that occurs: the values
+    of `first` in that order, then every other value, sorted."""
+    groups: dict[str, list[Evaluation]] = {}
+    for evaluation, profile in rows:
+        groups.setdefault(getattr(profile, column), []).append(evaluation)
+    order = [value for value in first if value in groups] + sorted(set(groups) - set(first))
+    return [(value, _average_total(groups[value]), len(groups[value])) for value in order]
 
 
 def _gross_errors(rows: list[Row]) -> GrossErrorStats:

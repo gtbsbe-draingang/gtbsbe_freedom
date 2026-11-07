@@ -627,3 +627,293 @@ def test_pending_second_opinions_become_unavailable_at_startup(
     assert r.json()["second_opinion_status"] == "pending"
     restarted = make_client(**KEY)
     assert restarted.get(f"/api/appeals/{r.json()['id']}").json()["second_opinion_status"] == "unavailable"
+
+
+# --- final review: appeals on a superseded transcript --------------------------------------
+
+
+def queue_item(client: TestClient, conversation: str = CHAT) -> dict:
+    return next(i for i in client.get("/api/conversations").json() if i["id"] == conversation)
+
+
+def test_an_appeal_on_a_superseded_transcript_leaves_the_status_new(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    reimport(edit_first_line)
+    assert status_of(client) == "new"  # no evaluation of the current text
+
+    appeal = file(client, first["id"])
+    assert status_of(client) == "new"  # the appeal is about text the conversation no longer holds
+    assert queue_item(client)["final"]["open_appeals"] == 0
+    decide(client, appeal["id"], answer={"step": 20})
+    assert status_of(client) == "new"
+
+
+def test_only_appeals_on_the_current_transcript_count(setup) -> None:
+    """The status and the queue's `open_appeals` count only the open appeals on the conversation's
+    current transcript, so the two always agree."""
+    client, official = setup
+    first = grade(client, official)
+    file(client, first["id"])  # stays open, on the transcript `first` graded
+    assert status_of(client) == "disputed"
+    assert queue_item(client)["final"]["open_appeals"] == 1
+
+    reimport(edit_first_line)
+    item = queue_item(client)
+    assert item["status"] == "new"
+    assert item["final"]["open_appeals"] == 0  # `final` still shows `first`, whose transcript is gone
+
+    second = grade(client, official)  # the current transcript
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("evaluated", 0)
+
+    current = file(client, second["id"])
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("disputed", 1)
+
+    decide(client, current["id"], answer={"step": 20})
+    item = queue_item(client)
+    assert (item["status"], item["final"]["open_appeals"]) == ("evaluated", 0)  # the old one does not count
+    assert item["final"]["total"] == 92.5
+
+
+# --- final review: a decision reaches later evaluations ------------------------------------
+
+
+def csv_row(client: TestClient, version: ChecklistVersion, conversation_id: str = "p1-ru-001") -> dict[str, str]:
+    r = client.get("/api/export.csv", params={"checklist_id": version.checklist_id, "version": version.version})
+    assert r.status_code == 200, r.text
+    lines = r.content.decode("utf-8-sig").splitlines()
+    header = lines[0].split(";")
+    rows = [dict(zip(header, line.split(";"), strict=True)) for line in lines[1:]]
+    return next(row for row in rows if row["conversation_id"] == conversation_id)
+
+
+def test_a_decision_reaches_a_later_evaluation_of_the_same_transcript(setup) -> None:
+    """An appeal filed on E1, a re-run that creates E2 before the decision: the decision reaches E2,
+    and so every reader of E2 (the queue, analytics, the CSV) shows it."""
+    client, official = setup
+    earlier = grade(client, official)  # before the appealed one: carry-forward only goes forward
+    first = grade(client, official)
+    appeal = file(client, first["id"])
+    second = grade(client, official)
+    assert result(second, "c04")["carried_decision"] is None  # an open appeal carries nothing
+    assert queue_item(client)["final"]["total"] == 84.17
+
+    decide(client, appeal["id"], answer={"step": 20})
+
+    after = client.get(f"/api/evaluations/{second['id']}").json()
+    validate("evaluation", after)
+    c04 = result(after, "c04")
+    assert c04["carried_decision"] == {"appeal_id": appeal["id"], "evaluation_id": first["id"]}
+    assert (c04["answer"], c04["final_answer"]) == ({"step": 15}, {"step": 20})
+    assert (c04["points"], c04["effective_weight"]) == (33.33, 33.33)
+    assert (after["original_total"], after["final_total"]) == (84.17, 92.5)
+    assert all(r["carried_decision"] is None for r in after["results"] if r["criterion_id"] != "c04")
+
+    assert queue_item(client)["final"]["total"] == 92.5
+    body = client.get(
+        "/api/analytics", params={"checklist_id": official.checklist_id, "version": official.version}
+    ).json()
+    assert body["by_language"] == [{"language": "RU", "avg_total": 92.5, "n": 1}]
+    row = csv_row(client, official)
+    assert (row["final_total"], row["original_total"], row["c04_answer"]) == ("92,50", "84,17", "20")
+
+    untouched = client.get(f"/api/evaluations/{earlier['id']}").json()
+    assert untouched["final_total"] == 84.17 and result(untouched, "c04")["carried_decision"] is None
+
+
+def test_a_later_evaluations_own_decision_outranks_a_newer_one_elsewhere(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    on_first = file(client, first["id"])
+    second = grade(client, official)
+    decide(client, file(client, second["id"])["id"], answer={"step": 5})  # E2's own decision
+
+    decide(client, on_first["id"], answer={"step": 20})  # decided later, on E1
+
+    after = client.get(f"/api/evaluations/{second['id']}").json()
+    assert result(after, "c04")["final_answer"] == {"step": 5}  # its own decision stands
+    assert after["final_total"] == 67.5
+    assert client.get(f"/api/evaluations/{first['id']}").json()["final_total"] == 92.5
+
+
+def test_a_decision_reaches_later_evaluations_of_any_checklist_with_the_same_criterion(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    appeal = file(client, first["id"])
+    heavier = grade(client, save_copy(client, official, heavier_c01))  # weights only: same fingerprint
+
+    def reword_c04(copied: dict) -> None:
+        criterion(copied, "c04")["wording"] = "Оцените полноту ответа по шкале."
+
+    reworded = grade(client, save_copy(client, official, reword_c04))  # another fingerprint
+    reimport(edit_first_line)
+    other_text = grade(client, official)  # another transcript
+
+    decide(client, appeal["id"], answer={"step": 20})
+
+    after = client.get(f"/api/evaluations/{heavier['id']}").json()
+    assert result(after, "c04")["final_answer"] == {"step": 20}
+    assert (after["original_total"], after["final_total"]) == (86.43, 93.57)
+    for unchanged in (reworded, other_text):
+        assert client.get(f"/api/evaluations/{unchanged['id']}").json() == unchanged
+
+
+# --- final review: "confirmed" keeps the score under appeal --------------------------------
+
+
+def test_confirm_keeps_a_carried_answer(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    decide(client, file(client, first["id"], "c03")["id"], answer="no")  # the model said N/A
+    second = grade(client, official)
+    assert result(second, "c03")["final_answer"] == "no"  # carried
+
+    appeal = file(client, second["id"], "c03")
+    decided = decide(client, appeal["id"], outcome="confirmed")
+
+    c03 = result(decided, "c03")
+    assert (c03["answer"], c03["final_answer"]) == ("na", "no")  # the carried answer is what was confirmed
+    assert decided["final_total"] == second["final_total"]
+    assert decided["sections"] == second["sections"]
+    assert client.get(f"/api/appeals/{appeal['id']}").json()["decision"]["answer"] == "no"
+
+
+def test_confirm_keeps_the_evaluations_own_earlier_decision(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decide(client, file(client, ev["id"])["id"], answer={"step": 20})
+    again = file(client, ev["id"])  # the controller disputes the changed answer
+
+    decided = decide(client, again["id"], outcome="confirmed")
+
+    assert result(decided, "c04")["final_answer"] == {"step": 20}
+    assert decided["final_total"] == 92.5
+    assert client.get(f"/api/appeals/{again['id']}").json()["decision"]["answer"] == {"step": 20}
+
+
+# --- final review: gross-error kinds on a decision -----------------------------------------
+
+
+def analytics_of(client: TestClient, version: ChecklistVersion) -> dict:
+    r = client.get("/api/analytics", params={"checklist_id": version.checklist_id, "version": version.version})
+    assert r.status_code == 200, r.text
+    validate("analytics", r.json())
+    return r.json()
+
+
+def test_a_reviewer_raises_a_gross_error_with_its_kinds(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)  # the model found no gross error (c08 = no)
+    appeal = file(client, ev["id"], "c08")
+
+    decided = decide(client, appeal["id"], answer="yes", kinds=["insult", "confidential_disclosure"])
+
+    validate("evaluation", decided)
+    assert decided["gross_error"]["flag"] is True
+    assert decided["gross_error"]["kinds"] == ["insult", "confidential_disclosure"]
+    assert result(decided, "c08")["final_answer"] == "yes"
+    stored = client.get(f"/api/appeals/{appeal['id']}").json()
+    validate("appeal", stored)
+    assert stored["decision"]["kinds"] == ["insult", "confidential_disclosure"]
+    gross = analytics_of(client, official)["gross_errors"]
+    assert gross["count"] == 1 and gross["conversations"] == [CHAT]
+    assert gross["by_kind"] == [{"kind": "confidential_disclosure", "count": 1}, {"kind": "insult", "count": 1}]
+    assert csv_row(client, official)["gross_error_kinds"] == "insult,confidential_disclosure"
+
+
+def test_without_kinds_a_raised_gross_error_has_none(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decided = decide(client, file(client, ev["id"], "c08")["id"], answer="yes")
+    assert decided["gross_error"] == {**decided["gross_error"], "flag": True, "kinds": []}
+
+
+def test_kinds_carry_forward_and_a_confirmation_keeps_them(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    decide(client, file(client, first["id"], "c08")["id"], answer="yes", kinds=["insult"])
+    second = grade(client, official)
+    assert second["gross_error"]["kinds"] == ["insult"]  # carried with the answer
+
+    confirmed = decide(client, file(client, second["id"], "c08")["id"], outcome="confirmed")
+    assert (confirmed["gross_error"]["flag"], confirmed["gross_error"]["kinds"]) == (True, ["insult"])
+
+    third = grade(client, official)
+    relabelled = decide(client, file(client, third["id"], "c08")["id"], outcome="confirmed",
+                        kinds=["paid_service_outside_company"])  # fmt: skip
+    assert relabelled["gross_error"]["kinds"] == ["paid_service_outside_company"]
+    assert result(relabelled, "c08")["final_answer"] == "yes"
+
+
+@pytest.mark.parametrize(
+    ("criterion_id", "body"),
+    [
+        ("c04", {"outcome": "changed", "answer": {"step": 20}, "kinds": ["insult"]}),  # not a gross-error criterion
+        ("c08", {"outcome": "changed", "answer": "no", "kinds": ["insult"]}),  # the answer is not yes
+        ("c08", {"outcome": "confirmed", "kinds": ["insult"]}),  # confirms the model's no
+        ("c08", {"outcome": "changed", "answer": "yes", "kinds": ["shouting"]}),  # not one of its kinds
+        ("c08", {"outcome": "changed", "answer": "yes", "kinds": ["insult", "insult"]}),  # twice
+    ],
+    ids=["not gross error", "answer no", "confirmed no", "unknown kind", "duplicate"],
+)
+def test_kinds_that_do_not_fit_are_refused(setup, criterion_id: str, body: dict) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    appeal = file(client, ev["id"], criterion_id)
+    r = client.post(
+        f"/api/appeals/{appeal['id']}/decision", json={"reason": "Потому что.", "role": "reviewer", **body}
+    )
+    assert r.status_code == 422
+    assert set(r.json()) == {"error", "message"} and r.json()["error"] == "invalid_request"
+    assert "kinds" in r.json()["message"]
+    assert client.get(f"/api/appeals/{appeal['id']}").json()["status"] == "open"  # nothing stored
+    assert client.get(f"/api/evaluations/{ev['id']}").json() == ev
+
+
+def test_an_empty_kinds_list_is_no_kinds(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decided = decide(client, file(client, ev["id"])["id"], answer={"step": 20}, kinds=[])
+    assert decided["final_total"] == 92.5
+
+
+# --- final review: no second opinion on a superseded transcript ----------------------------
+
+
+def test_no_second_opinion_when_the_transcript_was_reimported(setup, fake: FakeEvaluator) -> None:
+    """The evidence indices of a second opinion on today's text would point at other lines."""
+    client, official = setup
+    first = grade(client, official)
+    reimport(edit_first_line)
+    r = client.post(
+        "/api/appeals",
+        json={"evaluation_id": first["id"], "criterion_id": "c04", "comment": "x", "role": "controller"},
+    )
+    assert r.status_code == 201
+    assert (r.json()["second_opinion_status"], r.json()["second_opinion"]) == ("unavailable", None)
+    client.portal.call(appeals.wait_for_second_opinions)
+    assert fake.second_opinions == 0
+    stored = client.get(f"/api/appeals/{r.json()['id']}").json()
+    assert stored["second_opinion_status"] == "unavailable"
+    validate("appeal", stored)
+
+
+def test_no_second_opinion_when_the_transcript_is_reimported_before_it_is_asked(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    scheduled: list[str] = []
+    monkeypatch.setattr(appeals, "_schedule_second_opinion", scheduled.append)
+    r = client.post(
+        "/api/appeals", json={"evaluation_id": ev["id"], "criterion_id": "c04", "comment": "x", "role": "controller"}
+    )
+    assert r.json()["second_opinion_status"] == "pending" and scheduled == [r.json()["id"]]
+
+    reimport(edit_first_line)  # between filing and asking
+    client.portal.call(appeals._second_opinion, r.json()["id"])
+
+    assert fake.second_opinions == 0
+    assert client.get(f"/api/appeals/{r.json()['id']}").json()["second_opinion_status"] == "unavailable"

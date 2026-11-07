@@ -4,13 +4,22 @@ design sections 6 and 7).
 * **Filing** (`file_appeal`): a controller disputes one criterion of a done evaluation. At most
   one open appeal per criterion per evaluation (the database enforces it). Filing never needs a
   model key and never waits for the model: the second opinion is asked for in the background and
-  the UI polls `GET /appeals/{id}`. The conversation becomes `disputed`.
-* **Second opinion**: `unavailable` without a key or an evaluator; otherwise `pending` until a
-  background task stores C's `second_opinion` (`done`) or fails (`unavailable`). Failures are
-  logged by exception class only (an exception's text may carry a URL).
-* **Deciding** (`decide`): a reviewer confirms (the stored answer is the model's original one) or
-  changes the answer, with a reason. The appeal, the recalculated evaluation and the
-  conversation's status are written in one transaction.
+  the UI polls `GET /appeals/{id}`. The conversation becomes `disputed` when the appealed
+  evaluation graded its current transcript (after a re-import it stays `new`); only appeals on the
+  current transcript keep it disputed.
+* **Second opinion**: `unavailable` without a key or an evaluator, and when the appealed
+  evaluation graded a transcript a re-import has replaced since (C would judge today's text, and
+  its evidence indices would point at other lines); no model call is made then. Otherwise
+  `pending` until a background task stores C's `second_opinion` (`done`) or fails (`unavailable`,
+  also when the re-import happens before it asks). Failures are logged by exception class only (an
+  exception's text may carry a URL).
+* **Deciding** (`decide`): a reviewer confirms or changes the answer, with a reason. A
+  confirmation keeps the score that was under appeal: it stores the evaluation's final answer (and
+  gross-error kinds) at that moment, which is a carried or an earlier decision's when there is one,
+  else the model's. A decision whose answer is `yes` on the gross-error criterion may name the
+  violation kinds (`kinds`, each one of the criterion's, no repeats); they become the evaluation's
+  `gross_error.kinds`. The appeal, the recalculated evaluation and the conversation's status are
+  written in one transaction.
 * **Final answers** (`final_answers`, `recompute`): per result, the evaluation's own decided
   appeal, else its carried decision, else the model's answer. `original_total` always comes from
   the model's answers; `final_total`, points, effective weights, sections and the gross-error flag
@@ -18,7 +27,11 @@ design sections 6 and 7).
   a decision compute the final values the same way.
 * **Carry-forward** (`carry_forward`): a later evaluation of the same transcript takes over the
   latest decided answer for each criterion whose fingerprint is unchanged (a weight-only change
-  keeps the fingerprint; a reworded or replaced criterion does not).
+  keeps the fingerprint; a reworded or replaced criterion does not). It is applied when an
+  evaluation is built, and again when a decision is made: every later `done` evaluation of the same
+  conversation and transcript (any checklist) whose criterion has the appealed fingerprint takes
+  the new decision and is recomputed in the decision's transaction, so an evaluation made while
+  the appeal was open shows it too. An evaluation's own decision still outranks a carried one.
 """
 
 import asyncio
@@ -31,6 +44,8 @@ from typing import Literal
 from app import store
 from app.errors import ApiError
 from app.evaluator_port import find_evaluator
+from pydantic import TypeAdapter
+
 from app.models import (
     Answer,
     Appeal,
@@ -45,9 +60,11 @@ from app.models import (
 )
 from app.scoring import ScoringError, score, validate_answer
 from app.settings import get_settings
+from app.transcript import transcript_hash as hash_of  # carry_forward has a parameter of that name
 
 __all__ = [
     "apply_decisions",
+    "carried_decisions",
     "carry_forward",
     "decide",
     "file_appeal",
@@ -62,6 +79,8 @@ logger = logging.getLogger(__name__)
 
 Final = tuple[Answer, list[str]]  # (answer, gross-error kinds), what score() takes per criterion
 Outcome = Literal["confirmed", "changed"]
+
+_ANSWER = TypeAdapter(Answer)
 
 
 def _now() -> datetime:
@@ -187,16 +206,19 @@ def apply_decisions(
 # --- carry-forward -------------------------------------------------------------------------
 
 
-def carry_forward(conversation: str, transcript_hash: str, version: ChecklistVersion) -> dict[str, dict]:
-    """Reviewer decisions to carry into a new evaluation of `conversation` with `version`, by
+def carry_forward(
+    conversation: str, transcript_hash: str, version: ChecklistVersion, *, conn=None
+) -> dict[str, dict]:
+    """Reviewer decisions to carry into an evaluation of `conversation` with `version`, by
     criterion id: `{"appeal_id", "evaluation_id", "answer", "kinds"}`.
 
     For each criterion, the most recent decided appeal (by `decided_at`) on an evaluation of this
     conversation whose criterion had the same fingerprint and whose graded transcript had this
-    hash. A confirmed decision carries the answer it confirmed. The evaluation being built has
-    no appeals of its own yet (appeals need a done evaluation), so every match is on an earlier
-    one. Blocking (one database query): call it off the event loop."""
-    latest = store.latest_decisions(conversation, transcript_hash, [c.fingerprint for c in version.criteria])
+    hash. A confirmed decision carries the answer it confirmed. An evaluation being built has no
+    appeals of its own yet (appeals need a done evaluation), so every match is on an earlier one.
+    Blocking (one database query, on `conn` when given): call it off the event loop."""
+    fingerprints = [c.fingerprint for c in version.criteria]
+    latest = store.latest_decisions(conversation, transcript_hash, fingerprints, conn=conn)
     carries: dict[str, dict] = {}
     for c in version.criteria:
         appeal = latest.get(c.fingerprint)
@@ -209,6 +231,63 @@ def carry_forward(conversation: str, transcript_hash: str, version: ChecklistVer
             "kinds": list(appeal.decision.kinds),
         }
     return carries
+
+
+def carried_decisions(version: ChecklistVersion, carries: dict[str, dict]) -> tuple[dict[str, Final], dict[str, dict]]:
+    """`carries` (from `carry_forward`) as what `apply_decisions` takes and what a result records:
+    the carried (answer, kinds) by appeal id, and each criterion's `carried_decision` marker
+    (`{"appeal_id", "evaluation_id"}`) by criterion id. A carry whose answer does not fit the
+    criterion is dropped (the same fingerprint means the same scale, so this is only a safeguard)."""
+    criteria = {c.id: c for c in version.criteria}
+    carried: dict[str, Final] = {}
+    markers: dict[str, dict] = {}
+    for cid, carry in carries.items():
+        criterion = criteria.get(cid)
+        if criterion is None:
+            continue
+        answer = _ANSWER.validate_python(carry["answer"])
+        if validate_answer(criterion, answer) is not None:
+            continue
+        carried[carry["appeal_id"]] = (answer, list(carry.get("kinds") or []))
+        markers[cid] = {"appeal_id": carry["appeal_id"], "evaluation_id": carry["evaluation_id"]}
+    return carried, markers
+
+
+def _carry_into_later(conn, appeal: Appeal, appealed: Evaluation) -> None:
+    """Carry a decision just made into the later `done` evaluations of the same conversation and
+    graded transcript, of any checklist: each criterion with the appealed fingerprint gets the
+    marker `carry_forward` picks now (the most recent decision: this one), and the evaluation is
+    recomputed from its stored decisions (`recompute`: its own decision still outranks it). Inside
+    the decision's transaction. An evaluation that cannot be recomputed is left as it was."""
+    match = store.appeal_match(conn, appeal.id)
+    if match is None:
+        return
+    fingerprint, graded_hash = match
+    versions: dict[tuple[str, int], ChecklistVersion | None] = {}
+    for later in store.later_done_evaluations(conn, appealed, graded_hash):
+        key = (later.checklist_id, later.version)
+        if key not in versions:
+            versions[key] = store.get_checklist_version(*key)
+        version = versions[key]
+        if version is None:
+            continue
+        concerned = {c.id for c in version.criteria if c.fingerprint == fingerprint}
+        _, markers = carried_decisions(version, carry_forward(appealed.conversation, graded_hash, version, conn=conn))
+        results = [
+            r.model_copy(update={"carried_decision": markers[r.criterion_id]})
+            if r.criterion_id in concerned and r.criterion_id in markers
+            else r
+            for r in later.results
+        ]
+        if results == later.results:
+            continue
+        try:
+            updated = recompute(later.model_copy(update={"results": results}), version, conn=conn)
+        except ScoringError as exc:
+            logger.warning("Decision %s not carried into evaluation %s: %s", appeal.id, later.id, exc.code)
+            continue
+        store.write_evaluation(conn, updated)
+        logger.info("Decision %s carried into evaluation %s", appeal.id, later.id)
 
 
 # --- filing --------------------------------------------------------------------------------
@@ -242,7 +321,11 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
         raise _not_found(
             f"No criterion {criterion_id!r} in checklist {evaluation.checklist_id!r} v{evaluation.version}."
         )
-    graded_hash = evaluation.transcript_hash or store.get_transcript_hash(evaluation.conversation) or ""
+    current_hash = store.get_transcript_hash(evaluation.conversation)
+    graded_hash = evaluation.transcript_hash or current_hash or ""
+    superseded = graded_hash != current_hash  # re-imported since: no second opinion on other text
+    if superseded:
+        logger.info("No second opinion for an appeal on evaluation %s: its transcript was re-imported", evaluation.id)
 
     appeal = Appeal(
         id=uuid.uuid4().hex,
@@ -254,7 +337,7 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
         role=role,
         status="open",
         second_opinion=None,
-        second_opinion_status="pending" if _second_opinion_possible() else "unavailable",
+        second_opinion_status="pending" if not superseded and _second_opinion_possible() else "unavailable",
         decision=None,
     )
     already_open = ApiError(
@@ -265,7 +348,7 @@ def _file(evaluation_id: str, criterion_id: str, comment: str, role: Role) -> Ap
             if store.has_open_appeal(conn, evaluation.id, criterion_id):
                 raise already_open
             store.insert_appeal(appeal, fingerprint=criterion.fingerprint, transcript_hash=graded_hash, conn=conn)
-            store.set_conversation_status(conn, evaluation.conversation, "disputed")
+            store.mark_disputed(conn, evaluation.conversation, graded_hash)
     except store.AppealAlreadyOpen:
         raise already_open from None
     logger.info("Appeal %s filed by %s on %s of evaluation %s", appeal.id, role, criterion_id, evaluation.id)
@@ -312,6 +395,8 @@ def _context(appeal_id: str):
     result = _result(evaluation, appeal.criterion_id)
     if conv is None or version is None or criterion is None or result is None:
         raise _Unavailable()
+    if evaluation.transcript_hash is not None and evaluation.transcript_hash != hash_of(conv.transcript):
+        raise _Unavailable()  # re-imported since the appeal was filed: not the text that was graded
     return appeal, conv, version, criterion, result
 
 
@@ -371,17 +456,44 @@ def recover_pending() -> None:
 # --- deciding ------------------------------------------------------------------------------
 
 
-def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str, role: Role) -> Evaluation:
+def _kinds_problem(criterion: Criterion, answer: Answer, kinds: list[str]) -> str | None:
+    """Why `kinds` cannot go with `answer` on `criterion`, or None when they fit. An empty list
+    always fits (it names no kind)."""
+    if not kinds:
+        return None
+    if criterion.kind != "gross_error":
+        return f"kinds: only the gross-error criterion takes kinds, and {criterion.id!r} is a scored one."
+    if answer != "yes":
+        return "kinds: only a decision whose answer is yes (a gross error) takes kinds."
+    if any(kind not in criterion.kinds for kind in kinds):
+        return f"kinds: each must be one of the kinds of {criterion.id!r}: {', '.join(criterion.kinds)}."
+    if len(set(kinds)) != len(kinds):
+        return "kinds: each kind may be named once."
+    return None
+
+
+def decide(
+    appeal_id: str,
+    outcome: Outcome,
+    answer: Answer | None,
+    reason: str,
+    role: Role,
+    kinds: list[str] | None = None,
+) -> Evaluation:
     """Decide an open appeal and return the recalculated evaluation.
 
     Checked in this order: 404 for an unknown appeal, 403 `role_not_allowed` unless `role` is
     `reviewer`, 409 `appeal_already_decided`, 422 `reason_required` for a blank reason, then for
-    `changed` 422 `invalid_request` without an answer or 422 with the `validate_answer` code. For
-    `confirmed` the stored answer is the model's original one (a sent answer is ignored). A
-    recalculation that fails is 422 with the scoring code, and nothing is stored.
+    `changed` 422 `invalid_request` without an answer or 422 with the `validate_answer` code, then
+    422 `invalid_request` for `kinds` that do not fit (`_kinds_problem`). For `confirmed` the
+    stored answer is the one under appeal, the evaluation's final one (a sent answer is ignored).
+    The stored kinds are `kinds` when given; otherwise, for `confirmed`, the kinds under appeal,
+    and for `changed`, none (the model's when the answer is the model's). A recalculation that
+    fails is 422 with the scoring code, and nothing is stored.
 
-    The decision, the recalculated evaluation and the conversation's status (`evaluated` once no
-    appeal on it is open) are written in one transaction. Blocking: call it off the event loop."""
+    The decision, the recalculated evaluation, the later evaluations it carries into (see
+    `_carry_into_later`) and the conversation's status (`evaluated` once no appeal on its current
+    transcript is open) are written in one transaction. Blocking: call it off the event loop."""
     found = store.get_appeal(appeal_id)
     if found is None:
         raise _not_found(f"No appeal {appeal_id!r}.")
@@ -405,7 +517,9 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
         if current is None or result is None:
             raise _not_found(f"The evaluation of appeal {appeal_id!r} has no criterion {appeal.criterion_id!r}.")
         if outcome == "confirmed":
-            decided_answer: Answer = result.answer
+            # What was under appeal: the final answer and kinds now, a carried or earlier decision included.
+            own, carried = _load_decisions(current, conn)
+            decided_answer, default_kinds = _final_answers(current, own, carried)[appeal.criterion_id]
         else:
             if answer is None:
                 raise ApiError(422, "invalid_request", "answer: required when the outcome is changed.")
@@ -413,10 +527,19 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
             if code is not None:
                 raise ApiError(422, code, f"The answer does not fit criterion {criterion.id!r}.")
             decided_answer = answer
-        # The model's kinds go with the model's answer; a different answer has none.
-        kinds = list(result.kinds) if decided_answer == result.answer else []
+            # The model's kinds go with the model's answer; a different answer has none.
+            default_kinds = list(result.kinds) if decided_answer == result.answer else []
+        if kinds is not None:
+            problem = _kinds_problem(criterion, decided_answer, kinds)
+            if problem is not None:
+                raise ApiError(422, "invalid_request", problem)
         decision = Decision(
-            outcome=outcome, answer=decided_answer, reason=reason.strip(), role=role, decided_at=_now(), kinds=kinds
+            outcome=outcome,
+            answer=decided_answer,
+            reason=reason.strip(),
+            role=role,
+            decided_at=_now(),
+            kinds=list(kinds) if kinds is not None else default_kinds,
         )
         store.update_appeal(conn, appeal.model_copy(update={"status": "decided", "decision": decision}))
         try:
@@ -424,6 +547,7 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
         except ScoringError as exc:
             raise ApiError(422, exc.code, "The evaluation cannot be recalculated with this answer.") from None
         store.write_evaluation(conn, updated)
+        _carry_into_later(conn, appeal, updated)
         store.settle_dispute(conn, updated.conversation)
     logger.info("Appeal %s decided by %s: %s", appeal_id, role, outcome)
     return updated

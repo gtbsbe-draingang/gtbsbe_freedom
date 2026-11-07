@@ -12,6 +12,10 @@ dependencies = [
     "uvicorn[standard]>=0.54.0",
 ]
 
+[project.scripts]
+cqa-serve = "app.cli:serve"
+cqa-snapshot = "app.cli:snapshot"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
