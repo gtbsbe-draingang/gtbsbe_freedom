@@ -54,3 +54,34 @@ describe("playingIndex: start ≤ t < the next start", () => {
     assert.equal(playingIndex([0, 10, 5], 7), 2);
   });
 });
+
+describe("startTimes without audio_offsets: the recording's clock", () => {
+  const at = (s) => `2026-11-07T10:${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}+05:00`;
+  const line = (s, speaker, text) => ({ timestamp: at(s), speaker, text });
+
+  test("the recording starts at its system event; earlier lines have no start", () => {
+    const transcript = [line(0, "bot", "a"), line(30, "system", "Запись и транскрибирование запущены."), line(40, "client", "b")];
+    assert.deepEqual(startTimes({ transcript, audio_offsets: [] }), [null, 0, 10]);
+  });
+
+  test("a paused stretch is cut; lines said during it have no start", () => {
+    const transcript = [
+      line(0, "operator", "a"),
+      line(50, "system", "Запись и транскрибирование приостановлены."),
+      line(55, "client", "card number"),
+      line(65, "system", "Запись и транскрибирование возобновлены."),
+      line(70, "operator", "b"),
+    ];
+    assert.deepEqual(startTimes({ transcript }), [0, 50, null, 50, 55]);
+  });
+
+  test("Kazakh start event, and a pause never resumed ends the recording", () => {
+    const transcript = [
+      line(0, "bot", "a"),
+      line(5, "system", "Жазу және транскрипция басталды."),
+      line(9, "system", "Recording paused"),
+      line(12, "client", "b"),
+    ];
+    assert.deepEqual(startTimes({ transcript }), [null, 0, null, null]);
+  });
+});

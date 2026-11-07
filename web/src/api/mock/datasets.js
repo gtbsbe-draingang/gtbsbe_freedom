@@ -1,12 +1,12 @@
 // Records -> stored conversations for the mock: the organisers' record through normalizeRecord,
 // plus the fields a Conversation needs that a record may lack (created_at, info, audio offsets).
 import { normalizeRecord } from "../../domain/normalize.js";
-import { offsets } from "../../domain/time.js";
+import { recordingOffsets } from "../../domain/time.js";
 
-// Seconds of each line from the first one, for calls only: the mock has no calibration, so the
-// timestamps stand in for the position in the recording.
+// Each line's place in the recording, for calls only: the mock has no calibration, so the
+// timestamps on the recording's clock stand in for it.
 function callOffsets(transcript) {
-  return offsets(transcript).flatMap((seconds, index) =>
+  return recordingOffsets(transcript).flatMap((seconds, index) =>
     seconds === null ? [] : [{ message_index: index, seconds: Math.max(0, Math.round(seconds * 10) / 10) }],
   );
 }

@@ -13,9 +13,10 @@
 //     destroy() pauses the recording: a detached <audio> keeps playing otherwise.
 //
 //   startTimes(conversation) -> (number | null)[]   each line's start in the recording, in seconds:
-//     `audio_offsets` (the calibrated starts), or the transcript's own times when there are none
+//     `audio_offsets` (the calibrated starts), or, when there are none, the transcript's own times
+//     on the recording's clock (recordingOffsets: from "recording started", paused stretches cut)
 //   playingIndex(starts, seconds) -> number | null   the line being played at that time
-import { offsets } from "../domain/time.js";
+import { recordingOffsets } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
 import { h } from "./dom.js";
 
@@ -24,7 +25,7 @@ const isTime = (value) => typeof value === "number" && Number.isFinite(value);
 export function startTimes(conversation) {
   const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
   const given = Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [];
-  if (given.length === 0) return offsets(transcript).map((value) => (isTime(value) ? value : null));
+  if (given.length === 0) return recordingOffsets(transcript).map((value) => (isTime(value) ? value : null));
   const starts = transcript.map(() => null);
   for (const entry of given) {
     const index = entry?.message_index;
