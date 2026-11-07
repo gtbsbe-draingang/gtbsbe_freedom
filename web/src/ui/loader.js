@@ -27,6 +27,7 @@ import { clear, h } from "./dom.js";
 import { jobSlot } from "./job-runner.js";
 import { pickSelection } from "./scorecard.js";
 import { errorText, toastError } from "./toast.js";
+import { versionNumbers } from "../domain/checklist-versions.js";
 
 export const ESTIMATE_DELAY_MS = 250;
 export const BATCH_SLOT = "batch";
@@ -218,7 +219,7 @@ export function openImport(store, api, host, { group } = {}) {
 
 // ---- the batch bar ----------------------------------------------------------------------------
 
-const versionsOf = (row) => (Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version]);
+const versionsOf = versionNumbers;
 
 export function createBatchBar(store, api) {
   const view = {
