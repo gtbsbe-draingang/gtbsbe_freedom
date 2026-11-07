@@ -18,3 +18,5 @@ backend/.venv/
 *.db-shm
 __pycache__/
 .pytest_cache/
+# Stream D: reference-label batches stay local
+data/reference/batches/
