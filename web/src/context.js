@@ -1,3 +1,4 @@
+import {normalizeLanguage} from "./i18n/ru.js";
 // Where the app's context comes from. Nothing here touches the DOM, window or parent.Xrm: the
 // caller passes in the URL search string, the deployment config (window.CQA_CONFIG) and the
 // options of mount(); a Dynamics form script hands over the form through setClientApiContext().
@@ -70,6 +71,7 @@ export function readContext(search, config, options) {
     api: oneOf(APIS, chain("api")) ?? "http",
     apiBase: firstText(chain("apiBase")) ?? "api",
     conversationId,
+    language: [opt.language, opt.lang, urlValue("language"), urlValue("lang"), cfg.language, cfg.lang].map(normalizeLanguage).find(Boolean) ?? null,
     role: oneOf(ROLES, chain("role")) ?? "controller",
     theme: oneOf(THEMES, chain("theme")) ?? "light",
     // true when the host or the URL named the theme: only then does it beat a stored choice

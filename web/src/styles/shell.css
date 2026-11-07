@@ -541,3 +541,5 @@
   background: none;
   cursor: pointer;
 }
+
+.cqa .cqa-language { max-width: 108px; border: 1px solid var(--line-2); border-radius: var(--r-ctl); background: var(--surface); color: var(--text); padding: 6px; font: inherit; font-size: 12px; }

@@ -1,3 +1,4 @@
+import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 // The scorecard pane: the checklist picker and the run buttons, the brand panel with the total, the
 // sections and the gross-error flag, one card per criterion, and the info that does not count.
 //
@@ -256,11 +257,11 @@ export function createScorecard(store, api, args = {}) {
     const keyMissing = view.server?.model_key_configured === false;
     const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
     const off = view.busy || keyMissing || !ready;
-    runButton.textContent = t(view.evaluation ? "scorecard.rerun" : "scorecard.run");
+    setLocalizedText(runButton, t(view.evaluation ? "scorecard.rerun" : "scorecard.run"));
     for (const button of [runButton, fullButton]) {
       button.disabled = off;
-      if (keyMissing) button.setAttribute("title", t("scorecard.keyMissing"));
-      else if (button === fullButton) button.setAttribute("title", t("scorecard.runFullTitle"));
+      if (keyMissing) setLocalizedAttribute(button, "title", t("scorecard.keyMissing"));
+      else if (button === fullButton) setLocalizedAttribute(button, "title", t("scorecard.runFullTitle"));
       else button.removeAttribute("title");
     }
     hint.hidden = !keyMissing;
@@ -474,7 +475,7 @@ export function createScorecard(store, api, args = {}) {
           { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } },
           h("b", { class: "cqa-sc-hist-what", text: what }),
           appealId ? h("a", { class: ["cqa-link", "cqa-sc-hist-link"], attrs: { href: href("appeal", { id: appealId }) }, text: t("history.openAppeal") }) : null,
-          note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null,
+          note ? h("p", { class: "cqa-sc-hist-note", verbatim:true, text: note }) : null,
         ),
       );
 
@@ -568,7 +569,7 @@ export function createScorecard(store, api, args = {}) {
         return h(
           "div",
           { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
-          h("span", { class: "cqa-sc-sec-name", text: section.title }),
+          h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
           h("span", {
             class: ["cqa-sc-sec-score", "num"],
             text: has ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
@@ -613,7 +614,7 @@ export function createScorecard(store, api, args = {}) {
     const info = conversation?.info ?? null;
     const facts = conversation?.facts ?? null;
     const rows = [];
-    const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value)));
+    const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {verbatim:key === "topic" || key === "mood"}, ...value)));
 
     if (info?.topic) row("topic", "info-topic", info.topic);
     const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
@@ -661,7 +662,7 @@ export function createScorecard(store, api, args = {}) {
         return card;
       });
       if (items.length === 0) continue;
-      list.append(h("h3", { class: "cqa-sc-sec-title", text: section.title }), ...items);
+      list.append(h("h3", { class: "cqa-sc-sec-title", verbatim: true, text: section.title }), ...items);
     }
     if (view.active && cards.has(view.active)) cards.get(view.active).classList.add("is-open");
     return list;
@@ -705,7 +706,7 @@ export function createScorecard(store, api, args = {}) {
             on: { click: () => jump(criterion, result, item, activate) },
           },
           h("span", { class: "cqa-sc-ev-n", text: `↳ ${t("scorecard.evidenceLine", { n: item.message_index + 1 })}${expected ? ` · ${t("transcript.expectedHere")}` : ""}` }),
-          item.quote ? h("span", { class: "cqa-sc-ev-quote", text: clip(item.quote, EVIDENCE_QUOTE_MAX) }) : null,
+          item.quote ? h("span", { class: "cqa-sc-ev-quote", verbatim: true, text: clip(item.quote, EVIDENCE_QUOTE_MAX) }) : null,
         ),
       );
     });
@@ -726,13 +727,13 @@ export function createScorecard(store, api, args = {}) {
       h(
         "div",
         { class: "cqa-sc-r1" },
-        h("b", { class: "cqa-sc-crit-title", text: criterion.title }),
+        h("b", { class: "cqa-sc-crit-title", verbatim: true, text: criterion.title }),
         tag(answer.kind, answer.text, { data: { test: "answer" } }),
         h("span", { class: ["cqa-sc-pts", "num"], text: points, data: { test: "points" } }),
       ),
       marks.length > 0 ? h("div", { class: "cqa-sc-marks" }, marks) : null,
-      result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
-      shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
+      result.explanation ? h("p", { class: "cqa-sc-why", verbatim: true, text: result.explanation, data: { test: "why" } }) : null,
+      shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", verbatim: true, text: result.na_reason, data: { test: "na-reason" } }) : null,
       evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
       renderVoiceMeasurements(view.conversation, result, (measurement) => {
         store.set({ pane: "transcript" });
@@ -743,7 +744,7 @@ export function createScorecard(store, api, args = {}) {
       range && Number.isInteger(range.from) && Number.isInteger(range.to)
         ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } })
         : null,
-      result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
+      result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", verbatim: true, text: result.coaching })) : null,
       controller
         ? h(
             "div",

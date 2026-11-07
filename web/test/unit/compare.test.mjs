@@ -17,12 +17,12 @@ describe("signedText", () => {
 
 describe("summaryText", () => {
   test("«N из M диалогов изменились, в среднем −X.XX»", () => {
-    assert.equal(summaryText({ total: 40, changed: 12, avg_delta: -3.5 }), "12 из 40 диалогов изменились, в среднем −3.50");
+    assert.equal(summaryText({ total: 40, changed: 12, avg_delta: -3.5 }), "12 из 40 диалогов изменились, в среднем −3,50");
   });
 
   test("the noun after «из» and the verb agree with their numbers", () => {
-    assert.equal(summaryText({ total: 1, changed: 1, avg_delta: 2 }), "1 из 1 диалога изменился, в среднем +2.00");
-    assert.equal(summaryText({ total: 21, changed: 0, avg_delta: 0 }), "0 из 21 диалога изменились, в среднем 0.00");
+    assert.equal(summaryText({ total: 1, changed: 1, avg_delta: 2 }), "1 из 1 диалога изменился, в среднем +2,00");
+    assert.equal(summaryText({ total: 21, changed: 0, avg_delta: 0 }), "0 из 21 диалога изменились, в среднем 0,00");
     assert.equal(summaryText({ total: 3, changed: 2, avg_delta: null }), "2 из 3 диалогов изменились, в среднем —");
   });
 });

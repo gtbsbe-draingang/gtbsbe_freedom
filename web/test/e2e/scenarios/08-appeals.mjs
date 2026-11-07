@@ -14,7 +14,7 @@ export const viewports = [
 
 const sel = (test) => `[data-test="${test}"]`;
 const quote = (value) => JSON.stringify(value);
-const TOTAL = /^Итог: (\d+\.\d{2}|не рассчитывается) → (\d+\.\d{2}|не рассчитывается)$/;
+const TOTAL = /^Итог: (\d+,\d{2}|не рассчитывается) → (\d+,\d{2}|не рассчитывается)$/;
 
 async function until(page, expression, what, ms = 8000) {
   const deadline = Date.now() + ms;
@@ -63,7 +63,7 @@ async function findDisputable(page) {
   })()`);
 }
 
-const money = (value) => (value === null ? "не рассчитывается" : value.toFixed(2));
+const money = (value) => (value === null ? "не рассчитывается" : value.toFixed(2).replace(".",","));
 
 export async function run(page) {
   await page.waitFor(sel("queue-item"), 10000);

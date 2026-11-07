@@ -58,7 +58,7 @@ export function createChecklistsPage(store, api) {
         h(
           "div",
           { class: "cqa-aps-row1" },
-          h("b", { class: "cqa-ck-name", text: row.name ?? row.checklist_id }),
+          h("b", { class: "cqa-ck-name", verbatim: true, text: row.name ?? row.checklist_id }),
           h("span", { class: "cqa-ck-tags" }, row.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked"), data: { test: "checklist-locked" } }) : null, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t(`checklists.channel.${row.channel ?? "any"}`) })),
         ),
         h("span", { class: "cqa-ck-meta", text: [t("checklists.version", { version: row.version, count: versionsOf(row).length }), tp("checklists.criteria", count), t("checklists.weights", { sum: weightSum(row) })].join(" · ") }),

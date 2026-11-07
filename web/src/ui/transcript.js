@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The transcript pane: the dialogue as bubbles (client left, operator and bot right, system lines
 // as centred notes), built once per conversation.
 //
@@ -118,7 +119,7 @@ function buildMessage(message, index, offset, seek) {
     time,
     message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null,
   );
-  const text = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+  const text = h("p", { class: "cqa-msg-text", verbatim: true, text: typeof message?.text === "string" ? message.text : "" });
   const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text);
   return { el, flag };
 }
@@ -157,7 +158,7 @@ export function renderTranscript(store, api, args = {}) {
       const row = rows[i];
       row.el.classList.remove("is-evidence", "is-expected", "is-checked");
       row.el.removeAttribute("data-criterion");
-      row.flag.textContent = "";
+      setLocalizedText(row.flag, "");
     }
     marked = [];
   }
@@ -175,7 +176,7 @@ export function renderTranscript(store, api, args = {}) {
       row.classList.toggle("is-expected", mark.expected);
       row.classList.toggle("is-checked", mark.checked);
       row.setAttribute("data-criterion", String(criterionId));
-      flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" · ");
+      setLocalizedText(flag, [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" · "));
       marked.push(i);
     });
   }
@@ -249,19 +250,19 @@ export function renderTranscript(store, api, args = {}) {
     translationOn = false;
     translationCache = null;
     const translate = h("button", {
-      class: "cqa-sc-btn", text: "Перевести на русский",
+      class: "cqa-sc-btn", text: t("translate.show"),
       attrs: { type: "button", "aria-pressed": "false" }, data: { test: "translate-toggle" },
       on: { click: async () => {
         if (destroyed || translationEpoch !== translationRun) return;
         translationOn = !translationOn;
         translate.setAttribute("aria-pressed", String(translationOn));
-        translate.textContent = translationOn ? "Скрыть перевод" : "Перевести на русский";
+        setLocalizedText(translate, translationOn ? t("translate.hide") : t("translate.show"));
         if (!translationOn) {
           rows.forEach(({ el }) => el.querySelector(".msg-translation")?.remove());
           return;
         }
         translate.disabled = true;
-        translate.textContent = "Переводим…";
+        setLocalizedText(translate, t("translate.loading"));
         try {
           const data = translationCache ?? await api.getTranslation(id, "ru");
           if (destroyed || translationEpoch !== translationRun) return;
@@ -269,14 +270,14 @@ export function renderTranscript(store, api, args = {}) {
           for (const message of data.messages ?? []) {
             const row = rows[message.message_index];
             if (!row || typeof message.text !== "string") continue;
-            row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, text: message.text }));
+            row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, verbatim: true, text: message.text }));
           }
-          translate.textContent = "Скрыть перевод";
+          setLocalizedText(translate, t("translate.hide"));
         } catch (error) {
           if (destroyed || translationEpoch !== translationRun) return;
           translationOn = false;
           translate.setAttribute("aria-pressed", "false");
-          translate.textContent = "Повторить перевод";
+          setLocalizedText(translate, t("translate.retry"));
           toastError(store, error);
         } finally {
           if (!destroyed && translationEpoch === translationRun) translate.disabled = false;
@@ -284,7 +285,7 @@ export function renderTranscript(store, api, args = {}) {
       } },
     });
     clear(head).append(
-      h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
+      h("b", { class: "cqa-tr-title", verbatim: true, text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
       h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" · "), data: { test: "transcript-meta" } }),
     );
     if (["KZ", "EN"].includes(conversation?.language?.toUpperCase())) head.append(translate);

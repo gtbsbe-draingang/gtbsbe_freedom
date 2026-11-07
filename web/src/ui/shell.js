@@ -1,3 +1,4 @@
+import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 // The app shell: header, the route outlet and the toasts. Views plug in through two registries,
 // so the pages that come later change one entry each instead of this file's structure:
 //
@@ -7,7 +8,7 @@
 //
 // A pane or view returns an HTMLElement or { el, update?(route), destroy?() }. Each falls back to
 // a placeholder until its page exists.
-import { t } from "../i18n/ru.js";
+import { t, currentLanguage, setLanguage } from "../i18n/ru.js";
 import { isCompact, watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { icon } from "./icons.js";
@@ -88,8 +89,8 @@ function roleSwitch(store, track) {
   track(() => document.removeEventListener("pointerdown", onOutside));
 
   const paint = (role) => {
-    label.textContent = t(`role.${role}`);
-    button.setAttribute("aria-label", t("role.current", { role: t(`role.${role}`) }));
+    setLocalizedText(label, t(`role.${role}`));
+    setLocalizedAttribute(button, "aria-label", t("role.current", { role: t(`role.${role}`) }));
     for (const item of items) item.setAttribute("aria-checked", String(item.getAttribute("data-role") === role));
   };
   paint(store.get().role);
@@ -122,7 +123,7 @@ function themeToggle(store, track) {
 }
 
 function datasetBadge(store, track) {
-  const value = h("b", { class: "cqa-badge-value" });
+  const value = h("b", { class: "cqa-badge-value", verbatim:true });
   const badge = h(
     "span",
     { class: "cqa-badge", attrs: { title: t("dataset.title") }, data: { test: "dataset-badge" } },
@@ -131,7 +132,7 @@ function datasetBadge(store, track) {
     value,
   );
   const paint = (groupId) => {
-    value.textContent = groupId ?? "";
+    setLocalizedText(value, groupId ?? "");
   };
   paint(store.get().groupId);
   track(watch(store, (state) => state.groupId, paint));
@@ -140,7 +141,12 @@ function datasetBadge(store, track) {
 
 function buildHeader(store, compact, track) {
   const prod = h("span", { class: "cqa-prod", text: t("app.title") });
-  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), roleSwitch(store, track), themeToggle(store, track));
+  const language = h("select", {
+    class: "cqa-language", attrs: { "aria-label": t("language.label") }, data: { test: "ui-language" },
+    on: { change: () => setLanguage(language.value) },
+  }, [["ru", "Русский"], ["en", "English"], ["kk", "Қазақша"]].map(([value,label]) => h("option", {verbatim:true, attrs:{value}, text:label})));
+  language.value = currentLanguage();
+  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language, roleSwitch(store, track), themeToggle(store, track));
   if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
 
   const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));

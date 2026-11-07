@@ -15,7 +15,7 @@ export const viewports = [
 
 const sel = (test) => `[data-test="${test}"]`;
 const quote = (value) => JSON.stringify(value);
-const SUMMARY = /^(\d+) из (\d+) диалог(а|ов)? изменил(ся|ись), в среднем ([−+]?\d+\.\d\d|—)$/;
+const SUMMARY = /^(\d+) из (\d+) диалог(а|ов)? изменил(ся|ись), в среднем ([−+]?\d+,\d\d|—)$/;
 
 async function until(page, expression, what, ms = 8000) {
   const deadline = Date.now() + ms;

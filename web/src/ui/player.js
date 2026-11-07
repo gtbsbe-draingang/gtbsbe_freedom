@@ -1,3 +1,4 @@
+import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 // The call player (extra 7, R6): the recording on top of a call's transcript, linked to its lines.
 //
 //   renderPlayer(conversation, api, transcript) -> { el, seek(index), destroy } | null
@@ -98,10 +99,10 @@ export function renderPlayer(conversation, api, transcript) {
 
   function paintControls() {
     playIcon.replaceChildren(svg("path", { d: audio.paused ? "M8 5v14l11-7Z" : "M6 5h4v14H6zM14 5h4v14h-4z", fill: "currentColor" }));
-    play.setAttribute("aria-label", t(audio.paused ? "player.play" : "player.pause"));
+    setLocalizedAttribute(play, "aria-label", t(audio.paused ? "player.play" : "player.pause"));
     mute.replaceChildren(svg("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", "stroke-width": 1.8, "stroke-linecap": "round", "aria-hidden": "true" },
       svg("path", { d: "M11 4 5 9H2v6h3l6 5Z" }), svg("path", { d: audio.muted ? "m16 9 6 6m0-6-6 6" : "M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14" })));
-    mute.setAttribute("aria-label", t(audio.muted ? "player.unmute" : "player.mute"));
+    setLocalizedAttribute(mute, "aria-label", t(audio.muted ? "player.unmute" : "player.mute"));
     mute.setAttribute("aria-pressed", String(audio.muted));
   }
 
@@ -109,17 +110,17 @@ export function renderPlayer(conversation, api, transcript) {
     const length = duration();
     const seconds = audio.currentTime || 0;
     const fraction = length ? Math.min(1, seconds / length) : 0;
-    clock.textContent = `${formatOffset(seconds) || "0:00"} / ${length ? formatOffset(length) : "—"}`;
+    setLocalizedText(clock, `${formatOffset(seconds) || "0:00"} / ${length ? formatOffset(length) : "—"}`);
     scrubber.disabled = !length;
     scrubber.max = String(length || 1);
     scrubber.value = String(seconds);
     scrubber.style.setProperty("--progress", `${fraction * 100}%`);
-    scrubber.setAttribute("aria-valuetext", clock.textContent);
+    setLocalizedAttribute(scrubber, "aria-valuetext", clock.textContent);
     const window = windows.find((part) => seconds >= part.from && seconds < part.to);
     for (const track of tracks) {
       track.plot.setAttribute("aria-valuemax", String(length));
       track.plot.setAttribute("aria-valuenow", String(seconds));
-      track.plot.setAttribute("aria-valuetext", clock.textContent);
+      setLocalizedAttribute(track.plot, "aria-valuetext", clock.textContent);
       track.cursor.style.left = `${fraction * 100}%`;
       track.selection.hidden = !window || window.role !== track.role;
       if (window) {
@@ -144,17 +145,17 @@ export function renderPlayer(conversation, api, transcript) {
 
   async function loadWaveform() {
     const mine = ++waveRun;
-    waveformNote.textContent = t("player.waveformLoading");
+    setLocalizedText(waveformNote, t("player.waveformLoading"));
     try {
       const data = await api.getAudioWaveform(src, { signal: controller.signal });
       if (destroyed || mine !== waveRun) return;
       envelope = data;
-      waveformNote.textContent = "";
+      setLocalizedText(waveformNote, "");
       el.setAttribute("data-waveform", "ready");
       drawWaves();
     } catch {
       if (destroyed || mine !== waveRun) return;
-      waveformNote.textContent = t("player.waveformUnavailable");
+      setLocalizedText(waveformNote, t("player.waveformUnavailable"));
       el.setAttribute("data-waveform", "unavailable");
     }
   }
@@ -175,7 +176,7 @@ export function renderPlayer(conversation, api, transcript) {
   play.addEventListener("click", async () => {
     if (!audio.paused) { audio.pause(); return; }
     try { await audio.play(); }
-    catch { if (!destroyed) { status.textContent = t("player.failed"); status.hidden = false; } }
+    catch { if (!destroyed) { setLocalizedText(status, t("player.failed")); status.hidden = false; } }
   });
   mute.addEventListener("click", () => { audio.muted = !audio.muted; });
   speed.addEventListener("change", () => { audio.playbackRate = Number(speed.value); });
@@ -223,7 +224,7 @@ export function renderPlayer(conversation, api, transcript) {
   audio.addEventListener("error", () => {
     if (destroyed) return;
     status.replaceChildren(
-      t("player.failed"),
+      h("span", {text:t("player.failed")}),
       " ",
       h("button", { class: ["cqa-link", "cqa-player-retry"], attrs: { type: "button" }, text: t("player.retry"), data: { test: "player-retry" }, on: { click: () => { audio.load(); loadWaveform(); } } }),
     );

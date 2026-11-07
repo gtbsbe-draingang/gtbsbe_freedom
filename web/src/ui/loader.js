@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // Loading data and batch runs (R3, R9, control check 1).
 //
 //   openLoader({host, store, api, onImported?, group?}) -> { el, close }
@@ -103,7 +104,7 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
   async function run(label, action) {
     if (busy || closed) return;
     busy = true;
-    status.textContent = label;
+    setLocalizedText(status, label);
     paint();
     try {
       const summary = await action();
@@ -115,7 +116,7 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
       if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
     } finally {
       busy = false;
-      status.textContent = "";
+      setLocalizedText(status, "");
       if (!closed) paint();
     }
   }
@@ -285,22 +286,22 @@ export function createBatchBar(store, api) {
       return;
     }
     if (!bar.isConnected) host.replaceChildren(bar);
-    count.textContent = t("batch.selected", { n: picked.size });
+    setLocalizedText(count, t("batch.selected", { n: picked.size }));
 
     const sel = current();
     const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
     if (at >= 0) select.value = String(at);
     select.disabled = active || view.options.length === 0;
 
-    if (view.estimate) estimate.textContent = estimateText(view.estimate);
-    else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
+    if (view.estimate) setLocalizedText(estimate, estimateText(view.estimate));
+    else setLocalizedText(estimate, view.estimating || !view.ready ? t("batch.estimating") : "");
     const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
     hint.hidden = !keyMissing;
     runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
 
     clear(progress);
     const { lock = null, job = null } = slot.state() ?? {};
-    if (lock === "starting") progress.append(t("batch.starting"));
+    if (lock === "starting") progress.append(h("span", {text: t("batch.starting")}));
     else if (job && (lock === "interrupted" || lock === "resuming")) {
       progress.append(
         h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
@@ -308,7 +309,7 @@ export function createBatchBar(store, api) {
       );
     } else if (job) {
       const running = lock === "watching";
-      progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+      progress.append(h("span", {text: t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total })}));
       if (job.failed > 0) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),

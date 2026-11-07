@@ -1,14 +1,20 @@
+import {setLocalizedText,setLocalizedAttribute,bindLocalizedNode} from "../i18n/dom.js";
 // DOM building for the whole UI. Text goes in through textContent or text nodes only, never as
 // HTML, and styles only through el.style, so everything built here survives a strict CSP.
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-const PROPS = new Set(["class", "text", "attrs", "data", "on", "style"]);
+const PROPS = new Set(["class", "text", "attrs", "data", "on", "style", "verbatim"]);
 
 function append(parent, children) {
   for (const child of children) {
     if (child === null || child === undefined || child === false || child === true) continue;
     if (Array.isArray(child)) append(parent, child);
-    else parent.append(child); // a string or number becomes a Text node, a Node is moved in
+    else if (typeof child === "string" || typeof child === "number") {
+      const node = document.createTextNode("");
+      if (parent.closest?.('[data-i18n-verbatim]')) node.textContent = String(child);
+      else bindLocalizedNode(node,child);
+      parent.append(node);
+    } else parent.append(child);
   }
 }
 
@@ -17,7 +23,7 @@ function setAttrs(el, attrs) {
     if (value === null || value === undefined || value === false) continue;
     // Inline styles and handlers are what a strict CSP forbids; use props.style and props.on.
     if (name === "style" || /^on/i.test(name)) throw new TypeError(`dom: attribute "${name}" is not allowed`);
-    el.setAttribute(name, value === true ? "" : String(value));
+    setLocalizedAttribute(el, name, value === true ? "" : String(value));
   }
 }
 
@@ -40,7 +46,8 @@ export function h(tag, props, ...children) {
     }
     const { class: className, text, attrs, data, on, style } = props;
     if (className) el.className = Array.isArray(className) ? className.filter(Boolean).join(" ") : String(className);
-    if (text !== undefined && text !== null) el.textContent = String(text);
+    if (props.verbatim) el.setAttribute("data-i18n-verbatim", "");
+    if (text !== undefined && text !== null) setLocalizedText(el, String(text));
     if (attrs) setAttrs(el, attrs);
     if (data) {
       for (const [key, value] of Object.entries(data)) {

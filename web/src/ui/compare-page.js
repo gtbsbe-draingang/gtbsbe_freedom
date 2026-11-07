@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // The before/after comparison (extra 1, protected; R10 and the guide's demo step 4 end here).
 //
 //   createComparePage(store, api, route) -> { el, update(route), destroy }
@@ -185,7 +186,7 @@ export function createComparePage(store, api, route) {
     fill(toSelect, ref("to"));
     const group = params.group_id ?? "";
     const groups = view.groups.includes(group) || group === "" ? view.groups : [...view.groups, group];
-    clear(groupSelect).append(h("option", { attrs: { value: "" }, text: t("compare.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+    clear(groupSelect).append(h("option", { attrs: { value: "" }, text: t("compare.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, verbatim:true, text: g })));
     groupSelect.value = group;
   }
 
@@ -278,8 +279,8 @@ export function createComparePage(store, api, route) {
   // ---- painting ----
   function paintHead() {
     const data = view.data;
-    fromName.textContent = `${t("compare.from")}: ${data ? sideLabel(data.from) : sideLabel(ref("from"))}`;
-    toName.textContent = `${t("compare.to")}: ${data ? sideLabel(data.to) : sideLabel(ref("to"))}`;
+    setLocalizedText(fromName, `${t("compare.from")}: ${data ? sideLabel(data.from) : sideLabel(ref("from"))}`);
+    setLocalizedText(toName, `${t("compare.to")}: ${data ? sideLabel(data.to) : sideLabel(ref("to"))}`);
   }
 
   function stateBox(test, title, note, extra) {
@@ -291,7 +292,7 @@ export function createComparePage(store, api, route) {
     paintHead();
     clear(state);
     clear(table);
-    summary.textContent = "";
+    setLocalizedText(summary, "");
     if (view.phase === "pick") state.append(stateBox("compare-pick", t("compare.pickTitle"), t("compare.pickNote")));
     else if (view.phase === "loading") state.append(stateBox("compare-loading", t("compare.loading")));
     else if (view.phase === "error") {
@@ -299,7 +300,7 @@ export function createComparePage(store, api, route) {
     } else if (view.data.rows.length === 0) {
       state.append(stateBox("compare-empty", t("compare.empty"), t("compare.emptyNote")));
     } else {
-      summary.textContent = summaryText(view.data.summary);
+      setLocalizedText(summary, summaryText(view.data.summary));
       table.append(buildTable());
     }
     paintCard();
@@ -345,9 +346,9 @@ export function createComparePage(store, api, route) {
         h(
           "td",
           { class: "cqa-cmp-col--id" },
-          h("button", { class: "cqa-cmp-open", attrs: { type: "button", "aria-expanded": String(open), title: t("compare.openTitle") }, data: { test: "compare-open" }, on: { click: () => openRow(row) } }, h("b", { text: row.conversation_id ?? row.conversation, data: { test: "compare-id" } })),
+          h("button", { class: "cqa-cmp-open", attrs: { type: "button", "aria-expanded": String(open), title: t("compare.openTitle") }, data: { test: "compare-open" }, on: { click: () => openRow(row) } }, h("b", { verbatim:true, text: row.conversation_id ?? row.conversation, data: { test: "compare-id" } })),
         ),
-        h("td", { class: "cqa-cmp-col--group", text: row.group_id ?? "" }),
+        h("td", { class: "cqa-cmp-col--group", verbatim:true, text: row.group_id ?? "" }),
         h("td", { class: ["cqa-cmp-col--old", "num"], text: money(row.old_total) }),
         h("td", { class: ["cqa-cmp-col--new", "num"], text: money(row.new_total) }),
         h("td", { class: ["cqa-cmp-col--delta", "num"] }, h("span", { class: ["cqa-tag", `cqa-tag--${deltaKind(row.delta)}`], text: signedText(row.delta), data: { test: "compare-delta" } })),
@@ -409,7 +410,7 @@ export function createComparePage(store, api, route) {
                 h(
                   "div",
                   { class: "cqa-cmp-crit-name" },
-                  h("span", { text: criterion.title ?? r.id }),
+                  h("span", { verbatim: true, text: criterion.title ?? r.id }),
                   r.side === "old" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyOld") }) : null,
                   r.side === "new" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyNew") }) : null,
                   r.reworded ? h("span", { class: "cqa-cmp-reworded", text: t("compare.side.reworded", { title: r.oldCriterion.title ?? r.id }) }) : null,

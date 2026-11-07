@@ -1,3 +1,4 @@
+import { setLocalizedText } from "../i18n/dom.js";
 // «Применить к диалогам» (R2, R10, extra 1): apply a saved checklist version to a chosen set of
 // dialogues — the control group (the current non-DEV group), DEV, or the queue's selection. There
 // is deliberately no «все» target. Shows the dry-run estimate, runs the job with reuse (unchanged
@@ -79,21 +80,21 @@ export function openApplyDialog({ host, store, api, version }) {
       ),
       h("p", { class: "cqa-rv-hint", text: t("apply.noAll") }),
     );
-    estimate.textContent = view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "";
+    setLocalizedText(estimate, view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "");
     const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
     hint.hidden = !keyMissing;
     runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
 
     clear(progress);
     const { lock = null, job = null } = slot.state() ?? {};
-    if (lock === "starting") progress.append(t("batch.starting"));
+    if (lock === "starting") progress.append(h("span", {text: t("batch.starting")}));
     else if (job && (lock === "interrupted" || lock === "resuming")) {
       progress.append(
         h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
         h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => slot.resume() } }),
       );
     } else if (job) {
-      progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+      progress.append(h("span", {text: t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total })}));
       if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
       if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => slot.retry() } }));
       const from = compareFrom(version);
