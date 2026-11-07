@@ -40,8 +40,8 @@
         search.append(key, String(v));
       }
     }
-    const text2 = search.toString();
-    return text2 ? `?${text2}` : "";
+    const text3 = search.toString();
+    return text3 ? `?${text3}` : "";
   }
   function createHttpApi({ apiBase, role, fetchImpl = globalThis.fetch, timeoutMs = 3e4 } = {}) {
     if (typeof apiBase !== "string" || apiBase.trim() === "") {
@@ -69,11 +69,11 @@
         init.body = JSON.stringify(body);
       }
       let response;
-      let text2;
+      let text3;
       try {
         const doFetch = fetchImpl;
         response = await doFetch(`${base}/${path}`, init);
-        text2 = await response.text();
+        text3 = await response.text();
       } catch (cause) {
         if (timedOut) throw new ApiError("timeout", `Request timed out after ${timeoutMs} ms`, { cause });
         const reason = cause instanceof Error ? cause.message : String(cause);
@@ -85,7 +85,7 @@
       let data;
       let parsed = false;
       try {
-        data = JSON.parse(text2);
+        data = JSON.parse(text3);
         parsed = true;
       } catch {
       }
@@ -228,8 +228,11 @@
   }
   var orNull = (value) => value === void 0 ? null : value;
   function fingerprint(criterion) {
+    return sha256Hex(canonicalJson(fingerprintSubset(criterion)));
+  }
+  function fingerprintSubset(criterion) {
     const c = criterion || {};
-    const subset = {
+    return {
       title: orNull(c.title),
       wording: orNull(c.wording),
       answer_type: orNull(c.answer_type),
@@ -243,7 +246,6 @@
       kinds: Array.isArray(c.kinds) ? c.kinds : [],
       guidance: orNull(c.guidance)
     };
-    return sha256Hex(canonicalJson(subset));
   }
   function transcriptHash(transcript) {
     const lines = (Array.isArray(transcript) ? transcript : []).map((m) => ({
@@ -261,12 +263,12 @@
   var UNKNOWN = Object.freeze({ kind: "unknown" });
   function parseTimestamp(ts) {
     if (typeof ts !== "string") return { ...UNKNOWN };
-    const text2 = ts.trim();
-    let m = CLOCK_MS.exec(text2);
+    const text3 = ts.trim();
+    let m = CLOCK_MS.exec(text3);
     if (m) return { kind: "clock", seconds: Number(m[1]) * 60 + Number(m[2]) };
-    m = CLOCK_HMS.exec(text2);
+    m = CLOCK_HMS.exec(text3);
     if (m) return { kind: "clock", seconds: Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]) };
-    m = ISO.exec(text2);
+    m = ISO.exec(text3);
     if (!m) return { ...UNKNOWN };
     const year = Number(m[1]);
     const month = Number(m[2]);
@@ -337,10 +339,10 @@
     let ending = "normal";
     lines.forEach((m, i) => {
       if (speakerOf(m) !== "system") return;
-      const text2 = textOf(m);
-      if (handover < 0 && HANDOVER.test(text2)) handover = i;
-      if (identity < 0 && IDENTITY.test(text2)) identity = i;
-      for (const [kind, pattern] of ENDINGS) if (pattern.test(text2)) ending = kind;
+      const text3 = textOf(m);
+      if (handover < 0 && HANDOVER.test(text3)) handover = i;
+      if (identity < 0 && IDENTITY.test(text3)) identity = i;
+      for (const [kind, pattern] of ENDINGS) if (pattern.test(text3)) ending = kind;
     });
     let joined = -1;
     for (let i = handover + 1; i < lines.length; i += 1) {
@@ -381,8 +383,8 @@
   function markDuplicates(lines) {
     return lines.map((m, i) => {
       const prev = lines[i - 1];
-      const same2 = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
-      return same2 || m.duplicate === true ? { ...m, duplicate: true } : m;
+      const same3 = i > 0 && m.timestamp === prev.timestamp && m.speaker === prev.speaker && m.text === prev.text;
+      return same3 || m.duplicate === true ? { ...m, duplicate: true } : m;
     });
   }
   function normalizeRecord(record, groupId, options = {}) {
@@ -425,10 +427,10 @@
     if (RECORD_KEYS.some((key) => key in data)) return { list: [data], groupHint: null };
     return { list: [], groupHint: null };
   }
-  function parseUpload(text2) {
+  function parseUpload(text3) {
     let data;
     try {
-      data = JSON.parse(String(text2).replace(/^\uFEFF/, ""));
+      data = JSON.parse(String(text3).replace(/^\uFEFF/, ""));
     } catch {
       throw new UploadError("not_json");
     }
@@ -460,18 +462,18 @@
     const g = gcd(n, d);
     return g > 1n ? { n: n / g, d: d / g } : { n, d };
   }
-  function parse(text2) {
-    const m = DECIMAL.exec(text2.trim());
+  function parse(text3) {
+    const m = DECIMAL.exec(text3.trim());
     const intPart = m?.[2] ?? "";
     const fracPart = m?.[3] ?? "";
     if (!m || intPart + fracPart === "") {
-      throw new TypeError(`not a decimal number: ${JSON.stringify(text2)}`);
+      throw new TypeError(`not a decimal number: ${JSON.stringify(text3)}`);
     }
     let n = BigInt(intPart + fracPart);
     let d = 10n ** BigInt(fracPart.length);
     const exp = m[4] === void 0 ? 0 : Number(m[4]);
     if (!Number.isSafeInteger(exp) || Math.abs(exp) > 1e4) {
-      throw new RangeError(`exponent out of range: ${JSON.stringify(text2)}`);
+      throw new RangeError(`exponent out of range: ${JSON.stringify(text3)}`);
     }
     if (exp > 0) n *= 10n ** BigInt(exp);
     else if (exp < 0) d *= 10n ** BigInt(-exp);
@@ -551,14 +553,14 @@
       const applicable = scored && answer !== null && answer !== void 0 && answer !== "na" && weight.n > 0n;
       return { criterion, given, answer: answer ?? null, weight, applicable };
     });
-    let weightSum = ZERO;
-    for (const e of entries) if (e.applicable) weightSum = add(weightSum, e.weight);
+    let weightSum2 = ZERO;
+    for (const e of entries) if (e.applicable) weightSum2 = add(weightSum2, e.weight);
     let total = ZERO;
     const perSection = /* @__PURE__ */ new Map();
     for (const e of entries) {
       if (!e.applicable) continue;
       const frac = fraction(e.criterion, e.answer);
-      e.effective = div(mul(e.weight, HUNDRED), weightSum);
+      e.effective = div(mul(e.weight, HUNDRED), weightSum2);
       e.points = mul(frac, e.effective);
       total = add(total, e.points);
       const acc = perSection.get(e.criterion.section_id) ?? {
@@ -587,7 +589,7 @@
         points: e.applicable ? round2(e.points) : null,
         effective_weight: e.applicable ? round2(e.effective) : null
       })),
-      total: weightSum.n > 0n ? round2(total) : null,
+      total: weightSum2.n > 0n ? round2(total) : null,
       // In their `order`, as the backend returns them (a stable sort keeps ties in array order).
       sections: [...version2.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => {
         const acc = perSection.get(s.id);
@@ -1250,9 +1252,9 @@
   var DEMO = "\u0414\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u043A\u0430:";
   var sameAnswer = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   var sortedSteps = (criterion) => [...criterion.scale_steps ?? []].sort((a, b) => a.value - b.value);
-  var stripNaPrefix = (text2) => String(text2 ?? "").replace(/^N\/A\s*[—–-]\s*/i, "");
-  var capitalize = (text2) => text2.charAt(0).toUpperCase() + text2.slice(1);
-  var stripYesPrefix = (text2) => String(text2 ?? "").replace(/^Да\s*[—–-]\s*/, "");
+  var stripNaPrefix = (text3) => String(text3 ?? "").replace(/^N\/A\s*[—–-]\s*/i, "");
+  var capitalize = (text3) => text3.charAt(0).toUpperCase() + text3.slice(1);
+  var stripYesPrefix = (text3) => String(text3 ?? "").replace(/^Да\s*[—–-]\s*/, "");
   function answerLabel(answer) {
     if (answer === "yes") return "\u0414\u0430";
     if (answer === "no") return "\u041D\u0435\u0442";
@@ -1373,8 +1375,8 @@
     const rng = seeded(`${conversation.id}${criterion.fingerprint}|second`);
     const differs = rng() < RATES.secondOpinionDiffers;
     const answer = differs ? alternative(criterion, current2, rng()) : current2;
-    const same2 = sameAnswer(answer, current2);
-    const reasoning = same2 ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
+    const same3 = sameAnswer(answer, current2);
+    const reasoning = same3 ? `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u0438\u0441\u0445\u043E\u0434\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430 \xAB${answerLabel(current2)}\xBB \u043F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \xAB${criterion.title}\xBB \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0432\u0435\u0440\u043D\u043E\u0439.` : `\u0414\u0435\u043C\u043E-\u0432\u0442\u043E\u0440\u043E\u0435 \u043C\u043D\u0435\u043D\u0438\u0435: \u043F\u043E \u0440\u0435\u043F\u043B\u0438\u043A\u0430\u043C \u043E\u043F\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u043E\u0442\u0432\u0435\u0442 \xAB${answerLabel(answer)}\xBB \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \xAB${answerLabel(current2)}\xBB.`;
     return { answer, reasoning };
   }
   var MOODS = ["\u043D\u0435\u0439\u0442\u0440\u0430\u043B\u044C\u043D\u043E\u0435", "\u043F\u043E\u0437\u0438\u0442\u0438\u0432\u043D\u043E\u0435", "\u0440\u0430\u0437\u0434\u0440\u0430\u0436\u0451\u043D\u043D\u043E\u0435", "\u0442\u0440\u0435\u0432\u043E\u0436\u043D\u043E\u0435"];
@@ -1382,8 +1384,8 @@
   function mockInfo(conversation) {
     const rng = seeded(`${conversation.id}|info`);
     const first = (conversation.transcript ?? []).find((m) => m.speaker === "client" && m.text.trim() !== "");
-    const text2 = first ? first.text.trim().replace(/\s+/g, " ") : "";
-    const topic = text2.length > 80 ? `${text2.slice(0, 79).trimEnd()}\u2026` : text2 || null;
+    const text3 = first ? first.text.trim().replace(/\s+/g, " ") : "";
+    const topic = text3.length > 80 ? `${text3.slice(0, 79).trimEnd()}\u2026` : text3 || null;
     return {
       topic,
       mood_start: MOODS[Math.floor(rng() * MOODS.length)],
@@ -1588,8 +1590,8 @@
   var NEEDS_QUOTES = /[;"\r\n]/;
   function csvField(value) {
     if (value === null || value === void 0) return "";
-    const text2 = String(value);
-    return NEEDS_QUOTES.test(text2) ? `"${text2.replaceAll('"', '""')}"` : text2;
+    const text3 = String(value);
+    return NEEDS_QUOTES.test(text3) ? `"${text3.replaceAll('"', '""')}"` : text3;
   }
   function toCsv(rows, columns) {
     const cols = columns.map((c) => typeof c === "string" ? { key: c, header: c } : c);
@@ -2562,6 +2564,94 @@
     "batch.calls.one": "{n} \u0432\u044B\u0437\u043E\u0432",
     "batch.calls.few": "{n} \u0432\u044B\u0437\u043E\u0432\u0430",
     "batch.calls.many": "{n} \u0432\u044B\u0437\u043E\u0432\u043E\u0432",
+    "checklists.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "checklists.note": "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D: \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0433\u043E \u043E\u0441\u043D\u043E\u0432\u0435. \u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 \u043C\u043E\u0436\u0435\u0442 \u043E\u0442\u043B\u0438\u0447\u0430\u0442\u044C\u0441\u044F \u043E\u0442 100 \u2014 \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "checklists.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\u2026",
+    "checklists.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "checklists.locked": "\u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D",
+    "checklists.channel.any": "\u043B\u044E\u0431\u043E\u0439 \u043A\u0430\u043D\u0430\u043B",
+    "checklists.channel.chat": "\u0447\u0430\u0442\u044B",
+    "checklists.channel.call": "\u0437\u0432\u043E\u043D\u043A\u0438",
+    "checklists.version": "v{version} (\u0432\u0435\u0440\u0441\u0438\u0439: {count})",
+    "checklists.criteria.one": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "checklists.criteria.few": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "checklists.criteria.many": "{n} \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "checklists.weights": "\u0441\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432 {sum}",
+    "checklists.basedOn": "\u043D\u0430 \u043E\u0441\u043D\u043E\u0432\u0435 \xAB{name}\xBB v{version}",
+    "checklists.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C",
+    "checklists.copy": "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
+    "editor.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u2026",
+    "editor.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.titleNew": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newName": "\u041D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.newNote": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442 \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438.",
+    "editor.newSection": "\u041D\u043E\u0432\u044B\u0439 \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.copyName": "{name} (\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0439)",
+    "editor.lockedNote": "\u0412\u0435\u0440\u0441\u0438\u044F \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u0430: \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0441\u0442 \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u043D\u0430 \u0435\u0451 \u043E\u0441\u043D\u043E\u0432\u0435.",
+    "editor.versionNote": "\u041A\u0430\u0436\u0434\u043E\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0451\u0442 \u043D\u043E\u0432\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E; \u043F\u0440\u0435\u0436\u043D\u0438\u0435 \u0432\u0435\u0440\u0441\u0438\u0438 \u0438 \u0438\u0445 \u043E\u0446\u0435\u043D\u043A\u0438 \u043D\u0435 \u043C\u0435\u043D\u044F\u044E\u0442\u0441\u044F.",
+    "editor.back": "\u2190 \u0412\u0441\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
+    "editor.apply": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "editor.saved": "\u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E: \xAB{name}\xBB v{version}. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u0435 \u0435\u0433\u043E \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438.",
+    "editor.name": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435",
+    "editor.channel": "\u041A\u0430\u043D\u0430\u043B (\u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u0435\u0434\u0432\u044B\u0431\u043E\u0440)",
+    "editor.sectionTitle": "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0440\u0430\u0437\u0434\u0435\u043B\u0430",
+    "editor.critTitle": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.wording": "\u0424\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0430 \u0434\u043B\u044F \u043E\u0446\u0435\u043D\u0449\u0438\u043A\u0430",
+    "editor.type": "\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430",
+    "editor.type.yes_no": "\u0414\u0430 / \u041D\u0435\u0442",
+    "editor.type.scale": "\u0428\u043A\u0430\u043B\u0430",
+    "editor.kind": "\u0412\u0438\u0434",
+    "editor.kind.scored": "\u041E\u0446\u0435\u043D\u043E\u0447\u043D\u044B\u0439",
+    "editor.kind.gross_error": "\u0413\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430 (\u0444\u043B\u0430\u0433, \u0431\u0435\u0437 \u0431\u0430\u043B\u043B\u043E\u0432)",
+    "editor.weight": "\u0412\u0435\u0441",
+    "editor.section": "\u0420\u0430\u0437\u0434\u0435\u043B",
+    "editor.steps": "\u0428\u0430\u0433\u0438 \u0448\u043A\u0430\u043B\u044B: \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435",
+    "editor.stepValue": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.stepLabel": "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0448\u0430\u0433\u0430",
+    "editor.removeStep": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0448\u0430\u0433",
+    "editor.addStep": "+ \u0448\u0430\u0433",
+    "editor.naAllowed": "\u041C\u043E\u0436\u043D\u043E \u043E\u0442\u0432\u0435\u0442\u0438\u0442\u044C N/A",
+    "editor.naCondition": "\u041A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A",
+    "editor.kinds": "\u0412\u0438\u0434\u044B \u043D\u0430\u0440\u0443\u0448\u0435\u043D\u0438\u0439 (\u0447\u0435\u0440\u0435\u0437 \u0437\u0430\u043F\u044F\u0442\u0443\u044E)",
+    "editor.more": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438 \u043C\u043E\u0434\u0435\u043B\u044C",
+    "editor.guidance": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0434\u043B\u044F \u043C\u043E\u0434\u0435\u043B\u0438",
+    "editor.model": "\u041C\u043E\u0434\u0435\u043B\u044C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
+    "editor.modelDefault": "\u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
+    "editor.removeCriterion": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C",
+    "editor.addCriterion": "+ \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
+    "editor.addSection": "+ \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removeSection": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u0430\u0437\u0434\u0435\u043B",
+    "editor.removed": "\u0423\u0434\u0430\u043B\u0435\u043D\u044B:",
+    "editor.restore": "\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
+    "editor.badge.new": "\u043D\u043E\u0432\u044B\u0439",
+    "editor.badge.reworded": "\u0438\u0437\u043C\u0435\u043D\u0451\u043D",
+    "editor.badge.weight": "\u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441",
+    "editor.diff": "\u043D\u043E\u0432\u044B\u0445: {added} \xB7 \u0443\u0434\u0430\u043B\u0435\u043D\u043E: {removed} \xB7 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E: {reworded} \xB7 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0435\u0441: {weight}",
+    "editor.weightSum": "\u0421\u0443\u043C\u043C\u0430 \u0432\u0435\u0441\u043E\u0432: {sum}, \u043D\u0435 100. \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E: \u0438\u0442\u043E\u0433 \u0432\u0441\u0451 \u0440\u0430\u0432\u043D\u043E \u043F\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A 100.",
+    "editor.errorCount": "\u0418\u0441\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u043E\u043B\u044F: {n}",
+    "editor.create": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveAsNew": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u0430\u043A \u043D\u043E\u0432\u044B\u0439 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "editor.saveVersion": "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E",
+    "editor.error.title_required": "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435.",
+    "editor.error.weight_invalid": "\u0412\u0435\u0441 \u2014 \u0447\u0438\u0441\u043B\u043E \u043E\u0442 0 (\u043C\u043E\u0436\u043D\u043E \u0441 \u0437\u0430\u043F\u044F\u0442\u043E\u0439: 7,5).",
+    "editor.error.scale_empty": "\u0423 \u0448\u043A\u0430\u043B\u044B \u0434\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u0445\u043E\u0442\u044F \u0431\u044B \u0434\u0432\u0430 \u0448\u0430\u0433\u0430.",
+    "editor.error.scale_value_invalid": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0448\u0430\u0433\u0430 \u2014 \u0447\u0438\u0441\u043B\u043E.",
+    "editor.error.scale_duplicate": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0448\u0430\u0433\u043E\u0432 \u043D\u0435 \u0434\u043E\u043B\u0436\u043D\u044B \u043F\u043E\u0432\u0442\u043E\u0440\u044F\u0442\u044C\u0441\u044F.",
+    "editor.error.na_condition_required": "\u041E\u043F\u0438\u0448\u0438\u0442\u0435, \u043A\u043E\u0433\u0434\u0430 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F N/A.",
+    "editor.error.section_missing": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B.",
+    "editor.error.criteria_empty": "\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439.",
+    "apply.title": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C",
+    "apply.what": "\xAB{name}\xBB v{version}: \u043D\u0435\u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438\u0437 \u043F\u0440\u0435\u0436\u043D\u0438\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0431\u0435\u0437 \u0432\u044B\u0437\u043E\u0432\u0430 \u043C\u043E\u0434\u0435\u043B\u0438.",
+    "apply.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433\u0438\u2026",
+    "apply.targets": "\u041A\u0430\u043A\u0438\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
+    "apply.control": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 {group}",
+    "apply.controlNone": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0433\u0440\u0443\u043F\u043F\u0430 (\u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430)",
+    "apply.dev": "DEV",
+    "apply.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "apply.noAll": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u043E \u0432\u0441\u0435\u043C \u0441\u0440\u0430\u0437\u0443 \u043D\u0435\u043B\u044C\u0437\u044F: \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440.",
+    "apply.run": "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
+    "apply.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "apply.compare": "\u0421\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
     "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
     "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
     "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
@@ -2789,9 +2879,9 @@
       for (const key of Object.keys(props)) {
         if (!PROPS.has(key)) throw new TypeError(`dom: unknown prop "${key}"`);
       }
-      const { class: className, text: text2, attrs, data, on, style } = props;
+      const { class: className, text: text3, attrs, data, on, style } = props;
       if (className) el.className = Array.isArray(className) ? className.filter(Boolean).join(" ") : String(className);
-      if (text2 !== void 0 && text2 !== null) el.textContent = String(text2);
+      if (text3 !== void 0 && text3 !== null) el.textContent = String(text3);
       if (attrs) setAttrs(el, attrs);
       if (data) {
         for (const [key, value] of Object.entries(data)) {
@@ -2905,8 +2995,8 @@
           const value = params?.[key];
           if (value !== void 0 && value !== null && value !== "") query2.set(key, String(value));
         }
-        const text2 = query2.toString();
-        return text2 ? `#/compare?${text2}` : "#/compare";
+        const text3 = query2.toString();
+        return text3 ? `#/compare?${text3}` : "#/compare";
       }
       case "analytics":
         return "#/analytics";
@@ -2980,20 +3070,20 @@
     const suffix = colon < 0 ? "" : full.slice(colon + 1);
     if (code === "bad_record" && /^\d+$/.test(suffix)) return t("error.bad_record_at", { n: Number(suffix) + 1 });
     const key = `error.${code}`;
-    const text2 = code ? t(key) : key;
-    return text2 === key ? t("error.generic") : text2;
+    const text3 = code ? t(key) : key;
+    return text3 === key ? t("error.generic") : text3;
   }
   function dismissToast(store, id) {
     const toasts = store.get().toasts ?? [];
     if (!toasts.some((entry) => entry.id === id)) return;
     store.set({ toasts: toasts.filter((entry) => entry.id !== id) });
   }
-  function toast(store, { kind = "info", text: text2, retry } = {}) {
+  function toast(store, { kind = "info", text: text3, retry } = {}) {
     if (!KINDS.includes(kind)) throw new TypeError(`toast: kind must be "error" or "info", got ${JSON.stringify(kind)}`);
-    if (typeof text2 !== "string" || text2 === "") throw new TypeError("toast: text is required");
+    if (typeof text3 !== "string" || text3 === "") throw new TypeError("toast: text is required");
     const id = nextId++;
-    const entry = { id, kind, text: text2, retry: typeof retry === "function" ? retry : null };
-    const rest = (store.get().toasts ?? []).filter((old) => !(old.kind === kind && old.text === text2));
+    const entry = { id, kind, text: text3, retry: typeof retry === "function" ? retry : null };
+    const rest = (store.get().toasts ?? []).filter((old) => !(old.kind === kind && old.text === text3));
     store.set({ toasts: [...rest, entry].slice(-MAX_TOASTS) });
     if (kind === "info") {
       const timer = setTimeout(() => dismissToast(store, id), INFO_MS);
@@ -3074,12 +3164,12 @@
       select.disabled = busy;
     }
     async function send() {
-      const text2 = comment.value.trim();
-      if (busy || closed || text2 === "") return;
+      const text3 = comment.value.trim();
+      if (busy || closed || text3 === "") return;
       busy = true;
       paint();
       try {
-        const appeal = await api.fileAppeal({ evaluation_id: evaluationId, criterion_id: select.value, comment: text2 });
+        const appeal = await api.fileAppeal({ evaluation_id: evaluationId, criterion_id: select.value, comment: text3 });
         close();
         onFiled?.(appeal);
       } catch (error) {
@@ -3206,16 +3296,16 @@
   }
   function labelled(prefix, value) {
     const key = `${prefix}.${value}`;
-    const text2 = t(key);
-    return text2 === key ? String(value) : text2;
+    const text3 = t(key);
+    return text3 === key ? String(value) : text3;
   }
-  var clip = (text2, max) => {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  var clip = (text3, max) => {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > max ? `${line.slice(0, max - 1).trimEnd()}\u2026` : line;
   };
   var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  var tag = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
-  var tagLink = (kind, text2, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text2, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
+  var tag = (kind, text3, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text3, attrs: props.attrs, data: props.data });
+  var tagLink = (kind, text3, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text3, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
   function stateBox(test, title, note, extra) {
     return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
   }
@@ -3797,8 +3887,8 @@
       clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
       message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
     );
-    const text2 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
-    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text2);
+    const text3 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text3);
     return { el, flag };
   }
   function renderTranscript(store, api, args = {}) {
@@ -3972,12 +4062,12 @@
   }
   var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   var totalText = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : fmt2(rat(value));
-  var tag2 = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, data: props.data });
+  var tag2 = (kind, text3, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text3, data: props.data });
   function stepLabel(criterion, answer) {
-    const text2 = answerTag(criterion, answer).text;
-    if (typeof answer !== "object") return text2;
+    const text3 = answerTag(criterion, answer).text;
+    if (typeof answer !== "object") return text3;
     const step = (criterion.scale_steps ?? []).find((s) => s.value === answer.step);
-    return step?.label ? `${text2} \xB7 ${step.label}` : text2;
+    return step?.label ? `${text3} \xB7 ${step.label}` : text3;
   }
   function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
     const el = h("section", { class: "cqa-rv", attrs: { "aria-label": t("review.label") }, data: { test: "review-panel" } });
@@ -4255,14 +4345,14 @@
   // src/ui/appeals-page.js
   var FILTERS = ["open", "decided", "all"];
   var COMMENT_MAX = 120;
-  var clip2 = (text2) => {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  var clip2 = (text3) => {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > COMMENT_MAX ? `${line.slice(0, COMMENT_MAX - 1).trimEnd()}\u2026` : line;
   };
   function splitConversation(id) {
-    const text2 = String(id ?? "");
-    const at = text2.indexOf(":");
-    return at < 0 ? { group: "", conversation: text2 } : { group: text2.slice(0, at), conversation: text2.slice(at + 1) };
+    const text3 = String(id ?? "");
+    const at = text3.indexOf(":");
+    return at < 0 ? { group: "", conversation: text3 } : { group: text3.slice(0, at), conversation: text3.slice(at + 1) };
   }
   function createAppealsPage(store, api, route2) {
     const view = { filter: "open", appeals: [], phase: "loading", error: null, titles: /* @__PURE__ */ new Map() };
@@ -4404,6 +4494,82 @@
     };
   }
 
+  // src/domain/checklist-diff.js
+  var same2 = (x, y) => canonicalJson(fingerprintSubset(x)) === canonicalJson(fingerprintSubset(y));
+  var hasId = (c) => typeof c?.id === "string" && c.id !== "";
+  function diffVersions(a, b) {
+    const before = new Map((a?.criteria ?? []).filter(hasId).map((c) => [c.id, c]));
+    const after = b?.criteria ?? [];
+    const seen = /* @__PURE__ */ new Set();
+    const out = { added: [], removed: [], reworded: [], weightOnly: [] };
+    for (const c of after) {
+      const old = hasId(c) ? before.get(c.id) : void 0;
+      if (!old) {
+        out.added.push(hasId(c) ? c.id : null);
+        continue;
+      }
+      seen.add(c.id);
+      if (!same2(old, c)) out.reworded.push(c.id);
+      else if (Number(old.weight ?? 0) !== Number(c.weight ?? 0)) out.weightOnly.push(c.id);
+    }
+    for (const id of before.keys()) if (!seen.has(id)) out.removed.push(id);
+    return out;
+  }
+
+  // src/domain/checklist-validate.js
+  var text2 = (value) => typeof value === "string" ? value.trim() : "";
+  function parseNumber(value) {
+    if (typeof value === "number") return value;
+    if (typeof value !== "string") return Number.NaN;
+    const cleaned = value.trim().replace(",", ".");
+    return /^-?\d+(\.\d+)?$/.test(cleaned) ? Number(cleaned) : Number.NaN;
+  }
+  var sumOf = (weights) => Math.round(weights.reduce((acc, w) => acc + w, 0) * 1e6) / 1e6;
+  function validateChecklist(draft) {
+    const errors = [];
+    const warnings = [];
+    const fail2 = (path, code) => errors.push({ path, code });
+    const source = draft ?? {};
+    if (text2(source.name) === "") fail2("name", "title_required");
+    const sections = Array.isArray(source.sections) ? source.sections.map((s, i) => ({ ...s, order: Number.isInteger(s?.order) ? s.order : i + 1 })) : [];
+    const sectionIds = new Set(sections.map((s) => s.id));
+    const criteria = (Array.isArray(source.criteria) ? source.criteria : []).map((raw, i) => {
+      const c = { ...raw };
+      const path = `criteria.${i}`;
+      const gross = c.kind === "gross_error";
+      c.kind = gross ? "gross_error" : "scored";
+      c.answer_type = c.answer_type === "scale" ? "scale" : "yes_no";
+      if (text2(c.title) === "") fail2(`${path}.title`, "title_required");
+      if (!sectionIds.has(c.section_id)) fail2(`${path}.section_id`, "section_missing");
+      if (gross) c.weight = 0;
+      else {
+        const weight = parseNumber(c.weight);
+        if (!Number.isFinite(weight) || weight < 0) fail2(`${path}.weight`, "weight_invalid");
+        else c.weight = weight;
+      }
+      if (c.answer_type === "scale") {
+        const steps = (Array.isArray(c.scale_steps) ? c.scale_steps : []).map((step) => ({ value: parseNumber(step?.value), label: typeof step?.label === "string" ? step.label : "" }));
+        if (steps.some((step) => !Number.isFinite(step.value))) fail2(`${path}.scale_steps`, "scale_value_invalid");
+        else if (steps.length < 2) fail2(`${path}.scale_steps`, "scale_empty");
+        else if (new Set(steps.map((step) => step.value)).size !== steps.length) fail2(`${path}.scale_steps`, "scale_duplicate");
+        c.scale_steps = steps.sort((a, b) => a.value - b.value);
+      } else c.scale_steps = [];
+      c.na_allowed = c.na_allowed === true;
+      if (c.na_allowed && text2(c.na_condition) === "") fail2(`${path}.na_condition`, "na_condition_required");
+      c.na_condition = c.na_allowed ? text2(c.na_condition) || null : null;
+      c.kinds = gross ? Array.isArray(c.kinds) ? c.kinds.map(text2).filter(Boolean) : [] : [];
+      c.wording = typeof c.wording === "string" ? c.wording : "";
+      c.guidance = text2(c.guidance) === "" ? null : c.guidance;
+      if (!Number.isInteger(c.order)) c.order = i + 1;
+      return c;
+    });
+    if (criteria.length === 0) fail2("criteria", "criteria_empty");
+    const scored = criteria.filter((c) => c.kind === "scored" && Number.isFinite(c.weight));
+    const sum = sumOf(scored.map((c) => c.weight));
+    if (scored.length > 0 && sum !== 100) warnings.push({ code: "weight_sum", sum });
+    return { value: { ...source, sections, criteria }, errors, warnings };
+  }
+
   // src/ui/loader.js
   var POLL_MS3 = 500;
   var ESTIMATE_DELAY_MS = 250;
@@ -4415,6 +4581,16 @@
   }
   function estimateText(dry) {
     return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
+  }
+  async function followJob(api, first, onTick) {
+    let job = first;
+    onTick(job, !jobSettled(job));
+    while (!jobSettled(job)) {
+      await sleep2(POLL_MS3);
+      job = await api.getJob(job.id);
+      onTick(job, !jobSettled(job));
+    }
+    return job;
   }
   var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
   var bump = (store) => store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
@@ -4451,8 +4627,8 @@
       groupInput.disabled = busy;
       fileInput.disabled = busy;
     }
-    function showError(text2) {
-      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text2, data: { test: "loader-error" } }));
+    function showError(text3) {
+      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text3, data: { test: "loader-error" } }));
     }
     function showSummary(summary) {
       clear(result).append(
@@ -4489,9 +4665,9 @@
       if (!file) return;
       run(t("loader.uploading", { name: file.name }), async () => {
         try {
-          const text2 = await readText(file);
-          parseUpload(text2);
-          return await api.uploadConversations(JSON.parse(text2.replace(/^﻿/, "")));
+          const text3 = await readText(file);
+          parseUpload(text3);
+          return await api.uploadConversations(JSON.parse(text3.replace(/^﻿/, "")));
         } finally {
           fileInput.value = "";
         }
@@ -4691,16 +4867,10 @@
       }, ESTIMATE_DELAY_MS);
     }
     async function follow(first) {
-      let job = first;
-      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: true };
-      paint();
-      while (!jobSettled(job)) {
-        await sleep2(POLL_MS3);
-        job = await api.getJob(job.id);
-        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: !jobSettled(job) };
+      await followJob(api, first, (job, running) => {
+        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running };
         paint();
-      }
-      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
+      });
       bump(store);
       scheduleEstimate();
     }
@@ -4748,6 +4918,620 @@
     };
   }
 
+  // src/ui/apply-dialog.js
+  var DEV = "DEV";
+  function compareFrom(version2) {
+    if (version2?.based_on?.checklist_id) return { checklist_id: version2.based_on.checklist_id, version: version2.based_on.version };
+    if (Number.isInteger(version2?.version) && version2.version > 1) return { checklist_id: version2.checklist_id, version: version2.version - 1 };
+    return null;
+  }
+  function controlGroup(groups, current2) {
+    if (current2 && current2 !== DEV && groups.includes(current2)) return current2;
+    const others = groups.filter((g) => g !== DEV).sort();
+    return others.length > 0 ? others[others.length - 1] : null;
+  }
+  function openApplyDialog({ host, store, api, version: version2 }) {
+    let closed = false;
+    const view = { targets: null, target: null, estimate: null, estimating: false, job: null, error: null, server: null };
+    let estimateRun = 0;
+    const body = h("div", { class: "cqa-ap-form" });
+    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "apply-estimate" } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing") });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("apply.run"), data: { test: "apply-run" }, on: { click: () => run() } });
+    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "apply-progress" } });
+    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("apply.close"), data: { test: "apply-close" }, on: { click: () => close() } });
+    function targetRow(key, label, count, disabled) {
+      const input = h("input", {
+        class: "cqa-ap-radio",
+        attrs: { type: "radio", name: "cqa-apply-target", value: key, disabled: disabled || view.job?.running ? true : null },
+        data: { test: `apply-target-${key}` },
+        on: { change: () => choose(key) }
+      });
+      input.checked = view.target === key;
+      return h("label", { class: ["cqa-ap-target", disabled && "is-disabled"] }, input, h("span", { text: label }), h("span", { class: ["cqa-q-count", "num"], text: disabled && count === 0 ? "" : String(count) }));
+    }
+    function paint() {
+      if (closed) return;
+      clear(body);
+      if (!view.targets) {
+        body.append(h("p", { class: "cqa-rv-note", text: view.error ? errorText(view.error) : t("apply.loading") }));
+        return;
+      }
+      const { control, dev, selected } = view.targets;
+      body.append(
+        h("p", { class: "cqa-rv-label", text: t("apply.targets") }),
+        h(
+          "div",
+          { class: "cqa-ap-targets", attrs: { role: "radiogroup", "aria-label": t("apply.targets") } },
+          targetRow("control", control.group ? t("apply.control", { group: control.group }) : t("apply.controlNone"), control.ids.length, control.ids.length === 0),
+          targetRow("dev", t("apply.dev"), dev.ids.length, dev.ids.length === 0),
+          targetRow("selected", t("apply.selected"), selected.ids.length, selected.ids.length === 0)
+        ),
+        h("p", { class: "cqa-rv-hint", text: t("apply.noAll") })
+      );
+      estimate.textContent = view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "";
+      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
+      hint.hidden = !keyMissing;
+      runButton.disabled = !view.estimate || view.estimating || keyMissing || view.job?.running === true;
+      clear(progress);
+      const job = view.job;
+      if (job) {
+        progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
+        if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => retry() } }));
+        const from = compareFrom(version2);
+        if (!job.running && from) {
+          const group = view.target === "control" ? view.targets.control.group : view.target === "dev" ? DEV : null;
+          const link = href("compare", { from_checklist: from.checklist_id, from_version: from.version, to_checklist: version2.checklist_id, to_version: version2.version, group_id: group });
+          progress.append(h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta", "cqa-ap-compare"], attrs: { href: link }, text: t("apply.compare"), data: { test: "apply-compare" }, on: { click: () => close() } }));
+        }
+      }
+    }
+    async function loadTargets() {
+      try {
+        const [items, server] = await Promise.all([api.listConversations(), api.getConfig()]);
+        if (closed) return;
+        const groups = [...new Set(items.map((item) => item.group_id))];
+        const group = controlGroup(groups, store.get().groupId);
+        const selection = [...store.get().selection ?? []].filter((id) => items.some((item) => item.id === id));
+        view.server = server;
+        view.targets = {
+          control: { group, ids: group ? items.filter((item) => item.group_id === group).map((item) => item.id) : [] },
+          dev: { ids: items.filter((item) => item.group_id === DEV).map((item) => item.id) },
+          selected: { ids: selection }
+        };
+      } catch (error) {
+        view.error = error;
+      }
+      paint();
+    }
+    async function choose(key) {
+      view.target = key;
+      view.estimate = null;
+      view.job = null;
+      view.estimating = true;
+      paint();
+      const mine = ++estimateRun;
+      try {
+        const dry = await api.startEvaluations({ conversations: view.targets[key].ids, checklist_id: version2.checklist_id, version: version2.version, dry_run: true });
+        if (closed || mine !== estimateRun) return;
+        view.estimate = dry;
+      } catch (error) {
+        if (closed || mine !== estimateRun) return;
+        toastError(store, error, { retry: () => choose(key) });
+      }
+      view.estimating = false;
+      paint();
+    }
+    async function follow(first) {
+      await followJob(api, first, (job, running) => {
+        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running };
+        paint();
+      });
+      store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+    }
+    async function run() {
+      if (!view.target || view.job?.running) return;
+      try {
+        await follow(await api.startEvaluations({ conversations: view.targets[view.target].ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }));
+      } catch (error) {
+        if (view.job) view.job.running = false;
+        paint();
+        toastError(store, error, { retry: run });
+      }
+    }
+    async function retry() {
+      if (!view.job?.id) return;
+      try {
+        await follow(await api.retryJob(view.job.id));
+      } catch (error) {
+        toastError(store, error, { retry });
+      }
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("apply.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("apply.title") }), h("p", { class: "cqa-rv-hint", text: t("apply.what", { name: version2.name, version: version2.version }) })),
+      body,
+      estimate,
+      hint,
+      h("div", { class: "cqa-rv-acts" }, closeButton, runButton),
+      progress
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("apply.close") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "apply-dialog" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.remove();
+    }
+    paint();
+    host.append(el);
+    loadTargets();
+    return { el, close };
+  }
+
+  // src/ui/checklists-page.js
+  var NEW_ID = "new";
+  var versionsOf3 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  var weightSum = (row) => (row.criteria ?? []).filter((c) => c.kind !== "gross_error").reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
+  function createChecklistsPage(store, api) {
+    let destroyed = false;
+    const list = h("ul", { class: "cqa-ck-list", attrs: { "aria-label": t("nav.checklists") }, data: { test: "checklists-list" } });
+    const state = h("div", { class: "cqa-aps-state" });
+    const el = h(
+      "section",
+      { class: ["cqa-view", "cqa-ck"], data: { test: "checklists-page" } },
+      h(
+        "div",
+        { class: "cqa-ck-head" },
+        h("h1", { class: "cqa-view-title", text: t("nav.checklists") }),
+        h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { href: href("editor", { checklistId: NEW_ID, version: 0 }) }, text: t("checklists.create"), data: { test: "checklist-create" } })
+      ),
+      h("p", { class: "cqa-view-note", text: t("checklists.note") }),
+      state,
+      list
+    );
+    async function copy(row, button) {
+      button.disabled = true;
+      try {
+        const created = await api.createChecklist({ based_on: { checklist_id: row.checklist_id, version: row.version } });
+        if (destroyed) return;
+        window.location.hash = href("editor", { checklistId: created.checklist_id, version: created.version });
+      } catch (error) {
+        button.disabled = false;
+        toastError(store, error);
+      }
+    }
+    function rowOf(row, rows) {
+      const source = row.based_on ? rows.find((r) => r.checklist_id === row.based_on.checklist_id) : null;
+      const count = (row.criteria ?? []).length;
+      const copyButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("checklists.copy"), data: { test: "checklist-copy" } });
+      copyButton.addEventListener("click", () => copy(row, copyButton));
+      return h(
+        "li",
+        { class: "cqa-ck-row", data: { test: "checklist-row", id: row.checklist_id } },
+        h(
+          "div",
+          { class: "cqa-ck-main" },
+          h(
+            "div",
+            { class: "cqa-aps-row1" },
+            h("b", { class: "cqa-ck-name", text: row.name ?? row.checklist_id }),
+            h("span", { class: "cqa-ck-tags" }, row.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked"), data: { test: "checklist-locked" } }) : null, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t(`checklists.channel.${row.channel ?? "any"}`) }))
+          ),
+          h("span", { class: "cqa-ck-meta", text: [t("checklists.version", { version: row.version, count: versionsOf3(row).length }), tp("checklists.criteria", count), t("checklists.weights", { sum: weightSum(row) })].join(" \xB7 ") }),
+          row.based_on ? h("span", { class: "cqa-ck-based", text: t("checklists.basedOn", { name: source?.name ?? row.based_on.checklist_id, version: row.based_on.version }), data: { test: "checklist-based-on" } }) : null
+        ),
+        h(
+          "div",
+          { class: "cqa-ck-acts" },
+          h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { href: href("editor", { checklistId: row.checklist_id, version: row.version }) }, text: t("checklists.open"), data: { test: "checklist-open" } }),
+          copyButton
+        )
+      );
+    }
+    async function load2() {
+      clear(state).append(h("div", { class: "cqa-empty", attrs: { role: "status" } }, h("b", { class: "cqa-empty-title", text: t("checklists.loading") })));
+      try {
+        const rows = await api.listChecklists();
+        if (destroyed) return;
+        clear(state);
+        list.replaceChildren(...rows.map((row) => rowOf(row, rows)));
+      } catch (error) {
+        if (destroyed) return;
+        clear(state).append(
+          h("div", { class: "cqa-empty", attrs: { role: "status" } }, h("b", { class: "cqa-empty-title", text: t("checklists.loadFailed") }), h("p", { class: "cqa-empty-note", text: errorText(error) })),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("appeals.retry"), on: { click: load2 } })
+        );
+      }
+    }
+    load2();
+    return {
+      el,
+      destroy() {
+        destroyed = true;
+      }
+    };
+  }
+
+  // src/ui/checklist-editor.js
+  var CHANNELS2 = ["any", "chat", "call"];
+  var keyOf = (route2) => `${route2.params.checklistId}@${route2.params.version}`;
+  function createChecklistEditor(store, api, route2) {
+    const view = { route: route2, source: null, draft: null, models: [], phase: "loading", error: null, saving: false, savedFor: null };
+    let keySeq = 0;
+    let destroyed = false;
+    let apply = null;
+    let loadRun = 0;
+    let refs = null;
+    const el = h("section", { class: ["cqa-view", "cqa-ed"], data: { test: "editor" } });
+    const params = () => ({ id: view.route.params.checklistId, version: Number(view.route.params.version) });
+    const isNew = () => params().id === NEW_ID;
+    const withKey = (c) => ({ ...c, _key: `k${keySeq += 1}` });
+    function newCriterion(sectionId) {
+      return withKey({ id: void 0, section_id: sectionId, title: "", wording: "", answer_type: "yes_no", scale_steps: [], weight: 0, na_allowed: false, na_condition: null, kind: "scored", kinds: [], guidance: null });
+    }
+    function toDraft(source) {
+      const draft = structuredClone(source);
+      if (source.locked) draft.name = t("editor.copyName", { name: source.name });
+      draft.criteria = draft.criteria.map(withKey);
+      return draft;
+    }
+    function blankDraft() {
+      return { name: t("editor.newName"), description: null, channel: "any", guidance: "", rounding: 2, sections: [{ id: "s1", title: t("editor.newSection"), order: 1 }], criteria: [newCriterion("s1")] };
+    }
+    async function load2() {
+      const mine = ++loadRun;
+      view.phase = "loading";
+      draw();
+      try {
+        const config = await api.getConfig().catch(() => null);
+        const source = isNew() ? null : await api.getChecklistVersion(params().id, params().version);
+        if (destroyed || mine !== loadRun) return;
+        view.models = Array.isArray(config?.models) ? config.models : [];
+        view.source = source;
+        view.draft = source ? toDraft(source) : blankDraft();
+        view.phase = "ready";
+      } catch (error) {
+        if (destroyed || mine !== loadRun) return;
+        view.phase = "error";
+        view.error = error;
+      }
+      draw();
+    }
+    const sections = () => [...view.draft.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    function addCriterion(sectionId) {
+      const list = view.draft.criteria;
+      const last = list.map((c) => c.section_id).lastIndexOf(sectionId);
+      const fresh = newCriterion(sectionId);
+      list.splice(last < 0 ? list.length : last + 1, 0, fresh);
+      draw();
+      el.querySelector(`[data-key="${fresh._key}"] [data-test="crit-title"]`)?.focus();
+    }
+    function moveCriterion(c, sectionId) {
+      const list = view.draft.criteria;
+      list.splice(list.indexOf(c), 1);
+      c.section_id = sectionId;
+      const last = list.map((x) => x.section_id).lastIndexOf(sectionId);
+      list.splice(last < 0 ? list.length : last + 1, 0, c);
+      draw();
+    }
+    function addSection() {
+      const ids = new Set(view.draft.sections.map((s) => s.id));
+      let n = view.draft.sections.length + 1;
+      while (ids.has(`s${n}`)) n += 1;
+      const order = Math.max(0, ...view.draft.sections.map((s) => s.order ?? 0)) + 1;
+      view.draft.sections.push({ id: `s${n}`, title: t("editor.newSection"), order });
+      draw();
+    }
+    function restore(id) {
+      const original = view.source?.criteria.find((c) => c.id === id);
+      if (!original) return;
+      if (!view.draft.sections.some((s) => s.id === original.section_id)) view.draft.sections.push(structuredClone(view.source.sections.find((s) => s.id === original.section_id)));
+      view.draft.criteria.push(withKey(structuredClone(original)));
+      draw();
+    }
+    function field(labelKey, control, error) {
+      return h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t(labelKey) }), control, error ?? null);
+    }
+    function errorEl() {
+      const e = h("p", { class: "cqa-ed-err", attrs: { role: "alert" }, data: { test: "field-error" } });
+      e.hidden = true;
+      return e;
+    }
+    function input(value, test, onInput, attrs = {}) {
+      const control = h("input", { class: "cqa-sc-select", attrs: { type: "text", autocomplete: "off", ...attrs }, data: { test }, on: { input: () => onInput(control.value) } });
+      control.value = value === null || value === void 0 ? "" : String(value);
+      return control;
+    }
+    function textarea(value, test, onInput, rows = 2) {
+      const control = h("textarea", { class: "cqa-ap-text", attrs: { rows: String(rows) }, data: { test }, on: { input: () => onInput(control.value) } });
+      control.value = value ?? "";
+      return control;
+    }
+    function select(value, test, options, onChange, label) {
+      const control = h(
+        "select",
+        { class: "cqa-sc-select", attrs: { "aria-label": label }, data: { test }, on: { change: () => onChange(control.value) } },
+        options.map(([v, text3]) => h("option", { attrs: { value: v }, text: text3 }))
+      );
+      control.value = value;
+      return control;
+    }
+    function cardOf(c) {
+      const errs = /* @__PURE__ */ new Map();
+      const err = (name) => {
+        const e = errorEl();
+        errs.set(name, e);
+        return e;
+      };
+      const live = (name) => (value) => {
+        c[name] = value;
+        refresh();
+      };
+      const gross = c.kind === "gross_error";
+      const badge = h("span", { class: "cqa-tag", data: { test: "criterion-badge" } });
+      const steps = c.answer_type === "scale" ? h(
+        "div",
+        { class: "cqa-ed-steps", data: { test: "crit-steps" } },
+        h("span", { class: "cqa-rv-label", text: t("editor.steps") }),
+        ...c.scale_steps.map(
+          (step, i) => h(
+            "div",
+            { class: "cqa-ed-step" },
+            input(step.value, "step-value", (v) => (step.value = v, refresh()), { inputmode: "decimal", "aria-label": t("editor.stepValue"), class: "cqa-sc-select cqa-ed-step-value" }),
+            input(step.label, "step-label", (v) => (step.label = v, refresh()), { "aria-label": t("editor.stepLabel") }),
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button", "aria-label": t("editor.removeStep") }, text: "\u2715", data: { test: "remove-step" }, on: { click: () => (c.scale_steps.splice(i, 1), draw()) } })
+          )
+        ),
+        err("scale_steps"),
+        h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addStep"), data: { test: "add-step" }, on: { click: () => (c.scale_steps.push({ value: "", label: "" }), draw()) } })
+      ) : null;
+      const naBox = h("input", {
+        class: "cqa-q-check",
+        attrs: { type: "checkbox" },
+        data: { test: "crit-na" },
+        on: {
+          change: () => {
+            c.na_allowed = naBox.checked;
+            draw();
+          }
+        }
+      });
+      naBox.checked = c.na_allowed === true;
+      const card = h(
+        "article",
+        { class: "cqa-ed-crit", data: { test: "editor-criterion", id: c.id ?? "", key: c._key, new: c.id ? null : "true" } },
+        h(
+          "div",
+          { class: "cqa-ed-crit-head" },
+          badge,
+          h("span", { class: "cqa-ed-crit-id", text: c.id ?? "" }),
+          h("button", { class: ["cqa-sc-btn", "cqa-ed-remove"], attrs: { type: "button" }, text: t("editor.removeCriterion"), data: { test: "remove-criterion" }, on: { click: () => (view.draft.criteria.splice(view.draft.criteria.indexOf(c), 1), draw()) } })
+        ),
+        field("editor.critTitle", input(c.title, "crit-title", live("title")), err("title")),
+        field("editor.wording", textarea(c.wording, "crit-wording", live("wording"))),
+        h(
+          "div",
+          { class: "cqa-ed-grid" },
+          field(
+            "editor.type",
+            select(c.answer_type, "crit-type", [["yes_no", t("editor.type.yes_no")], ["scale", t("editor.type.scale")]], (v) => {
+              c.answer_type = v;
+              if (v === "scale" && c.scale_steps.length === 0) c.scale_steps = [{ value: 0, label: "" }, { value: 10, label: "" }];
+              draw();
+            }, t("editor.type"))
+          ),
+          field("editor.kind", select(c.kind, "crit-kind", [["scored", t("editor.kind.scored")], ["gross_error", t("editor.kind.gross_error")]], (v) => (c.kind = v, draw()), t("editor.kind"))),
+          gross ? null : field("editor.weight", input(c.weight, "crit-weight", live("weight"), { inputmode: "decimal" }), err("weight")),
+          field("editor.section", select(c.section_id, "crit-section", sections().map((s) => [s.id, s.title || s.id]), (v) => moveCriterion(c, v), t("editor.section")), err("section_id"))
+        ),
+        steps,
+        h("label", { class: "cqa-q-all" }, naBox, h("span", { text: t("editor.naAllowed") })),
+        c.na_allowed ? field("editor.naCondition", input(c.na_condition, "crit-na-condition", live("na_condition")), err("na_condition")) : null,
+        gross ? field("editor.kinds", input((c.kinds ?? []).join(", "), "crit-kinds", (v) => (c.kinds = v.split(","), refresh()))) : null,
+        h(
+          "details",
+          { class: "cqa-ed-more" },
+          h("summary", { text: t("editor.more") }),
+          field("editor.guidance", textarea(c.guidance, "crit-guidance", live("guidance"), 3)),
+          view.models.length > 0 ? field("editor.model", select(c.model ?? "", "crit-model", [["", t("editor.modelDefault")], ...view.models.map((m) => [m, m])], (v) => (c.model = v === "" ? void 0 : v, refresh()), t("editor.model"))) : null
+        )
+      );
+      refs.cards.set(c._key, { badge, errs });
+      return card;
+    }
+    function sectionOf(section, count) {
+      const items = view.draft.criteria.filter((c) => c.section_id === section.id).map(cardOf);
+      const title = input(section.title, "section-title", (v) => (section.title = v, refresh()), { "aria-label": t("editor.sectionTitle"), class: "cqa-sc-select cqa-ed-section-title" });
+      return h(
+        "div",
+        { class: "cqa-ed-section", data: { test: "editor-section", id: section.id } },
+        h(
+          "div",
+          { class: "cqa-ed-section-head" },
+          title,
+          items.length === 0 && count > 1 ? h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("editor.removeSection"), data: { test: "remove-section" }, on: { click: () => (view.draft.sections.splice(view.draft.sections.indexOf(section), 1), draw()) } }) : null
+        ),
+        ...items,
+        h("button", { class: ["cqa-sc-btn", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addCriterion"), data: { test: "add-criterion" }, on: { click: () => addCriterion(section.id) } })
+      );
+    }
+    function draw() {
+      if (destroyed) return;
+      clear(el);
+      refs = { cards: /* @__PURE__ */ new Map() };
+      if (view.phase !== "ready") {
+        el.append(
+          h(
+            "div",
+            { class: "cqa-empty", attrs: { role: "status" } },
+            h("b", { class: "cqa-empty-title", text: t(view.phase === "error" ? "editor.loadFailed" : "editor.loading") }),
+            view.phase === "error" ? h("p", { class: "cqa-empty-note", text: errorText(view.error) }) : null
+          )
+        );
+        return;
+      }
+      const { source, draft } = view;
+      const head = h(
+        "div",
+        { class: "cqa-ck-head" },
+        h("h1", { class: "cqa-view-title", text: isNew() ? t("editor.titleNew") : source.name }),
+        !isNew() ? h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("editor.apply"), data: { test: "open-apply" }, on: { click: () => openApply() } }) : null
+      );
+      const meta = isNew() ? h("p", { class: "cqa-view-note", text: t("editor.newNote") }) : h(
+        "p",
+        { class: "cqa-ed-meta" },
+        h("span", { class: ["cqa-tag", "cqa-tag--out"], text: `v${source.version}` }),
+        source.locked ? h("span", { class: ["cqa-tag", "cqa-tag--na"], text: t("checklists.locked") }) : null,
+        h("span", { class: "cqa-rv-hint", text: source.locked ? t("editor.lockedNote") : t("editor.versionNote") }),
+        h("a", { class: "cqa-link", attrs: { href: href("checklists") }, text: t("editor.back") })
+      );
+      const saved = view.savedFor === keyOf(view.route) ? h("p", { class: "cqa-ld-summary", attrs: { role: "status" }, text: t("editor.saved", { name: source?.name ?? "", version: source?.version ?? "" }), data: { test: "editor-saved" } }) : null;
+      refs.nameError = errorEl();
+      refs.global = errorEl();
+      const form = h(
+        "div",
+        { class: "cqa-ed-top" },
+        field("editor.name", input(draft.name, "editor-name", (v) => (draft.name = v, refresh())), refs.nameError),
+        field("editor.channel", select(draft.channel ?? "any", "editor-channel", CHANNELS2.map((c) => [c, t(`checklists.channel.${c}`)]), (v) => (draft.channel = v, refresh()), t("editor.channel")))
+      );
+      const list = sections();
+      refs.removed = h("div", { class: "cqa-ed-removed-host" });
+      refs.sum = h("div", { class: "cqa-ed-sum-host" });
+      refs.diff = h("p", { class: "cqa-ed-diff", data: { test: "editor-diff" } });
+      refs.count = h("p", { class: "cqa-ed-err" });
+      refs.save = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, data: { test: "editor-save" }, on: { click: () => save() } });
+      el.append(
+        head,
+        meta,
+        saved ?? "",
+        form,
+        ...list.map((s) => sectionOf(s, list.length)),
+        h("button", { class: ["cqa-sc-btn", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.addSection"), data: { test: "add-section" }, on: { click: () => addSection() } }),
+        refs.removed,
+        refs.global,
+        h("div", { class: "cqa-ed-foot" }, refs.sum, refs.diff, refs.count, refs.save)
+      );
+      refresh();
+    }
+    function refresh() {
+      if (!refs || view.phase !== "ready") return;
+      const { draft, source } = view;
+      const { errors, warnings } = validateChecklist(draft);
+      const diff2 = diffVersions(source, draft);
+      const known = new Set((source?.criteria ?? []).map((c) => c.id));
+      const reworded = new Set(diff2.reworded);
+      const weightOnly = new Set(diff2.weightOnly);
+      for (const c of draft.criteria) {
+        const ref = refs.cards.get(c._key);
+        if (!ref) continue;
+        const kind = !c.id || !known.has(c.id) ? "new" : reworded.has(c.id) ? "reworded" : weightOnly.has(c.id) ? "weight" : null;
+        ref.badge.hidden = kind === null;
+        ref.badge.textContent = kind ? t(`editor.badge.${kind}`) : "";
+        ref.badge.className = `cqa-tag ${kind === "new" ? "cqa-tag--ok" : kind === "reworded" ? "cqa-tag--mid" : "cqa-tag--out"}`;
+        for (const e of ref.errs.values()) e.hidden = true;
+      }
+      refs.nameError.hidden = true;
+      refs.global.hidden = true;
+      for (const { path, code } of errors) {
+        const message = t(`editor.error.${code}`);
+        const match = /^criteria\.(\d+)\.(\w+)$/.exec(path);
+        const target = match ? refs.cards.get(draft.criteria[Number(match[1])]?._key)?.errs.get(match[2]) : path === "name" ? refs.nameError : refs.global;
+        if (!target) continue;
+        target.textContent = message;
+        target.hidden = false;
+      }
+      const sum = warnings.find((w) => w.code === "weight_sum");
+      refs.sum.replaceChildren(sum ? h("p", { class: "cqa-ed-warn", attrs: { role: "status" }, text: t("editor.weightSum", { sum: String(sum.sum).replace(".", ",") }), data: { test: "weight-sum" } }) : "");
+      const removed = diff2.removed.map((id) => source.criteria.find((c) => c.id === id)).filter(Boolean);
+      refs.removed.replaceChildren(
+        removed.length > 0 ? h(
+          "div",
+          { class: "cqa-ed-removed", data: { test: "removed-list" } },
+          h("span", { class: "cqa-rv-label", text: t("editor.removed") }),
+          ...removed.map(
+            (c) => h(
+              "span",
+              { class: "cqa-ed-removed-item" },
+              h("span", { class: ["cqa-tag", "cqa-tag--bad"], text: c.title }),
+              h("button", { class: ["cqa-link", "cqa-ed-add"], attrs: { type: "button" }, text: t("editor.restore"), data: { test: "restore-criterion" }, on: { click: () => restore(c.id) } })
+            )
+          )
+        ) : ""
+      );
+      refs.diff.textContent = t("editor.diff", { added: diff2.added.length, removed: diff2.removed.length, reworded: diff2.reworded.length, weight: diff2.weightOnly.length });
+      refs.count.textContent = errors.length > 0 ? t("editor.errorCount", { n: errors.length }) : "";
+      refs.count.hidden = errors.length === 0;
+      refs.save.textContent = t(isNew() ? "editor.create" : source.locked ? "editor.saveAsNew" : "editor.saveVersion");
+      refs.save.disabled = view.saving || errors.length > 0;
+    }
+    async function save() {
+      const { value, errors } = validateChecklist(view.draft);
+      if (errors.length > 0 || view.saving) return;
+      view.saving = true;
+      refresh();
+      const body = {
+        name: String(value.name).trim(),
+        description: value.description ?? null,
+        channel: value.channel ?? "any",
+        guidance: typeof value.guidance === "string" ? value.guidance : "",
+        rounding: Number.isInteger(value.rounding) ? value.rounding : 2,
+        sections: value.sections.map((s) => ({ id: s.id, title: s.title, order: s.order })),
+        criteria: value.criteria.map(({ _key, fingerprint: fingerprint2, ...rest }, i) => ({ ...rest, order: i + 1 }))
+      };
+      try {
+        const saved = isNew() ? await api.createChecklist(body) : view.source.locked ? await api.createChecklist({ ...body, based_on: { checklist_id: view.source.checklist_id, version: view.source.version } }) : await api.saveChecklistVersion(view.source.checklist_id, body);
+        if (destroyed) return;
+        view.saving = false;
+        view.savedFor = `${saved.checklist_id}@${saved.version}`;
+        window.location.hash = href("editor", { checklistId: saved.checklist_id, version: saved.version });
+      } catch (error) {
+        if (destroyed) return;
+        view.saving = false;
+        refresh();
+        toastError(store, error, { retry: save });
+      }
+    }
+    function openApply() {
+      if (!view.source) return;
+      apply?.close();
+      apply = openApplyDialog({ host: el.closest(".cqa") ?? el, store, api, version: view.source });
+    }
+    load2();
+    return {
+      el,
+      update(next) {
+        if (keyOf(next) === keyOf(view.route) && next.name === view.route.name) return;
+        const reload = keyOf(next) !== keyOf(view.route);
+        view.route = next;
+        if (reload) load2();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        apply?.close();
+      }
+    };
+  }
+
   // src/ui/queue.js
   var IMPORT_ON_EMPTY = "DEV";
   var TOPIC_MAX = 80;
@@ -4762,8 +5546,8 @@
     disputed: (item) => item.status === "disputed",
     new: (item) => item.status === "new"
   };
-  function clip3(text2) {
-    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+  function clip3(text3) {
+    const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
     return line.length > TOPIC_MAX ? `${line.slice(0, TOPIC_MAX - 1).trimEnd()}\u2026` : line;
   }
   function firstClientLine(conversation) {
@@ -4776,7 +5560,7 @@
     const total = final?.total;
     return typeof total === "number" && Number.isFinite(total) ? String(total).replace(".", ",") : "\u2014";
   }
-  var tag3 = (kind, text2, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, ...extra });
+  var tag3 = (kind, text3, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text3, ...extra });
   function createQueue(store, api) {
     const subs = [];
     let destroyed = false;
@@ -4904,7 +5688,7 @@
       if (q === "") return true;
       if (view.remote && view.remote.q === q && view.remote.ids.has(item.id)) return true;
       const haystack = [item.id, item.conversation_id, topicOf(item), firstLines.get(item.id) ?? ""];
-      return haystack.some((text2) => text2.toLowerCase().includes(q));
+      return haystack.some((text3) => text3.toLowerCase().includes(q));
     }
     function setFilter(name) {
       if (view.filter === name) return;
@@ -5580,7 +6364,14 @@
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
     const shell = createShell(store, api, {
       panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
-      views: { appeals: createAppealsPage, appeal: createAppealsPage, ...options.views }
+      views: {
+        appeals: createAppealsPage,
+        appeal: createAppealsPage,
+        checklists: createChecklistsPage,
+        checklist: createChecklistEditor,
+        editor: createChecklistEditor,
+        ...options.views
+      }
     });
     el.replaceChildren(shell.el);
     let destroyed = false;

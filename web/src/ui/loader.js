@@ -36,6 +36,22 @@ export function estimateText(dry) {
   return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
 }
 
+/**
+ * Polls a job until it is over, calling onTick(job, running) after every answer (and once at the
+ * start). It does not stop when the caller's view is gone: results must still refresh.
+ * @returns {Promise<object>} the settled job
+ */
+export async function followJob(api, first, onTick) {
+  let job = first;
+  onTick(job, !jobSettled(job));
+  while (!jobSettled(job)) {
+    await sleep(POLL_MS);
+    job = await api.getJob(job.id);
+    onTick(job, !jobSettled(job));
+  }
+  return job;
+}
+
 const summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
 const bump = (store) => store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -337,16 +353,10 @@ export function createBatchBar(store, api) {
 
   // Polls the job to the end. It keeps going if the queue is closed: the totals must still refresh.
   async function follow(first) {
-    let job = first;
-    view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: true };
-    paint();
-    while (!jobSettled(job)) {
-      await sleep(POLL_MS);
-      job = await api.getJob(job.id);
-      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: !jobSettled(job) };
+    await followJob(api, first, (job, running) => {
+      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running };
       paint();
-    }
-    view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
+    });
     bump(store);
     scheduleEstimate(); // what is cached now
   }
