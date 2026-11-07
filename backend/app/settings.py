@@ -41,6 +41,11 @@ class Settings(BaseSettings):
         "claude-sonnet-5-5": {"input": Decimal("2.00"), "output": Decimal("10.00")},
     }
     max_parallel_calls: int = 8
+    # env HIDDEN_CHECKLIST_VERSIONS: JSON list of "checklist_id:version" left out of GET /checklists
+    # (and so out of every checklist picker in the UI). Nothing is deleted: the versions, their
+    # evaluations and GET /checklists/{id}/versions/{n} stay as they are, and removing an entry
+    # shows the version again. The default checklist version cannot be hidden.
+    hidden_checklist_versions: list[str] = []
     web_dist: Path | None = None  # override for the static UI directory (tests)
 
     @field_validator("base_path")
@@ -58,6 +63,17 @@ class Settings(BaseSettings):
         for source in value:
             if not source or re.search(r"[\s;,]", source):
                 raise ValueError(f"invalid frame-ancestors source: {source!r}")
+        return value
+
+    @field_validator("hidden_checklist_versions")
+    @classmethod
+    def _hidden_versions_are_ids(cls, value: list[str]) -> list[str]:
+        default = f"{DEFAULT_CHECKLIST_ID}:{DEFAULT_CHECKLIST_VERSION}"
+        for entry in value:
+            if not re.fullmatch(r"[^\s:]+:[1-9][0-9]*", entry):
+                raise ValueError(f"hidden checklist version must be 'checklist_id:version', got {entry!r}")
+            if entry == default:
+                raise ValueError(f"the default checklist version {default} cannot be hidden")
         return value
 
     @property
