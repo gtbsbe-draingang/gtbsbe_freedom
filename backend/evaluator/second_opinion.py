@@ -27,12 +27,18 @@ from evaluator.schemas import SecondOpinionOutput
 EFFORT_SECOND = "medium"
 
 
-def _safe(text: str) -> str:
-    return prompt.neutralize_tags(masking.mask_text(text))
+def _appeal_texts(result: CriterionResult, comment: str) -> list[str]:
+    return [result.explanation, *(e.quote for e in result.evidence), comment]
 
 
-def appeal_block(result: CriterionResult, comment: str) -> dict:
-    """The third text block (original judgment + neutralised appeal comment)."""
+def appeal_block(result: CriterionResult, comment: str, names: set[str] | None = None) -> dict:
+    """The third text block (original judgment + neutralised appeal comment). `names`: names known
+    from the dialogue, masked here too (each field alone may not introduce them)."""
+    names = masking.known_names(_appeal_texts(result, comment)) | (names or set())
+
+    def _safe(text: str) -> str:
+        return prompt.neutralize_tags(masking.mask_text(text, names))
+
     answer = f"step {result.answer.step}" if isinstance(result.answer, StepAnswer) else result.answer
     lines = [
         "SECOND OPINION. The operator appealed the judgment of this criterion. Re-read the dialogue and the "
@@ -59,8 +65,10 @@ async def second_opinion(
     """Public API. Model = criterion.model or settings.default_model."""
     client.get_client()  # ModelKeyMissing before any work
     model = criterion.model or get_settings().default_model
-    masked = masking.mask_transcript(conv.transcript)
-    blocks = [*prompt.build_blocks(conv, masked, checklist, criterion), appeal_block(result, comment)]
+    # one name set for every outbound block: the dialogue, the original judgment and the appeal comment
+    names = masking.known_names([*(m.text for m in conv.transcript), *_appeal_texts(result, comment)])
+    masked = masking.mask_transcript(conv.transcript, names)
+    blocks = [*prompt.build_blocks(conv, masked, checklist, criterion), appeal_block(result, comment, names)]
     calls: list[LLMCallRecord] = []
 
     async def ask(extra: list[dict]) -> SecondOpinionOutput:

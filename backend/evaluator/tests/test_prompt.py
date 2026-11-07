@@ -254,7 +254,7 @@ def test_replaced_criterion_needs_no_code_change() -> None:
 
 
 def test_prompt_version() -> None:
-    assert prompt.PROMPT_VERSION == "c2"
+    assert prompt.PROMPT_VERSION == "c3"
 
 
 def test_call_offsets_out_of_order_and_non_iso():

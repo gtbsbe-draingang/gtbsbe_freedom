@@ -135,7 +135,8 @@ class _Recorder:
 
 def _judgment_row(j: Any) -> dict:
     d = j.model_dump(mode="json", by_alias=True, exclude={"calls"})
-    return {k: d[k] for k in ("criterion_id", "answer", "kinds", "needs_review", "confidence", "model", "explanation")}
+    return {k: d[k] for k in ("criterion_id", "answer", "kinds", "needs_review", "confidence", "model", "explanation", "evidence",
+                               "na_reason", "coaching")}
 
 
 async def run(
@@ -205,6 +206,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path)
     args = ap.parse_args(argv)
 
+    from app.db import migrate
+
+    migrate()  # the c_llm_calls table; the app does this on startup, a script run must too
     convs = load_dev_conversations(args.data)
     expectations = load_expectations(args.expectations)
     ids, criteria = _split(args.ids), _split(args.criteria)

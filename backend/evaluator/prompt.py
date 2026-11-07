@@ -13,7 +13,7 @@ from datetime import datetime
 
 from evaluator._compat import ChecklistVersion, Conversation, Criterion, Message
 
-PROMPT_VERSION = "c2"  # c2: masking fixes, safer call offsets
+PROMPT_VERSION = "c3"  # c2: masking fixes, safer call offsets; c3: KZ name stems, names shared across appeal blocks
 
 SYSTEM_PROMPT = """\
 You are a quality auditor of customer-support dialogues of a brokerage company. Each request gives you \

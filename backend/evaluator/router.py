@@ -22,13 +22,15 @@ from evaluator._compat import Conversation
 router = APIRouter(tags=["evaluator"])
 
 
-def _no_store(conversation: str) -> Conversation | None:
-    return None
+def _from_store(conversation: str) -> Conversation | None:
+    from app.store import get_conversation  # lazy: app.main imports this module while it starts
+
+    return get_conversation(conversation)
 
 
-# Hook: B's conversation store replaces this (`evaluator.router.find_conversation = ...`) when it
-# exists; C owns no conversation storage. Returns the Conversation or None. Tests monkeypatch it.
-find_conversation: Callable[[str], Conversation | None] = _no_store
+# Hook: the conversation lookup (B's store; C owns no conversation storage). Returns the
+# Conversation or None. Unit tests monkeypatch it; tests/app/test_evaluator_wiring.py does not.
+find_conversation: Callable[[str], Conversation | None] = _from_store
 
 
 def _payload(conversation: str, to: str, texts: list[str]) -> dict:

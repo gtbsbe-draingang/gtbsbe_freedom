@@ -10,6 +10,7 @@ and non-names («Вам», «AIM», «ноутбука») untouched. Any change 
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 
 from evaluator._compat import Message
 
@@ -64,6 +65,9 @@ _NAMES = [
 ]
 
 
+_KZ_SUFFIX = re.compile(r"(?:мын|мін|пын|пін|бын|бін)$")
+
+
 def _numbers(text: str) -> str:
     for pattern, key in ((_EMAIL, "email"), (_IBAN, "account"), (_CARD, "card"), (_IIN, "iin"), (_PHONE, "phone")):
         text = pattern.sub(PLACEHOLDERS[key], text)
@@ -76,6 +80,8 @@ def _introduced(text: str) -> set[str]:
     for pattern in _NAMES:
         for m in pattern.finditer(text):
             found.update(t for t in m.group(1).split() if len(t) >= 3)
+    # «Мен Нұрланмын»: later mentions are the bare «Нұрлан», so remember the stem without the suffix too
+    found.update(stem for t in list(found) if len(stem := _KZ_SUFFIX.sub("", t)) >= 3)
     return found
 
 
@@ -89,16 +95,23 @@ def _mask(text: str, names: set[str]) -> str:
     return text
 
 
-def mask_text(text: str) -> str:
-    """Replace personal data in one message text with PLACEHOLDERS values. Names introduced in
-    the text are masked everywhere in it."""
-    return _mask(text, _introduced(text))
+def known_names(texts: Iterable[str]) -> set[str]:
+    """Every name introduced by a cue in any of `texts`; pass it to mask_text / mask_transcript so a
+    name introduced in one text (the dialogue) is masked in another (an appeal comment)."""
+    found: set[str] = set()
+    for t in texts:
+        found |= _introduced(t)
+    return found
 
 
-def mask_transcript(messages: list[Message]) -> list[Message]:
+def mask_text(text: str, names: set[str] | None = None) -> str:
+    """Replace personal data in one text with PLACEHOLDERS values. Names introduced in the text,
+    plus `names`, are masked everywhere in it."""
+    return _mask(text, _introduced(text) | (names or set()))
+
+
+def mask_transcript(messages: list[Message], names: set[str] | None = None) -> list[Message]:
     """Same length, order and indices; only `text` changes. The input is never mutated.
-    A name introduced in any message is masked wherever it appears later (or earlier)."""
-    names: set[str] = set()
-    for m in messages:
-        names |= _introduced(m.text)
+    A name introduced in any message (or given in `names`) is masked wherever it appears."""
+    names = known_names(m.text for m in messages) | (names or set())
     return [m.model_copy(update={"text": _mask(m.text, names)}) for m in messages]

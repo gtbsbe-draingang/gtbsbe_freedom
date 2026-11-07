@@ -134,3 +134,9 @@ def test_later_mentions_across_transcript_masked():
 def test_no_name_no_global_masking():
     conv = make_conv([("operator", "Здравствуйте"), ("client", "Алия мне не знакома")])
     assert [m.text for m in mask_transcript(conv.transcript)] == ["Здравствуйте", "Алия мне не знакома"]
+
+
+def test_kazakh_name_with_suffix_is_masked_bare_in_later_messages():
+    conv = make_conv([("operator", "Сәлем, мен Нұрланмын"), ("client", "Нұрлан, көмектесіңіз")], language="KZ")
+    out = [m.text for m in mask_transcript(conv.transcript)]
+    assert out == [f"Сәлем, мен {N}", f"{N}, көмектесіңіз"]

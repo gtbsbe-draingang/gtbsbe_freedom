@@ -1,9 +1,7 @@
 """S3 (#17): call_structured against FakeAsyncAnthropic (the Claude API is never called)."""
 
+import anthropic  # a project dependency: these tests must run, never skip
 import pytest
-
-pytest.importorskip("anthropic")
-import anthropic
 import httpx2
 
 from evaluator import client

@@ -256,3 +256,14 @@ def test_unknown_criterion_id_raises_before_any_call(scripted):
     with pytest.raises(ValueError, match="c99"):
         run(conv, cl, criteria=["c01", "c99"])
     assert scripted.calls == []
+
+
+def test_reused_judgment_takes_the_new_criterion_id(scripted):
+    """Keys omit criterion ids: an equivalent criterion under a new id reuses the judgment, relabelled."""
+    conv, cache = make_conv(LINES), DictCache()
+    scripted.script.append(YES)
+    first = run(conv, make_checklist([make_criterion(id="old")]), cache=cache, with_info=False)
+    assert first.results[0].criterion_id == "old" and first.calls
+    r = run(conv, make_checklist([make_criterion(id="new")]), cache=cache, with_info=False)
+    assert r.reused == ["new"] and r.calls == []
+    assert r.results[0].criterion_id == "new" and r.results[0].calls == []

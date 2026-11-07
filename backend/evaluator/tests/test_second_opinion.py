@@ -226,3 +226,15 @@ async def test_empty_reasoning_twice_raises(scripted: ScriptedCalls, db) -> None
     with pytest.raises(JudgmentFailed) as e:
         await run()
     assert e.value.reason == "invalid_answer"
+
+
+async def test_names_from_the_dialogue_are_masked_in_every_outbound_block(scripted, api_key, db):
+    """The appeal comment alone does not introduce «Анна»; the dialogue does. No block may carry it."""
+    conv = make_conv([("operator", "Здравствуйте! Меня зовут Анна."), ("client", "Анна, помогите"), ("operator", "Да")])
+    res = result(explanation="Анна не поздоровалась.",
+                 evidence=[Evidence(message_index=1, quote="Анна, помогите", role="supports")])
+    scripted.script.append(OK)
+    await run(comment="Я представилась: Анна", res=res, conv=conv)
+    blocks = scripted.calls[0]["blocks"]
+    text = "\n".join(b["text"] for b in blocks if b.get("type") == "text")
+    assert "Анна" not in text and "Я представилась: [ИМЯ]" in text

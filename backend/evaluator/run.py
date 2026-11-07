@@ -117,7 +117,8 @@ async def evaluate(
         key = keys.reuse_key(conv, checklist, c, model)
         hit = cache.get(key) if cache is not None and opts.mode == "reuse" else None
         if hit is not None:
-            found[c.id] = hit
+            # keys omit criterion ids: relabel the hit for this criterion, drop its old paid calls (as jobs.py does)
+            found[c.id] = hit.model_copy(update={"criterion_id": c.id, "calls": []})
         else:
             todo.append((c, model, key))
 

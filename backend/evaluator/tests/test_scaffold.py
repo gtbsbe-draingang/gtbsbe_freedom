@@ -23,8 +23,9 @@ from evaluator.testing import (
 )
 
 FROZEN = {
-    "masking.mask_text": "text",
-    "masking.mask_transcript": "messages",
+    "masking.known_names": "texts",
+    "masking.mask_text": "text, names=None",
+    "masking.mask_transcript": "messages, names=None",
     "prompt.neutralize_tags": "text, tags=('transcript', 'appeal_comment')",
     "prompt.render_transcript": "conv, masked",
     "prompt.render_facts": "conv",
@@ -48,7 +49,7 @@ FROZEN = {
     "judge.to_judgment": "out, *, criterion, model, reuse_key, calls, needs_review",
     "judge.judge_criterion": "conv, checklist, criterion, *, model",
     "info.dialog_info": "conv",
-    "second_opinion.appeal_block": "result, comment",
+    "second_opinion.appeal_block": "result, comment, names=None",
     "second_opinion.second_opinion": "conv, checklist, criterion, result, comment",
     "translation.translate": "conv, to='ru'",
     "translation.load_translation": "conversation, lang",
