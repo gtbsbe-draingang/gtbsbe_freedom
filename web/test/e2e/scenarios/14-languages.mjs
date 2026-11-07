@@ -27,7 +27,7 @@ export async function run(page){
   assert.ok(await page.eval(`window.__cqaTest.api.listChecklists().then(rows=>rows.some(row=>row.name==='Оценка'))`));
   for(const [lang,nav] of [['en','Evaluation'],['kk','Бағалау'],['ru','Оценка']]){
     await choose(page,lang);assert.equal(await page.text(s('nav-workspace')),nav);
-    for(const [route,test] of [['checklists','checklist-create'],['appeals','appeals-empty'],['analytics','reports-ready'],['accuracy','reports-ready'],['compare','compare-page']]){
+    for(const [route,test] of [['checklists','checklist-create'],['appeals','appeals-empty'],['analytics','reports-ready'],['compare','compare-page']]){
       await page.eval(`location.hash='#/${route}'`);
       await page.waitFor(s(test),10000);
       assert.equal(await page.eval(`document.documentElement.scrollWidth<=innerWidth`),true,`${lang}/${route}: no overflow`);

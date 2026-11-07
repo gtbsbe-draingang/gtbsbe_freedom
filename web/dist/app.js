@@ -33,6 +33,8 @@
     "dataset.label": "\u041D\u0430\u0431\u043E\u0440",
     "dataset.title": "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
     "workspace.queue": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
+    "workspace.resize.left": "\u0428\u0438\u0440\u0438\u043D\u0430 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "workspace.resize.right": "\u0428\u0438\u0440\u0438\u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0438",
     "workspace.queueClose": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u0447\u0435\u0440\u0435\u0434\u044C",
     "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "workspace.tab.scorecard": "\u041E\u0446\u0435\u043D\u043A\u0430",
@@ -509,6 +511,7 @@
     "reports.chart.matrix": "\u0413\u0434\u0435 \u043C\u043E\u0434\u0435\u043B\u044C \u0440\u0430\u0441\u0445\u043E\u0434\u0438\u0442\u0441\u044F \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043E\u043C",
     "reports.chart.matrixNote": "\u0421\u0442\u0440\u043E\u043A\u0438 \u2014 \u044D\u0442\u0430\u043B\u043E\u043D, \u0441\u0442\u043E\u043B\u0431\u0446\u044B \u2014 \u043E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438; \u0442\u043E\u043B\u044C\u043A\u043E \u0440\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F.",
     "reports.chart.step": "\u0428\u0430\u0433 \u0448\u043A\u0430\u043B\u044B",
+    "reports.chart.grossLinks": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438 \u0441 \u0433\u0440\u0443\u0431\u044B\u043C\u0438 \u043E\u0448\u0438\u0431\u043A\u0430\u043C\u0438 ({n})",
     "reports.chart.tipFail": "{title}: \u043F\u0440\u043E\u0432\u0430\u043B\u044B {fail}, N/A {na}, n={n}",
     "reports.chart.tipValue": "{title}: {value}, n={n}",
     "reports.chart.tipCell": "\u042D\u0442\u0430\u043B\u043E\u043D \xAB{from}\xBB \u2192 \u043C\u043E\u0434\u0435\u043B\u044C \xAB{to}\xBB: {n}",
@@ -552,6 +555,8 @@
     "dataset.label": "Dataset",
     "dataset.title": "Current dataset",
     "workspace.queue": "Queue",
+    "workspace.resize.left": "Resize queue",
+    "workspace.resize.right": "Resize scorecard",
     "workspace.queueClose": "Close queue",
     "workspace.tab.transcript": "Conversation",
     "workspace.tab.scorecard": "Evaluation",
@@ -1028,6 +1033,7 @@
     "reports.chart.matrix": "Where the model departs from the reference",
     "reports.chart.matrixNote": "Rows: reference, columns: model answer; disagreements only.",
     "reports.chart.step": "Scale step",
+    "reports.chart.grossLinks": "Conversations with gross errors ({n})",
     "reports.chart.tipFail": "{title}: failures {fail}, N/A {na}, n={n}",
     "reports.chart.tipValue": "{title}: {value}, n={n}",
     "reports.chart.tipCell": "Reference \u201C{from}\u201D \u2192 model \u201C{to}\u201D: {n}",
@@ -1071,6 +1077,8 @@
     "dataset.label": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440",
     "dataset.title": "\u0410\u0493\u044B\u043C\u0434\u0430\u0493\u044B \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
     "workspace.queue": "\u041A\u0435\u0437\u0435\u043A",
+    "workspace.resize.left": "\u041A\u0435\u0437\u0435\u043A \u0435\u043D\u0456",
+    "workspace.resize.right": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u0435\u043D\u0456",
     "workspace.queueClose": "\u041A\u0435\u0437\u0435\u043A\u0442\u0456 \u0436\u0430\u0431\u0443",
     "workspace.tab.transcript": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "workspace.tab.scorecard": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
@@ -1547,6 +1555,7 @@
     "reports.chart.matrix": "\u041C\u043E\u0434\u0435\u043B\u044C \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u0430\u043D \u049B\u0430\u0439\u0434\u0430 \u0430\u043B\u0448\u0430\u049B\u0442\u0430\u0439\u0434\u044B",
     "reports.chart.matrixNote": "\u0416\u043E\u043B\u0434\u0430\u0440 \u2014 \u044D\u0442\u0430\u043B\u043E\u043D, \u0431\u0430\u0493\u0430\u043D\u0434\u0430\u0440 \u2014 \u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B; \u0442\u0435\u043A \u0430\u043B\u0448\u0430\u049B\u0442\u044B\u049B\u0442\u0430\u0440.",
     "reports.chart.step": "\u0428\u043A\u0430\u043B\u0430 \u049B\u0430\u0434\u0430\u043C\u044B",
+    "reports.chart.grossLinks": "\u04E8\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435\u043B\u0435\u0440\u0456 \u0431\u0430\u0440 \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440 ({n})",
     "reports.chart.tipFail": "{title}: \u0441\u04D9\u0442\u0441\u0456\u0437\u0434\u0456\u043A {fail}, N/A {na}, n={n}",
     "reports.chart.tipValue": "{title}: {value}, n={n}",
     "reports.chart.tipCell": "\u042D\u0442\u0430\u043B\u043E\u043D \xAB{from}\xBB \u2192 \u043C\u043E\u0434\u0435\u043B\u044C \xAB{to}\xBB: {n}",
@@ -4396,8 +4405,7 @@
     compare: "checklists",
     appeals: "appeals",
     appeal: "appeals",
-    analytics: "analytics",
-    accuracy: "accuracy"
+    analytics: "analytics"
   };
   var navFor = (routeName) => NAV_OF[routeName] ?? null;
   var sameRoute = (a, b) => a?.name === b?.name && JSON.stringify(a?.params ?? {}) === JSON.stringify(b?.params ?? {});
@@ -4440,7 +4448,7 @@
       }
       return route("compare", params);
     }
-    if ((head === "analytics" || head === "accuracy") && n === 1) return route(head);
+    if (head === "analytics" && n === 1) return route(head);
     return notFound;
   }
   var encoded = (params, key) => {
@@ -4473,8 +4481,6 @@
       }
       case "analytics":
         return "#/analytics";
-      case "accuracy":
-        return "#/accuracy";
       default:
         throw new TypeError(`href: unknown route ${JSON.stringify(name)}`);
     }
@@ -8242,18 +8248,6 @@
     };
     requestAnimationFrame(step);
   }
-  function ring(value2, label) {
-    return h(
-      "div",
-      { class: "cqa-ring", data: { tip: label }, style: { "--v": pct(value2) } },
-      svg(
-        "svg",
-        { viewBox: "0 0 120 120", "aria-hidden": "true", focusable: "false" },
-        svg("circle", { class: "cqa-ring-track", cx: 60, cy: 60, r: 50, pathLength: 100 }),
-        svg("circle", { class: "cqa-ring-arc", cx: 60, cy: 60, r: 50, pathLength: 100, transform: "rotate(-90 60 60)" })
-      )
-    );
-  }
   function hbars(rows, { ref = null } = {}) {
     return h("div", { class: "cqa-hb", attrs: { "aria-hidden": "true" } }, rows.map((r, i) => {
       const track = h(
@@ -8328,23 +8322,7 @@
       h("div", { class: "cqa-donut-center" }, h("span", { class: "cqa-donut-num", text: center }), caption ? h("span", { class: "cqa-donut-cap", text: caption }) : null)
     );
   }
-  function stack(parts) {
-    const total = parts.reduce((s, p) => s + p.value, 0) || 1;
-    return h("div", { class: "cqa-stack", attrs: { "aria-hidden": "true" } }, parts.filter((p) => p.value > 0).map((p, i) => h("span", { class: `cqa-stack-part tone-${p.tone}`, data: { tip: p.tip }, style: { "--w": pct(p.value / total), "--i": i } })));
-  }
   var legend = (items) => h("ul", { class: "cqa-legend" }, items.map((x) => h("li", {}, h("span", { class: `cqa-dot tone-${x.tone}` }), h("span", { text: x.text, verbatim: x.verbatim }))));
-  function matrix(rows, cols, counts, tip) {
-    const max = Math.max(1, ...counts.values());
-    return h("div", { class: "cqa-table-scroll", attrs: { "aria-hidden": "true" } }, h(
-      "table",
-      { class: "cqa-matrix" },
-      h("thead", {}, h("tr", {}, h("th"), cols.map((c) => h("th", { attrs: { scope: "col" }, text: c.label })))),
-      h("tbody", {}, rows.map((r) => h("tr", {}, h("th", { attrs: { scope: "row" }, text: r.label }), cols.map((c) => {
-        const n = counts.get(`${r.key}|${c.key}`) ?? 0;
-        return h("td", { class: ["cqa-matrix-cell", n ? `lvl-${Math.ceil(4 * n / max)}` : "is-zero"], data: n ? { tip: tip(r, c, n) } : {}, text: n ? String(n) : "\xB7" });
-      }))))
-    ));
-  }
   function tooltips(root) {
     const tip = h("div", { class: "cqa-tip", attrs: { role: "presentation" } });
     tip.hidden = true;
@@ -8368,41 +8346,6 @@
   var numeric = (value2) => typeof value2 === "number" && Number.isFinite(value2);
   var percentText = (value2) => numeric(value2) ? `${formatNumber(value2 * 100, { maximumFractionDigits: 2 })} %` : "\u2014";
   var averageText = (value2) => numeric(value2) ? formatNumber(value2, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "\u2014";
-  function reportAnswer(value2) {
-    if (value2 === "yes") return t("scorecard.answer.yes");
-    if (value2 === "no") return t("scorecard.answer.no");
-    if (value2 === "na") return "N/A";
-    if (numeric(value2?.step)) return t("scorecard.answer.step", { value: value2.step });
-    return typeof value2 === "string" ? value2 : "\u2014";
-  }
-  var KNOWN_NOTES = ["reports.referenceDraft", "reports.referenceDemo"];
-  function referenceNote(note) {
-    if (typeof note !== "string" || note.trim() === "") return { text: t("reports.referenceMissing"), verbatim: false };
-    const key = KNOWN_NOTES.find((k) => catalogs.ru[k] === note);
-    return key ? { text: t(key), verbatim: false } : { text: note, verbatim: true };
-  }
-  function modelText(model) {
-    const names = typeof model === "string" ? model.split(",").map((name) => name.trim()).filter(Boolean) : [];
-    return names.length ? names.join(", ") : "\u2014";
-  }
-  var measured = (ref) => ref?.checklist_id && numeric(ref.version) ? { name: ref.name || ref.checklist_id, version: ref.version } : null;
-  function accuracyEmptyText(data) {
-    if (!(data?.missing > 0)) return t("reports.noComparable");
-    const ref = measured(data.checklist);
-    return ref ? t("reports.noComparableVersion", ref) : t("reports.noComparableRun");
-  }
-  var criterionTitles = (data) => new Map((data.by_criterion ?? []).map((r) => [r.criterion_id, r.title || r.criterion_id]));
-  function disagreementFilters(data) {
-    const rows = data.disagreements ?? [];
-    const titles = criterionTitles(data);
-    const counts = /* @__PURE__ */ new Map();
-    for (const r of rows) counts.set(r.criterion_id, (counts.get(r.criterion_id) ?? 0) + 1);
-    const order = [.../* @__PURE__ */ new Set([...titles.keys(), ...counts.keys()])].filter((id) => counts.has(id));
-    return [
-      { value: "", label: t("reports.allCriteria", { n: rows.length }), verbatim: false },
-      ...order.map((id) => ({ value: id, label: `${titles.get(id) ?? id} (${counts.get(id)})`, verbatim: true }))
-    ];
-  }
   var channelText = (value2) => ({ "agent chat": t("reports.channel.chat"), "voice call": t("reports.channel.call") })[value2] ?? value2;
   var cell = (text3, verbatim = false) => h("td", { text: text3, verbatim });
   var num = (value2) => h("td", { class: "cqa-report-num", text: value2 });
@@ -8443,7 +8386,7 @@
   }
   var groupRows = (rows, field) => rows.filter((r) => numeric(r.avg_total)).map((r) => {
     const label = field === "channel" ? channelText(r[field]) : r[field];
-    return { label, verbatim: field !== "channel", value: r.avg_total / 100, text: averageText(r.avg_total), tip: t("reports.chart.tipValue", { title: label, value: averageText(r.avg_total), n: r.n }) };
+    return { label, verbatim: field !== "channel", value: r.avg_total / 100, text: `${averageText(r.avg_total)} \xB7 n=${r.n}`, tip: t("reports.chart.tipValue", { title: label, value: averageText(r.avg_total), n: r.n }) };
   });
   function statTile(label, to, format2) {
     const value2 = h("span", { class: "cqa-hero-value", text: format2(to) });
@@ -8477,133 +8420,49 @@
       tip: t("reports.chart.tipValue", { title: r.title || r.criterion_id, value: percentText(1 - r.fail_rate), n: r.n })
     }));
     const groups = [...groupRows(data.by_language ?? [], "language"), ...groupRows(data.by_channel ?? [], "channel")];
-    const kinds = [...data.gross_errors?.by_kind ?? []].sort((a, b) => b.count - a.count);
+    const gross = data.gross_errors ?? {};
+    const kinds = [...gross.by_kind ?? []].sort((a, b) => b.count - a.count);
     const shown = kinds.slice(0, 4), rest = sum(kinds.slice(4), "count");
-    const slices = [...shown.map((k) => ({ value: k.count, label: k.kind, verbatim: true })), ...rest ? [{ value: rest, label: t("reports.chart.other") }] : []].map((s, tone) => ({ ...s, tone, tip: `${s.label}: ${s.value}` }));
+    const unnamed = Math.max(0, (gross.count ?? 0) - sum(kinds, "count"));
+    const slices = [...shown.map((k) => ({ value: k.count, label: k.kind, verbatim: true })), ...rest + unnamed ? [{ value: rest + unnamed, label: t("reports.chart.other") }] : []].map((s, tone) => ({ ...s, tone, tip: `${s.label}: ${s.value}` }));
+    const ids = gross.conversations ?? [];
+    const grossCard = chartCard(
+      t("reports.grossKinds"),
+      null,
+      donut(slices, String(gross.count ?? 0), t("reports.hero.gross")),
+      slices.length ? legend(slices.map((x) => ({ tone: x.tone, text: `${x.label}: ${x.value}`, verbatim: x.verbatim }))) : h("p", { class: "cqa-report-muted", text: t("reports.emptyCell") }),
+      ids.length ? h(
+        "details",
+        { class: "cqa-gross-links" },
+        h("summary", { text: t("reports.chart.grossLinks", { n: ids.length }) }),
+        h("ul", { class: "cqa-report-links" }, ids.map((id) => h("li", {}, link(id))))
+      ) : null
+    );
+    grossCard.dataset.test = "analytics-gross";
     return [analyticsHero(data), grid(
       shape.length >= 3 ? chartCard(t("reports.chart.shape"), t("reports.chart.shapeNote"), radar(shape)) : null,
       chartCard(t("reports.chart.failRank"), t("reports.failures"), hbars(rank)),
-      groups.length ? chartCard(t("reports.chart.scores"), null, hbars(groups)) : null,
-      slices.length ? chartCard(t("reports.grossKinds"), null, donut(slices, String(data.gross_errors?.count ?? 0), t("reports.hero.gross")), legend(slices)) : null
+      h("div", { class: "cqa-chart-col" }, groups.length ? chartCard(t("reports.chart.scores"), null, hbars(groups)) : null, grossCard)
     )];
   }
-  var ANSWERS = ["yes", "no", "na", "step"];
-  var answerKey = (value2) => typeof value2 === "string" ? value2 : "step";
-  var answerLabel2 = (key) => key === "step" ? t("reports.chart.step") : reportAnswer(key);
-  function accuracyCharts(data) {
-    const ref = data.overall.agreement;
-    const rows = (list, field) => list.filter((r) => numeric(r.agreement)).map((r) => {
-      const label = field === "title" ? r.title : field === "channel" ? channelText(r.channel) : r[field];
-      return { label, verbatim: field !== "channel", value: r.agreement, text: percentText(r.agreement), tip: t("reports.chart.tipValue", { title: label, value: percentText(r.agreement), n: r.n }) };
-    });
-    const parts = [
-      { value: data.overall.n, tone: 1, text: t("reports.chart.compared") },
-      { value: data.missing ?? 0, tone: 3, text: t("reports.chart.missing") },
-      { value: data.disputed_excluded ?? 0, tone: 2, text: t("reports.chart.disputed") }
-    ].map((p) => ({ ...p, tip: `${p.text}: ${p.value}` }));
-    const counts = /* @__PURE__ */ new Map();
-    for (const r of data.disagreements ?? []) {
-      const key = `${answerKey(r.reference)}|${answerKey(r.evaluated)}`;
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    const used = (side) => ANSWERS.filter((k) => [...counts.keys()].some((c) => c.split("|")[side] === k)).map((key) => ({ key, label: answerLabel2(key) }));
-    const groups = [...rows(data.by_language ?? [], "language"), ...rows(data.by_channel ?? [], "channel")];
-    return grid(
-      chartCard(t("reports.byCriterion"), t("reports.chart.refLine"), hbars(rows(data.by_criterion ?? [], "title"), { ref })),
-      groups.length ? chartCard(`${t("reports.byLanguage")} \xB7 ${t("reports.byChannel")}`, t("reports.chart.refLine"), hbars(groups, { ref })) : null,
-      chartCard(t("reports.chart.coverage"), null, stack(parts), legend(parts.map((p) => ({ tone: p.tone, text: `${p.text}: ${p.value}` })))),
-      counts.size ? chartCard(
-        t("reports.chart.matrix"),
-        t("reports.chart.matrixNote"),
-        matrix(used(0), used(1), counts, (r, c, n) => t("reports.chart.tipCell", { from: r.label, to: c.label, n }))
-      ) : null
-    );
-  }
   function createReportsPage(store, api, route2 = store.get().route) {
-    const accuracy = route2.name === "accuracy";
     const body = h("div", { class: "cqa-report-body", attrs: { "aria-live": "polite" } });
     const refresh = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("reports.refresh"), data: { test: "reports-refresh" }, on: { click: () => load2() } });
     const el = h(
       "div",
-      { class: "cqa-reports", data: { test: accuracy ? "accuracy-page" : "analytics-page" } },
-      h("div", { class: "cqa-report-head" }, h("h1", { text: accuracy ? t("reports.accuracyTitle") : t("reports.analyticsTitle") }), refresh),
-      h("p", { class: "cqa-report-muted", text: accuracy ? t("reports.accuracyNote") : t("reports.analyticsNote") }),
+      { class: "cqa-reports", data: { test: "analytics-page" } },
+      h("div", { class: "cqa-report-head" }, h("h1", { text: t("reports.analyticsTitle") }), refresh),
+      h("p", { class: "cqa-report-muted", text: t("reports.analyticsNote") }),
       body
     );
     tooltips(el);
     let destroyed = false;
     let run = 0;
-    function accuracyReport(data) {
-      const note = referenceNote(data.reference_note);
-      const ref = measured(data.checklist);
-      const compared = data.overall?.n > 0;
-      body.append(...[
-        h("p", { class: "cqa-report-reference", verbatim: note.verbatim, text: note.text, data: { test: "accuracy-reference" } }),
-        h("p", { class: "cqa-report-meta", text: t("reports.model", { model: modelText(data.model) }), data: { test: "accuracy-model" } }),
-        ref ? h("p", { class: "cqa-report-meta", text: t("reports.checklist", ref), data: { test: "accuracy-checklist" } }) : null,
-        compared ? h(
-          "div",
-          { class: "cqa-report-brand", data: { test: "accuracy-overall" } },
-          h("span", { class: "cqa-report-brand-label", text: t("reports.overallLabel") }),
-          h("span", { class: "cqa-report-brand-value", text: percentText(data.overall.agreement) }),
-          h("span", { class: "cqa-report-brand-n", text: t("reports.overallN", { n: data.overall.n }) }),
-          numeric(data.overall.agreement) ? ring(data.overall.agreement, percentText(data.overall.agreement)) : null
-        ) : null,
-        h("p", { data: { test: "accuracy-counts" }, text: t("reports.counts", { missing: data.missing ?? 0, disputed: data.disputed_excluded ?? 0 }) })
-      ].filter(Boolean));
-      if (!compared) {
-        body.append(h("p", { class: "cqa-report-empty", text: accuracyEmptyText(data), data: { test: "reports-empty" } }));
-        return;
-      }
-      body.append(accuracyCharts(data));
-      for (const [key, label, heading, field] of [["by_criterion", t("reports.byCriterion"), t("reports.criterion"), "title"], ["by_language", t("reports.byLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.byChannel"), t("reports.channelColumn"), "channel"]]) {
-        body.append(table(label, [heading, t("reports.agreement"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), bar(r.agreement), num(r.n)]), `accuracy-${key.slice(3)}`));
-      }
-      body.append(disagreementsSection(data));
-    }
-    function disagreementsSection(data) {
-      const rows = data.disagreements ?? [];
-      const titles = criterionTitles(data);
-      const section = table(
-        t("reports.disagreements"),
-        [t("reports.conversation"), t("reports.criterion"), t("reports.reference"), t("reports.evaluated")],
-        rows.map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(titles.get(r.criterion_id) ?? r.criterion_id, true), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]),
-        "disagreement"
-      );
-      if (!rows.length) return section;
-      const trs = [...section.querySelectorAll("tbody tr")];
-      rows.forEach((r, i) => {
-        trs[i].dataset.criterion = r.criterion_id;
-      });
-      const filter = h(
-        "select",
-        {
-          class: "cqa-report-select",
-          attrs: { "aria-label": t("reports.criterion") },
-          data: { test: "disagreement-filter" },
-          on: { change: () => {
-            for (const tr of trs) tr.hidden = filter.value !== "" && tr.dataset.criterion !== filter.value;
-          } }
-        },
-        disagreementFilters(data).map((o) => h("option", { attrs: { value: o.value }, text: o.label, verbatim: o.verbatim }))
-      );
-      section.querySelector("h2").after(filter);
-      return section;
-    }
     function analyticsReport(data) {
       const criteria = data.by_criterion ?? [];
       if (!criteria.length) body.append(h("p", { text: t("reports.noEvaluations"), data: { test: "reports-empty" } }));
       else body.append(...analyticsCharts(data));
       body.append(table(t("reports.byCriterion"), [t("reports.criterion"), t("reports.failures"), "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id, true), bar(r.fail_rate), bar(r.na_rate), num(r.n)]), "analytics-criterion"));
-      for (const [key, label, heading, field] of [["by_language", t("reports.avgLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.avgChannel"), t("reports.channelColumn"), "channel"]]) {
-        body.append(table(label, [heading, t("reports.average"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), num(averageText(r.avg_total)), num(r.n)]), `analytics-${field}`));
-      }
-      const gross = data.gross_errors ?? {};
-      body.append(
-        h("h2", { text: t("reports.gross", { n: gross.count ?? 0 }), data: { test: "analytics-gross" } }),
-        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(grossKindsText([r.kind])), num(r.count)])),
-        h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id))))
-      );
     }
     async function load2() {
       const mine = ++run;
@@ -8612,22 +8471,17 @@
       body.classList.remove("is-in");
       clear(body).append(h("p", { text: t("reports.loading"), data: { test: "reports-loading" } }));
       try {
-        const data = await (accuracy ? api.getAccuracy() : api.getAnalytics());
+        const data = await api.getAnalytics();
         if (destroyed || mine !== run) return;
         clear(body);
         body.setAttribute("data-test", "reports-ready");
-        if (accuracy) accuracyReport(data);
-        else analyticsReport(data);
+        analyticsReport(data);
         requestAnimationFrame(() => requestAnimationFrame(() => {
           if (!destroyed && mine === run) body.classList.add("is-in");
         }));
       } catch (error) {
         if (destroyed || mine !== run) return;
         body.removeAttribute("data-test");
-        if (accuracy && error?.code === "reference_missing") {
-          clear(body).append(h("p", { class: "cqa-report-empty", attrs: { role: "status" }, text: errorText(error), data: { test: "accuracy-no-reference" } }));
-          return;
-        }
         clear(body).append(h(
           "div",
           { attrs: { role: "alert" }, data: { test: "reports-error" } },
@@ -9170,7 +9024,7 @@
   }
 
   // src/ui/shell.js
-  var NAV = ["workspace", "checklists", "appeals", "analytics", "accuracy"];
+  var NAV = ["workspace", "checklists", "appeals", "analytics"];
   var ROLES4 = ["controller", "reviewer"];
   var normalise = (made) => made instanceof Node ? { el: made } : made;
   function placeholder(title, note) {
@@ -9314,6 +9168,68 @@
       right
     );
   }
+  var PANE_LIMITS = { left: [200, 520, 300], right: [300, 640, 390] };
+  var paneKey = (side) => `cqa-pane-${side}`;
+  function savedWidth(side) {
+    try {
+      const n = Number(globalThis.localStorage?.getItem(paneKey(side)));
+      if (n) return n;
+    } catch {
+    }
+    return PANE_LIMITS[side][2];
+  }
+  function paneResizer(root, side) {
+    const [min, max, fallback] = PANE_LIMITS[side];
+    let width = Math.min(max, Math.max(min, savedWidth(side)));
+    const apply = () => root.style.setProperty(`--ws-${side}`, `${width}px`);
+    let handle;
+    const set = (next, save) => {
+      width = Math.round(Math.min(max, Math.max(min, next)));
+      apply();
+      handle.setAttribute("aria-valuenow", String(width));
+      if (save) {
+        try {
+          globalThis.localStorage?.setItem(paneKey(side), String(width));
+        } catch {
+        }
+      }
+    };
+    const sign = side === "left" ? 1 : -1;
+    let start = null;
+    handle = h("div", {
+      class: ["cqa-resizer", `cqa-resizer--${side}`],
+      attrs: { role: "separator", "aria-orientation": "vertical", tabindex: "0", "aria-label": t(`workspace.resize.${side}`), "aria-valuemin": String(min), "aria-valuemax": String(max), "aria-valuenow": String(width) },
+      data: { test: `resize-${side}` },
+      on: {
+        pointerdown: (e) => {
+          start = { x: e.clientX, width };
+          handle.setPointerCapture(e.pointerId);
+          handle.classList.add("is-drag");
+          e.preventDefault();
+        },
+        pointermove: (e) => {
+          if (start) set(start.width + sign * (e.clientX - start.x), false);
+        },
+        pointerup: () => {
+          if (start) {
+            start = null;
+            handle.classList.remove("is-drag");
+            set(width, true);
+          }
+        },
+        dblclick: () => set(fallback, true),
+        keydown: (e) => {
+          const step = e.shiftKey ? 48 : 16;
+          const move = { ArrowLeft: -step, ArrowRight: step }[e.key];
+          if (move === void 0) return;
+          e.preventDefault();
+          set(width + sign * move, true);
+        }
+      }
+    });
+    apply();
+    return handle;
+  }
   function workspaceView(store, api, route2, panes) {
     const compact = isCompact(store.get());
     const subs = [];
@@ -9367,6 +9283,7 @@
     );
     const bar2 = h("div", { class: "cqa-ws-bar" }, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
     const scrim = compact ? null : h("button", { class: "cqa-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("workspace.queueClose") }, data: { test: "queue-scrim" }, on: { click: () => store.set({ queueOpen: false }) } });
+    const grid2 = h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost);
     const el = h(
       "div",
       {
@@ -9383,8 +9300,9 @@
       },
       bar2,
       scrim,
-      h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost)
+      grid2
     );
+    grid2.append(...[queueHost ? paneResizer(el, "left") : null, paneResizer(el, "right")].filter(Boolean));
     const paint = () => {
       const { queueOpen, pane } = store.get();
       const open = Boolean(queueOpen) && !compact;
@@ -9541,7 +9459,6 @@
         checklist: createChecklistEditor,
         editor: createChecklistEditor,
         compare: createComparePage,
-        accuracy: createReportsPage,
         analytics: createReportsPage,
         ...options.views
       }

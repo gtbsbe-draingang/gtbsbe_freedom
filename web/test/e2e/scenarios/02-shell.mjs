@@ -25,7 +25,6 @@ export async function run(page) {
     ["checklists", "#/checklists", "Чек-листы"],
     ["appeals", "#/appeals", "Апелляции"],
     ["analytics", "#/analytics", "Отчёты"],
-    ["accuracy", "#/accuracy", "Точность"],
     ["workspace", "#/", null],
   ]) {
     await page.click(sel(`nav-${route}`));

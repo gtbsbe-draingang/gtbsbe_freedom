@@ -24,7 +24,6 @@ describe("router", () => {
       ["#/appeals", { name: "appeals", params: {} }],
       ["#/appeals/ap-7", { name: "appeal", params: { id: "ap-7" } }],
       ["#/analytics", { name: "analytics", params: {} }],
-      ["#/accuracy", { name: "accuracy", params: {} }],
     ];
     for (const [hash, expected] of cases) assert.deepEqual(parseRoute(hash), expected, hash);
   });
@@ -63,7 +62,6 @@ describe("router", () => {
       ["compare", {}],
       ["compare", { from_checklist: "a/b", from_version: "1", to_checklist: "c:d", to_version: "2", group_id: "DEV" }],
       ["analytics", {}],
-      ["accuracy", {}],
     ];
     for (const [name, params] of routes) {
       const link = href(name, params);
