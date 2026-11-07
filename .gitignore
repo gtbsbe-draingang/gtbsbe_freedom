@@ -1,0 +1,11 @@
+# Never committed (see CLAUDE.md)
+docs/
+.superpowers/
+data/dev.json
+data/audio/
+*.pdf
+graphify-out/
+
+# Build and tooling
+node_modules/
+.DS_Store
