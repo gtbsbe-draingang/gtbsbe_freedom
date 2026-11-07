@@ -435,6 +435,21 @@
   }
 }
 
+/* Wide layout: the column is exactly the height under the header, like the queue and the
+   scorecard, and the dialogue takes what the title and the player leave, so the page never
+   scrolls by the few pixels a fixed estimate would miss. */
+@media (min-width: 900px) {
+  .cqa .cqa-pane-transcript > .cqa-tr {
+    max-height: calc(100vh - 32px - 61px);
+  }
+
+  .cqa .cqa-pane-transcript > .cqa-tr > .cqa-tr-scroll,
+  .cqa .cqa-pane-transcript > .cqa-tr:has(.cqa-player) > .cqa-tr-scroll {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+}
+
 .cqa .cqa-tr-retry {
   margin-top: 12px;
   padding: 7px 16px;
@@ -745,6 +760,33 @@
   flex-direction: column;
   gap: 10px;
   min-width: 0;
+}
+
+/* Side by side with the transcript, the scorecard stays in view and its body scrolls inside, like
+   the queue and the transcript: a long result never drags the page. The checklist picker and the
+   run buttons stay on top. */
+@media (min-width: 700px) {
+  .cqa .cqa-pane-scorecard > .cqa-sc {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+  }
+
+  .cqa .cqa-pane-scorecard > .cqa-sc > .cqa-sc-body {
+    min-height: 0;
+    margin: 0 -4px 0 -3px;
+    padding: 3px 4px 3px 3px; /* room for the cards' outlines, which overflow would clip */
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Wide layout: minus the 60 px header as well, so at the top of the page the whole column fits. */
+@media (min-width: 900px) {
+  .cqa .cqa-pane-scorecard > .cqa-sc {
+    max-height: calc(100vh - 32px - 61px);
+  }
 }
 
 /* brand panel: one per screen */

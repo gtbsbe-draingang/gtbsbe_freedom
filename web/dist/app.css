@@ -1209,6 +1209,16 @@
     max-height: max(240px, calc(100vh - 320px));
   }
 }
+@media (min-width: 900px) {
+  .cqa .cqa-pane-transcript > .cqa-tr {
+    max-height: calc(100vh - 32px - 61px);
+  }
+  .cqa .cqa-pane-transcript > .cqa-tr > .cqa-tr-scroll,
+  .cqa .cqa-pane-transcript > .cqa-tr:has(.cqa-player) > .cqa-tr-scroll {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+}
 .cqa .cqa-tr-retry {
   margin-top: 12px;
   padding: 7px 16px;
@@ -1455,6 +1465,26 @@
   flex-direction: column;
   gap: 10px;
   min-width: 0;
+}
+@media (min-width: 700px) {
+  .cqa .cqa-pane-scorecard > .cqa-sc {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+  }
+  .cqa .cqa-pane-scorecard > .cqa-sc > .cqa-sc-body {
+    min-height: 0;
+    margin: 0 -4px 0 -3px;
+    padding: 3px 4px 3px 3px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+@media (min-width: 900px) {
+  .cqa .cqa-pane-scorecard > .cqa-sc {
+    max-height: calc(100vh - 32px - 61px);
+  }
 }
 .cqa .cqa-sc-hero {
   padding: 16px 18px;

@@ -59,6 +59,21 @@ export async function run(page) {
   await until(page, `document.querySelector(${quote(sel("job-progress"))}).textContent === ""`, "the progress line to clear");
 
   assert.equal(await page.count(sel("crit")), checklist.criteria, "one card per criterion");
+  if (page.viewport[0] >= 900) {
+    // a long result scrolls inside the scorecard; the page itself stays put, like the queue and the transcript
+    const scroll = await page.eval(`(() => {
+      const body = document.querySelector('[data-test="scorecard"] > .cqa-sc-body');
+      const page = document.scrollingElement;
+      return { inner: body.scrollHeight > body.clientHeight + 1, overflow: getComputedStyle(body).overflowY, pageScrolls: page.scrollHeight > page.clientHeight + 1 };
+    })()`);
+    assert.equal(scroll.inner, true, "the criterion cards overflow the scorecard's body");
+    assert.equal(scroll.overflow, "auto", "the scorecard's body is the scroller");
+    assert.equal(scroll.pageScrolls, false, "the page does not scroll with the scorecard");
+    await page.eval(`document.querySelector('[data-test="scorecard"] > .cqa-sc-body').scrollTop = 400`);
+    assert.equal(await page.eval(`document.scrollingElement.scrollTop`), 0, "scrolling the scorecard leaves the page at the top");
+    assert.equal(await page.eval(`(() => { const r = document.querySelector('[data-test="run-eval"]').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; })()`), true, "the run button stays on screen");
+    await page.eval(`document.querySelector('[data-test="scorecard"] > .cqa-sc-body').scrollTop = 0`);
+  }
   const total = await page.text(sel("total"));
   assert.match(total, /^(\d+,\d{2}|не рассчитывается)$/, "the total has two decimals");
   assert.equal(await page.text(sel("demo-badge")), "демо-оценка", "a mock evaluation is marked");

@@ -41,6 +41,11 @@ export async function run(page) {
   await until(page, `document.querySelector(${quote(AUDIO)}).readyState >= 1`, "the recording's metadata", 5000);
   await until(page, `document.querySelector('[data-test="player"]')?.getAttribute('data-waveform') === 'ready'`, "the decoded waveform", 15000);
   assert.equal(await page.count(sel("waveform-track")), 2, "client and operator rows");
+  if (page.viewport[0] >= 900) {
+    // the dialogue shrinks to what the player leaves: the column fits under the header, the page stays put
+    assert.equal(await page.eval("document.scrollingElement.scrollHeight <= document.scrollingElement.clientHeight + 1"), true, "the page does not scroll with the player open");
+    assert.equal(await page.eval(`(() => { const s = document.querySelector('[data-test="transcript-list"]'); return s.clientHeight >= 200 && s.scrollHeight > s.clientHeight; })()`), true, "the call's dialogue scrolls in its own pane");
+  }
   assert.equal(await page.count(".cqa-wave-bar"), 440, "real decoded envelope on both rows");
   assert.equal(await page.eval(`document.querySelectorAll('.cqa-wave-bar[height="2"]').length < 440`), true, "recording contains non-silent waveform bars");
   // Playback controls and timeline navigation stay linked to the same recording.

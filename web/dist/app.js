@@ -6096,7 +6096,9 @@
       else if (basketButton.isConnected) basketButton.focus();
     }
     const onOutside = (event) => {
-      if (!bar2.contains(event.target)) closeBasket();
+      const target = event.target;
+      if (target instanceof Node && (basketList.contains(target) || basketButton.contains(target))) return;
+      closeBasket();
     };
     function openBasket() {
       if (selection().size === 0) return;
