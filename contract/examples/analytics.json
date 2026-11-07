@@ -31,17 +31,17 @@
   ],
   "by_language": [
     {
-      "language": "ru",
+      "language": "RU",
       "avg_total": 78.4,
       "n": 30
     },
     {
-      "language": "kz",
+      "language": "KZ",
       "avg_total": 71.9,
       "n": 12
     },
     {
-      "language": "en",
+      "language": "EN",
       "avg_total": 80.2,
       "n": 8
     }

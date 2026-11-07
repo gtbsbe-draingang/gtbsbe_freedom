@@ -48,7 +48,7 @@
     },
     "language": {
       "type": "string",
-      "description": "For example ru, kz or en."
+      "description": "Uppercase code by convention: RU, KZ or EN. Other codes are kept as given, so this stays a plain string."
     },
     "audio": {
       "type": [
@@ -241,10 +241,14 @@
           ]
         },
         "outcome": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "enum": [
+            "resolved",
+            "passed_to_specialists",
+            "unresolved",
+            "client_left",
+            null
+          ],
+          "description": "How the request ended. topic, mood_start and mood_end are free text."
         }
       }
     },
@@ -296,7 +300,7 @@
               "number",
               "null"
             ],
-            "description": "Pitch span of the line, in Hz."
+            "description": "Pitch range of the part, in semitones."
           },
           "rate_wpm": {
             "type": [
@@ -310,14 +314,14 @@
               "number",
               "null"
             ],
-            "description": "Number of pauses in the line."
+            "description": "Seconds of silence inside the part."
           },
           "overlap": {
             "type": [
               "number",
               "null"
             ],
-            "description": "Seconds of overlapping speech."
+            "description": "Seconds the part overlaps the client's speech."
           }
         }
       },

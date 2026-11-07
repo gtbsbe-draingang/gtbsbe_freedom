@@ -95,11 +95,8 @@
       "description": "Decimals of the total (2)."
     },
     "guidance": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "description": "Shared text; for the official checklist the page 3 guidance verbatim."
+      "type": "string",
+      "description": "Shared text; for the official checklist the page 3 guidance verbatim. Empty string when none."
     },
     "sections": {
       "type": "array",
@@ -232,10 +229,8 @@
           "description": "Violation kinds of a gross-error criterion; empty otherwise."
         },
         "guidance": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string",
+          "description": "Per-criterion guidance; empty string when none."
         },
         "model": {
           "type": [

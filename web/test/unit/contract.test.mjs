@@ -323,6 +323,79 @@ describe("schema rules", () => {
     }
   });
 
+  test("info.outcome is one of the agreed values; the other info fields are free text", () => {
+    const ajv = buildAjv();
+    const outcomes = ["resolved", "passed_to_specialists", "unresolved", "client_left", null];
+    for (const name of ["conversation", "queue-item"]) {
+      const validate = validator(ajv, name);
+      const base = example(name === "conversation" ? "conversation.chat-ru.json" : "queue-item.chat-ru.json");
+      for (const outcome of outcomes) {
+        base.info.outcome = outcome;
+        assert.ok(validate(base), `${name}: outcome ${outcome} is allowed: ${describeErrors(validate)}`);
+      }
+      for (const outcome of ["вопрос решён", "solved", ""]) {
+        base.info.outcome = outcome;
+        assert.equal(validate(base), false, `${name}: outcome "${outcome}" is rejected`);
+      }
+      base.info = { topic: "Любая тема", mood_start: "любое", mood_end: "любое", outcome: "resolved" };
+      assert.ok(validate(base), `${name}: topic and moods are free text`);
+      base.info = null;
+      assert.ok(validate(base), `${name}: info may be null`);
+    }
+  });
+
+  test("language is a plain string with the RU/KZ/EN convention in the examples", () => {
+    const ajv = buildAjv();
+    const conv = example("conversation.chat-ru.json");
+    conv.language = "DE";
+    assert.ok(validator(ajv, "conversation")(conv), "another code is kept, not rejected");
+
+    const languages = [];
+    for (const { name, data } of examples()) {
+      if (name === "conversation" || name === "queue-item") languages.push(data.language);
+      if (name === "analytics" || name === "accuracy") languages.push(...data.by_language.map((r) => r.language));
+    }
+    assert.ok(languages.length >= 8);
+    for (const language of languages) assert.match(language, /^(RU|KZ|EN)$/);
+  });
+
+  test("checklist guidance is a string, empty when there is none", () => {
+    const ajv = buildAjv();
+    const version = validator(ajv, "checklist-version");
+    const seed = validator(ajv, "checklist-seed");
+    const custom = example("checklist-version.custom.json");
+    assert.equal(custom.guidance, "");
+    assert.ok(custom.criteria.every((c) => c.guidance === ""));
+    assert.ok(version(custom), describeErrors(version));
+
+    const nullTop = clone(custom);
+    nullTop.guidance = null;
+    assert.equal(version(nullTop), false, "checklist guidance null is rejected");
+    const nullCriterion = clone(custom);
+    nullCriterion.criteria[0].guidance = null;
+    assert.equal(version(nullCriterion), false, "criterion guidance null is rejected");
+
+    const official = readJson(seedFile);
+    assert.ok(seed(official), describeErrors(seed));
+    official.guidance = null;
+    assert.equal(seed(official), false, "the seed's guidance is a string too");
+  });
+
+  test("voice measurements use semitones, seconds and words per minute", () => {
+    const call = example("conversation.call-ru.json");
+    for (const m of call.voice_measurements) {
+      assert.ok(m.pitch_range >= 0 && m.pitch_range <= 24, `pitch_range ${m.pitch_range} is in semitones`);
+      assert.ok(m.pauses <= m.to_seconds - m.from_seconds, "pauses are seconds of silence inside the part");
+      assert.ok(m.overlap <= m.to_seconds - m.from_seconds, "overlap is seconds inside the part");
+    }
+    const schema = readJson(join(schemaDir, "conversation.schema.json"));
+    const props = schema.$defs.voice_measurements.items.properties;
+    assert.match(props.pitch_range.description, /semitones/);
+    assert.match(props.pauses.description, /Seconds of silence/);
+    assert.match(props.rate_wpm.description, /words per minute/);
+    assert.match(props.overlap.description, /overlaps the client/);
+  });
+
   test("conversation references need the {group_id}:{conversation_id} form", () => {
     const ajv = buildAjv();
     const cases = [

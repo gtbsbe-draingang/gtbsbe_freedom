@@ -58,7 +58,8 @@
         ],
         "properties": {
           "language": {
-            "type": "string"
+            "type": "string",
+            "description": "Same code as conversation.language (RU, KZ, EN)."
           },
           "avg_total": {
             "type": [

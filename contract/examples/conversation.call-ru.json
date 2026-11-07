@@ -4,7 +4,7 @@
   "group_id": "example",
   "conversation_id": "p4-ru-001",
   "channel": "voice call",
-  "language": "ru",
+  "language": "RU",
   "transcript": [
     {
       "timestamp": "2026-11-02T10:15:03+05:00",
@@ -66,7 +66,7 @@
     "topic": "Комиссия за сделки на зарубежном рынке",
     "mood_start": "нейтральное",
     "mood_end": "раздражённое",
-    "outcome": "вопрос не решён"
+    "outcome": "unresolved"
   },
   "audio_offsets": [
     {
@@ -111,7 +111,7 @@
       "message_index": 0,
       "from_seconds": 0,
       "to_seconds": 1.4,
-      "pitch_range": 41,
+      "pitch_range": 2.4,
       "rate_wpm": 60,
       "pauses": 0,
       "overlap": 0
@@ -120,25 +120,25 @@
       "message_index": 2,
       "from_seconds": 8,
       "to_seconds": 13.6,
-      "pitch_range": 63,
+      "pitch_range": 5.8,
       "rate_wpm": 142,
-      "pauses": 1,
+      "pauses": 0.6,
       "overlap": 0
     },
     {
       "message_index": 4,
       "from_seconds": 23,
       "to_seconds": 28.8,
-      "pitch_range": 48,
+      "pitch_range": 4.1,
       "rate_wpm": 131,
-      "pauses": 2,
+      "pauses": 1.3,
       "overlap": 0
     },
     {
       "message_index": 6,
       "from_seconds": 35,
       "to_seconds": 41.2,
-      "pitch_range": 92,
+      "pitch_range": 9.6,
       "rate_wpm": 168,
       "pauses": 0,
       "overlap": 0.8
@@ -147,7 +147,7 @@
       "message_index": 8,
       "from_seconds": 46,
       "to_seconds": 49.5,
-      "pitch_range": 70,
+      "pitch_range": 7.2,
       "rate_wpm": 176,
       "pauses": 0,
       "overlap": 0

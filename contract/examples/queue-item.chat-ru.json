@@ -4,7 +4,7 @@
   "group_id": "example",
   "conversation_id": "p1-ru-001",
   "channel": "agent chat",
-  "language": "ru",
+  "language": "RU",
   "audio": null,
   "audio_unavailable_reason": "none",
   "status": "evaluated",
@@ -19,7 +19,7 @@
     "topic": "Пополнение брокерского счёта и справка для налоговой",
     "mood_start": "нейтральное",
     "mood_end": "позитивное",
-    "outcome": "вопрос решён"
+    "outcome": "resolved"
   },
   "audio_offsets": [],
   "voice_measurements": [],
