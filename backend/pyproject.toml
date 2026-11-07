@@ -20,6 +20,11 @@ dependencies = [
 cqa-serve = "app.cli:serve"
 cqa-snapshot = "app.cli:snapshot"
 
+[project.optional-dependencies]
+asr = [
+    "faster-whisper>=1.2",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
