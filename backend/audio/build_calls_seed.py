@@ -21,10 +21,13 @@ def build_calls_seed(official: dict) -> dict:
     result.pop('id', None)
     result.pop('created_at', None)
     result.update(checklist_id='calls', version=1, name='Звонки', channel='call', locked=False,
-                  description='Производный чек-лист для звонков с дополнительным критерием голоса.',
-                  based_on={'checklist_id': official['checklist_id'], 'version': official['version']})
+                  description='Официальные 8 критериев с формулировками для звонков и критерий 09 по записи')
+    # The seed shape carries no based_on and no fingerprints; the loader adds what it needs.
+    result.pop('based_on', None)
     for criterion in result['criteria']:
-        criterion.pop('fingerprint', None)  # the authoritative loader recomputes changed text
+        criterion.pop('fingerprint', None)
+        if criterion['id'] == 'c01':
+            criterion['wording'] = criterion['wording'].replace('в первом ответе', 'в начале разговора')
         for field in ('wording', 'na_condition'):
             if field in criterion:
                 criterion[field] = voice_text(criterion[field])

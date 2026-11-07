@@ -126,11 +126,12 @@ def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
     assert empty.json()['overall'] == {'agreement': None, 'n': 0}
     assert empty.json()['missing'] == 4
 
-    # Real persisted runs. The store returns the latest done run per conversation for the exact
-    # version; the report then drops mock runs. Older, failed and other-version runs never count.
+    # Real persisted runs: only a's latest done MODEL run counts. The mock run is the newest of
+    # all (review of PR 56: it must not hide the real run); older, failed, other-version,
+    # other-checklist and other-group runs never count.
     for name, change in [
         ('old', {'created_at': '2025-01-01T00:00:00Z'}),
-        ('mock', {'source': 'mock', 'created_at': '2025-01-02T00:00:00Z'}),
+        ('mock', {'source': 'mock', 'created_at': '2026-12-31T00:00:00Z'}),
         ('failed', {'status': 'failed'}),
         ('version', {'version': 2}), ('checklist', {'checklist_id': 'custom'}),
         ('control', {'conversation': 'CONTROL:a'}),
@@ -151,7 +152,8 @@ def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
     assert data['overall'] == {'agreement': 1.0, 'n': 1}
     assert data['missing'] == 3
     assert next(r for r in data['by_criterion'] if r['criterion_id'] == 'c02')['agreement'] is None
-    assert 'control' not in {e.id for e in store.list_evaluations('official-chat', 1, group_id='DEV')}
+    # the shared store still returns the newest done run of any source for the other reports
+    assert [e.id for e in store.list_evaluations('official-chat', 1, group_id='DEV') if e.conversation == 'DEV:a'] == ['mock']
 
 
 @pytest.mark.parametrize('field', ['overall', 'by_criterion', 'by_language', 'by_channel'])

@@ -1,6 +1,6 @@
 # Reference answers for DEV
 
-`dev_labels.json` holds our reference answers for the 65 DEV dialogs and the 8 criteria of the official checklist (`official-chat` v1, criteria `c01` to `c08`): 520 answers. They are our references, not the organisers' ground truth, and the UI says so.
+`dev_labels.json` holds our reference answers for the 65 DEV dialogs and the 8 criteria of the official checklist (`official-chat` **v2**, criteria `c01` to `c08`): 520 answers. They are our references, not the organisers' ground truth, and the UI says so.
 
 These are draft labels from the transcripts, not human-reviewed ground truth. Team review is still pending (Task 8, issue #24). All 520 labels need review, including the 479 not currently marked disputed. They support the provisional accuracy report and model comparison (#26); they do not yet establish evaluator accuracy.
 
@@ -27,7 +27,7 @@ uv run pytest tests/quality
 
 ## Readings applied (#25)
 
-The four #25 questions are written into the official seed as per-criterion `guidance` that starts with «Уточнение команды: ». The official `wording` is unchanged. Guidance is part of the criterion fingerprint, so evaluations made before this change are not reused. The team can still overrule any of these; if it does, change the seed guidance and these labels together.
+The four #25 questions are published as a new immutable version, `checklists/official-chat-v2.json`: v1 with per-criterion `guidance` that starts with «Уточнение команды: » on c01, c03, c06 and c07. v1 stays exactly as published, and a database that already holds v1 keeps it; startup adds v2 next to it. The official `wording` is unchanged. Guidance is part of the criterion fingerprint, so v1 judgments of those four criteria are not reused for v2 (the other four can be). The labels are for v2, and the accuracy report defaults to v2. The app's default checklist is still v1 (`DEFAULT_CHECKLIST_VERSION` in `backend/app/settings.py`); moving it to v2 is stream B's call. If the team overrules a decision, publish v3 and relabel; never edit a published version.
 
 | Question | Decision (in the seed) | Labels it touches |
 |---|---|---|

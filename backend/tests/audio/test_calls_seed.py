@@ -13,7 +13,7 @@ def test_copies_authoritative_fields_without_mutating_source():
     before = deepcopy(official)
     calls = build_calls_seed(official)
     assert official == before
-    assert calls['based_on'] == {'checklist_id': 'official-chat', 'version': 3}
+    assert 'based_on' not in calls and calls['checklist_id'] == 'calls' and calls['locked'] is False
     for old, new in zip(official['criteria'], calls['criteria']):
         for field in ('id', 'section_id', 'answer_type', 'scale_steps', 'weight', 'na_allowed', 'kind', 'model'):
             assert new[field] == old[field]

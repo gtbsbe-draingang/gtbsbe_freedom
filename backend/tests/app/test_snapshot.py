@@ -270,7 +270,7 @@ def test_snapshot_round_trip(source: Source, fresh, tmp_path: Path) -> None:
 
     client = fresh()
     count = import_snapshot(path)
-    assert count == row_count(document) - 1  # the seeded official checklist is not inserted again
+    assert count == row_count(document) - len(checklists.seed_files())  # seeded checklists are not inserted again
 
     assert (totals(OFFICIAL), totals(copy_key)) == before_totals
     assert len(totals(OFFICIAL)) == 6
@@ -647,7 +647,7 @@ def test_import_warns_when_the_seeded_checklist_differs_from_the_snapshots_copy(
     path, _ = exported(source, tmp_path)  # exported while the seed file was still the original
     seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", change))
     fresh()  # the new database is seeded from the changed file
-    seeded = rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'")
+    seeded = rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat' AND version = 1")
 
     with caplog.at_level(logging.WARNING, logger="app.snapshot"):
         count = import_snapshot(path)
@@ -657,7 +657,7 @@ def test_import_warns_when_the_seeded_checklist_differs_from_the_snapshots_copy(
     assert "official-chat" in warned[0].getMessage() and "version 1" in warned[0].getMessage()
     assert "Changed after" not in caplog.text and "(new)" not in caplog.text  # names the checklist, not its text
     assert count > 0 and len(store.list_conversations()) == 6  # the import still went ahead
-    assert rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'") == seeded  # seeded one kept
+    assert rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat' AND version = 1") == seeded  # seeded one kept
 
 
 def test_import_does_not_warn_when_the_seeded_checklist_has_the_same_content(
@@ -971,7 +971,8 @@ def test_a_registered_table_round_trips(source: Source, fresh, translations, tmp
 
     fresh()
     assert translation_rows() == []
-    assert import_snapshot(path) == row_count(document) - 1  # the seeded official checklist is skipped
+    # the checklists seeded at startup (official, plus D's calls checklist when present) are skipped
+    assert import_snapshot(path) == row_count(document) - len(checklists.seed_files())
     assert translation_rows() == before
     assert len(store.list_conversations()) == 6  # B's parts in the same import
 
@@ -1011,7 +1012,7 @@ def test_a_part_not_registered_here_is_skipped_with_a_warning(
 ) -> None:
     add_translation(CHAT, "ru", ["Добрый день"])
     path, document = exported(source, tmp_path)
-    expected = row_count(document) - 1 - len(document[FAKE_PART])  # no seeded checklist, no unknown part
+    expected = row_count(document) - len(checklists.seed_files()) - len(document[FAKE_PART])  # no seeded checklist, no unknown part
     monkeypatch.setattr(snapshots, "_REGISTERED", {})  # the importing machine lacks that package
     fresh()
 
