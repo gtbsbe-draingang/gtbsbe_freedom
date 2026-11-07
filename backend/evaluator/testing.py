@@ -247,6 +247,23 @@ def status_error(cls: type, status: int) -> Exception:
 
 
 def from_recorded(path: Any) -> FakeAsyncAnthropic:
-    """FakeAsyncAnthropic replaying responses saved by `devrun --record`. S8 (#20)."""
-    raise NotImplementedError("S8 (#20): from_recorded")
+    """FakeAsyncAnthropic replaying responses saved by `devrun --record`. S8 (#20).
+
+    `path` is a JSON file or a directory of them (read in name order). Each file holds one entry or a
+    list of entries: {"payload": {...} | "text": str, "stop_reason"?, "usage"?: [in, write, read, out],
+    "model"?}; responses replay in order."""
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    files = sorted(p.glob("*.json")) if p.is_dir() else [p]
+    script: list[Any] = []
+    for f in files:
+        data = json.loads(f.read_text(encoding="utf-8"))
+        for e in data if isinstance(data, list) else [data]:
+            kw: dict[str, Any] = {k: e[k] for k in ("stop_reason", "model") if k in e}
+            if "usage" in e:
+                kw["usage"] = tuple(e["usage"])
+            script.append(text_response(e["payload"] if "payload" in e else e["text"], **kw))
+    return FakeAsyncAnthropic(script)
 
