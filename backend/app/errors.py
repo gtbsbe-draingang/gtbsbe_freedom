@@ -1,11 +1,14 @@
 """One error shape for the whole API: {"error": "<code>", "message": "<text>"}."""
 
+import logging
 from http import HTTPStatus
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
+logger = logging.getLogger(__name__)
 
 _MAX_LISTED_ERRORS = 5
 
@@ -56,3 +59,12 @@ def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
         return JSONResponse(_body("invalid_request", _validation_message(exc)), status_code=422)
+
+    # Anything else is a bug on our side. The client gets the same error shape and a fixed text,
+    # never the exception's own (it can carry paths, SQL or URLs); the details go to the log.
+    # Starlette serves this from its outermost middleware and then re-raises, so the response
+    # carries no CORS header and the server logs the traceback a second time.
+    @app.exception_handler(Exception)
+    async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:
+        logger.exception("Unhandled error on %s %s", request.method, request.url.path, exc_info=exc)
+        return JSONResponse(_body("internal_error", "Internal server error."), status_code=500)

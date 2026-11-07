@@ -2,7 +2,7 @@
 name = "cqa-backend"
 version = "0.1.0"
 description = "Conversation Quality Analytics backend (FastAPI)"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.162.0",
     "httpx>=0.28.1",
@@ -35,3 +35,7 @@ dev = [
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
+# importlib mode: no sys.path edits, so tests/app, tests/evaluator, tests/quality and tests/audio
+# may hold test files with the same basename. Do not add tests/app/__init__.py (it would clash
+# with the real `app` package).
+addopts = ["--import-mode=importlib"]

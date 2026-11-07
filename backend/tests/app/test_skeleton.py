@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 import sqlite3
 import sys
@@ -180,6 +181,26 @@ def test_api_error_is_mapped(client: TestClient) -> None:
     assert r.json() == {"error": "model_key_missing", "message": "No model key is configured."}
 
 
+def test_unhandled_exception_is_500_internal_error(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    def explode() -> None:
+        raise RuntimeError("secret-detail postgres://user:pw@host/db")
+
+    client.app.add_api_route("/api/explode", explode, methods=["GET"])
+    # TestClient re-raises server exceptions by default; a real client only sees the response.
+    quiet = TestClient(client.app, raise_server_exceptions=False)
+    with caplog.at_level(logging.ERROR, logger="app.errors"):
+        r = quiet.get("/api/explode")
+    assert r.status_code == 500
+    assert r.json() == {"error": "internal_error", "message": "Internal server error."}
+    assert "secret-detail" not in r.text  # the exception text is never echoed
+    logged = [rec for rec in caplog.records if rec.name == "app.errors"]
+    assert len(logged) == 1
+    assert logged[0].exc_info is not None and logged[0].exc_info[0] is RuntimeError
+    assert "secret-detail" in "".join(logging.Formatter().format(rec) for rec in logged)
+
+
 # --- SQLite ------------------------------------------------------------------------------
 
 
@@ -343,6 +364,50 @@ def test_missing_ui_directory_gives_plain_text_note(make_client: MakeClient, tmp
     assert r.status_code == 404
     assert r.json()["error"] == "not_found"
     assert client.get("/api/config").status_code == 200
+
+
+def test_post_to_unknown_api_path_is_404_with_ui_built(make_client: MakeClient, dist: Path) -> None:
+    client = make_client(WEB_DIST=str(dist))
+    r = client.post("/api/nope", json={})
+    assert r.status_code == 404
+    assert r.json()["error"] == "not_found"
+    assert "allow" not in r.headers
+
+
+def test_post_to_unknown_api_path_is_404_without_ui(make_client: MakeClient, tmp_path: Path) -> None:
+    client = make_client(WEB_DIST=str(tmp_path / "not-built"))
+    r = client.post("/api/nope", json={})
+    assert r.status_code == 404
+    assert r.json()["error"] == "not_found"
+
+
+@pytest.mark.parametrize("method", ["POST", "PUT", "PATCH", "DELETE"])
+def test_static_ui_answers_404_to_non_read_methods(make_client: MakeClient, dist: Path, method: str) -> None:
+    client = make_client(WEB_DIST=str(dist))
+    for path in ("/", "/assets/app.js", "/nope"):
+        r = client.request(method, path)
+        assert r.status_code == 404, (method, path)
+        assert r.json()["error"] == "not_found"
+
+
+def test_static_ui_never_serves_files_under_base_path(make_client: MakeClient, dist: Path) -> None:
+    (dist / "api").mkdir()
+    (dist / "api" / "leak.txt").write_text("static file inside the API prefix")
+    client = make_client(WEB_DIST=str(dist))
+    r = client.get("/api/leak.txt")
+    assert r.status_code == 404
+    assert r.json()["error"] == "not_found"
+    assert client.get("/api").status_code == 404
+    # A path that merely starts with the same letters is not under the prefix.
+    (dist / "apiary.txt").write_text("hello")
+    assert client.get("/apiary.txt").text == "hello"
+
+
+def test_static_ui_serves_everything_when_there_is_no_base_path(make_client: MakeClient, dist: Path) -> None:
+    client = make_client(WEB_DIST=str(dist), BASE_PATH="/")
+    assert client.get("/").status_code == 200
+    assert client.get("/assets/app.js").status_code == 200
+    assert client.get("/config").status_code == 200  # API routes are mounted at the root
 
 
 def test_default_ui_directory_is_repo_web_dist() -> None:
