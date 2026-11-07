@@ -2558,6 +2558,9 @@
     "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
     "batch.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u044B\u0435",
     "batch.done": "\u0413\u043E\u0442\u043E\u0432\u043E: \u043E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "batch.interrupted": "\u0421\u0432\u044F\u0437\u044C \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C \u043F\u0440\u0435\u0440\u0432\u0430\u043B\u0430\u0441\u044C \u043D\u0430 {done} \u0438\u0437 {total}: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442\u0441\u044F \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435.",
+    "batch.resume": "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0438\u0442\u044C",
     "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
     "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
     "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
@@ -3343,6 +3346,23 @@
       // the criterion id whose evidence is marked in the transcript
     };
     let destroyed = false;
+    let pendingSel = null;
+    function followShared(ref) {
+      pendingSel = null;
+      if (destroyed || !ref || id === null) return;
+      if (view.sel && view.sel.checklist_id === ref.checklist_id && view.sel.version === ref.version) return;
+      if (view.busy) {
+        pendingSel = ref;
+        return;
+      }
+      if (!view.options.some((o) => o.checklist_id === ref.checklist_id && o.version === ref.version)) {
+        boot();
+        return;
+      }
+      view.sel = { checklist_id: ref.checklist_id, version: ref.version };
+      fillSelect();
+      loadSelection();
+    }
     let loadRun = 0;
     let drawer = null;
     const unwatch = [];
@@ -3528,6 +3548,7 @@
       } finally {
         view.busy = false;
         paintBar();
+        if (pendingSel) followShared(pendingSel);
       }
     }
     function run(mode) {
@@ -3826,6 +3847,7 @@
         if (!view.busy && view.phase === "ready" && view.sel) loadSelection({ quiet: true });
       })
     );
+    unwatch.push(watch(store, (state) => state.checklistSel, (ref) => followShared(ref)));
     unwatch.push(store.subscribe((state, previous) => {
       if (state.role === previous.role) return;
       if (state.role !== "controller") drawer?.close();
@@ -4741,8 +4763,10 @@
       estimate: null,
       // the dry-run answer for the current selection and checklist
       estimating: false,
-      job: null
-      // null | {id, done, total, failed, running}
+      job: null,
+      // null | {id, done, total, failed}: the last job of this bar
+      lock: null
+      // null | "starting" | "watching" | "interrupted" | "resuming" (see runBatch)
     };
     let destroyed = false;
     let estimateTimer = null;
@@ -4788,7 +4812,7 @@
     function paint() {
       if (destroyed) return;
       const picked = selection();
-      const active = view.job?.running === true;
+      const active = busy();
       const show = picked.size > 0 || active;
       if (!show) {
         host.replaceChildren();
@@ -4807,12 +4831,19 @@
       runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
       clear(progress);
       const job = view.job;
-      if (job) {
-        progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+      if (view.lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => resume() } })
+        );
+      } else if (job) {
+        const running = view.lock === "watching";
+        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
         if (job.failed > 0) {
           progress.append(
             h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
-            job.running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } })
+            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } })
           );
         }
       }
@@ -4866,40 +4897,73 @@
         paint();
       }, ESTIMATE_DELAY_MS);
     }
-    async function follow(first) {
-      await followJob(api, first, (job, running) => {
-        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running };
+    const busy = () => view.lock !== null;
+    const snapshot = (job) => ({ id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0 });
+    async function watchJob(first) {
+      view.lock = "watching";
+      try {
+        const job = await followJob(api, first, (tick) => {
+          view.job = snapshot(tick);
+          paint();
+        });
+        view.job = snapshot(job);
+        view.lock = null;
         paint();
-      });
-      bump(store);
-      scheduleEstimate();
+        bump(store);
+        scheduleEstimate();
+      } catch (error) {
+        view.lock = "interrupted";
+        paint();
+        toastError(store, error, { retry: resume });
+      }
     }
-    async function runBatch() {
+    async function resume() {
+      const id = view.job?.id;
+      if (!id || view.lock !== "interrupted") return;
+      view.lock = "resuming";
+      paint();
+      let job;
+      try {
+        job = await api.getJob(id);
+      } catch (error) {
+        const gone = error?.code === "not_found";
+        view.lock = gone ? null : "interrupted";
+        if (gone) view.job = null;
+        paint();
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return;
+      }
+      await watchJob(job);
+    }
+    async function start(request, again) {
+      if (busy()) return;
+      view.lock = "starting";
+      paint();
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        view.lock = null;
+        paint();
+        toastError(store, error, { retry: again });
+        return;
+      }
+      await watchJob(first);
+    }
+    function runBatch() {
       const sel = current2();
       const picked = [...selection()];
-      if (!sel || picked.length === 0 || view.job?.running) return;
-      try {
-        await follow(await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }));
-      } catch (error) {
-        if (view.job) view.job.running = false;
-        paint();
-        toastError(store, error, { retry: runBatch });
-      }
+      if (busy() || !sel || picked.length === 0) return void 0;
+      return start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), runBatch);
     }
-    async function retry() {
+    function retry() {
       const id = view.job?.id;
-      if (!id || view.job.running) return;
-      try {
-        await follow(await api.retryJob(id));
-      } catch (error) {
-        if (view.job) view.job.running = false;
-        paint();
-        toastError(store, error, { retry });
-      }
+      if (busy() || !id) return void 0;
+      return start(() => api.retryJob(id), retry);
     }
     stops.push(
       watch(store, (state) => state.selection, (next) => {
-        if (!view.job?.running) view.job = null;
+        if (!busy()) view.job = null;
         if ((next?.size ?? 0) > 0) boot();
         scheduleEstimate();
       }),
