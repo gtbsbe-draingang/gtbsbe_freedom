@@ -18,10 +18,16 @@
 // is also published as store state `transcript` (null after destroy), so the scorecard, which is a
 // sibling pane, reaches it without a reference to this module's internals; with test hooks it is
 // on window.__cqaTest.transcript as {focusMessage, highlight}.
+//
+// An import (store `importRefresh`, bumped by the loader) may have updated this dialogue: it is
+// fetched again and redrawn only when what the pane shows changed, keeping the scroll position and
+// the marks, so the evidence the scorecard reloads points at the lines on screen.
+import { canonicalJson } from "../domain/fingerprint.js";
 import { formatOffset, offsets } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
+import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
-import { errorText } from "./toast.js";
+import { errorText, toastError } from "./toast.js";
 
 export const FLASH_MS = 1200;
 
@@ -56,6 +62,12 @@ export function highlightPlan(count, evidence, range) {
     for (let i = from; i <= to; i += 1) marks[i].checked = true;
   }
   return marks;
+}
+
+/** What the pane draws of a conversation, as one string: equal strings draw the same pane. */
+export function shownKey(conversation) {
+  const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+  return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
 }
 
 // The id of the open conversation: the pane's argument, else the workspace route, else the
@@ -106,6 +118,8 @@ export function renderTranscript(store, api, args = {}) {
   let loaded = false; // the dialogue is on screen (it may have no lines)
   let marked = []; // indexes with a highlight class, so clearing touches only those
   let pending = { highlight: null, focus: null };
+  let lastHighlight = null; // the arguments of the marks on screen, applied again after a redraw
+  let shown = null; // shownKey() of the dialogue on screen
   const flashTimers = new Map(); // index -> timer id
 
   // ---- highlight and focus --------------------------------------------------------------------
@@ -122,7 +136,8 @@ export function renderTranscript(store, api, args = {}) {
 
   function applyHighlight(criterionId, evidence, range, label) {
     clearMarks();
-    if (criterionId === null || criterionId === undefined) return;
+    lastHighlight = criterionId === null || criterionId === undefined ? null : [criterionId, evidence, range, label];
+    if (lastHighlight === null) return;
     const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
     const plan = highlightPlan(rows.length, evidence, range);
     plan.forEach((mark, i) => {
@@ -189,6 +204,7 @@ export function renderTranscript(store, api, args = {}) {
     rows = [];
     marked = [];
     loaded = true;
+    shown = shownKey(conversation);
     if (transcript.length === 0) {
       scroller.append(stateBox("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
     } else {
@@ -231,11 +247,34 @@ export function renderTranscript(store, api, args = {}) {
     }
   }
 
+  // After an import: fetch the dialogue again and redraw it only if it changed. A pane that is not
+  // showing the dialogue (still loading, or failed) loads it again instead.
+  async function refresh() {
+    if (destroyed || id === null) return;
+    if (!loaded) {
+      load();
+      return;
+    }
+    const mine = ++run;
+    try {
+      const conversation = await api.getConversation(id);
+      if (destroyed || mine !== run || shownKey(conversation) === shown) return;
+      const top = scroller.scrollTop;
+      if (pending.highlight === null && lastHighlight !== null) pending.highlight = lastHighlight;
+      show(conversation);
+      scroller.scrollTop = top;
+    } catch (error) {
+      if (destroyed || mine !== run) return;
+      toastError(store, error, { retry: refresh }); // the lines on screen stay
+    }
+  }
+
   // ---- publishing the handle ------------------------------------------------------------------
 
   function destroy() {
     if (destroyed) return;
     destroyed = true;
+    stopRefresh();
     flashTimers.forEach((timer) => clearTimeout(timer));
     flashTimers.clear();
     if (store.get().transcript === handle) store.set({ transcript: null });
@@ -243,6 +282,7 @@ export function renderTranscript(store, api, args = {}) {
     if (hook?.store === store && hook.transcript?.focusMessage === focusMessage) hook.transcript = null;
   }
 
+  const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
   store.set({ transcript: handle });
   const hook = window.__cqaTest;
   if (hook?.store === store) hook.transcript = { focusMessage, highlight };

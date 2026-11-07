@@ -1,8 +1,9 @@
-// Pure parts of the transcript pane: speaker kinds and which messages a highlight marks.
-// The DOM part is covered by the e2e scenario 05-transcript.
+// Pure parts of the transcript pane: speaker kinds, which messages a highlight marks, and when a
+// re-imported dialogue needs a redraw. The DOM part is covered by the e2e scenarios 05-transcript
+// and 07c-reimport.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { FLASH_MS, highlightPlan, speakerKind } from "../../src/ui/transcript.js";
+import { FLASH_MS, highlightPlan, shownKey, speakerKind } from "../../src/ui/transcript.js";
 
 describe("speakerKind", () => {
   test("the four known speakers", () => {
@@ -46,6 +47,26 @@ describe("highlightPlan", () => {
   test("an empty dialogue and missing arguments give nothing", () => {
     assert.deepEqual(highlightPlan(0, [{ message_index: 0, role: "supports" }], { from: 0, to: 3 }), []);
     assert.equal(highlightPlan(2, undefined, undefined).length, 2);
+  });
+});
+
+describe("shownKey: a re-import redraws the pane only when what it shows changed", () => {
+  const conv = { id: "DEV:1", conversation_id: "1", channel: "agent chat", language: "ru", status: "new", info: { topic: "a" }, transcript: [{ timestamp: "10:00", speaker: "client", text: "Здравствуйте" }] };
+
+  test("the same dialogue gives the same key, whatever else changed", () => {
+    assert.equal(shownKey(conv), shownKey({ ...conv, status: "evaluated", info: { topic: "b" }, transcript: [{ text: "Здравствуйте", speaker: "client", timestamp: "10:00" }] }));
+  });
+
+  test("a new, changed or removed line, or another header, changes the key", () => {
+    const line = { timestamp: "10:01", speaker: "operator", text: "Добрый день" };
+    assert.notEqual(shownKey(conv), shownKey({ ...conv, transcript: [...conv.transcript, line] }));
+    assert.notEqual(shownKey(conv), shownKey({ ...conv, transcript: [{ ...conv.transcript[0], text: "Привет" }] }));
+    assert.notEqual(shownKey(conv), shownKey({ ...conv, transcript: [] }));
+    assert.notEqual(shownKey(conv), shownKey({ ...conv, language: "kk" }));
+  });
+
+  test("a missing transcript reads as an empty one", () => {
+    assert.equal(shownKey({ ...conv, transcript: undefined }), shownKey({ ...conv, transcript: [] }));
   });
 });
 

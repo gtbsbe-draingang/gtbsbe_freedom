@@ -120,8 +120,13 @@ const orNull = (value) => (value === undefined ? null : value);
  * @returns {Promise<string>}
  */
 export function fingerprint(criterion) {
+  return sha256Hex(canonicalJson(fingerprintSubset(criterion)));
+}
+
+/** The fields a criterion's fingerprint covers (also used to compare two drafts without hashing). */
+export function fingerprintSubset(criterion) {
   const c = criterion || {};
-  const subset = {
+  return {
     title: orNull(c.title),
     wording: orNull(c.wording),
     answer_type: orNull(c.answer_type),
@@ -135,7 +140,6 @@ export function fingerprint(criterion) {
     kinds: Array.isArray(c.kinds) ? c.kinds : [],
     guidance: orNull(c.guidance),
   };
-  return sha256Hex(canonicalJson(subset));
 }
 
 /**

@@ -15,6 +15,7 @@ import { finalAnswers, score } from "../domain/scoring.js";
 import { fmt2, rat } from "../domain/rational.js";
 import { formatOffset } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
+import { watch } from "../state/store.js";
 import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
 import { href } from "./router.js";
@@ -174,6 +175,26 @@ export function createScorecard(store, api, args = {}) {
     active: null, // the criterion id whose evidence is marked in the transcript
   };
   let destroyed = false;
+  let pendingSel = null; // a shared checklist change that arrived during our own run
+
+  // Shows the shared checklist reference `ref` here, unless it is already shown. A reference this
+  // pane does not know (a checklist saved after it loaded) reloads the list first.
+  function followShared(ref) {
+    pendingSel = null;
+    if (destroyed || !ref || id === null) return;
+    if (view.sel && view.sel.checklist_id === ref.checklist_id && view.sel.version === ref.version) return;
+    if (view.busy) {
+      pendingSel = ref;
+      return;
+    }
+    if (!view.options.some((o) => o.checklist_id === ref.checklist_id && o.version === ref.version)) {
+      boot();
+      return;
+    }
+    view.sel = { checklist_id: ref.checklist_id, version: ref.version };
+    fillSelect();
+    loadSelection();
+  }
   let loadRun = 0;
   let drawer = null; // the open appeal drawer, if any
   const unwatch = [];
@@ -386,6 +407,7 @@ export function createScorecard(store, api, args = {}) {
     } finally {
       view.busy = false;
       paintBar();
+      if (pendingSel) followShared(pendingSel);
     }
   }
 
@@ -742,6 +764,19 @@ export function createScorecard(store, api, args = {}) {
   }
 
   // ---- wiring ---------------------------------------------------------------------------------
+
+  // A batch run or an import elsewhere changed the results: show the fresh ones (not during our
+  // own run, which reloads by itself).
+  unwatch.push(
+    watch(store, (state) => state.queueRefresh, () => {
+      if (!view.busy && view.phase === "ready" && view.sel) loadSelection({ quiet: true });
+    }),
+  );
+
+  // The checklist is shared (store `checklistSel`): when another picker (the batch bar) changes
+  // it, show the same checklist here. Our own picker's change comes back equal and is ignored; a
+  // change during our own run waits until the run is over.
+  unwatch.push(watch(store, (state) => state.checklistSel, (ref) => followShared(ref)));
 
   unwatch.push(store.subscribe((state, previous) => {
     if (state.role === previous.role) return;
