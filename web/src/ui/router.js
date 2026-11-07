@@ -5,7 +5,7 @@
 //   checklists #/checklists  checklist #/checklists/:checklistId/:version  editor …/edit
 //   appeals    #/appeals     appeal #/appeals/:id
 //   compare    #/compare?from_checklist&from_version&to_checklist&to_version&group_id
-//   analytics  #/analytics   accuracy #/accuracy
+//   analytics  #/analytics
 // Anything else parses as { name: "notfound" }.
 
 const COMPARE_KEYS = ["from_checklist", "from_version", "to_checklist", "to_version", "group_id"];
@@ -20,7 +20,6 @@ const NAV_OF = {
   appeals: "appeals",
   appeal: "appeals",
   analytics: "analytics",
-  accuracy: "accuracy",
 };
 
 // The nav item that stays highlighted on a route, or null.
@@ -70,7 +69,7 @@ export function parseRoute(hash) {
     }
     return route("compare", params);
   }
-  if ((head === "analytics" || head === "accuracy") && n === 1) return route(head);
+  if (head === "analytics" && n === 1) return route(head);
   return notFound;
 }
 
@@ -105,8 +104,6 @@ export function href(name, params = {}) {
     }
     case "analytics":
       return "#/analytics";
-    case "accuracy":
-      return "#/accuracy";
     default:
       throw new TypeError(`href: unknown route ${JSON.stringify(name)}`);
   }

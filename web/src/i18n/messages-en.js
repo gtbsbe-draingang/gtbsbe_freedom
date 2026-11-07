@@ -506,6 +506,7 @@ export default {
   "reports.chart.matrix": "Where the model departs from the reference",
   "reports.chart.matrixNote": "Rows: reference, columns: model answer; disagreements only.",
   "reports.chart.step": "Scale step",
+  "reports.chart.grossLinks": "Conversations with gross errors ({n})",
   "reports.chart.tipFail": "{title}: failures {fail}, N/A {na}, n={n}",
   "reports.chart.tipValue": "{title}: {value}, n={n}",
   "reports.chart.tipCell": "Reference “{from}” → model “{to}”: {n}",

@@ -114,7 +114,6 @@ export function mount(el, options = {}) {
       checklist: createChecklistEditor,
       editor: createChecklistEditor,
       compare: createComparePage,
-      accuracy: createReportsPage,
       analytics: createReportsPage,
       ...options.views,
     },
