@@ -1,8 +1,10 @@
 # Accuracy against a versioned reference
 
 `GET /api/reports/accuracy` reports agreement on the DEV references for
-`official-chat` version 1. Install the reference branch (#24) and B's `app.store`
-to use the endpoint. The router is discovered automatically by `app.main`.
+`official-chat` version 1. References and B's conversation/checklist storage are
+integrated on `gyat`; B's evaluation storage (`list_evaluations`) is still pending.
+Until it lands the endpoint returns `evaluations_unavailable` once a checklist is
+installed. The router is discovered automatically by `app.main`.
 Other groups or checklist versions return `reference_mismatch`: admin-created
 criteria need their own reviewed references, never recycled DEV scores.
 
@@ -28,3 +30,8 @@ model comparison in #26 is superseded by that requirement. Record actual model
 IDs, quantization, context length, concurrency, per-GPU/aggregate peak memory,
 latency and complete cohort coverage before selecting defaults. Keep deployment
 headroom; 140 GB aggregate does not guarantee that a model fits on any one GPU.
+
+The shared backend still contains legacy hosted-provider settings. This Stream D
+change does not implement C's local evaluator adapter; that integration is a
+deployment blocker. Do not describe the complete application as local-ready
+until the evaluator and configuration have been switched and tested offline.

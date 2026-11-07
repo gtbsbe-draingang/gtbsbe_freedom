@@ -21,13 +21,17 @@ TIMEOUT = httpx.Timeout(60.0, connect=15.0)
 
 class _RedactRequestURLs(logging.Filter):
     def filter(self, record):
-        record.msg = re.sub(r"https?://[^\s\"']+", "<redacted-url>", record.getMessage())
+        def redact(match):
+            url = match.group()
+            return "<redacted>" if re.search(r"[?&](?:sig|signature|token)=", url, re.I) else url
+        record.msg = re.sub(r"https?://[^\s\"']+", redact, record.getMessage())
         record.args = ()
         return True
 
 
 # httpx logs request URLs at INFO, including signed queries. Sanitize before handlers.
-logging.getLogger("httpx").addFilter(_RedactRequestURLs())
+for _logger in ("httpx", "httpcore", "httpcore.connection", "httpcore.http11", "httpcore.http2", "httpcore.proxy", "httpcore.socks"):
+    logging.getLogger(_logger).addFilter(_RedactRequestURLs())
 
 
 class AudioSourceError(Exception):

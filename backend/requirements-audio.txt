@@ -1,5 +1,0 @@
-# CPU audio analysis. Installed alongside the backend's uv.lock environment.
-numpy==2.1.1
-scipy==1.15.2
-soundfile==0.14.0
-praat-parselmouth==0.4.7

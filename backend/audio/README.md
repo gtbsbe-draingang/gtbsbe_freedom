@@ -6,9 +6,8 @@ and 128 entries. Expired 403/404/410 responses trigger one fresh resolution.
 Only length/range headers pass through; links, cookies and upstream errors do
 not. `httpx` request logging redacts URLs. Audio files are not cached by the API.
 
-Install CPU dependencies after `uv sync --frozen` with
-`uv pip install -r requirements-audio.txt`. They are separately constrained;
-they are not yet part of the shared uv lockfile. No GPU or hosted model is needed
+Install with `uv sync --frozen`. CPU audio dependencies are pinned in the shared
+`uv.lock`. No GPU or hosted model is needed
 for these measurements. `audio.fetch_dev` is an explicit development-only
 download tool; keep its output under the ignored `data/audio/` directory.
 
@@ -19,9 +18,13 @@ memory, has a 60-second processing deadline and 128 MiB download cap, then calls
 The deadline cancels awaiting CPU work; an already running worker thread may
 finish afterward. It does not write late results to storage.
 
-B must provide `get_conversation`, `get_audio_url`, and `save_audio_results`
-in `app.store`, and schedule processing after imports. Storage is absent from
-the fetched B branch, so live browser playback and persistence remain unverified.
+B's `app.store` now provides `get_conversation`, `get_audio_url`, and
+`save_audio_results`; the latest shared backend has been merged into this branch.
+The import hook schedules audio processing. All five cached DEV recordings were
+processed with the locked environment and persisted through B's real SQLite
+store in an isolated verification database: 374 offsets and 130 operator
+measurements. This verifies decoding, analysis and persistence, not alignment
+accuracy or browser playback. Live browser play/seek checks remain pending.
 
 Offsets still use transcript timing, recording pauses and speech energy.
 They are estimates. Mono audio does not establish which speakers overlap;

@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "backend/**"
+      - "training/emotion/**"
       - "checklists/**"
       - "contract/**"
       - ".github/workflows/backend.yml"
@@ -11,6 +12,7 @@ on:
     branches: [main]
     paths:
       - "backend/**"
+      - "training/emotion/**"
       - "checklists/**"
       - "contract/**"
       - ".github/workflows/backend.yml"
@@ -29,5 +31,5 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv python install 3.12
       - run: uv sync --frozen
-      - run: uv pip install -r requirements-audio.txt
-      - run: uv run --no-sync pytest -q
+      - run: uv run pytest -q
+      - run: uv run pytest -q ../training/emotion/tests

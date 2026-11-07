@@ -29,6 +29,8 @@ def report(checklist_id: str = "official-chat", version: int = Query(1, ge=1), g
     reference = load_reference(REFERENCE_PATH)
     if group_id != "DEV" or (checklist_id, version) != (reference.checklist_id, reference.version):
         raise ApiError(409, "reference_mismatch", "References cover only the DEV group and their original checklist version.")
+    if not hasattr(store, "list_evaluations"):
+        raise ApiError(503, "evaluations_unavailable", "Evaluation storage is not integrated yet.")
     conversations = {f"DEV:{r.conversation_id}": store.get_conversation(f"DEV:{r.conversation_id}") for r in reference.labels}
     return accuracy_report(reference, store.list_evaluations(checklist_id, version, group_id=group_id),
                            checklist=checklist, conversations=conversations).model_dump()

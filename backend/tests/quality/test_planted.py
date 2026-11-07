@@ -4,12 +4,11 @@ import pytest
 
 from quality.planted import PLANTED
 
-from .conftest import REPO, needs_dev
+from .conftest import REPO
 
 LABELS = REPO / "data" / "reference" / "dev_labels.json"
 
 
-@needs_dev
 @pytest.mark.skipif(not LABELS.exists(), reason="no reference file")
 def test_planted_pairs_match_reference():
     labels = json.loads(LABELS.read_text(encoding="utf-8"))["labels"]

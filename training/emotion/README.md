@@ -15,8 +15,9 @@ The previous smoke run processed 690 selected clips, with 490 successes and 200
 missing podcast files. Its small-sample scores (Dusha 0.52 versus 0.30; RESD 0.50
 versus 0.37) demonstrate the pipeline only. They do not validate generalization,
 podcast performance, or real calls. KazEmoTTS is synthetic speech and needs a
-separate real-call evaluation. The corrected full run has not been submitted or
-validated yet.
+separate real-call evaluation. The corrected full run was submitted as private
+Kaggle kernel `iskoxi/cqa-emotion-head`, version 2, on 2026-11-07 with a T4.
+It reached RUNNING status; full-run metrics and coverage are not validated yet.
 
 Run the offline path regression tests with
 `python -m pytest training/emotion/tests -q`. Submit the private kernel using

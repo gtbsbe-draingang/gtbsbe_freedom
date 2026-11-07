@@ -143,9 +143,9 @@ try:
             rows.append(dict(path=path, label=DUSHA_MAP[r["label_raw"]], corpus="dusha_" + part.split("_")[0],
                              split=part.split("_")[1], speaker=spk, lang="ru", raw=r["label_raw"]))
         log(tsv, "rows", len(df), "clips kept", len(first))
-except Exception:
+except Exception as exc:
     # A partial corpus must never silently produce apparently valid full scores.
-    raise RuntimeError("Dusha manifest failed; training stopped before embedding") from None
+    raise RuntimeError(f"Dusha manifest failed; training stopped before embedding: {exc}") from None
 
 # KazEmoTTS: EmoKaz/<speaker>/<split>/<speaker>_<emotion>_<id>.wav
 KZ_MAP = {"angry": "angry", "sad": "sad", "scared": "sad", "fearful": "sad", "fear": "sad",
