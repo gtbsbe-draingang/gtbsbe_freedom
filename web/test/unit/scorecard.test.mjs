@@ -1,6 +1,51 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { answerTag, jobSettled, pickSelection, thresholdCheck } from "../../src/ui/scorecard.js";
+import { answerTag, cardAppeals, jobSettled, pickSelection, thresholdCheck } from "../../src/ui/scorecard.js";
+
+describe("cardAppeals: the appeals that concern the card on screen", () => {
+  const ev = (id, created_at, carried = []) => ({ id, created_at, results: carried.map((appeal_id, i) => ({ criterion_id: `c${i}`, carried_decision: { appeal_id, evaluation_id: "old" } })) });
+  const appeal = (id, evaluation_id, status, decided_at = null, created_at = "2026-11-07T10:00:00Z") => ({ id, evaluation_id, status, created_at, decision: decided_at ? { outcome: "changed", decided_at } : null });
+  const shown = ev("B", "2026-11-07T12:00:00Z");
+  const history = [shown, ev("A", "2026-11-07T11:00:00Z"), ev("Z", "2026-11-07T13:00:00Z")]; // Z: newer, another version
+
+  test("appeals on this evaluation are its own", () => {
+    const res = cardAppeals(shown, [appeal("a1", "B", "open")], history);
+    assert.deepEqual(res.own.map((a) => a.id), ["a1"]);
+    assert.deepEqual(res.earlierOpen, []);
+    assert.deepEqual(res.notCarried, []);
+  });
+
+  test("an open appeal on an earlier evaluation of the checklist still concerns the card", () => {
+    const res = cardAppeals(shown, [appeal("a1", "A", "open")], history);
+    assert.deepEqual(res.earlierOpen.map((a) => a.id), ["a1"]);
+  });
+
+  test("a decision on an earlier evaluation that was not carried: decided after this one was made", () => {
+    const res = cardAppeals(shown, [appeal("a1", "A", "decided", "2026-11-07T12:30:00Z")], history);
+    assert.deepEqual(res.notCarried.map((n) => [n.appeal.id, n.when]), [["a1", "after"]]);
+  });
+
+  test("decided before this evaluation and not carried: it applied to an earlier version of the criterion", () => {
+    const res = cardAppeals(shown, [appeal("a1", "A", "decided", "2026-11-07T11:30:00Z")], history);
+    assert.deepEqual(res.notCarried.map((n) => [n.appeal.id, n.when]), [["a1", "before"]]);
+  });
+
+  test("a carried decision is not listed as not carried", () => {
+    const carrying = ev("B", "2026-11-07T12:00:00Z", ["a1"]);
+    const res = cardAppeals(carrying, [appeal("a1", "A", "decided", "2026-11-07T11:30:00Z")], [carrying, history[1]]);
+    assert.deepEqual(res.notCarried, []);
+  });
+
+  test("appeals on newer evaluations, other checklists or other dialogues are ignored", () => {
+    const res = cardAppeals(shown, [appeal("a1", "Z", "open"), appeal("a2", "elsewhere", "open")], history);
+    assert.deepEqual(res, { own: [], earlierOpen: [], notCarried: [] });
+  });
+
+  test("each list is in filing order", () => {
+    const res = cardAppeals(shown, [appeal("late", "B", "open", null, "2026-11-07T12:20:00Z"), appeal("early", "B", "decided", "2026-11-07T12:40:00Z", "2026-11-07T12:10:00Z")], history);
+    assert.deepEqual(res.own.map((a) => a.id), ["early", "late"]);
+  });
+});
 
 const scale = { kind: "scored", answer_type: "scale", scale_steps: [{ value: 0 }, { value: 10 }, { value: 20 }] };
 const gross = { kind: "gross_error", answer_type: "yes_no", scale_steps: [] };

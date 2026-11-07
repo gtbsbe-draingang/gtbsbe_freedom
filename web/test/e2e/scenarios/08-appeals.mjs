@@ -56,7 +56,8 @@ async function findDisputable(page) {
       while (["queued", "running", "pending", "started"].includes(job.status)) { await new Promise((r) => setTimeout(r, 100)); job = await api.getJob(job.id); }
       const [ev] = await api.listEvaluations({ conversation: id, checklist_id });
       const hit = ev && ev.results.find((r) => r.final_answer === "no" && weighted(r.criterion_id));
-      if (hit) return { id, criterion: hit.criterion_id, other: ev.results.find((r) => r.criterion_id !== hit.criterion_id).criterion_id, total: ev.final_total };
+      const rest = ev && ev.results.filter((r) => r.criterion_id !== hit?.criterion_id).map((r) => r.criterion_id);
+      if (hit && rest.length >= 2) return { id, criterion: hit.criterion_id, other: rest[0], third: rest[1], total: ev.final_total };
     }
     return null;
   })()`);
@@ -96,9 +97,13 @@ export async function run(page) {
   await page.eval(`location.hash = "#/appeals"`);
   await page.waitFor(sel("appeals-list"), 5000);
   await page.waitFor(`${sel("appeal-row")}[data-id="${appeals[0].id}"]`, 5000);
+  await page.click(sel("appeals-filter-all"));
+  await page.eval(`document.querySelector(${quote(sel("appeals-page"))}).__kept = true`);
   await page.click(`${sel("appeal-row")}[data-id="${appeals[0].id}"] a`);
   await page.waitFor(sel("review-panel"), 5000);
   await until(page, `document.querySelector(${quote(sel("review-comment"))}) !== null`, "the panel to load");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("appeals-page"))}).__kept === true`), true, "opening an appeal keeps the page (no reload)");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("appeals-filter-all"))}).getAttribute("aria-pressed")`), "true", "and keeps the chosen filter");
   assert.match(await page.text(sel("review-comment")), /ошибочен/, "the reviewer sees the comment");
   assert.ok((await page.count(`${sel("review-fragment")} ${sel("fragment-msg")}`)) > 0, "the reviewer sees the dialogue fragment");
   assert.equal(await page.count(sel("review-card-link")), 1, "the panel links to the full card");
@@ -136,6 +141,27 @@ export async function run(page) {
   assert.equal(kinds[kinds.length - 1], "final", "history ends with the final total");
   assert.equal(await page.count(sel("dispute")), 0, "a reviewer does not dispute");
 
+  // ---- a new run carries the decision; the card says so and links to the appeal ----
+  await asRole(page, "controller");
+  await showScorecard(page);
+  await page.click(sel("run-eval"));
+  await until(page, `document.querySelector(${quote(sel("job-progress"))}).textContent === "" && document.querySelector(${quote(sel("run-eval"))}).disabled === false && document.querySelector(${quote(`${card} ${sel("carried")}`)}) !== null`, "the re-run with the carried decision", 10000);
+  assert.equal(await page.eval(`document.querySelector(${quote(`${card} ${sel("carried")}`)}).getAttribute("href")`), `#/appeals/${encodeURIComponent(appeals[0].id)}`, "the carried tag links to the original appeal");
+  assert.equal(await page.text(sel("total")), result[2], "the carried decision keeps the new total");
+  assert.ok((await page.eval(`[...document.querySelectorAll('[data-test="history-item"]')].map((i) => i.getAttribute("data-kind"))`)).includes("carried"), "the history lists the carried decision");
+
+  // ---- an open appeal survives a re-run: still shown, and no second appeal on that criterion ----
+  const otherCard = `${sel("crit")}[data-criterion="${target.other}"]`;
+  await page.click(`${otherCard} ${sel("dispute")}`);
+  await page.waitFor(sel("appeal-drawer"));
+  await page.type(sel("appeal-comment"), "Прошу пересмотреть.");
+  await page.click(sel("appeal-submit"));
+  await until(page, `document.querySelector(${quote(`${otherCard} ${sel("appeal-open")}`)}) !== null`, "the second appeal's tag");
+  await page.click(sel("run-eval-full"));
+  await until(page, `document.querySelector(${quote(sel("job-progress"))}).textContent === "" && document.querySelector(${quote(sel("run-eval"))}).disabled === false && document.querySelector(${quote(`${otherCard} ${sel("appeal-open-earlier")}`)}) !== null`, "the re-run that keeps the open appeal in view", 10000);
+  assert.equal(await page.eval(`document.querySelector(${quote(`${otherCard} ${sel("dispute")}`)}).disabled`), true, "no second appeal on a criterion with an open one");
+  assert.ok((await page.eval(`[...document.querySelectorAll('[data-test="history-item"]')].map((i) => i.getAttribute("data-kind"))`)).includes("earlier-open"), "the history lists the appeal on the earlier evaluation");
+
   // ---- no model key: filing still works; the second opinion is «недоступно» ----
   await page.goto(`/?mockModelKey=0#/c/${encodeURIComponent(target.id)}`);
   await until(page, `document.querySelector(${quote(sel("total"))}) !== null && document.querySelector(${quote(sel("scorecard-loading"))}) === null`, "the scorecard without a key", 10000);
@@ -143,13 +169,13 @@ export async function run(page) {
   await until(page, `window.__cqaTest.store.get().role !== undefined`, "the store");
   if ((await page.eval(`window.__cqaTest.store.get().role`)) !== "controller") await asRole(page, "controller");
   await showScorecard(page);
-  await page.click(`${sel("crit")}[data-criterion="${target.other}"] ${sel("dispute")}`);
+  await page.click(`${sel("crit")}[data-criterion="${target.third}"] ${sel("dispute")}`);
   await page.waitFor(sel("appeal-drawer"));
   await page.type(sel("appeal-comment"), "Прошу пересмотреть.");
   await page.click(sel("appeal-submit"));
   await until(page, `document.querySelector(${quote(sel("appeal-drawer"))}) === null`, "the drawer to close without a key");
   const [keyless] = await page.eval(`window.__cqaTest.api.listAppeals({ status: "open" })`);
-  assert.equal(keyless.criterion_id, target.other, "the appeal was filed without a model key");
+  assert.equal(keyless.criterion_id, target.third, "the appeal was filed without a model key");
   await page.eval(`location.hash = "#/appeals/" + encodeURIComponent(${quote(keyless.id)})`);
   await page.waitFor(sel("second-opinion"), 5000);
   assert.equal(await page.eval(`document.querySelector(${quote(sel("second-opinion"))}).getAttribute("data-state")`), "unavailable");

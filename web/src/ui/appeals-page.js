@@ -102,30 +102,37 @@ export function createAppealsPage(store, api, route) {
     el.classList.toggle("has-panel", openId !== null);
   }
 
-  // One evaluation and checklist version per appeal's evaluation, for the criterion titles.
+  // One evaluation and checklist version per appeal's evaluation, for the criterion titles; all
+  // requests at once, and only for appeals without a title yet.
   async function titlesFor(appeals) {
     const versions = new Map();
     const byEvaluation = new Map();
-    for (const appeal of appeals) {
-      if (view.titles.has(appeal.id)) continue;
-      if (!byEvaluation.has(appeal.evaluation_id)) {
+    const versionOf = (evaluationId) => {
+      if (!byEvaluation.has(evaluationId)) {
         byEvaluation.set(
-          appeal.evaluation_id,
-          api.getEvaluation(appeal.evaluation_id).then((ev) => {
+          evaluationId,
+          api.getEvaluation(evaluationId).then((ev) => {
             const key = `${ev.checklist_id}@${ev.version}`;
             if (!versions.has(key)) versions.set(key, api.getChecklistVersion(ev.checklist_id, ev.version));
             return versions.get(key);
           }),
         );
       }
-      try {
-        const version = await byEvaluation.get(appeal.evaluation_id);
-        const criterion = version.criteria.find((c) => c.id === appeal.criterion_id);
-        if (criterion) view.titles.set(appeal.id, criterion.title);
-      } catch {
-        // the row keeps the criterion id
-      }
-    }
+      return byEvaluation.get(evaluationId);
+    };
+    await Promise.all(
+      appeals
+        .filter((appeal) => !view.titles.has(appeal.id))
+        .map((appeal) =>
+          versionOf(appeal.evaluation_id).then(
+            (version) => {
+              const criterion = version.criteria.find((c) => c.id === appeal.criterion_id);
+              if (criterion) view.titles.set(appeal.id, criterion.title);
+            },
+            () => {}, // the row keeps the criterion id
+          ),
+        ),
+    );
   }
 
   async function load() {

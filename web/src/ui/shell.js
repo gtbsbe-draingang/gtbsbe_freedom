@@ -316,8 +316,11 @@ export function createShell(store, api, { panes = {}, views = {} } = {}) {
 
     const main = h("div", { class: "cqa-main", attrs: { role: "region", "aria-label": t("app.title") }, data: { test: "main" } });
     let current = null; // { name, view }
+    // A view whose factory also serves the new route (the appeals list and one appeal) is updated
+    // in place, so its filters and scroll survive.
+    const sameView = (route) => current.name === route.name || (Boolean(views[route.name]) && views[current.name] === views[route.name]);
     const show = (route) => {
-      if (current && current.name === route.name && current.view.update) {
+      if (current && current.view.update && sameView(route)) {
         current.view.update(route);
         return;
       }

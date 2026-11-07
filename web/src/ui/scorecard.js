@@ -17,6 +17,7 @@ import { formatOffset } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
 import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
+import { href } from "./router.js";
 import { toastError } from "./toast.js";
 
 export const POLL_MS = 500;
@@ -60,6 +61,46 @@ export function jobSettled(job) {
   return !ACTIVE.has(job.status) || (job.total > 0 && job.done + job.failed >= job.total);
 }
 
+const byFiling = (a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? ""));
+
+/**
+ * The appeals that concern the evaluation on screen. `evaluations` are this dialogue's evaluations
+ * of the same checklist (any version); only those made before the one on screen count as earlier.
+ *   own          appeals on this evaluation
+ *   earlierOpen  open appeals on an earlier evaluation (still undecided: the card must not hide them)
+ *   notCarried   decided appeals on an earlier evaluation that no result's carried_decision names,
+ *                as {appeal, when}: "before" = decided before this evaluation was made (the
+ *                criterion or the dialogue changed since), "after" = decided later (a new run
+ *                would apply it)
+ * Each list is in filing order.
+ */
+export function cardAppeals(evaluation, appeals, evaluations) {
+  const created = Date.parse(evaluation.created_at ?? "");
+  const earlier = new Set(
+    (evaluations ?? [])
+      .filter((e) => e.id !== evaluation.id)
+      .filter((e) => {
+        const at = Date.parse(e.created_at ?? "");
+        return !Number.isFinite(at) || !Number.isFinite(created) || at <= created;
+      })
+      .map((e) => e.id),
+  );
+  const carried = new Set(evaluation.results.map((r) => r.carried_decision?.appeal_id).filter(Boolean));
+  const own = [];
+  const earlierOpen = [];
+  const notCarried = [];
+  for (const appeal of [...(appeals ?? [])].sort(byFiling)) {
+    if (appeal.evaluation_id === evaluation.id) own.push(appeal);
+    else if (!earlier.has(appeal.evaluation_id)) continue;
+    else if (appeal.status === "open") earlierOpen.push(appeal);
+    else if (!carried.has(appeal.id)) {
+      const decided = Date.parse(appeal.decision?.decided_at ?? "");
+      notCarried.push({ appeal, when: Number.isFinite(decided) && Number.isFinite(created) && decided > created ? "after" : "before" });
+    }
+  }
+  return { own, earlierOpen, notCarried };
+}
+
 const versionsOf = (row) => (Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version]);
 const latestOf = (row) => Math.max(...versionsOf(row));
 
@@ -90,6 +131,9 @@ const clip = (text, max) => {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const tag = (kind, text, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text, attrs: props.attrs, data: props.data });
+// A tag that opens an appeal (#/appeals/:id).
+const tagLink = (kind, text, appealId, { title, test } = {}) =>
+  h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
 
 // ---- the pane ---------------------------------------------------------------------------------
 
@@ -122,6 +166,7 @@ export function createScorecard(store, api, args = {}) {
     sel: null, // {checklist_id, version}
     version: null, // the picked checklist version
     evaluation: null, // the newest finished evaluation of this dialogue for it
+    evaluations: [], // all of this dialogue's evaluations for the picked checklist (for earlier appeals)
     conversation: null,
     appeals: [],
     busy: false,
@@ -268,6 +313,7 @@ export function createScorecard(store, api, args = {}) {
       if (destroyed || mine !== loadRun) return;
       view.version = version;
       view.evaluation = pickEvaluation(evaluations, sel);
+      view.evaluations = evaluations;
       view.appeals = appeals;
       view.conversation = conversation;
       view.phase = "ready";
@@ -389,33 +435,47 @@ export function createScorecard(store, api, args = {}) {
   // The card history (R8): the original total, each appeal with its decision, the decisions carried
   // in from an earlier evaluation, and the final total. Shown once there is something to tell.
   function buildHistory(evaluation, version) {
-    const appeals = view.appeals
-      .filter((appeal) => appeal.evaluation_id === evaluation.id)
-      .sort((a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? "")));
+    const { own, earlierOpen, notCarried } = cardAppeals(evaluation, view.appeals, view.evaluations);
     const carried = evaluation.results.filter((result) => result.carried_decision);
-    if (appeals.length === 0 && carried.length === 0) return null;
+    if (own.length === 0 && earlierOpen.length === 0 && notCarried.length === 0 && carried.length === 0) return null;
 
     const criterionOf = (id) => version.criteria.find((c) => c.id === id) ?? { id, title: id };
     const resultOf = (id) => evaluation.results.find((r) => r.criterion_id === id) ?? null;
     const totalText = (value) => (value === null || value === undefined ? t("scorecard.totalNone") : money(value));
     const items = [];
-    const item = (kind, what, note) =>
-      items.push(h("li", { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } }, h("b", { class: "cqa-sc-hist-what", text: what }), note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null));
+    const item = (kind, what, note, appealId) =>
+      items.push(
+        h(
+          "li",
+          { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } },
+          h("b", { class: "cqa-sc-hist-what", text: what }),
+          appealId ? h("a", { class: ["cqa-link", "cqa-sc-hist-link"], attrs: { href: href("appeal", { id: appealId }) }, text: t("history.openAppeal") }) : null,
+          note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null,
+        ),
+      );
 
     item("original", t("history.original", { total: totalText(evaluation.original_total) }));
-    for (const appeal of appeals) {
+    for (const appeal of own) {
       const criterion = criterionOf(appeal.criterion_id);
       const result = resultOf(appeal.criterion_id);
-      item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "—" }), appeal.comment);
+      item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "—" }), appeal.comment, appeal.id);
       const decision = appeal.decision;
       if (decision) {
         const what = decision.outcome === "changed" ? t("history.changed", { answer: answerTag(criterion, decision.answer).text }) : t("history.confirmed");
         item("decision", what, decision.reason);
       } else item("pending", t("history.pending"));
     }
+    // Appeals filed on an earlier evaluation of this dialogue: still open, or decided without
+    // reaching this one (spec 6: say why instead of dropping them silently).
+    for (const appeal of earlierOpen) {
+      item("earlier-open", t("history.earlierOpen", { criterion: criterionOf(appeal.criterion_id).title }), appeal.comment, appeal.id);
+    }
+    for (const { appeal, when } of notCarried) {
+      item("not-carried", t(when === "after" ? "history.decidedAfter" : "history.olderVersion", { criterion: criterionOf(appeal.criterion_id).title }), appeal.decision?.reason, appeal.id);
+    }
     for (const result of carried) {
       const criterion = criterionOf(result.criterion_id);
-      item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }));
+      item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }), null, result.carried_decision.appeal_id);
     }
     item("final", t("history.final", { total: totalText(evaluation.final_total) }));
 
@@ -593,7 +653,12 @@ export function createScorecard(store, api, args = {}) {
       }
     } else points = "—";
 
-    const openAppeal = view.appeals.some((a) => a.status === "open" && a.evaluation_id === evaluation.id && a.criterion_id === criterion.id);
+    // An open appeal on this evaluation, or on an earlier one of this dialogue (a re-run must not
+    // hide it or allow a second appeal on the same criterion).
+    const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
+    const ownOpen = own.find((a) => a.status === "open" && a.criterion_id === criterion.id) ?? null;
+    const earlier = earlierOpen.find((a) => a.criterion_id === criterion.id) ?? null;
+    const openAppeal = Boolean(ownOpen || earlier);
 
     const evidence = (result.evidence ?? []).map((item) => {
       const expected = item.role === "expected_here";
@@ -617,8 +682,9 @@ export function createScorecard(store, api, args = {}) {
     const range = result.checked_range;
     const marks = [
       result.needs_review ? tag("mid", t("scorecard.needsReview"), { attrs: { title: t("scorecard.needsReviewTitle") }, data: { test: "needs-review" } }) : null,
-      result.carried_decision ? tag("out", t("scorecard.carried"), { attrs: { title: t("scorecard.carriedTitle") }, data: { test: "carried" } }) : null,
-      openAppeal ? tag("mid", t("scorecard.disputeOpenTag"), { data: { test: "appeal-open" } }) : null,
+      result.carried_decision?.appeal_id ? tagLink("out", t("scorecard.carried"), result.carried_decision.appeal_id, { title: t("scorecard.carriedTitle"), test: "carried" }) : null,
+      ownOpen ? tagLink("mid", t("scorecard.disputeOpenTag"), ownOpen.id, { test: "appeal-open" }) : null,
+      !ownOpen && earlier ? tagLink("mid", t("scorecard.disputeEarlierTag"), earlier.id, { title: t("scorecard.disputeEarlierTitle"), test: "appeal-open-earlier" }) : null,
       changed ? h("span", { class: "cqa-sc-note", text: t("scorecard.modelAnswer", { answer: answerTag(criterion, result.answer).text }), attrs: { title: t("scorecard.modelAnswerTitle") }, data: { test: "model-answer" } }) : null,
       weight ? h("span", { class: ["cqa-sc-note", "num"], text: weight, data: { test: "weight" } }) : null,
     ].filter(Boolean);

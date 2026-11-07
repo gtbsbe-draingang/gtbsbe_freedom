@@ -418,3 +418,26 @@
   gap: 6px;
   color: var(--text-2);
 }
+
+.cqa .cqa-tag--link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cqa .cqa-tag--link:hover {
+  text-decoration: underline;
+}
+
+.cqa .cqa-sc-hist-link {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.cqa .cqa-sc-hist-item--earlier-open::before,
+.cqa .cqa-sc-hist-item--pending::before {
+  background: var(--mid-ink);
+}
+
+.cqa .cqa-sc-hist-item--not-carried::before {
+  background: var(--bad-ink);
+}

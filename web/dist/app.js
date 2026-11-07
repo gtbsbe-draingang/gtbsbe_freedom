@@ -2592,6 +2592,8 @@
     "scorecard.carriedTitle": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u0438 \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0441\u044E\u0434\u0430",
     "scorecard.dispute": "\u041E\u0441\u043F\u043E\u0440\u0438\u0442\u044C",
     "scorecard.disputeOpenTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0430",
+    "scorecard.disputeEarlierTag": "\u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435",
+    "scorecard.disputeEarlierTitle": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043F\u043E\u0434\u0430\u043D\u0430 \u043D\u0430 \u043F\u0440\u0435\u0436\u043D\u044E\u044E \u043E\u0446\u0435\u043D\u043A\u0443 \u044D\u0442\u043E\u0433\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u0430 \u0438 \u0435\u0449\u0451 \u043D\u0435 \u0440\u0435\u0448\u0435\u043D\u0430",
     "scorecard.disputeOpenTitle": "\u041F\u043E \u044D\u0442\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0430\u044F \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
     "scorecard.info.title": "\u041D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0443",
     "scorecard.info.topic": "\u0422\u0435\u043C\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F",
@@ -2620,6 +2622,10 @@
     "history.pending": "\u0416\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0435\u0433\u043E",
     "history.carried": "\u041F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB: \xAB{answer}\xBB",
     "history.final": "\u0418\u0442\u043E\u0433\u043E\u0432\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430: {total}",
+    "history.openAppeal": "\u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044E",
+    "history.earlierOpen": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u043E\u0446\u0435\u043D\u043A\u0435: \xAB{criterion}\xBB, \u0436\u0434\u0451\u0442 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+    "history.decidedAfter": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u043F\u043E\u0441\u043B\u0435 \u044D\u0442\u043E\u0439 \u043E\u0446\u0435\u043D\u043A\u0438: \u043F\u0435\u0440\u0435\u043E\u0446\u0435\u043D\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C",
+    "history.olderVersion": "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \xAB{criterion}\xBB \u043E\u0442\u043D\u043E\u0441\u0438\u043B\u043E\u0441\u044C \u043A \u043F\u0440\u0435\u0436\u043D\u0435\u0439 \u0432\u0435\u0440\u0441\u0438\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F",
     "appeal.title": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F",
     "appeal.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
     "appeal.current": "\u0421\u0435\u0439\u0447\u0430\u0441: \xAB{answer}\xBB",
@@ -3114,6 +3120,30 @@
     if (!job) return true;
     return !ACTIVE.has(job.status) || job.total > 0 && job.done + job.failed >= job.total;
   }
+  var byFiling = (a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? ""));
+  function cardAppeals(evaluation, appeals, evaluations) {
+    const created = Date.parse(evaluation.created_at ?? "");
+    const earlier = new Set(
+      (evaluations ?? []).filter((e) => e.id !== evaluation.id).filter((e) => {
+        const at = Date.parse(e.created_at ?? "");
+        return !Number.isFinite(at) || !Number.isFinite(created) || at <= created;
+      }).map((e) => e.id)
+    );
+    const carried = new Set(evaluation.results.map((r) => r.carried_decision?.appeal_id).filter(Boolean));
+    const own = [];
+    const earlierOpen = [];
+    const notCarried = [];
+    for (const appeal of [...appeals ?? []].sort(byFiling)) {
+      if (appeal.evaluation_id === evaluation.id) own.push(appeal);
+      else if (!earlier.has(appeal.evaluation_id)) continue;
+      else if (appeal.status === "open") earlierOpen.push(appeal);
+      else if (!carried.has(appeal.id)) {
+        const decided = Date.parse(appeal.decision?.decided_at ?? "");
+        notCarried.push({ appeal, when: Number.isFinite(decided) && Number.isFinite(created) && decided > created ? "after" : "before" });
+      }
+    }
+    return { own, earlierOpen, notCarried };
+  }
   var versionsOf = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
   var latestOf = (row) => Math.max(...versionsOf(row));
   function pickSelection(stored, server, checklists) {
@@ -3135,6 +3165,7 @@
   };
   var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   var tag = (kind, text2, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`, props.class], text: text2, attrs: props.attrs, data: props.data });
+  var tagLink = (kind, text2, appealId, { title, test } = {}) => h("a", { class: ["cqa-tag", `cqa-tag--${kind}`, "cqa-tag--link"], text: text2, attrs: { href: href("appeal", { id: appealId }), title: title ?? null }, data: { test } });
   function stateBox(test, title, note, extra) {
     return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
   }
@@ -3161,6 +3192,8 @@
       // the picked checklist version
       evaluation: null,
       // the newest finished evaluation of this dialogue for it
+      evaluations: [],
+      // all of this dialogue's evaluations for the picked checklist (for earlier appeals)
       conversation: null,
       appeals: [],
       busy: false,
@@ -3292,6 +3325,7 @@
         if (destroyed || mine !== loadRun) return;
         view.version = version2;
         view.evaluation = pickEvaluation(evaluations, sel);
+        view.evaluations = evaluations;
         view.appeals = appeals;
         view.conversation = conversation;
         view.phase = "ready";
@@ -3395,28 +3429,42 @@
       body.append(...[buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
     }
     function buildHistory(evaluation, version2) {
-      const appeals = view.appeals.filter((appeal) => appeal.evaluation_id === evaluation.id).sort((a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? "")));
+      const { own, earlierOpen, notCarried } = cardAppeals(evaluation, view.appeals, view.evaluations);
       const carried = evaluation.results.filter((result) => result.carried_decision);
-      if (appeals.length === 0 && carried.length === 0) return null;
+      if (own.length === 0 && earlierOpen.length === 0 && notCarried.length === 0 && carried.length === 0) return null;
       const criterionOf = (id2) => version2.criteria.find((c) => c.id === id2) ?? { id: id2, title: id2 };
       const resultOf = (id2) => evaluation.results.find((r) => r.criterion_id === id2) ?? null;
       const totalText2 = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : money(value);
       const items = [];
-      const item = (kind, what, note) => items.push(h("li", { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } }, h("b", { class: "cqa-sc-hist-what", text: what }), note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null));
+      const item = (kind, what, note, appealId) => items.push(
+        h(
+          "li",
+          { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } },
+          h("b", { class: "cqa-sc-hist-what", text: what }),
+          appealId ? h("a", { class: ["cqa-link", "cqa-sc-hist-link"], attrs: { href: href("appeal", { id: appealId }) }, text: t("history.openAppeal") }) : null,
+          note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null
+        )
+      );
       item("original", t("history.original", { total: totalText2(evaluation.original_total) }));
-      for (const appeal of appeals) {
+      for (const appeal of own) {
         const criterion = criterionOf(appeal.criterion_id);
         const result = resultOf(appeal.criterion_id);
-        item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "\u2014" }), appeal.comment);
+        item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "\u2014" }), appeal.comment, appeal.id);
         const decision = appeal.decision;
         if (decision) {
           const what = decision.outcome === "changed" ? t("history.changed", { answer: answerTag(criterion, decision.answer).text }) : t("history.confirmed");
           item("decision", what, decision.reason);
         } else item("pending", t("history.pending"));
       }
+      for (const appeal of earlierOpen) {
+        item("earlier-open", t("history.earlierOpen", { criterion: criterionOf(appeal.criterion_id).title }), appeal.comment, appeal.id);
+      }
+      for (const { appeal, when } of notCarried) {
+        item("not-carried", t(when === "after" ? "history.decidedAfter" : "history.olderVersion", { criterion: criterionOf(appeal.criterion_id).title }), appeal.decision?.reason, appeal.id);
+      }
       for (const result of carried) {
         const criterion = criterionOf(result.criterion_id);
-        item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }));
+        item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }), null, result.carried_decision.appeal_id);
       }
       item("final", t("history.final", { total: totalText2(evaluation.final_total) }));
       return h(
@@ -3565,7 +3613,10 @@
           weight = t("scorecard.weight", { from: String(criterion.weight), to: money(result.effective_weight) });
         }
       } else points = "\u2014";
-      const openAppeal = view.appeals.some((a) => a.status === "open" && a.evaluation_id === evaluation.id && a.criterion_id === criterion.id);
+      const { own, earlierOpen } = cardAppeals(evaluation, view.appeals, view.evaluations);
+      const ownOpen = own.find((a) => a.status === "open" && a.criterion_id === criterion.id) ?? null;
+      const earlier = earlierOpen.find((a) => a.criterion_id === criterion.id) ?? null;
+      const openAppeal = Boolean(ownOpen || earlier);
       const evidence = (result.evidence ?? []).map((item) => {
         const expected = item.role === "expected_here";
         return h(
@@ -3587,8 +3638,9 @@
       const range = result.checked_range;
       const marks = [
         result.needs_review ? tag("mid", t("scorecard.needsReview"), { attrs: { title: t("scorecard.needsReviewTitle") }, data: { test: "needs-review" } }) : null,
-        result.carried_decision ? tag("out", t("scorecard.carried"), { attrs: { title: t("scorecard.carriedTitle") }, data: { test: "carried" } }) : null,
-        openAppeal ? tag("mid", t("scorecard.disputeOpenTag"), { data: { test: "appeal-open" } }) : null,
+        result.carried_decision?.appeal_id ? tagLink("out", t("scorecard.carried"), result.carried_decision.appeal_id, { title: t("scorecard.carriedTitle"), test: "carried" }) : null,
+        ownOpen ? tagLink("mid", t("scorecard.disputeOpenTag"), ownOpen.id, { test: "appeal-open" }) : null,
+        !ownOpen && earlier ? tagLink("mid", t("scorecard.disputeEarlierTag"), earlier.id, { title: t("scorecard.disputeEarlierTitle"), test: "appeal-open-earlier" }) : null,
         changed ? h("span", { class: "cqa-sc-note", text: t("scorecard.modelAnswer", { answer: answerTag(criterion, result.answer).text }), attrs: { title: t("scorecard.modelAnswerTitle") }, data: { test: "model-answer" } }) : null,
         weight ? h("span", { class: ["cqa-sc-note", "num"], text: weight, data: { test: "weight" } }) : null
       ].filter(Boolean);
@@ -4224,25 +4276,32 @@
     async function titlesFor(appeals) {
       const versions = /* @__PURE__ */ new Map();
       const byEvaluation = /* @__PURE__ */ new Map();
-      for (const appeal of appeals) {
-        if (view.titles.has(appeal.id)) continue;
-        if (!byEvaluation.has(appeal.evaluation_id)) {
+      const versionOf = (evaluationId) => {
+        if (!byEvaluation.has(evaluationId)) {
           byEvaluation.set(
-            appeal.evaluation_id,
-            api.getEvaluation(appeal.evaluation_id).then((ev) => {
+            evaluationId,
+            api.getEvaluation(evaluationId).then((ev) => {
               const key = `${ev.checklist_id}@${ev.version}`;
               if (!versions.has(key)) versions.set(key, api.getChecklistVersion(ev.checklist_id, ev.version));
               return versions.get(key);
             })
           );
         }
-        try {
-          const version2 = await byEvaluation.get(appeal.evaluation_id);
-          const criterion = version2.criteria.find((c) => c.id === appeal.criterion_id);
-          if (criterion) view.titles.set(appeal.id, criterion.title);
-        } catch {
-        }
-      }
+        return byEvaluation.get(evaluationId);
+      };
+      await Promise.all(
+        appeals.filter((appeal) => !view.titles.has(appeal.id)).map(
+          (appeal) => versionOf(appeal.evaluation_id).then(
+            (version2) => {
+              const criterion = version2.criteria.find((c) => c.id === appeal.criterion_id);
+              if (criterion) view.titles.set(appeal.id, criterion.title);
+            },
+            () => {
+            }
+            // the row keeps the criterion id
+          )
+        )
+      );
     }
     async function load2() {
       const mine = ++run;
@@ -4941,8 +5000,9 @@
       const compact = isCompact(store.get());
       const main = h("div", { class: "cqa-main", attrs: { role: "region", "aria-label": t("app.title") }, data: { test: "main" } });
       let current2 = null;
+      const sameView = (route2) => current2.name === route2.name || Boolean(views[route2.name]) && views[current2.name] === views[route2.name];
       const show = (route2) => {
-        if (current2 && current2.name === route2.name && current2.view.update) {
+        if (current2 && current2.view.update && sameView(route2)) {
           current2.view.update(route2);
           return;
         }
