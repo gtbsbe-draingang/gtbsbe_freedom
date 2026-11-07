@@ -49,18 +49,6 @@
   height: calc(var(--logo-h) * 59.8106 / 111.565);
 }
 
-.cqa .cqa-prod {
-  color: var(--text-2);
-  padding-left: 16px;
-  border-left: 1px solid var(--line-2);
-  white-space: nowrap;
-}
-
-.cqa .cqa-top--compact .cqa-prod {
-  padding-left: 0;
-  border-left: 0;
-}
-
 .cqa .cqa-nav {
   display: flex;
   gap: 22px;
@@ -437,11 +425,6 @@
   .cqa .cqa-logo-word,
   .cqa .cqa-badge-label {
     display: none;
-  }
-
-  .cqa .cqa-prod {
-    padding-left: 0;
-    border-left: 0;
   }
 
   .cqa .cqa-badge-value {

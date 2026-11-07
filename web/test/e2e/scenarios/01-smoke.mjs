@@ -1,4 +1,4 @@
-// The app mounts, shows its title and uses the inlined font under the strict CSP.
+// The app mounts, shows its logo and uses the inlined font under the strict CSP.
 import assert from "node:assert/strict";
 
 export const name = "smoke";
@@ -10,7 +10,8 @@ export const viewports = [
 
 export async function run(page) {
   await page.waitFor(".cqa");
-  assert.match(await page.text(".cqa"), /Качество диалогов/);
+  assert.equal(await page.count(".cqa-top .cqa-logo"), 1);
+  assert.doesNotMatch(await page.text(".cqa-top"), /Качество диалогов/);
 
   // Light theme by default.
   assert.equal(await page.count(".cqa--dark"), 0);

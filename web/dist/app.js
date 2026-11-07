@@ -6881,9 +6881,8 @@
     return badge;
   }
   function buildHeader(store, compact, track) {
-    const prod = h("span", { class: "cqa-prod", text: t("app.title") });
     const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), roleSwitch(store, track), themeToggle(store, track));
-    if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
+    if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, right);
     const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));
     const paint = (route2) => {
       const active = navFor(route2.name);
@@ -6898,7 +6897,6 @@
       "header",
       { class: "cqa-top" },
       h("a", { class: "cqa-logo", attrs: { href: href("workspace"), "aria-label": t("brand.name") }, data: { test: "logo" } }, logoMark(), logoWord()),
-      prod,
       h("nav", { class: "cqa-nav", attrs: { "aria-label": t("nav.label") } }, items),
       right
     );
