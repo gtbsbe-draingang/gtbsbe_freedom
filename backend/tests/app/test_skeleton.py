@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import mimetypes
 import re
 import sqlite3
 import sys
@@ -386,6 +387,25 @@ def test_csp_only_on_html_and_assets_are_served(make_client: MakeClient, dist: P
     r = client.get("/assets/missing.js")
     assert r.status_code == 404
     assert r.json()["error"] == "not_found"
+
+
+def test_the_ui_files_get_standard_content_types_whatever_the_system_says(
+    make_client: MakeClient, dist: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """StaticFiles asks `mimetypes`, which on Windows reads the registry: a misregistered type there
+    must not reach the browser (a stylesheet sent as text/plain leaves the page unstyled)."""
+    (dist / "assets" / "app.css").write_text("a{}")
+    (dist / "assets" / "icon.svg").write_text("<svg xmlns='http://www.w3.org/2000/svg'/>")
+    broken = mimetypes.MimeTypes()  # what a misconfigured registry can leave behind
+    for extension in (".js", ".css", ".svg"):
+        broken.add_type("text/plain", extension)
+    monkeypatch.setattr(mimetypes, "_db", broken)  # restored after the test
+
+    client = make_client(WEB_DIST=str(dist))
+
+    assert client.get("/assets/app.js").headers["content-type"].startswith("text/javascript")
+    assert client.get("/assets/app.css").headers["content-type"].startswith("text/css")
+    assert client.get("/assets/icon.svg").headers["content-type"].startswith("image/svg+xml")
 
 
 def test_frame_ancestors_follow_settings(make_client: MakeClient, dist: Path) -> None:
