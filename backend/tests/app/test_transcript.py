@@ -191,6 +191,12 @@ def test_normalize_tolerates_missing_and_odd_transcript_fields():
     assert normalize_record({**rec, "transcript": None}, "G")[0].transcript == []
 
 
+def test_normalize_keeps_the_language_as_given_and_turns_an_integer_id_into_text():
+    c, _ = normalize_record({**record("p1-ru-001"), "conversation_id": 7, "language": " kk "}, "G")
+    assert (c.id, c.conversation_id) == ("G:7", "7")
+    assert c.language == " kk "  # no upper-casing, no trimming: kept exactly as given
+
+
 @pytest.mark.parametrize("field", ["conversation_id", "channel", "language"])
 def test_normalize_rejects_a_record_without_required_field(field: str):
     rec = {k: v for k, v in record("p1-ru-001").items() if k != field}

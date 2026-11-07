@@ -82,7 +82,9 @@ class Conversation(BaseModel):
     conversation_id: str
     group_id: str
     channel: Literal["agent chat", "voice call"]
-    language: Literal["RU", "KZ", "EN"]
+    # RU, KZ or EN by convention; the contract keeps any other code exactly as given (no
+    # upper-casing, no trimming), so one unexpected code never fails an import.
+    language: str
     transcript: list[Message]
     status: Literal["new", "evaluated", "disputed"] = "new"
     facts: Facts | None = None
@@ -262,6 +264,9 @@ class Evaluation(BaseModel):
     final_total: Num | None = None
     sections: list[SectionScore] = Field(default_factory=list)
     gross_error: GrossError = Field(default_factory=lambda: GrossError(flag=False))
+    # Internal, never sent to the UI: the hash of the transcript a done evaluation graded. An
+    # appeal on it belongs to that transcript (carry-forward), even after a re-import.
+    transcript_hash: str | None = None
 
 
 # --- appeals -------------------------------------------------------------------------------
@@ -269,10 +274,16 @@ class Evaluation(BaseModel):
 
 class Decision(BaseModel):
     outcome: Literal["confirmed", "changed"]
+    # "confirmed": the answer under appeal (the evaluation's final answer when it was decided, a
+    # carried or earlier decision included); "changed": the reviewer's.
     answer: Answer
     reason: str
     role: Role
     decided_at: datetime
+    # Beyond the contract: the gross-error kinds that go with `answer`, so a carried decision scores
+    # exactly like the original. "confirmed": the kinds under appeal; "changed": none, or the
+    # model's when the answer is the model's.
+    kinds: list[str] = []
 
 
 class Appeal(BaseModel):
@@ -387,7 +398,7 @@ class AnalyticsCriterion(BaseModel):
 
 
 class AnalyticsLanguage(BaseModel):
-    language: Literal["RU", "KZ", "EN"]
+    language: str  # the conversations' code, as stored (see Conversation.language)
     avg_total: Num | None
     n: int
 
@@ -418,8 +429,9 @@ class Analytics(BaseModel):
 
 # --- output --------------------------------------------------------------------------------
 
-# What an evaluation never sends to the UI: the model-call log and the reuse hash.
-_EVALUATION_HIDDEN = {"results": {"__all__": {"calls", "reuse_key"}}}
+# What an evaluation never sends to the UI: the model-call log, the reuse hash and the hash of
+# the graded transcript.
+_EVALUATION_HIDDEN = {"transcript_hash": True, "results": {"__all__": {"calls", "reuse_key"}}}
 
 
 def dump(model: BaseModel) -> dict[str, Any]:

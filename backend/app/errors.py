@@ -8,6 +8,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app import redaction  # noqa: F401  (redacts signed URLs in this logger's and uvicorn's exception logs)
+
 logger = logging.getLogger(__name__)
 
 _MAX_LISTED_ERRORS = 5
@@ -61,7 +63,8 @@ def install_error_handlers(app: FastAPI) -> None:
         return JSONResponse(_body("invalid_request", _validation_message(exc)), status_code=422)
 
     # Anything else is a bug on our side. The client gets the same error shape and a fixed text,
-    # never the exception's own (it can carry paths, SQL or URLs); the details go to the log.
+    # never the exception's own (it can carry paths, SQL or URLs); the details go to the log, with
+    # any signed URL in them redacted (app.redaction, on this logger and on uvicorn.error).
     # Starlette serves this from its outermost middleware and then re-raises, so the response
     # carries no CORS header and the server logs the traceback a second time.
     @app.exception_handler(Exception)

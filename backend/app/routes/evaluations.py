@@ -1,8 +1,9 @@
 """Evaluations: start a batch (or estimate it with a dry run) and read one evaluation.
 
 `POST /evaluations` answers 201 with the Job it started, or 200 with `{total, model_calls,
-reused}` when `dry_run` is true (nothing is started or stored then, so `role` is optional). The
-list endpoint (`GET /evaluations?conversation&checklist_id`) comes with the read endpoints (#11).
+reused}` when `dry_run` is true (nothing is started or stored then, so `role` is optional).
+`GET /evaluations?conversation&checklist_id` lists evaluations newest first; `GET
+/evaluations/{id}` reads one.
 """
 
 from typing import Any, Literal
@@ -39,6 +40,15 @@ async def start_evaluations(request: EvaluationRequest) -> dict[str, Any] | JSON
         request.conversations, request.checklist_id, request.version, request.mode, request.role
     )
     return dump(job)
+
+
+@router.get("/evaluations")
+def list_evaluations(
+    conversation: str | None = None, checklist_id: str | None = None
+) -> list[dict[str, Any]]:
+    """Evaluations of any status, newest first (`created_at`, then id). Both filters are optional
+    and exact; a blank one is no filter."""
+    return [dump(found) for found in store.find_evaluations(conversation, checklist_id)]
 
 
 @router.get("/evaluations/{evaluation_id}")

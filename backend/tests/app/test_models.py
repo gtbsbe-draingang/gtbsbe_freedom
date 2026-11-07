@@ -1,8 +1,6 @@
 """The shared models serialise to the contract (section 7 of the front-end design).
 
-Fixtures: until the contract/ folder (stream A) exists at the repo root, the examples are the
-invented ones in tests/app/contract_examples/. Once contract/ lands the tests read
-contract/examples/ and contract/schemas/ instead, and the fallback folder is deleted.
+Fixtures: stream A's contract/ folder at the repo root, contract/examples/ and contract/schemas/.
 """
 
 import json
@@ -40,12 +38,8 @@ from app.models import (
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 
-if (REPO_ROOT / "contract").is_dir():
-    CONTRACT_DIR = REPO_ROOT / "contract"
-    EXAMPLES_DIR = CONTRACT_DIR / "examples"
-else:
-    CONTRACT_DIR = HERE / "contract_examples"
-    EXAMPLES_DIR = CONTRACT_DIR
+CONTRACT_DIR = REPO_ROOT / "contract"
+EXAMPLES_DIR = CONTRACT_DIR / "examples"
 SCHEMAS_DIR = CONTRACT_DIR / "schemas"
 
 # File-name prefix -> model. None: a shape that is not a backend model here (the evaluator,
@@ -131,7 +125,6 @@ def test_every_contract_example_parses(path: Path) -> None:
     model.model_validate(load(path))
 
 
-@pytest.mark.skipif(not SCHEMAS_DIR.is_dir(), reason="waiting for contract/schemas")
 @pytest.mark.parametrize("path", EXAMPLES, ids=lambda p: p.name)
 def test_dump_validates_against_schema(path: Path) -> None:
     from jsonschema import Draft202012Validator
@@ -433,9 +426,16 @@ def test_queued_evaluation_has_defaults() -> None:
 def test_model_dump_json_matches_dump() -> None:
     evaluation = _evaluation()
     raw = json.loads(evaluation.model_dump_json(by_alias=True))
-    for result in raw["results"]:  # the two internal fields are the only difference
+    for result in raw["results"]:  # the internal fields are the only difference
         del result["calls"], result["reuse_key"]
+    del raw["transcript_hash"]
     assert raw == dump(evaluation)
+
+
+def test_dump_hides_the_graded_transcript_hash() -> None:
+    evaluation = _evaluation().model_copy(update={"transcript_hash": "abc"})
+    assert "transcript_hash" not in dump(evaluation)
+    assert json.loads(evaluation.model_dump_json())["transcript_hash"] == "abc"  # kept in storage
 
 
 def test_dump_uses_aliases_for_other_models() -> None:

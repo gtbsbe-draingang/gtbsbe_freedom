@@ -5,6 +5,7 @@ Run from backend/: `uv run uvicorn app.main:create_app --factory`.
 
 import importlib
 import importlib.util
+import mimetypes
 import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -19,6 +20,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from starlette.websockets import WebSocketClose
 
+from app import appeals
 from app.checklists import seed_into_db
 from app.db import migrate
 from app.jobs import recover_interrupted, shutdown as stop_jobs
@@ -31,6 +33,11 @@ from app.settings import get_settings
 OPTIONAL_ROUTER_PACKAGES = ("evaluator", "audio", "quality")
 
 _WILDCARD = "[A-Za-z0-9-]*"
+
+# StaticFiles takes a file's content type from `mimetypes`, which on Windows also reads the
+# registry, where another program may have registered `.css` or `.js` as something else (a
+# stylesheet served as text/plain leaves the page unstyled). These are set at app creation.
+UI_CONTENT_TYPES = (("text/javascript", ".js"), ("text/css", ".css"), ("image/svg+xml", ".svg"))
 
 
 def default_web_dist() -> Path:
@@ -141,12 +148,16 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     migrate()
     seed_into_db()
     recover_interrupted()  # nothing runs yet: what a previous process left running was cut off
+    appeals.recover_pending()  # likewise for second opinions
     yield
     await stop_jobs()
+    await appeals.shutdown()
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    for content_type, extension in UI_CONTENT_TYPES:
+        mimetypes.add_type(content_type, extension)
     app = FastAPI(
         title="CQA backend",
         lifespan=lifespan,

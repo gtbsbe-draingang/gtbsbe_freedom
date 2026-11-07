@@ -18,7 +18,8 @@ decides what needs a call, caches what comes back, scores in code and stores eve
   JudgmentFailed. A dialogue whose criterion still fails, or whose answer is invalid, ends
   `failed` with a short error code; the others carry on. A store failure never leaves an item
   stuck for good: `retry_job` re-runs failed items and queued or running ones no run of this
-  process owns, and records who retried in the job's `retries`.
+  process owns, and records who retried in the job's `retries`. Retries of one job run one at a
+  time (a per-job lock), so two at once (a double click) never run an item twice.
   An item's error is never an exception's own text (it may carry a URL): it is C's
   `JudgmentFailed.reason`, `validation:<code>`, `scoring:<code>` or the exception's class name.
 * **Recovery.** `recover_interrupted` (at startup) fails the items a dead process left queued or
@@ -32,15 +33,15 @@ import asyncio
 import logging
 import uuid
 import weakref
-from collections.abc import Iterable
+from collections.abc import AsyncIterator, Iterable
+from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any, Literal
-
-from pydantic import TypeAdapter
+from typing import Literal
 
 from app import store
+from app.appeals import apply_decisions, carried_decisions, carry_forward
 from app.errors import ApiError
 from app.evaluator_port import (
     EvaluatorPort,
@@ -52,19 +53,17 @@ from app.evaluator_port import (
     set_evaluator,
 )
 from app.models import (
-    Answer,
     ChecklistVersion,
     Conversation,
     Criterion,
     CriterionResult,
     Evaluation,
-    GrossError,
     Job,
     JobItem,
     Judgment,
     Role,
 )
-from app.scoring import ScoringError, score, validate_answer
+from app.scoring import ScoringError, validate_answer
 from app.settings import get_settings
 from app.transcript import transcript_hash
 
@@ -88,7 +87,6 @@ Mode = Literal["reuse", "full"]
 
 RETRY_DELAY_SECONDS = 1.0  # pause before the one retry of a failed criterion call
 _MAX_ERROR_LENGTH = 200
-_ANSWER = TypeAdapter(Answer)
 
 
 # --- planning ------------------------------------------------------------------------------
@@ -247,12 +245,38 @@ async def dry_run(
     return await asyncio.to_thread(plan_run, ids, checklist, mode)
 
 
+@asynccontextmanager
+async def _one_retry_at_a_time(job_id: str) -> AsyncIterator[None]:
+    """Hold the job's retry lock. Without it, a second retry could check ownership before the
+    first scheduled its run, then requeue an item that run had already claimed: run twice. The
+    lock lives while someone holds or waits for it, one table per event loop (asyncio locks belong
+    to one loop; tests run several)."""
+    locks = _retry_locks.setdefault(asyncio.get_running_loop(), {})
+    entry = locks.get(job_id)
+    if entry is None:
+        entry = locks[job_id] = _RetryLock()
+    entry.users += 1
+    try:
+        async with entry.lock:
+            yield
+    finally:
+        entry.users -= 1
+        if entry.users == 0:
+            del locks[job_id]
+
+
 async def retry_job(job_id: str, role: Role) -> Job:
     """Re-run the job's unfinished items: the failed ones, and queued or running ones that no run
     of this process owns (left behind by a store failure). Done items are never re-run. A job with
     nothing to retry is returned as it is. The retry is recorded in the job's `retries` with
     `role`. 404 for an unknown job, 409 `model_key_missing` when those items need model calls and
-    no key is configured (nothing is reset then)."""
+    no key is configured (nothing is reset then). Retries of one job run one after the other: the
+    second sees the items the first scheduled as owned, and leaves them alone."""
+    async with _one_retry_at_a_time(job_id):
+        return await _retry(job_id, role)
+
+
+async def _retry(job_id: str, role: Role) -> Job:
     job = await asyncio.to_thread(store.get_job, job_id)
     context = await asyncio.to_thread(store.get_job_checklist, job_id)
     if job is None or context is None:
@@ -302,6 +326,18 @@ _remaining: dict[asyncio.Task[None], set[str]] = {}
 # settings.max_parallel_calls. An asyncio primitive belongs to one event loop, so there is one per
 # running loop (tests run several), created lazily and dropped with its loop.
 _semaphores: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore]" = (
+    weakref.WeakKeyDictionary()
+)
+
+
+@dataclass
+class _RetryLock:
+    lock: asyncio.Lock = field(default_factory=asyncio.Lock)
+    users: int = 0  # holding or waiting; the entry is dropped when it reaches 0
+
+
+# Per event loop, by job id: the lock `retry_job` holds (see `_one_retry_at_a_time`).
+_retry_locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, dict[str, _RetryLock]]" = (
     weakref.WeakKeyDictionary()
 )
 
@@ -537,6 +573,7 @@ async def _evaluate(
     evaluation = build_evaluation(
         base, version, {cid: j.judgment for cid, j in judged.items()},  # type: ignore[misc]
         reused={cid for cid, j in judged.items() if j.reused}, carries=carries, cost=cost,
+        graded_hash=evaluated_hash,
     )  # fmt: skip
     return evaluation, evaluated_hash
 
@@ -599,19 +636,6 @@ async def _dialog_info(
 # --- building the evaluation ---------------------------------------------------------------
 
 
-def carry_forward(conversation: str, transcript_hash: str, version: ChecklistVersion) -> dict[str, dict]:
-    """Reviewer decisions carried from earlier evaluations of this transcript, by criterion id:
-    `{"appeal_id", "evaluation_id", "answer", "kinds"}`. A stub until appeals exist (#12)."""
-    return {}
-
-
-def _scored(version: ChecklistVersion, answers: dict[str, tuple[Any, list[str]]]):
-    try:
-        return score(version, answers)
-    except ScoringError as exc:
-        raise _ItemFailed(f"scoring:{exc.code}") from None
-
-
 def build_evaluation(
     base: Evaluation,
     version: ChecklistVersion,
@@ -620,66 +644,39 @@ def build_evaluation(
     reused: set[str],
     carries: dict[str, dict],
     cost: Decimal,
+    graded_hash: str | None = None,
 ) -> Evaluation:
-    """The done evaluation: one result per criterion in checklist order. `original_total` comes
-    from the model's answers; `final_answer`, points, sections, `final_total` and the gross-error
-    flag from the final answers (a carried decision's answer, else the model's)."""
-    model_answers = {cid: (j.answer, list(j.kinds)) for cid, j in judgments.items()}
-    original = _scored(version, model_answers)
-
-    criteria = {c.id: c for c in version.criteria}
-    final_answers = dict(model_answers)
-    carried: dict[str, dict] = {}
-    for cid, carry in carries.items():
-        criterion = criteria.get(cid)
-        if criterion is None:
-            continue
-        answer = _ANSWER.validate_python(carry["answer"])
-        if validate_answer(criterion, answer) is not None:
-            continue
-        final_answers[cid] = (answer, list(carry.get("kinds") or []))
-        carried[cid] = {"appeal_id": carry["appeal_id"], "evaluation_id": carry["evaluation_id"]}
-    final = _scored(version, final_answers) if carried else original
-
-    results: list[CriterionResult] = []
-    for c in version.criteria:
-        judgment = judgments[c.id]
-        points, effective_weight = final.results[c.id]
-        results.append(
-            CriterionResult.model_validate(
-                {
-                    **judgment.model_dump(),
-                    "final_answer": final_answers[c.id][0],
-                    "points": points,
-                    "effective_weight": effective_weight,
-                    "reused": c.id in reused,
-                    "carried_decision": carried.get(c.id),
-                }
-            )
+    """The done evaluation: one result per criterion in checklist order, marked with the decision
+    carried into it (`carries`, from `appeals.carry_forward`) where there is one. The totals,
+    points, sections and gross-error flag come from `appeals.apply_decisions`, the code path a
+    reviewer's decision takes too: `original_total` from the model's answers, the rest from the
+    final answers (a carried decision's answer, else the model's)."""
+    carried, markers = carried_decisions(version, carries)  # by appeal id; by criterion id
+    results = [
+        CriterionResult.model_validate(
+            {
+                **judgments[c.id].model_dump(),
+                "final_answer": judgments[c.id].answer,
+                "points": None,
+                "effective_weight": None,
+                "reused": c.id in reused,
+                "carried_decision": markers.get(c.id),
+            }
         )
-
-    by_id = {r.criterion_id: r for r in results}
-    gross = [c.id for c in version.criteria if c.kind == "gross_error"]
-    flagged = [cid for cid in gross if final_answers[cid][0] == "yes"]
-    source = by_id[(flagged or gross)[0]] if gross else None
-    gross_error = GrossError(
-        flag=final.gross_error.flag,
-        kinds=final.gross_error.kinds,
-        explanation=source.explanation if source else None,
-        evidence=source.evidence if source else [],
-    )
-
+        for c in version.criteria
+    ]
     models = {j.model for j in judgments.values()}
-    return base.model_copy(
+    draft = base.model_copy(
         update={
             "status": "done",
             "source": "model",
             "model": next(iter(models)) if len(models) == 1 else ("mixed" if models else None),
             "cost_usd": cost,
             "results": results,
-            "original_total": original.total,
-            "final_total": final.total,
-            "sections": final.sections,
-            "gross_error": gross_error,
+            "transcript_hash": graded_hash,
         }
     )
+    try:
+        return apply_decisions(draft, version, own={}, carried=carried)
+    except ScoringError as exc:
+        raise _ItemFailed(f"scoring:{exc.code}") from None
