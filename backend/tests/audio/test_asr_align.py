@@ -41,9 +41,15 @@ def test_refine_without_the_recogniser_keeps_spans(monkeypatch):
     assert asr_align.refine(spans, np.zeros(16000, np.float32)) == (spans, {"asr": "not installed"})
 
 
-def test_alignment_is_off_unless_switched_on(monkeypatch):
+def test_alignment_follows_the_switch_and_otherwise_the_recogniser(monkeypatch):
     monkeypatch.delenv("CQA_AUDIO_ALIGNMENT", raising=False)
+    monkeypatch.setattr(asr_align, "available", lambda: False)
+    assert not pipeline.alignment_enabled()  # the length guess alone was not what passed the check
+    monkeypatch.setattr(asr_align, "available", lambda: True)
+    assert pipeline.alignment_enabled()
+    monkeypatch.setenv("CQA_AUDIO_ALIGNMENT", "off")
     assert not pipeline.alignment_enabled()
+    monkeypatch.setattr(asr_align, "available", lambda: False)
     monkeypatch.setenv("CQA_AUDIO_ALIGNMENT", " ON ")
     assert pipeline.alignment_enabled()
 

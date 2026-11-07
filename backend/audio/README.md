@@ -26,9 +26,24 @@ store in an isolated verification database: 374 offsets and 130 operator
 measurements. This verifies decoding, analysis and persistence, not alignment
 accuracy or browser playback.
 
-The import no longer produces offsets or voice measurements (PR #56 review): they
-stay withheld until alignment passes an independent check, and migration
-`d_001_withhold_unvalidated_audio` clears stored ones. Playback is unchanged.
+### Line-to-audio offsets (#28)
+
+Each line's end comes from the transcript (recording clock, pauses, one shift per call);
+its start is the length guess (13 chars/s, at most 20 s), then snapped to the line's first
+words in a faster-whisper `small` pass (`audio/asr_align.py`, optional extra `asr`).
+
+| Check on the five DEV calls | Result |
+|---|---|
+| Against a whole-call alignment of Whisper words, 190 lines | 74% within 2 s before, 78% with the new guess, 90% with snapping |
+| **Listening check** (`tests/manual/alignment_check.py`, 30 lines, 6 per call, seed 28), done by a person on 7 November | **29 of 30 start within about 2 s** of where playback starts; the miss is `p4-ru-002` line 21 |
+
+The listening check judged where the spoken line starts. Some of the passing lines have
+transcript text that the organisers' speech recognition got wrong; that does not change
+their timing. The pass covers the length guess plus snapping, so offsets and voice
+measurements are published by default only where faster-whisper is installed;
+`CQA_AUDIO_ALIGNMENT=on|off` overrides that. Without it (the earlier default) migration
+`d_001_withhold_unvalidated_audio` keeps clearing stored results. Overlap stays null: mono
+audio cannot show two speakers at once.
 
 ### Browser playback check (#27)
 

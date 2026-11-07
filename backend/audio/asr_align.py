@@ -90,7 +90,7 @@ def snap_spans(spans: list[dict], words: list[dict]) -> tuple[list[dict], int]:
     out, moved = [], 0
     for span in spans:
         span = dict(span)
-        if span["speaker"] in ("client", "operator", "bot"):
+        if span.get("speaker") in ("client", "operator", "bot") and span.get("text"):
             start = match_start(span["text"], words, span["end"] - LOOK_BACK, span["end"] + LOOK_AHEAD)
             if start is not None and start <= span["end"]:
                 span["start"], moved = start, moved + 1
