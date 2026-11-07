@@ -305,7 +305,10 @@ def test_load_seed_fills_fingerprints(seed) -> None:
 
 @needs_seed
 def test_seed_first_criterion_is_the_cross_stream_vector(seed) -> None:
-    assert by_id(seed, "c01").fingerprint == VECTOR_FINGERPRINT
+    # c01 carries the #25 team guidance; without it, it is exactly the shared vector.
+    c01 = by_id(seed, "c01")
+    assert criterion_fingerprint(c01.model_copy(update={"guidance": None})) == VECTOR_FINGERPRINT
+    assert c01.fingerprint == criterion_fingerprint(c01) != VECTOR_FINGERPRINT
 
 
 @needs_seed

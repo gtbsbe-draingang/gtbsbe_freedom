@@ -248,7 +248,8 @@
         {
           "properties": {
             "n": {
-              "const": 0
+              "const": 0,
+              "type": "integer"
             },
             "agreement": {
               "type": "null"
@@ -258,7 +259,8 @@
         {
           "properties": {
             "n": {
-              "minimum": 1
+              "minimum": 1,
+              "type": "integer"
             },
             "agreement": {
               "type": "number"

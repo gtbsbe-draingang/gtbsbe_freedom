@@ -11,7 +11,8 @@ from quality.models import AgreementCell
     (.95, .92, False, True, 'challenger'), (.85, .92, True, False, None),
     (None, .92, True, True, None)])
 def test_selection(a, b, planted, challenger_ok, expected):
-    assert choose_model(AgreementCell(agreement=a, n=100), AgreementCell(agreement=b, n=100), planted,
+    cell = lambda x: AgreementCell(agreement=x, n=0 if x is None else 100)  # missing means n = 0
+    assert choose_model(cell(a), cell(b), planted,
                         baseline_model='base', challenger_model='challenger',
                         challenger_planted_ok=challenger_ok, expected_n=100) == expected
 

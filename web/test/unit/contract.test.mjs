@@ -381,11 +381,15 @@ describe("schema rules", () => {
     assert.equal(seed(official), false, "the seed's checklist-level guidance is a string too");
   });
 
-  test("seed criteria have guidance === null and the checklist has the guidance text", () => {
+  test("seed criterion guidance is the #25 team note on c01, c03, c06, c07 and null elsewhere", () => {
     const seed = readJson(seedFile);
     assert.equal(typeof seed.guidance, "string");
     assert.ok(seed.guidance.length > 0);
-    for (const c of seed.criteria) assert.strictEqual(c.guidance, null, `${c.id}: guidance is null`);
+    const team = new Set(["c01", "c03", "c06", "c07"]);
+    for (const c of seed.criteria) {
+      if (team.has(c.id)) assert.match(c.guidance, /^Уточнение команды: /, `${c.id}: team guidance`);
+      else assert.strictEqual(c.guidance, null, `${c.id}: guidance is null`);
+    }
   });
 
   test("voice measurements use semitones, seconds and words per minute", () => {
