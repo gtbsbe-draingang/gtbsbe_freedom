@@ -6,9 +6,12 @@ The table schema below is final (scaffold) so other streams can read it.
 
 from __future__ import annotations
 
-from decimal import Decimal
+import logging
+from datetime import UTC, datetime
+from decimal import ROUND_HALF_UP, Decimal
 
-from app.db import register_migration
+from app.db import connect, register_migration
+from app.settings import get_settings
 from evaluator._compat import LLMCallRecord
 
 CACHE_WRITE = Decimal("1.25")  # x input price
@@ -48,14 +51,47 @@ def call_cost(
 
     Prices from `get_settings().prices` (USD per 1M). KeyError for an unknown model. S3.
     """
-    raise NotImplementedError("S3 (#19): call_cost")
+    price = get_settings().prices[model]
+    p_in, p_out = price["input"], price["output"]
+    total = (
+        input_tokens * p_in
+        + cache_write_tokens * p_in * CACHE_WRITE
+        + cache_read_tokens * p_in * CACHE_READ
+        + output_tokens * p_out
+    ) / Decimal(1_000_000)
+    return total.quantize(QUANTUM, rounding=ROUND_HALF_UP)
 
 
 def log_calls(records: list[LLMCallRecord], *, conversation: str | None, criterion_id: str | None) -> None:
     """Insert one c_llm_calls row per record; cost stored as a string. S7."""
-    raise NotImplementedError("S7 (#19): log_calls")
+    if not records:
+        return
+    now = datetime.now(UTC).isoformat(timespec="seconds")
+    conn = connect()
+    try:
+        with conn:
+            conn.executemany(
+                "INSERT INTO c_llm_calls (created_at, conversation, criterion_id, purpose, model, input_tokens,"
+                " output_tokens, cost_usd, latency_ms, reuse_key) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                [
+                    (now, conversation, criterion_id, r.purpose, r.model, r.input_tokens, r.output_tokens,
+                     str(r.cost_usd), r.latency_ms, r.reuse_key)
+                    for r in records
+                ],
+            )
+    finally:
+        conn.close()
+
+
+def log_calls_quietly(records: list[LLMCallRecord], *, conversation: str | None, criterion_id: str | None) -> None:
+    """log_calls that never raises: a failed log write must not hide the real result or error.
+    Logs the exception class only (no message, so no secrets)."""
+    try:
+        log_calls(records, conversation=conversation, criterion_id=criterion_id)
+    except Exception as exc:  # noqa: BLE001
+        logging.getLogger(__name__).warning("c_llm_calls write failed: %s", type(exc).__name__)
 
 
 def total_cost(records: list[LLMCallRecord]) -> Decimal:
     """Exact sum of cost_usd, quantized to QUANTUM; Decimal("0.000000") for no records. S7."""
-    raise NotImplementedError("S7 (#19): total_cost")
+    return sum((r.cost_usd for r in records), Decimal(0)).quantize(QUANTUM)
