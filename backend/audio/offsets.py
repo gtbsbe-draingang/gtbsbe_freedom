@@ -20,7 +20,8 @@ import numpy as np
 
 from audio.vad import HOP, onsets
 
-CHARS_PER_SECOND = 14.0
+CHARS_PER_SECOND = 13.0  # fitted on the five DEV calls (#28); 14 with a 12 s cap missed long lines
+MAX_LINE_SECONDS = 20.0
 SEARCH = (-45.0, 45.0, 0.2)  # seconds: from, to, step
 SNAP = 1.5  # seconds around the estimated start in which a speech onset is accepted
 
@@ -84,7 +85,7 @@ def recording_clock(lines: list[Line]):
 
 
 def _duration(text: str) -> float:
-    return float(np.clip(len(text) / CHARS_PER_SECOND, 0.6, 12.0))
+    return float(np.clip(len(text) / CHARS_PER_SECOND, 0.6, MAX_LINE_SECONDS))
 
 
 def _track(ends: list[tuple[float, float]], n: int) -> np.ndarray:
