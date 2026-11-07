@@ -317,6 +317,8 @@ function workspaceView(store, api, route, panes) {
     const open = Boolean(queueOpen) && !compact;
     el.classList.toggle("cqa-ws--queue-open", open);
     el.classList.toggle("cqa-ws--pane-scorecard", pane === "scorecard");
+    // No dialogue open: the board has the scorecard's column too (no empty «Оценка диалога»).
+    el.classList.toggle("cqa-ws--board", id === null && Boolean(panes.board));
     toggle?.setAttribute("aria-expanded", String(open));
     tabs.forEach((tab, i) => tab.setAttribute("aria-selected", String((i === 1) === (pane === "scorecard"))));
   };
@@ -328,7 +330,10 @@ function workspaceView(store, api, route, panes) {
     el,
     update(next) {
       const nextId = next.params.id ?? null;
-      if (nextId !== id) fillConversation(nextId);
+      if (nextId !== id) {
+        fillConversation(nextId);
+        paint();
+      }
     },
     destroy() {
       subs.forEach((off) => off());

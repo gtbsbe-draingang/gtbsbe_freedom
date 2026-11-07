@@ -419,6 +419,20 @@
   border-left: 1px solid var(--line);
 }
 
+/* no dialogue open: the batch board (ui/batch-board.js) takes the scorecard's column as well */
+.cqa .cqa-ws--board .cqa-ws-grid {
+  grid-template-columns: var(--ws-left, 300px) minmax(0, 1fr);
+}
+
+.cqa .cqa-ws--board.cqa-ws--compact .cqa-ws-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cqa .cqa-ws--board .cqa-pane-scorecard,
+.cqa .cqa-ws--board .cqa-resizer--right {
+  display: none;
+}
+
 /* the strip with the queue toggle and the pane tabs; only narrow widths show it */
 .cqa .cqa-ws-bar {
   display: none;
@@ -523,6 +537,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
   }
 
+  .cqa .cqa-ws--board .cqa-ws-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   /* the queue leaves the grid and becomes a drawer over the workspace */
   .cqa .cqa-pane-queue {
     display: none;
@@ -608,6 +626,15 @@
   .cqa .cqa-ws:not(.cqa-ws--pane-scorecard) .cqa-pane-scorecard,
   .cqa .cqa-ws--pane-scorecard .cqa-pane-transcript {
     display: none;
+  }
+
+  /* the tabs switch between a dialogue and its evaluation: with no dialogue, only the board */
+  .cqa .cqa-ws--board .cqa-tabs {
+    display: none;
+  }
+
+  .cqa .cqa-ws--board.cqa-ws--pane-scorecard .cqa-pane-transcript {
+    display: block;
   }
 
   .cqa .cqa-pane-scorecard {

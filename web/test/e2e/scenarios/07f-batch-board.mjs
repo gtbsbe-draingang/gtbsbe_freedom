@@ -39,11 +39,14 @@ export async function run(page) {
   const narrow = page.viewport[0] < 900;
   const tabs = page.viewport[0] < 700;
   await page.waitFor(sel("queue-item"), 10000);
-  if (tabs) await page.click(sel("tab-transcript"));
 
   // ---- before any batch: the old prompt, plus where results will appear ----
   await page.waitFor(sel("board-empty"));
   assert.match(await page.text(sel("board-empty")), /Выберите диалог в очереди/);
+  // no dialogue: no empty «Оценка диалога» column; the board has its width (and no tabs when narrow)
+  assert.equal(await page.eval(`getComputedStyle(${q(sel("scorecard-pane"))}).display`), "none");
+  assert.equal(await page.eval(`${q(sel("transcript-pane"))}.getBoundingClientRect().right >= ${q(".cqa-ws-grid")}.getBoundingClientRect().right - 1`), true, "the board reaches the right edge");
+  if (tabs) assert.equal(await page.eval(`getComputedStyle(${q(".cqa-tabs")}).display`), "none");
   assert.match(await page.text(sel("board-empty")), /Оценить выбранные/);
 
   // ---- run a batch: the board shows a shimmering card per dialogue at once ----
@@ -82,6 +85,7 @@ export async function run(page) {
   // ---- a card opens the dialogue; «Результаты» in the batch bar comes back to the board ----
   await page.click(card(picked[1]));
   await until(page, `decodeURIComponent(location.hash) === "#/c/${picked[1]}"`, "the dialogue route");
+  if (!tabs) await until(page, `getComputedStyle(${q(sel("scorecard-pane"))}).display !== "none"`, "the scorecard column to come back with a dialogue");
   await until(page, `${q(sel("batch-results"))} !== null`, "the «Результаты» link");
   await page.eval(`${q(sel("batch-results"))}.click()`);
   await until(page, `location.hash === "#/" && ${states}.length === 3`, "the board again");
@@ -119,4 +123,21 @@ export async function run(page) {
   await page.eval(`${q(sel("batch-results"))}.click()`);
   await until(page, `location.hash === "#/" && ${states}.length === 3`, "the board of the new batch");
   await until(page, `${states}.every((s) => s === "done")`, "the new batch done", 15000);
+
+  // ---- many dialogues: the cards scroll inside the board, under its head, within the screen ----
+  await openQueue(page);
+  await page.eval(`(() => { const ids = [...document.querySelectorAll('${sel("queue-item")}')].map((r) => r.getAttribute("data-id")).filter((id) => /:p1-/.test(id)).slice(0, 22); window.__cqaTest.store.set({ selection: new Set(ids) }); })()`);
+  await runReady(page);
+  await page.click(sel("batch-run"));
+  await until(page, `document.querySelectorAll(${JSON.stringify(sel("board-total"))}).length === 22`, "22 evaluated cards", 20000);
+  if (narrow) await page.eval("window.__cqaTest.store.set({ queueOpen: false })");
+  const scroll = q(sel("board-scroll"));
+  assert.equal(await page.eval(`${q(".cqa-bb-body")}.getBoundingClientRect().bottom <= innerHeight`), true, "the board ends on screen");
+  assert.equal(await page.eval("document.documentElement.scrollHeight <= innerHeight + 1"), true, "the page itself does not scroll");
+  assert.equal(await page.eval("document.documentElement.scrollWidth <= innerWidth"), true);
+  if (tabs) assert.equal(await page.eval(`${scroll}.scrollHeight > ${scroll}.clientHeight`), true, "22 cards overflow at 600 px");
+  const headTop = await page.eval(`${q(".cqa-bb-head")}.getBoundingClientRect().top`);
+  await page.eval(`${scroll}.scrollTop = ${scroll}.scrollHeight`);
+  assert.equal(await page.eval(`${q(".cqa-bb-head")}.getBoundingClientRect().top`), headTop, "the head stays while the cards scroll");
+  assert.equal(await page.eval(`(() => { const last = [...document.querySelectorAll('${sel("board-card")}')].at(-1).getBoundingClientRect(); return last.bottom <= ${scroll}.getBoundingClientRect().bottom; })()`), true, "the last card can be scrolled into the box");
 }

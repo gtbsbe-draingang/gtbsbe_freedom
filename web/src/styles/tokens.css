@@ -21,6 +21,8 @@
   --surface: #FFFFFF;
   --surface-2: #F5F6F7;
   --line: #E6E7E9;
+  --scroll-thumb: rgba(42, 134, 64, 0.32);
+  --scroll-thumb-hover: rgba(42, 134, 64, 0.55);
   --line-2: #D1D1D1;
   --frame: #D1D1D1;
   --text: #191919;
@@ -43,6 +45,8 @@
   --surface: #282828;
   --surface-2: #1F1F1F;
   --line: #333333;
+  --scroll-thumb: rgba(116, 250, 151, 0.26);
+  --scroll-thumb-hover: rgba(116, 250, 151, 0.45);
   --line-2: #454545;
   --frame: #000000;
   --text: rgba(255, 255, 255, 0.87);

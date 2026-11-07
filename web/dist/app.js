@@ -7382,7 +7382,7 @@
     const progress = h("p", { class: "cqa-bb-progress", attrs: { role: "status", "aria-live": "polite" }, data: { test: "board-progress" } });
     const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
     const grid2 = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
-    const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), grid2);
+    const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid2));
     const empty = h(
       "div",
       { class: "cqa-empty", data: { test: "board-empty" } },
@@ -9652,6 +9652,7 @@
       const open = Boolean(queueOpen) && !compact;
       el.classList.toggle("cqa-ws--queue-open", open);
       el.classList.toggle("cqa-ws--pane-scorecard", pane === "scorecard");
+      el.classList.toggle("cqa-ws--board", id === null && Boolean(panes.board));
       toggle?.setAttribute("aria-expanded", String(open));
       tabs.forEach((tab, i) => tab.setAttribute("aria-selected", String(i === 1 === (pane === "scorecard"))));
     };
@@ -9662,7 +9663,10 @@
       el,
       update(next) {
         const nextId2 = next.params.id ?? null;
-        if (nextId2 !== id) fillConversation(nextId2);
+        if (nextId2 !== id) {
+          fillConversation(nextId2);
+          paint();
+        }
       },
       destroy() {
         subs.forEach((off) => off());

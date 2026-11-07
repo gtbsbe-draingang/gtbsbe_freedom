@@ -66,7 +66,8 @@ export function createBatchBoard(store, api) {
   const progress = h("p", { class: "cqa-bb-progress", attrs: { role: "status", "aria-live": "polite" }, data: { test: "board-progress" } });
   const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
   const grid = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
-  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), grid);
+  // the cards scroll on their own; the head with the progress stays in view
+  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid));
   const empty = h(
     "div",
     { class: "cqa-empty", data: { test: "board-empty" } },
