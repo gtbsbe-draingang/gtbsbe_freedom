@@ -91,17 +91,25 @@ class ContentSecurityPolicyMiddleware:
 class StaticUI:
     """Serves the built UI (web/dist) as the router's fallback for every path no API route took.
 
-    The directory is checked per request, so building the UI while the server runs just works.
-    Without a build, `/` explains that, and any other path is an ordinary 404 error."""
+    It only answers GET and HEAD for paths outside `base_path`: anything else is the ordinary
+    404 error, so an unknown API call looks the same with or without a UI build. The directory
+    is checked per request, so building the UI while the server runs just works. Without a
+    build, `/` explains that."""
 
-    def __init__(self, directory: Path) -> None:
+    def __init__(self, directory: Path, base_path: str) -> None:
         self.directory = directory
+        self.base_path = base_path  # "" when the API is mounted at the root
         self.files = StaticFiles(directory=directory, html=True, check_dir=False)
+
+    def _is_api_path(self, path: str) -> bool:
+        return bool(self.base_path) and (path == self.base_path or path.startswith(f"{self.base_path}/"))
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] == "websocket":
             await WebSocketClose()(scope, receive, send)
             return
+        if scope["method"] not in ("GET", "HEAD") or self._is_api_path(scope["path"]):
+            raise HTTPException(status_code=404)
         if not self.directory.is_dir():
             if scope["path"] == "/":
                 note = PlainTextResponse("UI not built. Run `npm run build` in web/.")
@@ -164,5 +172,5 @@ def create_app() -> FastAPI:
 
     # The UI is the fallback (not a mount at "/"): a mount would swallow a wrong-method call
     # to an API route and answer 405 with the static files' Allow header.
-    app.router.default = StaticUI(settings.web_dist or default_web_dist())
+    app.router.default = StaticUI(settings.web_dist or default_web_dist(), settings.base_path)
     return app
