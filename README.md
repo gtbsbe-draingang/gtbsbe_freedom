@@ -40,15 +40,6 @@ As of `main` on 7 November 2026.
 | Evaluator (masking, prompts, model client, answer checking, reuse, cost, dialogue info, second opinion, translation, DEV harness) | Done. Runs on the local Qwen model or the Claude API; all 65 DEV dialogues evaluated (see [Models and cost](#models-and-cost)) |
 | UI workspace: queue, transcript, scorecard, evaluation runs, evidence jumps | Done |
 | UI appeals: dispute drawer, appeals page, reviewer panel with second opinion and decision | Done |
-| UI loading (group import, JSON upload with drag-and-drop), batch runs, checklist editor, "apply to dialogues" | Done ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36)) |
-| UI before/after comparison | Done ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36)) |
-| UI analytics and accuracy pages with charts, call player with speaker waveform, translation toggle, CSV button | Done ([#37](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/37)) |
-| UI in Russian, Kazakh and English | Done |
-| Call audio streaming, line-to-audio alignment, voice measurements, «Звонки» checklist | Done ([#27](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/27), [#28](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/28), [#29](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/29), [#93](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/93)). Alignment is on by default; `CQA_AUDIO_ALIGNMENT=off` turns it off |
-| Accuracy against reference labels, team interpretations of the checklist (`official-chat` v2) | Done ([#25](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/25), [#73](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/73)). References are our own reviewed labels, not organiser ground truth |
-| Results snapshot for the jury (`data/snapshot/cqa-snapshot.json`) | Not on `main` yet: PR [#100](https://github.com/gtbsbe-draingang/gtbsbe_freedom/pull/100) ([#15](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/15)). Until it merges, a fresh clone starts without stored results |
-| Control set | Waiting for the organisers' `group_id` ([#34](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/34)); the run and export tooling is merged |
-| Public repository and link to the organisers | Not done ([#35](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/35)) |
 
 Details in [In progress](#in-progress).
 
@@ -144,7 +135,7 @@ Key decisions:
 ├── contract/                    JSON Schemas and example payloads of the API contract
 │   ├── schemas/
 │   └── examples/
-├── data/                        Not in git yet: dev.json and audio/ are private; snapshot/ arrives with #15
+├── data/                        dev.json and audio/ are private (not in git); snapshot/ holds the jury snapshot
 ├── .github/workflows/backend.yml   CI: backend and evaluator tests
 ├── CLAUDE.md                    Project rules: Dynamics constraints, secrets, design language
 ├── EXTRA_FEATURES.md            Agreed features beyond the brief
