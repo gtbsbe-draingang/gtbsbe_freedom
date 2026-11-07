@@ -22,7 +22,7 @@ T = TypeVar("T", bound=BaseModel)
 
 SONNET_FALLBACK_BETA = "server-side-fallback-2026-07-01"
 MAX_RETRIES = 4
-TIMEOUT_SECONDS = 60.0
+TIMEOUT_SECONDS = 60.0  # the default of settings.model_timeout_seconds (env MODEL_TIMEOUT_SECONDS)
 MAX_TOKENS = 16000
 
 
@@ -79,10 +79,14 @@ def get_client() -> Any:
         raise ModelKeyMissing("ANTHROPIC_API_KEY is not set")
     import anthropic
 
+    options: dict[str, Any] = {}
+    if settings.anthropic_base_url and settings.anthropic_base_url.strip():
+        options["base_url"] = settings.anthropic_base_url.strip()
     _client = anthropic.AsyncAnthropic(
         api_key=settings.anthropic_api_key.get_secret_value(),  # type: ignore[union-attr]
         max_retries=MAX_RETRIES,
-        timeout=TIMEOUT_SECONDS,
+        timeout=settings.model_timeout_seconds,
+        **options,
     )
     return _client
 

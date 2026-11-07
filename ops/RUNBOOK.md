@@ -8,14 +8,16 @@ directly to `main`; submit feature branches and draft PRs for review.
 
 1. Start from a clean clone of the integrated demo commit. Build/install steps
    must follow that commit's README. Confirm the committed `web/dist` opens
-   without Node, the API is reachable and `ANTHROPIC_API_KEY` is set on the backend.
-2. The evaluator on `main` calls the Claude API: check the model and prices in
-   `/api/config` (default `claude-haiku-5-5`, per-criterion overrides allowed).
-   The key lives only in the backend environment, never in the UI or Git.
-   Fully local models (TECH_STACK.md, 140 GB VRAM ceiling) are a later option
-   and are not wired into the evaluator; do not describe the demo as local.
-3. Check the key's rate limits against the job concurrency with a dry run and a
-   small real run, so a full DEV or control run finishes within the time slot.
+   without Node and the API is reachable.
+2. The main model is local: `Qwen3.8-27B-FP8` on vLLM (decision of 7 November,
+   [LOCAL_MODEL.md](LOCAL_MODEL.md)). Start vLLM, set `ANTHROPIC_BASE_URL`,
+   `DEFAULT_MODEL`, `MAX_PARALLEL_CALLS=32` and `MODEL_TIMEOUT_SECONDS=300` in
+   `backend/.env`, and check `/api/config` lists `Qwen3.8-27B-FP8` as the default.
+   Check `nvidia-smi` first: the GPU may be shared, and vLLM needs about 75 GB.
+   Fallback if the GPU is unavailable: the Claude API (`claude-haiku-5-5`, key in
+   the backend environment only, never in the UI or Git), and say so in the demo.
+3. Time a dry run and a small real run on the local model, so a full DEV or
+   control run finishes within the time slot (DEV: 15 min at 32 parallel calls).
 4. Configure the organizer source privately on the backend. Never put signed
    organizer/player URLs into Git, screenshots, browser config, logs or issues.
    Confirm the UI receives only our relative audio endpoint.
@@ -97,8 +99,8 @@ goes into those folders.
   own report. That run saved no evidence list, so `evidence_turns` are the line numbers its
   explanations cite.
 - **Prod (control set, 10 chats, 1 hour).** Put the organisers' control link in `backend/.env`
-  (`ORGANIZER_API_URL`) next to `ANTHROPIC_API_KEY`, import the control group, evaluate it with the
-  official checklist, then:
+  (`ORGANIZER_API_URL`) next to the model settings, import the control group, evaluate it with the
+  official checklist, then (with the local model add `--mode local`; the results file records it):
 
   ```sh
   uv run python -m quality.results_export --group <control group_id> --out ../results/prod/results.json --expect 10
@@ -126,7 +128,7 @@ database with the UI and everything it does shows up there:
 ```sh
 cd backend
 uv run cqa-serve        # if it is not running yet (another terminal)
-uv run python -m quality.control_run --group <control group_id> --out ../results/prod/results.json --expect 10
+uv run python -m quality.control_run --group <control group_id> --model-mode local --out ../results/prod/results.json --expect 10
 ```
 
 It checks the server (`/config`), imports the group through the server (`GET /datasets/{group}`),
