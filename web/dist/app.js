@@ -4996,7 +4996,7 @@
   }
   function openApplyDialog({ host, store, api, version: version2 }) {
     let closed = false;
-    const view = { targets: null, target: null, estimate: null, estimating: false, job: null, error: null, server: null };
+    const view = { targets: null, target: null, estimate: null, estimating: false, job: null, lock: null, error: null, server: null };
     let estimateRun = 0;
     const body = h("div", { class: "cqa-ap-form" });
     const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "apply-estimate" } });
@@ -5007,7 +5007,7 @@
     function targetRow(key, label, count, disabled) {
       const input = h("input", {
         class: "cqa-ap-radio",
-        attrs: { type: "radio", name: "cqa-apply-target", value: key, disabled: disabled || view.job?.running ? true : null },
+        attrs: { type: "radio", name: "cqa-apply-target", value: key, disabled: disabled || busy() ? true : null },
         data: { test: `apply-target-${key}` },
         on: { change: () => choose(key) }
       });
@@ -5036,10 +5036,16 @@
       estimate.textContent = view.estimate ? estimateText(view.estimate) : view.estimating ? t("batch.estimating") : "";
       const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
       hint.hidden = !keyMissing;
-      runButton.disabled = !view.estimate || view.estimating || keyMissing || view.job?.running === true;
+      runButton.disabled = busy() || !view.estimate || view.estimating || keyMissing;
       clear(progress);
       const job = view.job;
-      if (job) {
+      if (view.lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "apply-resume" }, on: { click: () => resume() } })
+        );
+      } else if (job) {
         progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
         if (job.failed > 0) progress.append(h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }));
         if (!job.running && job.failed > 0) progress.append(h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "apply-retry" }, on: { click: () => retry() } }));
@@ -5070,6 +5076,7 @@
       paint();
     }
     async function choose(key) {
+      if (busy()) return;
       view.target = key;
       view.estimate = null;
       view.job = null;
@@ -5087,30 +5094,66 @@
       view.estimating = false;
       paint();
     }
-    async function follow(first) {
-      await followJob(api, first, (job, running) => {
-        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running };
-        paint();
-      });
-      store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-    }
-    async function run() {
-      if (!view.target || view.job?.running) return;
+    const busy = () => view.lock !== null;
+    async function watchJob(first) {
+      view.lock = "watching";
       try {
-        await follow(await api.startEvaluations({ conversations: view.targets[view.target].ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }));
-      } catch (error) {
-        if (view.job) view.job.running = false;
+        const job = await followJob(api, first, (tick, running) => {
+          view.job = { id: tick.id, done: tick.done, total: tick.total, failed: tick.failed ?? 0, running };
+          paint();
+        });
+        view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
+        view.lock = null;
         paint();
-        toastError(store, error, { retry: run });
+        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+      } catch (error) {
+        view.lock = "interrupted";
+        paint();
+        toastError(store, error, { retry: resume });
       }
     }
-    async function retry() {
-      if (!view.job?.id) return;
+    async function resume() {
+      const id = view.job?.id;
+      if (!id || view.lock !== "interrupted") return;
+      view.lock = "resuming";
+      paint();
+      let job;
       try {
-        await follow(await api.retryJob(view.job.id));
+        job = await api.getJob(id);
       } catch (error) {
-        toastError(store, error, { retry });
+        const gone = error?.code === "not_found";
+        view.lock = gone ? null : "interrupted";
+        if (gone) view.job = null;
+        paint();
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return;
       }
+      await watchJob(job);
+    }
+    async function start(request, again) {
+      if (busy()) return;
+      view.lock = "starting";
+      paint();
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        view.lock = null;
+        paint();
+        toastError(store, error, { retry: again });
+        return;
+      }
+      await watchJob(first);
+    }
+    function run() {
+      if (busy() || !view.target) return void 0;
+      const ids = view.targets[view.target].ids;
+      return start(() => api.startEvaluations({ conversations: ids, checklist_id: version2.checklist_id, version: version2.version, mode: "reuse" }), run);
+    }
+    function retry() {
+      const id = view.job?.id;
+      if (busy() || !id) return void 0;
+      return start(() => api.retryJob(id), retry);
     }
     const panel = h(
       "aside",
