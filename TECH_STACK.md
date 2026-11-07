@@ -32,7 +32,7 @@ through the Claude API**. Results files say `mode: external_api`; never present 
 | Admin checklists | Versions, fingerprints, reuse | As planned: immutable versions, fingerprint reuse, weight-only change makes zero model calls, dry run, comparison |
 | Hardware | 140 GB local VRAM | Not needed: hosted API |
 | Cost (section 10) | Local compute only | About **$0.0041 per dialogue**: $0.2685 for the 65 DEV dialogues, 613 calls |
-| Testing (section 9) | Human gold labels, ablations, latency | 520 draft reference labels; agreement 79.75% on the 479 undisputed ones; 21 of 25 planted violations caught (`data/reference/`); no human-reviewed gold set, ablations or capacity tests yet |
+| Testing (section 9) | Human gold labels, ablations, latency | 520 draft reference labels, #25 readings approved; agreement 80.66% on the 517 undisputed ones; 21 of 25 planted violations caught (`data/reference/`); no human-reviewed gold set, ablations or capacity tests yet |
 
 ## TL;DR (target architecture)
 
