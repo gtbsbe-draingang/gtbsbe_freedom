@@ -791,3 +791,89 @@ def test_confirm_keeps_the_evaluations_own_earlier_decision(setup) -> None:
     assert result(decided, "c04")["final_answer"] == {"step": 20}
     assert decided["final_total"] == 92.5
     assert client.get(f"/api/appeals/{again['id']}").json()["decision"]["answer"] == {"step": 20}
+
+
+# --- final review: gross-error kinds on a decision -----------------------------------------
+
+
+def analytics_of(client: TestClient, version: ChecklistVersion) -> dict:
+    r = client.get("/api/analytics", params={"checklist_id": version.checklist_id, "version": version.version})
+    assert r.status_code == 200, r.text
+    validate("analytics", r.json())
+    return r.json()
+
+
+def test_a_reviewer_raises_a_gross_error_with_its_kinds(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)  # the model found no gross error (c08 = no)
+    appeal = file(client, ev["id"], "c08")
+
+    decided = decide(client, appeal["id"], answer="yes", kinds=["insult", "confidential_disclosure"])
+
+    validate("evaluation", decided)
+    assert decided["gross_error"]["flag"] is True
+    assert decided["gross_error"]["kinds"] == ["insult", "confidential_disclosure"]
+    assert result(decided, "c08")["final_answer"] == "yes"
+    stored = client.get(f"/api/appeals/{appeal['id']}").json()
+    validate("appeal", stored)
+    assert stored["decision"]["kinds"] == ["insult", "confidential_disclosure"]
+    gross = analytics_of(client, official)["gross_errors"]
+    assert gross["count"] == 1 and gross["conversations"] == [CHAT]
+    assert gross["by_kind"] == [{"kind": "confidential_disclosure", "count": 1}, {"kind": "insult", "count": 1}]
+    assert csv_row(client, official)["gross_error_kinds"] == "insult,confidential_disclosure"
+
+
+def test_without_kinds_a_raised_gross_error_has_none(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decided = decide(client, file(client, ev["id"], "c08")["id"], answer="yes")
+    assert decided["gross_error"] == {**decided["gross_error"], "flag": True, "kinds": []}
+
+
+def test_kinds_carry_forward_and_a_confirmation_keeps_them(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    decide(client, file(client, first["id"], "c08")["id"], answer="yes", kinds=["insult"])
+    second = grade(client, official)
+    assert second["gross_error"]["kinds"] == ["insult"]  # carried with the answer
+
+    confirmed = decide(client, file(client, second["id"], "c08")["id"], outcome="confirmed")
+    assert (confirmed["gross_error"]["flag"], confirmed["gross_error"]["kinds"]) == (True, ["insult"])
+
+    third = grade(client, official)
+    relabelled = decide(client, file(client, third["id"], "c08")["id"], outcome="confirmed",
+                        kinds=["paid_service_outside_company"])  # fmt: skip
+    assert relabelled["gross_error"]["kinds"] == ["paid_service_outside_company"]
+    assert result(relabelled, "c08")["final_answer"] == "yes"
+
+
+@pytest.mark.parametrize(
+    ("criterion_id", "body"),
+    [
+        ("c04", {"outcome": "changed", "answer": {"step": 20}, "kinds": ["insult"]}),  # not a gross-error criterion
+        ("c08", {"outcome": "changed", "answer": "no", "kinds": ["insult"]}),  # the answer is not yes
+        ("c08", {"outcome": "confirmed", "kinds": ["insult"]}),  # confirms the model's no
+        ("c08", {"outcome": "changed", "answer": "yes", "kinds": ["shouting"]}),  # not one of its kinds
+        ("c08", {"outcome": "changed", "answer": "yes", "kinds": ["insult", "insult"]}),  # twice
+    ],
+    ids=["not gross error", "answer no", "confirmed no", "unknown kind", "duplicate"],
+)
+def test_kinds_that_do_not_fit_are_refused(setup, criterion_id: str, body: dict) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    appeal = file(client, ev["id"], criterion_id)
+    r = client.post(
+        f"/api/appeals/{appeal['id']}/decision", json={"reason": "Потому что.", "role": "reviewer", **body}
+    )
+    assert r.status_code == 422
+    assert set(r.json()) == {"error", "message"} and r.json()["error"] == "invalid_request"
+    assert "kinds" in r.json()["message"]
+    assert client.get(f"/api/appeals/{appeal['id']}").json()["status"] == "open"  # nothing stored
+    assert client.get(f"/api/evaluations/{ev['id']}").json() == ev
+
+
+def test_an_empty_kinds_list_is_no_kinds(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decided = decide(client, file(client, ev["id"])["id"], answer={"step": 20}, kinds=[])
+    assert decided["final_total"] == 92.5

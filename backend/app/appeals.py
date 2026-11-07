@@ -13,7 +13,9 @@ design sections 6 and 7).
 * **Deciding** (`decide`): a reviewer confirms or changes the answer, with a reason. A
   confirmation keeps the score that was under appeal: it stores the evaluation's final answer (and
   gross-error kinds) at that moment, which is a carried or an earlier decision's when there is one,
-  else the model's. The appeal, the recalculated evaluation and the conversation's status are
+  else the model's. A decision whose answer is `yes` on the gross-error criterion may name the
+  violation kinds (`kinds`, each one of the criterion's, no repeats); they become the evaluation's
+  `gross_error.kinds`. The appeal, the recalculated evaluation and the conversation's status are
   written in one transaction.
 * **Final answers** (`final_answers`, `recompute`): per result, the evaluation's own decided
   appeal, else its carried decision, else the model's answer. `original_total` always comes from
@@ -444,15 +446,40 @@ def recover_pending() -> None:
 # --- deciding ------------------------------------------------------------------------------
 
 
-def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str, role: Role) -> Evaluation:
+def _kinds_problem(criterion: Criterion, answer: Answer, kinds: list[str]) -> str | None:
+    """Why `kinds` cannot go with `answer` on `criterion`, or None when they fit. An empty list
+    always fits (it names no kind)."""
+    if not kinds:
+        return None
+    if criterion.kind != "gross_error":
+        return f"kinds: only the gross-error criterion takes kinds, and {criterion.id!r} is a scored one."
+    if answer != "yes":
+        return "kinds: only a decision whose answer is yes (a gross error) takes kinds."
+    if any(kind not in criterion.kinds for kind in kinds):
+        return f"kinds: each must be one of the kinds of {criterion.id!r}: {', '.join(criterion.kinds)}."
+    if len(set(kinds)) != len(kinds):
+        return "kinds: each kind may be named once."
+    return None
+
+
+def decide(
+    appeal_id: str,
+    outcome: Outcome,
+    answer: Answer | None,
+    reason: str,
+    role: Role,
+    kinds: list[str] | None = None,
+) -> Evaluation:
     """Decide an open appeal and return the recalculated evaluation.
 
     Checked in this order: 404 for an unknown appeal, 403 `role_not_allowed` unless `role` is
     `reviewer`, 409 `appeal_already_decided`, 422 `reason_required` for a blank reason, then for
-    `changed` 422 `invalid_request` without an answer or 422 with the `validate_answer` code. For
-    `confirmed` the stored answer and kinds are the ones under appeal, the evaluation's final ones
-    (a sent answer is ignored). A recalculation that fails is 422 with the scoring code, and
-    nothing is stored.
+    `changed` 422 `invalid_request` without an answer or 422 with the `validate_answer` code, then
+    422 `invalid_request` for `kinds` that do not fit (`_kinds_problem`). For `confirmed` the
+    stored answer is the one under appeal, the evaluation's final one (a sent answer is ignored).
+    The stored kinds are `kinds` when given; otherwise, for `confirmed`, the kinds under appeal,
+    and for `changed`, none (the model's when the answer is the model's). A recalculation that
+    fails is 422 with the scoring code, and nothing is stored.
 
     The decision, the recalculated evaluation, the later evaluations it carries into (see
     `_carry_into_later`) and the conversation's status (`evaluated` once no appeal on its current
@@ -480,9 +507,9 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
         if current is None or result is None:
             raise _not_found(f"The evaluation of appeal {appeal_id!r} has no criterion {appeal.criterion_id!r}.")
         if outcome == "confirmed":
-            # What was under appeal: the final answer now, a carried or earlier decision included.
+            # What was under appeal: the final answer and kinds now, a carried or earlier decision included.
             own, carried = _load_decisions(current, conn)
-            decided_answer, kinds = _final_answers(current, own, carried)[appeal.criterion_id]
+            decided_answer, default_kinds = _final_answers(current, own, carried)[appeal.criterion_id]
         else:
             if answer is None:
                 raise ApiError(422, "invalid_request", "answer: required when the outcome is changed.")
@@ -491,9 +518,18 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
                 raise ApiError(422, code, f"The answer does not fit criterion {criterion.id!r}.")
             decided_answer = answer
             # The model's kinds go with the model's answer; a different answer has none.
-            kinds = list(result.kinds) if decided_answer == result.answer else []
+            default_kinds = list(result.kinds) if decided_answer == result.answer else []
+        if kinds is not None:
+            problem = _kinds_problem(criterion, decided_answer, kinds)
+            if problem is not None:
+                raise ApiError(422, "invalid_request", problem)
         decision = Decision(
-            outcome=outcome, answer=decided_answer, reason=reason.strip(), role=role, decided_at=_now(), kinds=kinds
+            outcome=outcome,
+            answer=decided_answer,
+            reason=reason.strip(),
+            role=role,
+            decided_at=_now(),
+            kinds=list(kinds) if kinds is not None else default_kinds,
         )
         store.update_appeal(conn, appeal.model_copy(update={"status": "decided", "decision": decision}))
         try:
