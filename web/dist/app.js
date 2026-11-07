@@ -375,11 +375,13 @@
   var REC_START = ["\u0437\u0430\u043F\u0443\u0449\u0435\u043D\u044B", "\u0431\u0430\u0441\u0442\u0430\u043B\u0434\u044B", "recording started", "transcription started"];
   var REC_PAUSE = ["\u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B", "\u0442\u043E\u049B\u0442\u0430\u0442\u044B\u043B\u0434\u044B", "paused"];
   var REC_RESUME = ["\u0432\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B", "\u0436\u0430\u043B\u0493\u0430\u0441\u0442\u044B\u0440\u044B\u043B\u0434\u044B", "\u049B\u0430\u0439\u0442\u0430 \u0431\u0430\u0441\u0442\u0430\u043B\u0434\u044B", "resumed"];
+  var SPOKEN = ["client", "operator", "bot"];
+  var CHARS_PER_SECOND = 13;
   var says = (message, words) => {
     const text3 = typeof message?.text === "string" ? message.text.toLowerCase() : "";
     return message?.speaker === "system" && words.some((w) => text3.includes(w));
   };
-  function recordingOffsets(transcript) {
+  function recordingStarts(transcript) {
     const lines = Array.isArray(transcript) ? transcript : [];
     const at = offsets(lines);
     const startIndex = lines.findIndex((m, i) => at[i] !== null && says(m, REC_START));
@@ -394,7 +396,7 @@
         opened = null;
       }
     });
-    return at.map((t2) => {
+    const ends = at.map((t2) => {
       if (t2 === null || t2 < start || opened !== null && t2 >= opened) return null;
       let y = t2 - start;
       for (const [a, b] of pauses) {
@@ -402,6 +404,16 @@
         else if (t2 > a) return null;
       }
       return Math.max(0, y);
+    });
+    let previousEnd = 0;
+    return lines.map((m, i) => {
+      const end = ends[i];
+      if (end === null || m?.duplicate === true) return null;
+      if (!SPOKEN.includes(m?.speaker)) return end;
+      const length = Math.min(Math.max((typeof m.text === "string" ? m.text.length : 0) / CHARS_PER_SECOND, 0.6), 20);
+      const lineStart = Math.max(0, end - length, previousEnd - 0.3);
+      previousEnd = Math.max(previousEnd, end);
+      return lineStart;
     });
   }
 
@@ -798,7 +810,7 @@
 
   // src/api/mock/datasets.js
   function callOffsets(transcript) {
-    return recordingOffsets(transcript).flatMap(
+    return recordingStarts(transcript).flatMap(
       (seconds, index) => seconds === null ? [] : [{ message_index: index, seconds: Math.max(0, Math.round(seconds * 10) / 10) }]
     );
   }
@@ -4506,7 +4518,7 @@
   function startTimes(conversation) {
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const given = Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [];
-    if (given.length === 0) return recordingOffsets(transcript).map((value2) => isTime(value2) ? value2 : null);
+    if (given.length === 0) return recordingStarts(transcript).map((value2) => isTime(value2) ? value2 : null);
     const starts = transcript.map(() => null);
     for (const entry of given) {
       const index = entry?.message_index;

@@ -14,9 +14,9 @@
 //
 //   startTimes(conversation) -> (number | null)[]   each line's start in the recording, in seconds:
 //     `audio_offsets` (the calibrated starts), or, when there are none, the transcript's own times
-//     on the recording's clock (recordingOffsets: from "recording started", paused stretches cut)
+//     on the recording's clock, moved from each line's end to its estimated start (recordingStarts)
 //   playingIndex(starts, seconds) -> number | null   the line being played at that time
-import { formatOffset, recordingOffsets } from "../domain/time.js";
+import { formatOffset, recordingStarts } from "../domain/time.js";
 import { speakerWindows, splitWaveform } from "../domain/waveform.js";
 import { t } from "../i18n/ru.js";
 import { h, svg } from "./dom.js";
@@ -26,7 +26,7 @@ const isTime = (value) => typeof value === "number" && Number.isFinite(value);
 export function startTimes(conversation) {
   const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
   const given = Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [];
-  if (given.length === 0) return recordingOffsets(transcript).map((value) => (isTime(value) ? value : null));
+  if (given.length === 0) return recordingStarts(transcript).map((value) => (isTime(value) ? value : null));
   const starts = transcript.map(() => null);
   for (const entry of given) {
     const index = entry?.message_index;
