@@ -494,6 +494,24 @@
     "reports.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442. {error}",
     "reports.channel.chat": "\u0427\u0430\u0442",
     "reports.channel.call": "\u0417\u0432\u043E\u043D\u043E\u043A",
+    "reports.hero.evals": "\u041E\u0446\u0435\u043D\u043E\u043A",
+    "reports.hero.gross": "\u0413\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A",
+    "reports.chart.shape": "\u041F\u0440\u043E\u0444\u0438\u043B\u044C \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0430",
+    "reports.chart.shapeNote": "\u0414\u043E\u043B\u044F \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u0431\u0435\u0437 \u043F\u0440\u043E\u0432\u0430\u043B\u043E\u0432 \u043F\u043E \u043A\u0430\u0436\u0434\u043E\u043C\u0443 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044E; \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0432\u0438\u0434\u043D\u043E \u043F\u0440\u0438 \u043D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0438.",
+    "reports.chart.failRank": "\u0413\u0434\u0435 \u0442\u0435\u0440\u044F\u044E\u0442\u0441\u044F \u0431\u0430\u043B\u043B\u044B",
+    "reports.chart.scores": "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u0433\u0440\u0443\u043F\u043F\u0430\u043C",
+    "reports.chart.other": "\u0414\u0440\u0443\u0433\u043E\u0435",
+    "reports.chart.refLine": "\u041F\u0443\u043D\u043A\u0442\u0438\u0440 \u2014 \u043E\u0431\u0449\u0435\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435.",
+    "reports.chart.coverage": "\u041E\u0445\u0432\u0430\u0442 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432",
+    "reports.chart.compared": "\u0441\u0440\u0430\u0432\u043D\u0435\u043D\u043E",
+    "reports.chart.missing": "\u043D\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "reports.chart.disputed": "\u0441\u043F\u043E\u0440\u043D\u044B\u0435, \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B",
+    "reports.chart.matrix": "\u0413\u0434\u0435 \u043C\u043E\u0434\u0435\u043B\u044C \u0440\u0430\u0441\u0445\u043E\u0434\u0438\u0442\u0441\u044F \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043E\u043C",
+    "reports.chart.matrixNote": "\u0421\u0442\u0440\u043E\u043A\u0438 \u2014 \u044D\u0442\u0430\u043B\u043E\u043D, \u0441\u0442\u043E\u043B\u0431\u0446\u044B \u2014 \u043E\u0442\u0432\u0435\u0442 \u043C\u043E\u0434\u0435\u043B\u0438; \u0442\u043E\u043B\u044C\u043A\u043E \u0440\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F.",
+    "reports.chart.step": "\u0428\u0430\u0433 \u0448\u043A\u0430\u043B\u044B",
+    "reports.chart.tipFail": "{title}: \u043F\u0440\u043E\u0432\u0430\u043B\u044B {fail}, N/A {na}, n={n}",
+    "reports.chart.tipValue": "{title}: {value}, n={n}",
+    "reports.chart.tipCell": "\u042D\u0442\u0430\u043B\u043E\u043D \xAB{from}\xBB \u2192 \u043C\u043E\u0434\u0435\u043B\u044C \xAB{to}\xBB: {n}",
     "loader.dropTitle": "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 JSON-\u0444\u0430\u0439\u043B \u0441\u044E\u0434\u0430",
     "loader.dropHint": "\u0438\u043B\u0438 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0444\u0430\u0439\u043B \u0441 \u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u0430",
     "loader.chooseFile": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B",
@@ -995,6 +1013,24 @@
     "reports.failed": "Could not load report. {error}",
     "reports.channel.chat": "Chat",
     "reports.channel.call": "Call",
+    "reports.hero.evals": "Evaluations",
+    "reports.hero.gross": "Gross errors",
+    "reports.chart.shape": "Quality profile",
+    "reports.chart.shapeNote": "Share of answers without failures per criterion; hover a point for its name.",
+    "reports.chart.failRank": "Where points are lost",
+    "reports.chart.scores": "Average total by group",
+    "reports.chart.other": "Other",
+    "reports.chart.refLine": "Dashed line: overall agreement.",
+    "reports.chart.coverage": "Reference coverage",
+    "reports.chart.compared": "compared",
+    "reports.chart.missing": "no model answer",
+    "reports.chart.disputed": "disputed, excluded",
+    "reports.chart.matrix": "Where the model departs from the reference",
+    "reports.chart.matrixNote": "Rows: reference, columns: model answer; disagreements only.",
+    "reports.chart.step": "Scale step",
+    "reports.chart.tipFail": "{title}: failures {fail}, N/A {na}, n={n}",
+    "reports.chart.tipValue": "{title}: {value}, n={n}",
+    "reports.chart.tipCell": "Reference \u201C{from}\u201D \u2192 model \u201C{to}\u201D: {n}",
     "loader.dropTitle": "Drop a JSON file here",
     "loader.dropHint": "or choose a file from your device",
     "loader.chooseFile": "Choose file",
@@ -1496,6 +1532,24 @@
     "reports.failed": "\u0415\u0441\u0435\u043F\u0442\u0456 \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B. {error}",
     "reports.channel.chat": "\u0427\u0430\u0442",
     "reports.channel.call": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443",
+    "reports.hero.evals": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443\u043B\u0430\u0440",
+    "reports.hero.gross": "\u04E8\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435\u043B\u0435\u0440",
+    "reports.chart.shape": "\u0421\u0430\u043F\u0430 \u043F\u0440\u043E\u0444\u0438\u043B\u0456",
+    "reports.chart.shapeNote": "\u04D8\u0440 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u0430\u049B\u0430\u0443\u0441\u044B\u0437 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u04AF\u043B\u0435\u0441\u0456; \u0430\u0442\u0430\u0443\u044B \u043C\u0435\u04A3\u0437\u0435\u0433\u0435\u043D\u0434\u0435 \u043A\u04E9\u0440\u0456\u043D\u0435\u0434\u0456.",
+    "reports.chart.failRank": "\u04B0\u043F\u0430\u0439 \u049B\u0430\u0439\u0434\u0430 \u0436\u043E\u0493\u0430\u043B\u0430\u0434\u044B",
+    "reports.chart.scores": "\u0422\u043E\u043F\u0442\u0430\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u043E\u0440\u0442\u0430\u0448\u0430 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B",
+    "reports.chart.other": "\u0411\u0430\u0441\u049B\u0430",
+    "reports.chart.refLine": "\u04AE\u0437\u0456\u043A \u0441\u044B\u0437\u044B\u049B \u2014 \u0436\u0430\u043B\u043F\u044B \u0441\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A.",
+    "reports.chart.coverage": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u0434\u044B\u04A3 \u049B\u0430\u043C\u0442\u044B\u043B\u0443\u044B",
+    "reports.chart.compared": "\u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u044B\u043B\u0434\u044B",
+    "reports.chart.missing": "\u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B \u0436\u043E\u049B",
+    "reports.chart.disputed": "\u0434\u0430\u0443\u043B\u044B, \u0430\u043B\u044B\u043D\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u043B\u0434\u044B",
+    "reports.chart.matrix": "\u041C\u043E\u0434\u0435\u043B\u044C \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u0430\u043D \u049B\u0430\u0439\u0434\u0430 \u0430\u043B\u0448\u0430\u049B\u0442\u0430\u0439\u0434\u044B",
+    "reports.chart.matrixNote": "\u0416\u043E\u043B\u0434\u0430\u0440 \u2014 \u044D\u0442\u0430\u043B\u043E\u043D, \u0431\u0430\u0493\u0430\u043D\u0434\u0430\u0440 \u2014 \u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B; \u0442\u0435\u043A \u0430\u043B\u0448\u0430\u049B\u0442\u044B\u049B\u0442\u0430\u0440.",
+    "reports.chart.step": "\u0428\u043A\u0430\u043B\u0430 \u049B\u0430\u0434\u0430\u043C\u044B",
+    "reports.chart.tipFail": "{title}: \u0441\u04D9\u0442\u0441\u0456\u0437\u0434\u0456\u043A {fail}, N/A {na}, n={n}",
+    "reports.chart.tipValue": "{title}: {value}, n={n}",
+    "reports.chart.tipCell": "\u042D\u0442\u0430\u043B\u043E\u043D \xAB{from}\xBB \u2192 \u043C\u043E\u0434\u0435\u043B\u044C \xAB{to}\xBB: {n}",
     "loader.dropTitle": "JSON \u0444\u0430\u0439\u043B\u044B\u043D \u043E\u0441\u044B\u043D\u0434\u0430 \u0441\u04AF\u0439\u0440\u0435\u043F \u04D9\u043A\u0435\u043B\u0456\u04A3\u0456\u0437",
     "loader.dropHint": "\u043D\u0435\u043C\u0435\u0441\u0435 \u049B\u04B1\u0440\u044B\u043B\u0493\u044B\u0434\u0430\u043D \u0444\u0430\u0439\u043B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437",
     "loader.chooseFile": "\u0424\u0430\u0439\u043B \u0442\u0430\u04A3\u0434\u0430\u0443",
@@ -1696,11 +1750,11 @@
     const peaks = Array.from({ length: bins }, (_, i) => {
       const from = Math.floor(i * length / bins);
       const to = Math.min(length, Math.max(from + 1, Math.floor((i + 1) * length / bins)));
-      let sum = 0;
+      let sum2 = 0;
       for (const channel of channels) {
-        for (let j = from; j < to; j++) sum += (channel[j] ?? 0) ** 2;
+        for (let j = from; j < to; j++) sum2 += (channel[j] ?? 0) ** 2;
       }
-      return Math.sqrt(sum / ((to - from) * channels.length));
+      return Math.sqrt(sum2 / ((to - from) * channels.length));
     });
     const maximum = Math.max(...peaks);
     return maximum ? peaks.map((value2) => Math.sqrt(value2 / maximum)) : peaks;
@@ -3581,8 +3635,8 @@
     return new ApiError(code, message, { status });
   }
   function weightWarnings(criteria) {
-    const sum = Number(criteria.filter((c) => c.kind === "scored").reduce((total, c) => total + c.weight, 0).toFixed(6));
-    return sum === 100 ? [] : [`weights_sum_${sum}`];
+    const sum2 = Number(criteria.filter((c) => c.kind === "scored").reduce((total, c) => total + c.weight, 0).toFixed(6));
+    return sum2 === 100 ? [] : [`weights_sum_${sum2}`];
   }
   var text = (value2) => typeof value2 === "string" ? value2.trim() : "";
   function createMockApi(options = {}) {
@@ -7037,8 +7091,8 @@
     });
     if (criteria.length === 0) fail2("criteria", "criteria_empty");
     const scored = criteria.filter((c) => c.kind === "scored" && Number.isFinite(c.weight));
-    const sum = sumOf(scored.map((c) => c.weight));
-    if (scored.length > 0 && sum !== 100) warnings.push({ code: "weight_sum", sum });
+    const sum2 = sumOf(scored.map((c) => c.weight));
+    if (scored.length > 0 && sum2 !== 100) warnings.push({ code: "weight_sum", sum: sum2 });
     return { value: { ...source, sections, criteria }, errors, warnings };
   }
 
@@ -7577,8 +7631,8 @@
         setLocalizedText(target, message);
         target.hidden = false;
       }
-      const sum = warnings.find((w) => w.code === "weight_sum");
-      refs.sum.replaceChildren(sum ? h("p", { class: "cqa-ed-warn", attrs: { role: "status" }, text: t("editor.weightSum", { sum: String(sum.sum).replace(".", ",") }), data: { test: "weight-sum" } }) : "");
+      const sum2 = warnings.find((w) => w.code === "weight_sum");
+      refs.sum.replaceChildren(sum2 ? h("p", { class: "cqa-ed-warn", attrs: { role: "status" }, text: t("editor.weightSum", { sum: String(sum2.sum).replace(".", ",") }), data: { test: "weight-sum" } }) : "");
       const removed = diff2.removed.map((id) => source.criteria.find((c) => c.id === id)).filter(Boolean);
       refs.removed.replaceChildren(
         removed.length > 0 ? h(
@@ -8029,6 +8083,154 @@
     };
   }
 
+  // src/ui/charts.js
+  var TAU = Math.PI * 2;
+  var pct = (v) => Math.round(Math.min(1, Math.max(0, v)) * 1e3) / 10;
+  var f1 = (n) => Math.round(n * 100) / 100;
+  var reduced = () => globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  function chartCard(title, note, ...children) {
+    return h(
+      "section",
+      { class: "cqa-chart" },
+      h("h3", { class: "cqa-chart-title", text: title }),
+      note ? h("p", { class: "cqa-chart-note", text: note }) : null,
+      ...children
+    );
+  }
+  function countUp(el, to, format2) {
+    el.textContent = format2(to);
+    if (reduced() || !globalThis.requestAnimationFrame) return;
+    const start = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / 900);
+      el.textContent = format2(to * (1 - (1 - k) ** 3));
+      if (k < 1 && el.isConnected) requestAnimationFrame(step);
+      else el.textContent = format2(to);
+    };
+    requestAnimationFrame(step);
+  }
+  function ring(value2, label) {
+    return h(
+      "div",
+      { class: "cqa-ring", data: { tip: label }, style: { "--v": pct(value2) } },
+      svg(
+        "svg",
+        { viewBox: "0 0 120 120", "aria-hidden": "true", focusable: "false" },
+        svg("circle", { class: "cqa-ring-track", cx: 60, cy: 60, r: 50, pathLength: 100 }),
+        svg("circle", { class: "cqa-ring-arc", cx: 60, cy: 60, r: 50, pathLength: 100, transform: "rotate(-90 60 60)" })
+      )
+    );
+  }
+  function hbars(rows, { ref = null } = {}) {
+    return h("div", { class: "cqa-hb", attrs: { "aria-hidden": "true" } }, rows.map((r, i) => {
+      const track = h(
+        "span",
+        { class: "cqa-hb-track" },
+        typeof r.value === "number" ? h("span", { class: "cqa-hb-fill", style: { "--w": pct(r.value) } }) : null,
+        typeof ref === "number" ? h("span", { class: "cqa-hb-ref", style: { left: `${pct(ref)}%` } }) : null
+      );
+      return h(
+        "div",
+        { class: ["cqa-hb-row", r.hot && "is-hot"], data: { tip: r.tip }, style: { "--i": i } },
+        h("span", { class: "cqa-hb-label", text: r.label, verbatim: r.verbatim }),
+        track,
+        h("span", { class: "cqa-hb-val", text: r.text })
+      );
+    }));
+  }
+  function radar(rows) {
+    const n = rows.length, c = 110, R = 78;
+    const at = (k, v) => [c + Math.sin(TAU * k / n) * R * v, c - Math.cos(TAU * k / n) * R * v];
+    const poly = (v) => rows.map((_, k) => at(k, v(k)).map(f1).join(",")).join(" ");
+    return h("div", { class: "cqa-radar", attrs: { "aria-hidden": "true" } }, svg(
+      "svg",
+      { viewBox: "0 0 220 220", focusable: "false" },
+      [0.25, 0.5, 0.75, 1].map((v) => svg("polygon", { class: "cqa-radar-ring", points: poly(() => v) })),
+      rows.map((_, k) => svg("line", { class: "cqa-radar-axis", x1: c, y1: c, x2: at(k, 1)[0], y2: at(k, 1)[1] })),
+      svg(
+        "g",
+        { class: "cqa-radar-data" },
+        svg("polygon", { class: "cqa-radar-area", points: poly((k) => rows[k].value) }),
+        rows.map((r, k) => {
+          const [x, y] = at(k, r.value);
+          return svg("circle", { class: "cqa-radar-dot", cx: f1(x), cy: f1(y), r: 4 });
+        }),
+        rows.map((r, k) => {
+          const [x, y] = at(k, 1);
+          return svg("circle", { class: "cqa-radar-hit", cx: f1(x), cy: f1(y), r: 16, "data-tip": r.tip });
+        })
+      ),
+      rows.map((r, k) => {
+        const [x, y] = at(k, 1.17);
+        return svg("text", { class: "cqa-radar-label", x: f1(x), y: f1(y), "text-anchor": "middle", "dominant-baseline": "middle", "data-i18n-verbatim": "" }, r.label);
+      })
+    ));
+  }
+  function donut(slices, center, caption) {
+    const total = slices.reduce((s, x) => s + x.value, 0);
+    let from = 0;
+    const arcs = total ? slices.map((s) => {
+      const len = s.value / total * 100, el = svg("circle", {
+        class: `cqa-donut-arc tone-${s.tone}`,
+        cx: 60,
+        cy: 60,
+        r: 44,
+        pathLength: 100,
+        "stroke-dasharray": `${f1(Math.max(0, len - (slices.length > 1 ? 1.2 : 0)))} ${f1(100 - len + (slices.length > 1 ? 1.2 : 0))}`,
+        "stroke-dashoffset": f1(-from),
+        "data-tip": s.tip
+      });
+      from += len;
+      return el;
+    }) : [];
+    return h(
+      "div",
+      { class: "cqa-donut" },
+      svg(
+        "svg",
+        { viewBox: "0 0 120 120", "aria-hidden": "true", focusable: "false" },
+        svg("circle", { class: "cqa-donut-track", cx: 60, cy: 60, r: 44, pathLength: 100 }),
+        svg("g", { class: "cqa-donut-arcs", transform: "rotate(-90 60 60)" }, arcs)
+      ),
+      h("div", { class: "cqa-donut-center" }, h("span", { class: "cqa-donut-num", text: center }), caption ? h("span", { class: "cqa-donut-cap", text: caption }) : null)
+    );
+  }
+  function stack(parts) {
+    const total = parts.reduce((s, p) => s + p.value, 0) || 1;
+    return h("div", { class: "cqa-stack", attrs: { "aria-hidden": "true" } }, parts.filter((p) => p.value > 0).map((p, i) => h("span", { class: `cqa-stack-part tone-${p.tone}`, data: { tip: p.tip }, style: { "--w": pct(p.value / total), "--i": i } })));
+  }
+  var legend = (items) => h("ul", { class: "cqa-legend" }, items.map((x) => h("li", {}, h("span", { class: `cqa-dot tone-${x.tone}` }), h("span", { text: x.text, verbatim: x.verbatim }))));
+  function matrix(rows, cols, counts, tip) {
+    const max = Math.max(1, ...counts.values());
+    return h("div", { class: "cqa-table-scroll", attrs: { "aria-hidden": "true" } }, h(
+      "table",
+      { class: "cqa-matrix" },
+      h("thead", {}, h("tr", {}, h("th"), cols.map((c) => h("th", { attrs: { scope: "col" }, text: c.label })))),
+      h("tbody", {}, rows.map((r) => h("tr", {}, h("th", { attrs: { scope: "row" }, text: r.label }), cols.map((c) => {
+        const n = counts.get(`${r.key}|${c.key}`) ?? 0;
+        return h("td", { class: ["cqa-matrix-cell", n ? `lvl-${Math.ceil(4 * n / max)}` : "is-zero"], data: n ? { tip: tip(r, c, n) } : {}, text: n ? String(n) : "\xB7" });
+      }))))
+    ));
+  }
+  function tooltips(root) {
+    const tip = h("div", { class: "cqa-tip", attrs: { role: "presentation" } });
+    tip.hidden = true;
+    root.append(tip);
+    root.addEventListener("pointermove", (e) => {
+      const text3 = e.target.closest?.("[data-tip]")?.getAttribute("data-tip");
+      tip.hidden = !text3;
+      if (!text3) return;
+      tip.textContent = text3;
+      const box = root.getBoundingClientRect();
+      tip.style.left = `${Math.min(Math.max(8, e.clientX - box.left), box.width - 8)}px`;
+      tip.style.top = `${e.clientY - box.top - 14}px`;
+    });
+    root.addEventListener("pointerleave", () => {
+      tip.hidden = true;
+    });
+    return tip;
+  }
+
   // src/ui/reports-page.js
   var numeric = (value2) => typeof value2 === "number" && Number.isFinite(value2);
   var percentText = (value2) => numeric(value2) ? `${formatNumber(value2 * 100, { maximumFractionDigits: 2 })} %` : "\u2014";
@@ -8099,9 +8301,94 @@
       )) : h("p", { class: "cqa-report-muted", text: t("reports.emptyCell") })
     );
   }
+  var sum = (rows, key) => rows.reduce((total, r) => total + (numeric(r[key]) ? r[key] : 0), 0);
+  var grid = (...cards) => h("div", { class: "cqa-chart-grid" }, cards.filter(Boolean));
+  function weightedAverage(rows) {
+    const known = rows.filter((r) => numeric(r.avg_total) && r.n > 0);
+    const n = sum(known, "n");
+    return n ? known.reduce((total, r) => total + r.avg_total * r.n, 0) / n : null;
+  }
+  var groupRows = (rows, field) => rows.filter((r) => numeric(r.avg_total)).map((r) => {
+    const label = field === "channel" ? channelText(r[field]) : r[field];
+    return { label, verbatim: field !== "channel", value: r.avg_total / 100, text: averageText(r.avg_total), tip: t("reports.chart.tipValue", { title: label, value: averageText(r.avg_total), n: r.n }) };
+  });
+  function statTile(label, to, format2) {
+    const value2 = h("span", { class: "cqa-hero-value", text: format2(to) });
+    countUp(value2, to, format2);
+    return h("div", { class: "cqa-hero-stat" }, h("span", { class: "cqa-report-brand-label", text: label }), value2);
+  }
+  function analyticsHero(data) {
+    const avg = weightedAverage(data.by_channel ?? []);
+    const total = sum(data.by_channel ?? [], "n");
+    return h(
+      "div",
+      { class: "cqa-report-brand cqa-hero", data: { test: "analytics-hero" } },
+      avg === null ? null : h("div", { class: "cqa-hero-main" }, statTile(t("reports.average"), avg, averageText)),
+      statTile(t("reports.hero.evals"), total, (v) => String(Math.round(v))),
+      statTile(t("reports.hero.gross"), data.gross_errors?.count ?? 0, (v) => String(Math.round(v)))
+    );
+  }
+  function analyticsCharts(data) {
+    const criteria = data.by_criterion ?? [];
+    const rank = [...criteria].sort((a, b) => b.fail_rate - a.fail_rate).map((r, i) => ({
+      label: r.title || r.criterion_id,
+      verbatim: true,
+      value: r.fail_rate,
+      hot: i === 0 && r.fail_rate > 0,
+      text: percentText(r.fail_rate),
+      tip: t("reports.chart.tipFail", { title: r.title || r.criterion_id, fail: percentText(r.fail_rate), na: percentText(r.na_rate), n: r.n })
+    }));
+    const shape = criteria.map((r) => ({
+      label: r.criterion_id.toUpperCase(),
+      value: 1 - r.fail_rate,
+      tip: t("reports.chart.tipValue", { title: r.title || r.criterion_id, value: percentText(1 - r.fail_rate), n: r.n })
+    }));
+    const groups = [...groupRows(data.by_language ?? [], "language"), ...groupRows(data.by_channel ?? [], "channel")];
+    const kinds = [...data.gross_errors?.by_kind ?? []].sort((a, b) => b.count - a.count);
+    const shown = kinds.slice(0, 4), rest = sum(kinds.slice(4), "count");
+    const slices = [...shown.map((k) => ({ value: k.count, label: k.kind, verbatim: true })), ...rest ? [{ value: rest, label: t("reports.chart.other") }] : []].map((s, tone) => ({ ...s, tone, tip: `${s.label}: ${s.value}` }));
+    return [analyticsHero(data), grid(
+      shape.length >= 3 ? chartCard(t("reports.chart.shape"), t("reports.chart.shapeNote"), radar(shape)) : null,
+      chartCard(t("reports.chart.failRank"), t("reports.failures"), hbars(rank)),
+      groups.length ? chartCard(t("reports.chart.scores"), null, hbars(groups)) : null,
+      slices.length ? chartCard(t("reports.grossKinds"), null, donut(slices, String(data.gross_errors?.count ?? 0), t("reports.hero.gross")), legend(slices)) : null
+    )];
+  }
+  var ANSWERS = ["yes", "no", "na", "step"];
+  var answerKey = (value2) => typeof value2 === "string" ? value2 : "step";
+  var answerLabel2 = (key) => key === "step" ? t("reports.chart.step") : reportAnswer(key);
+  function accuracyCharts(data) {
+    const ref = data.overall.agreement;
+    const rows = (list, field) => list.filter((r) => numeric(r.agreement)).map((r) => {
+      const label = field === "title" ? r.title : field === "channel" ? channelText(r.channel) : r[field];
+      return { label, verbatim: field !== "channel", value: r.agreement, text: percentText(r.agreement), tip: t("reports.chart.tipValue", { title: label, value: percentText(r.agreement), n: r.n }) };
+    });
+    const parts = [
+      { value: data.overall.n, tone: 1, text: t("reports.chart.compared") },
+      { value: data.missing ?? 0, tone: 3, text: t("reports.chart.missing") },
+      { value: data.disputed_excluded ?? 0, tone: 2, text: t("reports.chart.disputed") }
+    ].map((p) => ({ ...p, tip: `${p.text}: ${p.value}` }));
+    const counts = /* @__PURE__ */ new Map();
+    for (const r of data.disagreements ?? []) {
+      const key = `${answerKey(r.reference)}|${answerKey(r.evaluated)}`;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    const used = (side) => ANSWERS.filter((k) => [...counts.keys()].some((c) => c.split("|")[side] === k)).map((key) => ({ key, label: answerLabel2(key) }));
+    const groups = [...rows(data.by_language ?? [], "language"), ...rows(data.by_channel ?? [], "channel")];
+    return grid(
+      chartCard(t("reports.byCriterion"), t("reports.chart.refLine"), hbars(rows(data.by_criterion ?? [], "title"), { ref })),
+      groups.length ? chartCard(`${t("reports.byLanguage")} \xB7 ${t("reports.byChannel")}`, t("reports.chart.refLine"), hbars(groups, { ref })) : null,
+      chartCard(t("reports.chart.coverage"), null, stack(parts), legend(parts.map((p) => ({ tone: p.tone, text: `${p.text}: ${p.value}` })))),
+      counts.size ? chartCard(
+        t("reports.chart.matrix"),
+        t("reports.chart.matrixNote"),
+        matrix(used(0), used(1), counts, (r, c, n) => t("reports.chart.tipCell", { from: r.label, to: c.label, n }))
+      ) : null
+    );
+  }
   function createReportsPage(store, api, route2 = store.get().route) {
     const accuracy = route2.name === "accuracy";
-    const body = h("div", { attrs: { "aria-live": "polite" } });
+    const body = h("div", { class: "cqa-report-body", attrs: { "aria-live": "polite" } });
     const refresh = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("reports.refresh"), data: { test: "reports-refresh" }, on: { click: () => load2() } });
     const el = h(
       "div",
@@ -8110,6 +8397,7 @@
       h("p", { class: "cqa-report-muted", text: accuracy ? t("reports.accuracyNote") : t("reports.analyticsNote") }),
       body
     );
+    tooltips(el);
     let destroyed = false;
     let run = 0;
     function accuracyReport(data) {
@@ -8125,7 +8413,8 @@
           { class: "cqa-report-brand", data: { test: "accuracy-overall" } },
           h("span", { class: "cqa-report-brand-label", text: t("reports.overallLabel") }),
           h("span", { class: "cqa-report-brand-value", text: percentText(data.overall.agreement) }),
-          h("span", { class: "cqa-report-brand-n", text: t("reports.overallN", { n: data.overall.n }) })
+          h("span", { class: "cqa-report-brand-n", text: t("reports.overallN", { n: data.overall.n }) }),
+          numeric(data.overall.agreement) ? ring(data.overall.agreement, percentText(data.overall.agreement)) : null
         ) : null,
         h("p", { data: { test: "accuracy-counts" }, text: t("reports.counts", { missing: data.missing ?? 0, disputed: data.disputed_excluded ?? 0 }) })
       ].filter(Boolean));
@@ -8133,6 +8422,7 @@
         body.append(h("p", { class: "cqa-report-empty", text: accuracyEmptyText(data), data: { test: "reports-empty" } }));
         return;
       }
+      body.append(accuracyCharts(data));
       for (const [key, label, heading, field] of [["by_criterion", t("reports.byCriterion"), t("reports.criterion"), "title"], ["by_language", t("reports.byLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.byChannel"), t("reports.channelColumn"), "channel"]]) {
         body.append(table(label, [heading, t("reports.agreement"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), bar(r.agreement), num(r.n)]), `accuracy-${key.slice(3)}`));
       }
@@ -8170,6 +8460,7 @@
     function analyticsReport(data) {
       const criteria = data.by_criterion ?? [];
       if (!criteria.length) body.append(h("p", { text: t("reports.noEvaluations"), data: { test: "reports-empty" } }));
+      else body.append(...analyticsCharts(data));
       body.append(table(t("reports.byCriterion"), [t("reports.criterion"), t("reports.failures"), "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id, true), bar(r.fail_rate), bar(r.na_rate), num(r.n)]), "analytics-criterion"));
       for (const [key, label, heading, field] of [["by_language", t("reports.avgLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.avgChannel"), t("reports.channelColumn"), "channel"]]) {
         body.append(table(label, [heading, t("reports.average"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), num(averageText(r.avg_total)), num(r.n)]), `analytics-${field}`));
@@ -8185,6 +8476,7 @@
       const mine = ++run;
       refresh.disabled = true;
       body.removeAttribute("data-test");
+      body.classList.remove("is-in");
       clear(body).append(h("p", { text: t("reports.loading"), data: { test: "reports-loading" } }));
       try {
         const data = await (accuracy ? api.getAccuracy() : api.getAnalytics());
@@ -8193,6 +8485,9 @@
         body.setAttribute("data-test", "reports-ready");
         if (accuracy) accuracyReport(data);
         else analyticsReport(data);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (!destroyed && mine === run) body.classList.add("is-in");
+        }));
       } catch (error) {
         if (destroyed || mine !== run) return;
         body.removeAttribute("data-test");
