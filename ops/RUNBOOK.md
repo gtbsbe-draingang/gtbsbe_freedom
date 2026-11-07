@@ -108,6 +108,11 @@ goes into those folders.
   appendix (missing criteria, wrong values, a score that does not follow from the values, not
   exactly 10 records). A dialogue that failed stays in the file as `status: "error"`. Commit
   only `results/prod/results.json` and push.
+- **Right before the final push**, re-check both committed files (reads only, writes nothing;
+  catches a BOM, NaN, duplicate keys, a signed URL, a wrong count, missing or extra ids, an
+  evidence turn past the transcript): `uv run python -m quality.results_export --check
+  ../results/dev/results.json --expect 65 --dev ../data/dev.json` and `... --check
+  ../results/prod/results.json --expect 10 --group <control group_id>`. Push only on `OK`.
 
 ## Rehearsal record
 
