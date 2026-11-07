@@ -24,7 +24,7 @@ rehearsal and update this file if they differ.
 | 4:00–5:00 | **Чек-листы**: copy the official checklist; change only a weight and run the dry run (0 model calls); then replace one criterion, apply to a few chats, open the comparison. | Only the changed criterion is re-asked; everything else is reused by fingerprint. Before and after totals side by side. | Show the dry run, then a labelled saved comparison. |
 
 Do not edit source code or a published version during the swap. The reference agreement
-(79.75%, `data/reference/agreement-dev-2026-11-07.json`) is agreement with our own draft answers,
+(80.66% on 517 labels, `data/reference/agreement-dev-2026-11-07.json`) is agreement with our own draft answers,
 not with the organisers; say so if it comes up.
 
 ## Rehearsal
