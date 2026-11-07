@@ -18,13 +18,13 @@ export function csvField(value) {
 
 /**
  * @param {Record<string, unknown>[]} rows
- * @param {(string | {key: string, header?: string, value?: (row: object) => unknown})[]} columns
+ * @param {(string | {key: string, title?: string, header?: string, value?: (row: object) => unknown})[]} columns
  *   A string is both the key and the header. `value(row)` overrides reading `row[key]`.
  * @returns {string} BOM, a header line, then one line per row, each ending in CRLF.
  */
 export function toCsv(rows, columns) {
   const cols = columns.map((c) => (typeof c === "string" ? { key: c, header: c } : c));
-  const lines = [cols.map((c) => csvField(c.header ?? c.key))];
+  const lines = [cols.map((c) => csvField(c.title ?? c.header ?? c.key))];
   for (const row of rows) {
     lines.push(cols.map((c) => csvField(typeof c.value === "function" ? c.value(row) : row?.[c.key])));
   }

@@ -9,6 +9,7 @@ import { createChecklistEditor } from "./ui/checklist-editor.js";
 import { createChecklistsPage } from "./ui/checklists-page.js";
 import { createComparePage } from "./ui/compare-page.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
+import { createReportsPage } from "./ui/reports-page.js";
 import { createQueue } from "./ui/queue.js";
 import { createScorecard } from "./ui/scorecard.js";
 import { createShell } from "./ui/shell.js";
@@ -109,6 +110,8 @@ export function mount(el, options = {}) {
       checklist: createChecklistEditor,
       editor: createChecklistEditor,
       compare: createComparePage,
+      accuracy: createReportsPage,
+      analytics: createReportsPage,
       ...options.views,
     },
   });

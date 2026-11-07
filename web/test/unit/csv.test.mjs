@@ -48,3 +48,7 @@ describe("toCsv", () => {
     assert.equal(toCsv([], ["a", "b"]), "﻿a;b\r\n");
   });
 });
+
+test('column titles from the Task 17 interface are supported', () => {
+  assert.equal(toCsv([{a:'a;b',b:'"x"'}], [{key:'a',title:'Первый'},{key:'b',title:'Второй'}]), '﻿Первый;Второй\r\n"a;b";"""x"""\r\n');
+});

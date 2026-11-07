@@ -147,7 +147,7 @@ export function createQueue(store, api) {
   const exportLink = h("a", {
     class: "cqa-q-export",
     attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
-    data: { test: "queue-export" },
+    data: { test: "export-csv" },
     on: {
       click: (event) => {
         try {
@@ -170,7 +170,7 @@ export function createQueue(store, api) {
     { class: "cqa-q-controls" },
     pillBar,
     h("div", { class: "cqa-q-sub" }, groupSelect, language),
-    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink),
+    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), h("span", { data: { test: "queue-export" } }, exportLink)),
   );
   const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
   const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);

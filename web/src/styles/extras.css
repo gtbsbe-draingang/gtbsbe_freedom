@@ -1,0 +1,7 @@
+.cqa .msg-translation { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--line-2); color: var(--text-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.cqa .cqa-tr-head { flex-wrap: wrap; }
+.cqa .cqa-voice { margin-top: 12px; font-size: 12px; color: var(--text-2); }
+.cqa .cqa-table-scroll { max-width: 100%; overflow-x: auto; }
+.cqa .cqa-voice-table { border-collapse: collapse; width: 100%; }
+.cqa .cqa-voice-table th, .cqa .cqa-voice-table td { padding: 6px; text-align: left; border-bottom: 1px solid var(--line); }
+.cqa .cqa-voice-table caption { text-align: left; margin-bottom: 8px; }

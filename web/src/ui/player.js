@@ -93,10 +93,10 @@ export function renderPlayer(conversation, api, transcript) {
 
   return {
     el,
-    seek(index) {
-      const start = starts[index];
-      if (destroyed || !isTime(start)) return false;
-      audio.currentTime = start;
+    seek(index) { return this.seekSeconds(starts[index]); },
+    seekSeconds(seconds) {
+      if (destroyed || !isTime(seconds) || seconds < 0) return false;
+      audio.currentTime = seconds;
       mark();
       return true;
     },
