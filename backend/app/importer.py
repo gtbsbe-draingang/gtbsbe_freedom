@@ -12,6 +12,7 @@ import asyncio
 import importlib
 import importlib.util
 import logging
+import re
 import sys
 from collections import Counter
 from datetime import UTC, datetime
@@ -73,18 +74,70 @@ def organizer_url_for(group_id: str) -> str:
     return f"{path}?{'&'.join(parts)}{hash_mark}{fragment}"
 
 
-class _HideOrganizerUrl(logging.Filter):
-    """httpx logs every request, URL included, at INFO. That URL has the signature in it."""
+# httpx logs every request, URL included, at INFO ("HTTP Request: GET <url> ..."), and that URL has
+# the signature in it. So does any other signed link a library logs (the audio recordings'). The
+# filter below rewrites such a URL to "<redacted>" and keeps the rest of the record (method, status).
+#
+# It is a filter on the loggers themselves, and a logger's filters do not apply to its children, so
+# httpcore's loggers are named one by one.
+_HTTP_LOGGERS = (
+    "httpx",
+    "httpcore",
+    "httpcore.connection",
+    "httpcore.http11",
+    "httpcore.http2",
+    "httpcore.proxy",
+    "httpcore.socks",
+)
+_REDACTED = "<redacted>"
+_URL_IN_TEXT = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
+_SIGNATURE = re.compile(r"sig(?:nature)?=", re.IGNORECASE)
 
+
+def _organizer_endpoints() -> list[str]:
+    """The configured URL without its query, as written and as httpx writes it (host in lower
+    case, the default port dropped), lower-cased for comparing."""
+    configured = _configured_url()
+    if configured is None:
+        return []
+    forms = [configured]
+    try:
+        forms.append(str(httpx.URL(configured)))
+    except httpx.InvalidURL:
+        pass
+    return [form.partition("#")[0].partition("?")[0].lower() for form in forms]
+
+
+def redact_signed_urls(message: str) -> str:
+    """`message` with every signed URL (a `sig=` / `signature=` parameter, any case) and every URL
+    of the configured organiser endpoint replaced by "<redacted>". A signature or the endpoint that
+    sits outside anything shaped like a URL makes the whole message "<redacted>"."""
+    endpoints = _organizer_endpoints()
+
+    def is_secret(url: str) -> bool:
+        return bool(_SIGNATURE.search(url)) or any(url.lower().startswith(e) for e in endpoints)
+
+    redacted = _URL_IN_TEXT.sub(lambda m: _REDACTED if is_secret(m.group()) else m.group(), message)
+    if _SIGNATURE.search(redacted) or any(e in redacted.lower() for e in endpoints):
+        return _REDACTED
+    return redacted
+
+
+class _RedactSignedUrls(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        configured = _configured_url()
-        if configured is None:
-            return True
-        endpoint = configured.partition("#")[0].partition("?")[0]
-        return endpoint not in record.getMessage()
+        try:
+            message = record.getMessage()
+            redacted = redact_signed_urls(message)
+        except Exception:  # a logging problem must not break a request, nor let a message through
+            message, redacted = "", _REDACTED
+        if redacted != message:
+            record.msg, record.args = redacted, None
+        return True
 
 
-logging.getLogger("httpx").addFilter(_HideOrganizerUrl())
+_redact_filter = _RedactSignedUrls()
+for _name in _HTTP_LOGGERS:
+    logging.getLogger(_name).addFilter(_redact_filter)
 
 
 def _organizer_error(message: str) -> ApiError:
@@ -95,15 +148,18 @@ async def fetch_group(group_id: str) -> list[dict]:
     """The records of one dataset group from the organisers' API.
 
     Raises ApiError 409 `organizer_url_missing` without a configured URL, and 502
-    `organizer_error` when the call times out (60 s), fails, answers with a status other than 200
-    or `isSuccess` false, or answers with something that is not `data.records`. The message names
-    the upstream status or "timeout", never the URL.
+    `organizer_error` when the call takes longer than 60 s in total, fails, answers with a status
+    other than 200 or `isSuccess` false, or answers with something that is not `data.records`. The
+    message names the upstream status or "timeout", never the URL.
     """
     url = organizer_url_for(group_id)
     try:
-        async with httpx.AsyncClient(timeout=FETCH_TIMEOUT_SECONDS) as client:
-            response = await client.get(url)
-    except httpx.TimeoutException:
+        # httpx's own timeout limits each wait (connect, one read), so a body that drips in forever
+        # would never trip it: the deadline for the whole call is this one.
+        async with asyncio.timeout(FETCH_TIMEOUT_SECONDS):
+            async with httpx.AsyncClient(timeout=FETCH_TIMEOUT_SECONDS) as client:
+                response = await client.get(url)
+    except (httpx.TimeoutException, TimeoutError):
         raise _organizer_error("The organisers' API did not answer in time (timeout).") from None
     except (httpx.HTTPError, httpx.InvalidURL) as exc:
         # The exception's own text is not used: it may name the URL.
@@ -261,8 +317,9 @@ async def import_records(records: list[dict], group_id: str) -> ImportSummary:
 
 # --- audio hook ----------------------------------------------------------------------------
 
-# Tasks are only weakly referenced by the event loop: hold them until they are done.
-_background_tasks: set[asyncio.Task[None]] = set()
+# Audio runs in flight, by conversation id. The table keeps each task referenced until it is done
+# (the event loop only holds tasks weakly) and stops a second run of the same call from starting.
+_background_tasks: dict[str, asyncio.Task[None]] = {}
 
 
 def _audio_package() -> ModuleType | None:
@@ -283,8 +340,14 @@ def _audio_package() -> ModuleType | None:
 async def _process_call(process_call: Any, conversation: str) -> None:
     try:
         await process_call(conversation)
-    except Exception:
-        logger.exception("Audio processing failed for %s", conversation)
+    except Exception as exc:
+        # Only the type. The message and the traceback of a failed download can hold the signed URL.
+        logger.error("Audio processing failed for %s: %s", conversation, type(exc).__name__)
+
+
+def _forget(conversation: str, task: asyncio.Task[None]) -> None:
+    if _background_tasks.get(conversation) is task:  # not a newer run of the same call
+        del _background_tasks[conversation]
 
 
 def _schedule_audio(conversations: list[str]) -> None:
@@ -301,6 +364,9 @@ def _schedule_audio(conversations: list[str]) -> None:
         return
     loop = asyncio.get_running_loop()
     for conversation in conversations:
+        running = _background_tasks.get(conversation)
+        if running is not None and not running.done():
+            continue  # already being processed; its result is what the caller is waiting for
         task = loop.create_task(_process_call(process_call, conversation))
-        _background_tasks.add(task)
-        task.add_done_callback(_background_tasks.discard)
+        _background_tasks[conversation] = task
+        task.add_done_callback(lambda done, key=conversation: _forget(key, done))

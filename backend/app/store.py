@@ -96,7 +96,7 @@ def upsert_conversation(
         with write_transaction() as own:
             return upsert_conversation(conv, audio_url, conn=own)
 
-    now = _now()
+    now = _now().replace(microsecond=0)  # whole seconds: the column and the JSON hold the same value
     new_hash = transcript_hash(conv.transcript)
     row = conn.execute(
         "SELECT conversation_json, transcript_hash, audio_url, created_at "
@@ -128,14 +128,15 @@ def upsert_conversation(
     }
 
     if new_hash != row["transcript_hash"]:
-        created = datetime.fromisoformat(row["created_at"])
+        # created_at is kept exactly: the stored conversation's value, written to the column as well.
+        created = previous.created_at or datetime.fromisoformat(row["created_at"])
         stored = conv.model_copy(update={"created_at": created, **audio_fields})
         conn.execute(
             "UPDATE conversations SET channel = ?, language = ?, conversation_json = ?, "
-            "transcript_hash = ?, audio_url = ?, updated_at = ? WHERE id = ?",
+            "transcript_hash = ?, audio_url = ?, created_at = ?, updated_at = ? WHERE id = ?",
             (
                 conv.channel, conv.language, stored.model_dump_json(), new_hash,
-                audio_url if has_new_url else row["audio_url"], _stamp(now), conv.id,
+                audio_url if has_new_url else row["audio_url"], _stamp(created), _stamp(now), conv.id,
             ),
         )  # fmt: skip
         return "updated"

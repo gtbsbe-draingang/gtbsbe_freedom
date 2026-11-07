@@ -552,6 +552,39 @@ def test_store_created_at_is_kept_and_updated_at_moves(migrated: None, clock: Ca
     assert got.transcript[0].text == "changed"
 
 
+def test_store_created_at_is_the_same_in_column_and_json_and_survives_an_update(
+    migrated: None, clock: Callable
+) -> None:
+    clock(datetime(2026, 11, 7, 10, 0, 0, 987654, tzinfo=UTC))  # a clock with microseconds
+    first, url = conv("p1-ru-001")
+    store.upsert_conversation(first, url)
+    row = stored_row("DEV:p1-ru-001")
+    in_json = json.loads(row["conversation_json"])["created_at"]
+    assert datetime.fromisoformat(in_json) == datetime.fromisoformat(row["created_at"])
+    assert in_json == "2026-11-07T10:00:00Z"  # whole seconds, so the two cannot drift apart
+
+    # A row whose column disagrees with its JSON (an older write): an update keeps the JSON's value
+    # and writes the column from that same value.
+    conn = db.connect()
+    conn.execute(
+        "UPDATE conversations SET created_at = '2020-01-01T00:00:00+00:00' WHERE id = 'DEV:p1-ru-001'"
+    )
+    conn.commit()
+    conn.close()
+    clock(datetime(2026, 11, 7, 11, 30, 0, 5, tzinfo=UTC))
+
+    def edit(record: dict) -> None:
+        record["transcript"][0]["text"] = "changed"
+
+    changed, url = conv("p1-ru-001", edit=edit)
+    assert store.upsert_conversation(changed, url) == "updated"
+
+    row = stored_row("DEV:p1-ru-001")
+    assert row["created_at"] == "2026-11-07T10:00:00+00:00"
+    assert json.loads(row["conversation_json"])["created_at"] == in_json
+    assert row["updated_at"] == "2026-11-07T11:30:00+00:00"
+
+
 def test_store_columns(migrated: None) -> None:
     c, url = conv("p4-ru-001", url="https://media.example/a?sig=Z")
     store.upsert_conversation(c, url)
@@ -731,9 +764,17 @@ def fake_audio(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     return seen
 
 
+@pytest.fixture(autouse=True)
+def _no_audio_tasks_left_over() -> Iterator[None]:
+    """The in-flight table is module state: a task of an earlier test must not suppress a later one."""
+    importer._background_tasks.clear()
+    yield
+    importer._background_tasks.clear()
+
+
 async def settle() -> None:
     while importer._background_tasks:
-        await asyncio.gather(*list(importer._background_tasks))
+        await asyncio.gather(*list(importer._background_tasks.values()))
 
 
 async def test_audio_hook_runs_for_the_voice_call_only(migrated: None, fake_audio: list[str]) -> None:
@@ -807,15 +848,102 @@ async def test_audio_hook_failure_is_logged_and_does_not_block(
     failures = [r for r in caplog.records if r.levelno >= logging.ERROR]
     assert len(failures) == 1
     assert f"DEV:{CALL_ID}" in failures[0].getMessage()
-    assert failures[0].exc_info is not None  # the traceback is logged, not only the text
-    assert importer._background_tasks == set()
+    assert "RuntimeError" in failures[0].getMessage()  # the type, so the log says what went wrong
+    assert "no ffmpeg" not in caplog.text  # not the text: an exception message can hold a signed URL
+    assert failures[0].exc_info is None  # and no traceback
+    assert importer._background_tasks == {}
+
+
+async def test_audio_hook_failure_log_never_carries_the_exception_text(
+    migrated: None, fake_audio: list[str], monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    async def boom(conversation: str) -> None:
+        try:
+            raise ValueError("could not fetch https://media.example/a?sig=Z")
+        except ValueError as inner:
+            raise RuntimeError("download failed: https://media.example/a?sig=Z") from inner
+
+    monkeypatch.setattr(sys.modules["audio"], "process_call", boom)
+    caplog.set_level(logging.DEBUG)
+
+    await importer.import_records(with_audio(dev_records()), "DEV")
+    await settle()
+
+    assert "sig=Z" not in caplog.text
+    assert "media.example" not in caplog.text
+    assert any(
+        f"DEV:{CALL_ID}" in r.getMessage() and "RuntimeError" in r.getMessage() for r in caplog.records
+    )
 
 
 async def test_audio_hook_keeps_references_until_done(migrated: None, fake_audio: list[str]) -> None:
     await importer.import_records(with_audio(dev_records()), "DEV")
     assert len(importer._background_tasks) == 1  # held, so it cannot be garbage-collected mid-run
     await settle()
-    assert importer._background_tasks == set()
+    assert importer._background_tasks == {}
+
+
+async def test_audio_hook_does_not_start_a_second_run_while_one_is_in_flight(
+    migrated: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    started: list[str] = []
+    gate = asyncio.Event()
+    module = types.ModuleType("audio")
+    module.__spec__ = ModuleSpec("audio", None)
+
+    async def process_call(conversation: str) -> None:
+        started.append(conversation)
+        await gate.wait()
+
+    module.process_call = process_call  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "audio", module)
+    records = with_audio(dev_records())
+
+    await importer.import_records(records, "DEV")
+    await asyncio.sleep(0)  # let the task start
+    assert started == [f"DEV:{CALL_ID}"]
+    # the same call is imported twice more (a second click, a second tab) while it is still running
+    await importer.import_records(records, "DEV")
+    await importer.import_records(records, "DEV")
+    await asyncio.sleep(0)
+    assert started == [f"DEV:{CALL_ID}"]
+    assert len(importer._background_tasks) == 1
+
+    gate.set()
+    await settle()
+    assert importer._background_tasks == {}
+
+    # once it has finished (and left nothing behind) the next import starts it again
+    gate.clear()
+    await importer.import_records(records, "DEV")
+    await asyncio.sleep(0)
+    assert started == [f"DEV:{CALL_ID}"] * 2
+    gate.set()
+    await settle()
+
+
+async def test_audio_hook_runs_different_calls_side_by_side(
+    migrated: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    started: list[str] = []
+    gate = asyncio.Event()
+    module = types.ModuleType("audio")
+    module.__spec__ = ModuleSpec("audio", None)
+
+    async def process_call(conversation: str) -> None:
+        started.append(conversation)
+        await gate.wait()
+
+    module.process_call = process_call  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "audio", module)
+
+    await importer.import_records(with_audio(dev_records()), "DEV")
+    await importer.import_records(with_audio(dev_records()), "OTHER")
+    await asyncio.sleep(0)
+
+    assert sorted(started) == [f"DEV:{CALL_ID}", f"OTHER:{CALL_ID}"]
+    gate.set()
+    await settle()
 
 
 async def test_audio_package_that_fails_to_import_does_not_block(
@@ -871,6 +999,14 @@ def test_audio_hook_through_the_route(
 
 # --- logging -------------------------------------------------------------------------------
 
+REALISTIC_URL = (
+    "https://PROD-12.Region.logic.example:443/workflows/x/invoke"
+    "?api-version=2016-06-01&sp=x&sig=FAKESIG&group_id=DEV"
+)
+REALISTIC_URL_WITHOUT_SIG = (
+    "https://PROD-12.Region.logic.example:443/workflows/x/invoke?api-version=2016-06-01&group_id=DEV"
+)
+
 
 async def test_httpx_request_log_does_not_carry_the_signed_url(
     caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch
@@ -884,3 +1020,114 @@ async def test_httpx_request_log_does_not_carry_the_signed_url(
 
     assert "sig=FAKE" not in caplog.text
     assert "org.example" not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "configured", [REALISTIC_URL, REALISTIC_URL_WITHOUT_SIG], ids=["signed", "no_sig_param"]
+)
+async def test_httpx_log_redacts_the_url_httpx_normalises(
+    caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch, configured: str
+) -> None:
+    # httpx logs the normalised URL (host in lower case, the default :443 dropped), which is not
+    # the text that was configured.
+    monkeypatch.setenv("ORGANIZER_API_URL", configured)
+    get_settings.cache_clear()
+    caplog.set_level(logging.DEBUG)
+    with respx.mock(assert_all_called=False) as mock:
+        mock.route(method="GET").respond(200, json=organizer_response([]))
+        await importer.fetch_group("DEV")
+
+    text = caplog.text.lower()
+    assert "fakesig" not in text
+    assert "sig=" not in text
+    assert "prod-12" not in text
+    assert "logic.example" not in text
+    assert "workflows" not in text
+    # the record is kept, with the method and the status, and the URL replaced
+    requests = [r.getMessage() for r in caplog.records if r.name == "httpx"]
+    assert len(requests) == 1
+    assert requests[0] == 'HTTP Request: GET <redacted> "HTTP/1.1 200 OK"'
+
+
+@pytest.mark.parametrize("url", ["https://media.example/a?sig=Z", "https://media.example/a?x=1&SIG=Z&y=2"])
+async def test_httpx_log_redacts_any_signed_url(caplog: pytest.LogCaptureFixture, url: str) -> None:
+    # e.g. stream D's audio links: no organiser URL is configured at all here
+    caplog.set_level(logging.DEBUG)
+    with respx.mock(assert_all_called=False) as mock:
+        mock.route(method="GET").respond(200, text="ok")
+        async with httpx.AsyncClient() as client:
+            await client.get(url)
+
+    assert "sig=" not in caplog.text.lower()
+    assert "media.example" not in caplog.text
+    assert [r.getMessage() for r in caplog.records if r.name == "httpx"] == [
+        'HTTP Request: GET <redacted> "HTTP/1.1 200 OK"'
+    ]
+
+
+async def test_httpx_log_keeps_urls_that_are_not_secret(caplog: pytest.LogCaptureFixture) -> None:
+    caplog.set_level(logging.DEBUG)
+    with respx.mock(assert_all_called=False) as mock:
+        mock.route(method="GET").respond(200, text="ok")
+        async with httpx.AsyncClient() as client:
+            await client.get("https://api.example/v1/messages?page=2")
+
+    assert [r.getMessage() for r in caplog.records if r.name == "httpx"] == [
+        'HTTP Request: GET https://api.example/v1/messages?page=2 "HTTP/1.1 200 OK"'
+    ]
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["httpx", "httpcore", "httpcore.connection", "httpcore.http11", "httpcore.http2", "httpcore.proxy"],
+)
+def test_httpx_and_httpcore_loggers_redact(caplog: pytest.LogCaptureFixture, name: str) -> None:
+    caplog.set_level(logging.DEBUG)
+    logging.getLogger(name).debug("fetching %s now", "https://media.example/a?sig=Z")
+    logging.getLogger(name).debug("no secret here, host=%r", "media.example")
+
+    assert [r.getMessage() for r in caplog.records if r.name == name] == [
+        "fetching <redacted> now",
+        "no secret here, host='media.example'",
+    ]
+
+
+def test_a_signature_outside_a_url_redacts_the_whole_message(caplog: pytest.LogCaptureFixture) -> None:
+    caplog.set_level(logging.DEBUG)
+    logging.getLogger("httpcore.http11").debug("query was %s", "a=1&sig=Z")
+
+    assert "sig=Z" not in caplog.text
+    assert [r.getMessage() for r in caplog.records] == ["<redacted>"]
+
+
+# --- the fetch deadline --------------------------------------------------------------------
+
+
+class _Drip(httpx.AsyncByteStream):
+    """A body that never stalls for long but never ends: every single read is fast."""
+
+    async def __aiter__(self):
+        for _ in range(500):
+            await asyncio.sleep(0.01)
+            yield b" "
+
+
+def test_a_slowly_dripping_answer_hits_the_total_deadline(
+    organizer: respx.MockRouter, client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(importer, "FETCH_TIMEOUT_SECONDS", 0.2)
+    organizer.get(host="org.example").mock(return_value=httpx.Response(200, stream=_Drip()))
+
+    started = time.monotonic()
+    r = client.get("/api/datasets/DEV")
+
+    assert time.monotonic() - started < 3
+    assert r.status_code == 502
+    assert r.json()["error"] == "organizer_error"
+    assert "timeout" in r.json()["message"]
+    assert "sig=" not in r.text
+    assert stored_count() == 0
+
+
+def test_the_deadline_is_the_documented_sixty_seconds() -> None:
+    assert importer.FETCH_TIMEOUT_SECONDS == 60
