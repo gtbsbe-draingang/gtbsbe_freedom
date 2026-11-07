@@ -59,7 +59,7 @@ All you need is `uv` and internet access for the first dependency installation. 
 3. **Optional: a `.env` file.** Copy `backend/.env.example` to `backend/.env`, then restart.
    - `ORGANIZER_API_URL`: the GET link from the guide. It lets you import a dataset group. When the queue is empty, the UI imports the `DEV` group by itself.
    - `ANTHROPIC_API_KEY`: needed only for new evaluations (a new or reworded criterion, or a new dialogue).
-   - `ANTHROPIC_BASE_URL`, `DEFAULT_MODEL`, `MODEL_TIMEOUT_SECONDS`: run the evaluator on the local model instead of the Claude API ([ops/LOCAL_MODEL.md](ops/LOCAL_MODEL.md)). `uv run cqa-serve --llm-api` ignores the first two and uses the Claude API with `claude-haiku-5-5` and `ANTHROPIC_API_KEY`.
+   - `ANTHROPIC_BASE_URL`, `DEFAULT_MODEL`, `MODEL_TIMEOUT_SECONDS`: run the evaluator on the local model instead of the Claude API ([ops/LOCAL_MODEL.md](ops/LOCAL_MODEL.md)).
 4. **Useful URLs** once it runs:
    - <http://127.0.0.1:8000/>: the UI.
    - <http://127.0.0.1:8000/dynamics-mock.html>: the UI inside a mock Dynamics form, 600 px wide.
