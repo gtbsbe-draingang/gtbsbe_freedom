@@ -6,6 +6,7 @@ uvicorn.run is replaced by a recorder, so nothing binds a port. Every URL and ke
 import importlib
 import json
 import logging
+import re
 import sqlite3
 import sys
 import tomllib
@@ -532,3 +533,44 @@ def test_cqa_snapshot_exports_a_table_another_stream_registers(
     assert written["t_fake_stream"] == [
         {"conversation": FAKE_ROW[0], "lang": "ru", "created_at": FAKE_ROW[3], "payload": ["Добрый день"]}
     ]
+
+
+# --- logging (final review, minor 6) -------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def app_logger_restored() -> Iterator[None]:
+    """`cqa-serve` configures the `app` logger, which is process-global: put it back after each test."""
+    logger = logging.getLogger("app")
+    saved = (logger.level, list(logger.handlers), logger.propagate)
+    yield
+    logger.setLevel(saved[0])
+    logger.handlers[:] = saved[1]
+    logger.propagate = saved[2]
+
+
+LIBRARY_LOGGERS = ("httpx", "httpcore", "uvicorn", "uvicorn.error", "uvicorn.access", "fastapi", "asyncio")
+
+
+def test_serve_sends_app_info_to_stderr_with_the_time_and_the_level(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, uvicorn_calls: list[dict], capsys: pytest.CaptureFixture[str]
+) -> None:
+    use_database(monkeypatch, tmp_path / "serve.db")
+    monkeypatch.setattr(snapshot_store, "SNAPSHOT", tmp_path / "none.json")
+    root = logging.getLogger()
+    root_before = (root.level, list(root.handlers))
+    libraries_before = {name: logging.getLogger(name).level for name in LIBRARY_LOGGERS}
+
+    cli.serve([])
+    cli.serve([])  # a second start in the same process adds no second handler
+    capsys.readouterr()
+    logging.getLogger("app.jobs").info("Job %s started by %s", "j1", "controller")
+    logging.getLogger("app.jobs").debug("a debug line")
+    err = capsys.readouterr().err
+
+    lines = [line for line in err.splitlines() if "Job j1 started" in line]
+    assert len(lines) == 1
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} INFO app\.jobs: Job j1 started by controller", lines[0])
+    assert "a debug line" not in err
+    assert (root.level, list(root.handlers)) == root_before  # the root logger is not configured
+    assert {name: logging.getLogger(name).level for name in LIBRARY_LOGGERS} == libraries_before

@@ -12,6 +12,11 @@ Both commands first import the other streams' router modules, as the app does wh
 modules register their migrations and snapshot tables (`app.snapshot.register_snapshot_table`) at
 import, and both must be known before the database is migrated, restored or exported.
 
+`cqa-serve` sends the app's own log records (the `app` loggers: imports, jobs, second-opinion cost,
+warnings) at INFO and above to stderr, with the time and the level. Only the `app` logger is
+configured: the root logger and the libraries' loggers keep their settings (uvicorn configures its
+own). Signed URLs in exception logs are redacted by app.redaction, on the loggers themselves.
+
 Both commands work the same from any directory: `backend/.env` is found from the package path (see
 app/settings.py) and a relative `DB_PATH` (the default is `cqa.db`) is resolved against `backend/`.
 """
@@ -36,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8000
+LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 
 
 def _port(text: str) -> int:
@@ -71,6 +77,31 @@ def _anchor_db_path() -> Path:
         os.environ["DB_PATH"] = str(BACKEND_DIR / db_path)
         get_settings.cache_clear()
     return get_settings().db_path
+
+
+class _AppLogHandler(logging.StreamHandler):
+    """Writes to whatever `sys.stderr` is when a record comes (as logging's last-resort handler
+    does), so a replaced stderr (a test's capture) is never written to after it is gone."""
+
+    def __init__(self) -> None:
+        logging.Handler.__init__(self, logging.INFO)
+
+    @property
+    def stream(self):  # type: ignore[override]
+        return sys.stderr
+
+
+def configure_logging() -> None:
+    """The `app` loggers' records at INFO and above to stderr, with the time and the level. Only
+    the `app` logger: the root logger and the libraries' loggers are left as they are. Calling it
+    again changes nothing."""
+    app_logger = logging.getLogger("app")
+    app_logger.setLevel(logging.INFO)
+    if any(isinstance(handler, _AppLogHandler) for handler in app_logger.handlers):
+        return
+    handler = _AppLogHandler()
+    handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    app_logger.addHandler(handler)
 
 
 def _load_other_streams() -> None:
@@ -115,6 +146,7 @@ def _restore_snapshot() -> None:
 def serve(argv: list[str] | None = None) -> None:
     """`cqa-serve`: prepare the database, load the snapshot into an empty one, run the app."""
     args = parse_serve_args(argv)
+    configure_logging()
     db_path = _anchor_db_path()
     _load_other_streams()
     migrate()
