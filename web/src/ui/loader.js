@@ -14,8 +14,11 @@ import { setLocalizedText } from "../i18n/dom.js";
 //     and the open transcript checks its dialogue (`importRefresh`). The queue's «Загрузить» and
 //     the call player's «Загрузить группу» both open it.
 //
-//   createBatchBar(store, api) -> { el, destroy }
-//     Shown while dialogues are selected in the queue (store `selection`) or a batch runs: the
+//   createBatchBar(store, api, {describe}?) -> { el, destroy }
+//     Shown while dialogues are selected in the queue (store `selection`) or a batch runs. Its
+//     «Выбрано: N» opens the basket: one row per selected dialogue in the order picked, with a link
+//     to it and a button that takes it out of the selection (`describe(id)` gives the row's queue
+//     item, for its group, language and channel). Then the
 //     checklist (store `checklistSel`, shared with the scorecard), the dry-run estimate
 //     «N диалогов · M вызовов модели · K из кэша», «Оценить выбранные», then the job's progress
 //     with «Повторить неудачные». The job is in the "batch" slot of job-runner.js (store `jobs`),
@@ -24,8 +27,10 @@ import { setLocalizedText } from "../i18n/dom.js";
 import { parseUpload, UploadError } from "../domain/normalize.js";
 import { t, tp } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
-import { clear, h, svg } from "./dom.js";
+import { clear, h, placeChildren, svg } from "./dom.js";
+import { icon } from "./icons.js";
 import { jobSlot } from "./job-runner.js";
+import { href } from "./router.js";
 import { pickSelection } from "./scorecard.js";
 import { errorText, toastError } from "./toast.js";
 import { versionNumbers } from "../domain/checklist-versions.js";
@@ -286,8 +291,9 @@ export function openImport(store, api, host, { group } = {}) {
 // ---- the batch bar ----------------------------------------------------------------------------
 
 const versionsOf = versionNumbers;
+let basketUid = 0; // element ids stay unique if a host mounts the UI twice
 
-export function createBatchBar(store, api) {
+export function createBatchBar(store, api, { describe = () => null } = {}) {
   const view = {
     ready: false, // config and checklists loaded
     server: null,
@@ -304,7 +310,28 @@ export function createBatchBar(store, api) {
   const stops = [];
 
   const host = h("div", { class: "cqa-batch-host" });
+  const basketId = `cqa-basket-${++basketUid}`;
   const count = h("b", { class: "cqa-batch-count" });
+  const basketButton = h(
+    "button",
+    {
+      class: "cqa-basket-btn",
+      attrs: { type: "button", "aria-expanded": "false", "aria-controls": basketId, title: t("batch.basket.toggle") },
+      data: { test: "batch-basket" },
+      on: { click: () => (basket.hidden ? openBasket() : closeBasket()) },
+    },
+    count,
+    icon("chevron", { size: 14 }),
+  );
+  const basketList = h("ul", { class: "cqa-basket-list", attrs: { "aria-label": t("batch.basket.label") }, data: { test: "batch-basket-list" } });
+  const basket = h(
+    "div",
+    { class: ["cqa-menu", "cqa-basket"], attrs: { id: basketId }, data: { test: "batch-basket-panel" } },
+    h("span", { class: "cqa-rv-label", text: t("batch.basket.label") }),
+    basketList,
+  );
+  basket.hidden = true;
+  const basketRows = new Map(); // id -> <li>, kept while the dialogue stays selected
   const select = h("select", {
     class: "cqa-sc-select",
     attrs: { "aria-label": t("batch.checklist") },
@@ -327,9 +354,10 @@ export function createBatchBar(store, api) {
     h(
       "div",
       { class: "cqa-batch-row" },
-      count,
+      basketButton,
       h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: new Set() }) } }),
     ),
+    basket,
     h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
     estimate,
     hint,
@@ -347,11 +375,13 @@ export function createBatchBar(store, api) {
     const active = busy();
     const show = picked.size > 0 || active;
     if (!show) {
+      closeBasket();
       host.replaceChildren();
       return;
     }
     if (!bar.isConnected) host.replaceChildren(bar);
     setLocalizedText(count, t("batch.selected", { n: picked.size }));
+    paintBasket(picked);
 
     const sel = current();
     const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
@@ -383,6 +413,74 @@ export function createBatchBar(store, api) {
       }
     }
   }
+
+  // ---- the basket: the selected dialogues, each one removable ----
+
+  function basketRow(id) {
+    const item = describe(id);
+    const name = item?.conversation_id ?? id.slice(id.indexOf(":") + 1);
+    const group = item?.group_id ?? (id.includes(":") ? id.slice(0, id.indexOf(":")) : "");
+    const meta = h("span", { class: "cqa-basket-meta" }, h("span", { verbatim: true, text: group }));
+    if (item?.language) meta.append(" · ", h("span", { verbatim: true, text: item.language }));
+    if (item?.channel) meta.append(" · ", h("span", { text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }));
+    return h(
+      "li",
+      { class: "cqa-basket-item", data: { test: "batch-basket-item", id } },
+      h("a", { class: "cqa-basket-link", attrs: { href: href("workspace", { id }) }, on: { click: () => closeBasket() } }, h("b", { class: "cqa-basket-id", verbatim: true, text: name }), meta),
+      h(
+        "button",
+        { class: "cqa-basket-remove", attrs: { type: "button", "aria-label": t("batch.basket.remove", { id: name }), title: t("batch.basket.remove", { id: name }) }, data: { test: "batch-basket-remove" }, on: { click: () => unpick(id) } },
+        icon("close", { size: 14 }),
+      ),
+    );
+  }
+
+  // Rows stay in place (placeChildren): a progress poll repaints the bar while the user tabs here.
+  function paintBasket(picked) {
+    for (const id of basketRows.keys()) if (!picked.has(id)) basketRows.delete(id);
+    const nodes = [...picked].map((id) => {
+      if (!basketRows.has(id)) basketRows.set(id, basketRow(id));
+      return basketRows.get(id);
+    });
+    if (!basket.hidden) placeChildren(basketList, nodes);
+    if (picked.size === 0) closeBasket();
+  }
+
+  // Takes one dialogue out of the selection; focus moves to the row that takes its place.
+  function unpick(id) {
+    const order = [...selection()];
+    const at = order.indexOf(id);
+    const next = new Set(order);
+    next.delete(id);
+    store.set({ selection: next }); // the queue unticks its row, the estimate is redone
+    const rest = order.filter((other) => other !== id);
+    const follow = rest[Math.min(at, rest.length - 1)];
+    if (follow !== undefined) basketRows.get(follow)?.querySelector(".cqa-basket-remove")?.focus();
+    else if (basketButton.isConnected) basketButton.focus();
+  }
+
+  const onOutside = (event) => {
+    if (!bar.contains(event.target)) closeBasket();
+  };
+  function openBasket() {
+    if (selection().size === 0) return;
+    basket.hidden = false;
+    basketButton.setAttribute("aria-expanded", "true");
+    paintBasket(selection());
+    document.addEventListener("pointerdown", onOutside);
+  }
+  function closeBasket() {
+    if (basket.hidden) return;
+    basket.hidden = true;
+    basketButton.setAttribute("aria-expanded", "false");
+    document.removeEventListener("pointerdown", onOutside);
+  }
+  bar.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || basket.hidden) return;
+    event.stopPropagation(); // closes the basket, not the queue drawer behind it
+    closeBasket();
+    basketButton.focus();
+  });
 
   // Config and checklists, once; the picker follows store `checklistSel` like the scorecard's.
   function boot() {
@@ -467,6 +565,7 @@ export function createBatchBar(store, api) {
       if (destroyed) return;
       destroyed = true;
       clearTimeout(estimateTimer);
+      closeBasket();
       stops.forEach((stop) => stop());
     },
   };

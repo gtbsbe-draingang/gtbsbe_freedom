@@ -16,7 +16,7 @@ import { setLocalizedText } from "../i18n/dom.js";
 // loader is opened with openImport (loader.js), which also bumps `importRefresh`.
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
-import { clear, h } from "./dom.js";
+import { clear, h, placeChildren } from "./dom.js";
 import { icon } from "./icons.js";
 import { createBatchBar, openImport } from "./loader.js";
 import { href } from "./router.js";
@@ -164,7 +164,7 @@ export function createQueue(store, api) {
   const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
   const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
   const body = h("div", { class: "cqa-q-body" }, stateBox, list);
-  const batch = createBatchBar(store, api);
+  const batch = createBatchBar(store, api, { describe: (id) => view.items.find((item) => item.id === id) ?? null });
 
   const controls = h(
     "div",
@@ -464,18 +464,6 @@ export function createQueue(store, api) {
     language.value = view.language;
   }
 
-  // Puts the rows in the list in this order, leaving every row that is already in place where it
-  // is. Taking them all out and back in (replaceChildren) detaches the checkbox that was just
-  // clicked: the browser drops its focus and, laying out the empty list, scrolls it to the top.
-  function placeRows(nodes) {
-    const wanted = new Set(nodes);
-    for (const child of [...list.children]) if (!wanted.has(child)) child.remove();
-    nodes.forEach((node, i) => {
-      const there = list.children[i] ?? null;
-      if (there !== node) list.insertBefore(node, there);
-    });
-  }
-
   function paint() {
     if (destroyed) return;
     const hasItems = view.items.length > 0;
@@ -492,7 +480,8 @@ export function createQueue(store, api) {
         pill.button.classList.toggle("is-on", pill.name === view.filter);
       }
       shown = base.filter(MATCHES[view.filter]);
-      placeRows(
+      placeChildren( // not replaceChildren: a ticked row's checkbox keeps its focus and the list its scroll
+        list,
         shown.map((item) => {
           let row = rows.get(item.id);
           if (!row) {

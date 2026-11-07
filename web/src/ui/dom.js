@@ -81,3 +81,16 @@ export function clear(el) {
   el.replaceChildren();
   return el;
 }
+
+// Makes `nodes` the children of `parent`, in this order, leaving every child that is already in
+// place where it is. Taking them all out and back in (replaceChildren) detaches a focused child:
+// the browser drops its focus and, laying out the momentarily empty parent, may reset its scroll.
+export function placeChildren(parent, nodes) {
+  const wanted = new Set(nodes);
+  for (const child of [...parent.children]) if (!wanted.has(child)) child.remove();
+  nodes.forEach((node, i) => {
+    const there = parent.children[i] ?? null;
+    if (there !== node) parent.insertBefore(node, there);
+  });
+  return parent;
+}
