@@ -15,7 +15,7 @@ import { ApiError } from "../api/errors.js";
 import { finalAnswers, score } from "../domain/scoring.js";
 import { fmt2, rat } from "../domain/rational.js";
 import { formatOffset } from "../domain/time.js";
-import { t } from "../i18n/ru.js";
+import { t, grossKindsText } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
@@ -621,7 +621,7 @@ export function createScorecard(store, api, args = {}) {
     const changed = evaluation.original_total !== evaluation.final_total;
 
     const gross = evaluation.gross_error;
-    const grossText = gross?.flag ? (gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn")) : t("scorecard.grossOff");
+    const grossText = gross?.flag ? (gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: grossKindsText(gross.kinds) }) : t("scorecard.grossOn")) : t("scorecard.grossOff");
 
     const rows = scoredSections(version).map((section) => {
       const row = evaluation.sections?.find((s) => s.section_id === section.id);
