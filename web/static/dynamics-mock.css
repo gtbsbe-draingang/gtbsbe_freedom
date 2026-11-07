@@ -167,3 +167,17 @@
   border: 0;
   background: #fff;
 }
+
+.dynmock .dynmock-back {
+  margin-left: auto;
+  color: #fff;
+  font-size: 13px;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.dynmock .dynmock-back:hover,
+.dynmock .dynmock-back:focus-visible {
+  opacity: 1;
+  text-decoration: underline;
+}

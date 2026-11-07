@@ -30,6 +30,7 @@
     "role.controller": "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u0451\u0440",
     "role.reviewer": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0439",
     "theme.toggle": "\u0422\u0451\u043C\u043D\u0430\u044F \u0442\u0435\u043C\u0430",
+    "dynamics.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0432 \u0444\u043E\u0440\u043C\u0435 Dynamics 365",
     "dataset.label": "\u041D\u0430\u0431\u043E\u0440",
     "dataset.title": "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
     "workspace.queue": "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
@@ -552,6 +553,7 @@
     "role.controller": "Controller",
     "role.reviewer": "Reviewer",
     "theme.toggle": "Dark theme",
+    "dynamics.open": "Open in a Dynamics 365 form",
     "dataset.label": "Dataset",
     "dataset.title": "Current dataset",
     "workspace.queue": "Queue",
@@ -1074,6 +1076,7 @@
     "role.controller": "\u0411\u0430\u049B\u044B\u043B\u0430\u0443\u0448\u044B",
     "role.reviewer": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443\u0448\u0456",
     "theme.toggle": "\u049A\u0430\u0440\u0430\u04A3\u0493\u044B \u0442\u0430\u049B\u044B\u0440\u044B\u043F",
+    "dynamics.open": "Dynamics 365 \u0444\u043E\u0440\u043C\u0430\u0441\u044B\u043D\u0434\u0430 \u0430\u0448\u0443",
     "dataset.label": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440",
     "dataset.title": "\u0410\u0493\u044B\u043C\u0434\u0430\u0493\u044B \u0434\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u0436\u0438\u044B\u043D\u044B",
     "workspace.queue": "\u041A\u0435\u0437\u0435\u043A",
@@ -4491,6 +4494,10 @@
     sun: [
       ["circle", { cx: 12, cy: 12, r: 4 }],
       ["path", { d: "M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" }]
+    ],
+    frame: [
+      ["rect", { x: 3, y: 4, width: 18, height: 16, rx: 2 }],
+      ["path", { d: "M3 9h18M12 9v11" }]
     ],
     moon: [["path", { d: "M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z" }]],
     user: [
@@ -9121,6 +9128,10 @@
     track(watch(store, (state) => state.theme, paint));
     return button;
   }
+  function dynamicsLink() {
+    const label = t("dynamics.open");
+    return h("a", { class: "cqa-icon-link", attrs: { href: "dynamics-mock.html", title: label, "aria-label": label }, data: { test: "dynamics-link" } }, icon("frame", { size: 16 }));
+  }
   function datasetBadge(store, track) {
     const value2 = h("b", { class: "cqa-badge-value", verbatim: true });
     const badge = h(
@@ -9147,7 +9158,7 @@
       on: { change: () => setLanguage(language2.value) }
     }, [["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430 (KAZ)", "KAZ"], ["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (RU)", "RU"], ["en", "English (EN)", "EN"]].map(([value2, label, short]) => h("option", { verbatim: true, attrs: { value: value2 }, data: { short }, text: label })));
     language2.value = currentLanguage();
-    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language2, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track));
+    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language2, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track), store.get().mode === "embedded" ? null : dynamicsLink());
     if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
     const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));
     const paint = (route2) => {

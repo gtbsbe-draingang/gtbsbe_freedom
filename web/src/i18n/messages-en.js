@@ -25,6 +25,7 @@ export default {
   "role.controller": "Controller",
   "role.reviewer": "Reviewer",
   "theme.toggle": "Dark theme",
+  "dynamics.open": "Open in a Dynamics 365 form",
   "dataset.label": "Dataset",
   "dataset.title": "Current dataset",
   "workspace.queue": "Queue",
