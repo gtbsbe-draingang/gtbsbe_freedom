@@ -72,4 +72,17 @@ export async function run(page) {
   await page.waitFor(sel("loader"), 3000);
   assert.equal(await page.eval(`document.querySelector(${quote(sel("group-id"))}).value`), "CTRL", "the loader opens on this call's group");
   await page.click(sel("loader-close"));
+
+  // ---- lines before the recording starts (no audio offset) show the dialogue's clock, not a raw stamp ----
+  await page.eval(`(() => {
+    const api = window.__cqaTest.api;
+    const real = api.getConversation;
+    api.getConversation = (id) => real(id).then((c) => (id === ${quote(CALL)} ? { ...c, audio_offsets: c.audio_offsets.filter((o) => o.message_index > 1) } : c));
+  })()`);
+  await open(page, CALL);
+  await page.waitFor(AUDIO, 5000);
+  await until(page, `document.querySelector(${quote(`${row(0)} ${sel("msg-time")}`)}) !== null`, "the first line's time");
+  assert.equal(await page.eval(`document.querySelector(${quote(`${row(0)} ${sel("msg-time")}`)}).tagName`), "SPAN", "a line without a start in the recording does not seek");
+  assert.match(await page.text(`${row(0)} ${sel("msg-time")}`), /^\d+:\d\d$/, "it shows m:ss, not the raw timestamp");
+  assert.equal(await page.eval(`document.querySelector(${quote(`${row(2)} ${sel("msg-time")}`)}).tagName`), "BUTTON", "a line with a start still seeks");
 }

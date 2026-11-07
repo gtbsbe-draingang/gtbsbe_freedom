@@ -261,8 +261,10 @@ export function renderTranscript(store, api, args = {}) {
     } else {
       // With a recording, a line's time is where it starts in the recording, and it seeks there.
       const audible = Boolean(api.audioUrl?.(conversation)) && conversation?.channel === "voice call";
+      // A line with no start in the recording (before it began) keeps the dialogue's own clock.
+      const clock = offsets(transcript);
       const starts = audible ? startTimes(conversation) : null;
-      const at = audible ? starts : offsets(transcript);
+      const at = audible ? starts.map((start, i) => start ?? clock[i]) : clock;
       const seek = (index) => player?.seek(index);
       rows = transcript.map((message, i) => buildMessage(message, i, at[i], audible && starts[i] !== null ? seek : null));
       scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
