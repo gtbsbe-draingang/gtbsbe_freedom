@@ -94,12 +94,19 @@ describe("router", () => {
 });
 
 describe("readContext", () => {
-  test("defaults: http api, light, controller, standalone", () => {
+  test("embedded defaults to light, standalone to dark", () => {
+    assert.equal(readContext("?conversationId=c1", {}).theme, "light");
+    assert.equal(readContext("?mode=embedded", {}).theme, "light");
+    assert.equal(readContext("", {}).theme, "dark");
+    assert.equal(readContext("?theme=light", {}).theme, "light");
+  });
+
+  test("defaults: http api, dark, controller, standalone", () => {
     const ctx = readContext("", {});
     assert.equal(ctx.api, "http");
     assert.equal(ctx.apiBase, "api");
     assert.equal(ctx.role, "controller");
-    assert.equal(ctx.theme, "light");
+    assert.equal(ctx.theme, "dark");
     assert.equal(ctx.themeExplicit, false);
     assert.equal(ctx.mode, "standalone");
     assert.equal(ctx.conversationId, null);
