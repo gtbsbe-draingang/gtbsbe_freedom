@@ -16,7 +16,7 @@
     "player.mute": "\u0412\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
     "player.unmute": "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0432\u0443\u043A",
     "player.speed": "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0432\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u044F",
-    "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "app.title": "Qualio",
     "brand.name": "Freedom \u2014 \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E",
     "nav.label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B",
     "nav.workspace": "\u041E\u0446\u0435\u043D\u043A\u0430",
@@ -480,7 +480,14 @@
     "reports.loading": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043E\u0442\u0447\u0451\u0442\u0430\u2026",
     "reports.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442. {error}",
     "reports.channel.chat": "\u0427\u0430\u0442",
-    "reports.channel.call": "\u0417\u0432\u043E\u043D\u043E\u043A"
+    "reports.channel.call": "\u0417\u0432\u043E\u043D\u043E\u043A",
+    "loader.dropTitle": "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 JSON-\u0444\u0430\u0439\u043B \u0441\u044E\u0434\u0430",
+    "loader.dropHint": "\u0438\u043B\u0438 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0444\u0430\u0439\u043B \u0441 \u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u0430",
+    "loader.chooseFile": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B",
+    "loader.noFile": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432\u044B\u0431\u0440\u0430\u043D",
+    "loader.error.oneFile": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043E\u0434\u0438\u043D JSON-\u0444\u0430\u0439\u043B.",
+    "loader.error.fileType": "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E JSON-\u0444\u0430\u0439\u043B\u044B.",
+    "loader.dropActive": "\u041E\u0442\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u0444\u0430\u0439\u043B, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C"
   };
 
   // src/i18n/messages-en.js
@@ -497,7 +504,7 @@
     "player.mute": "Mute",
     "player.unmute": "Unmute",
     "player.speed": "Playback speed",
-    "app.title": "Conversation quality",
+    "app.title": "Qualio",
     "brand.name": "Freedom \u2014 home",
     "nav.label": "Sections",
     "nav.workspace": "Evaluation",
@@ -961,7 +968,14 @@
     "reports.loading": "Loading report\u2026",
     "reports.failed": "Could not load report. {error}",
     "reports.channel.chat": "Chat",
-    "reports.channel.call": "Call"
+    "reports.channel.call": "Call",
+    "loader.dropTitle": "Drop a JSON file here",
+    "loader.dropHint": "or choose a file from your device",
+    "loader.chooseFile": "Choose file",
+    "loader.noFile": "No file selected",
+    "loader.error.oneFile": "Choose one JSON file at a time.",
+    "loader.error.fileType": "Only JSON files are supported.",
+    "loader.dropActive": "Release to upload"
   };
 
   // src/i18n/messages-kk.js
@@ -978,7 +992,7 @@
     "player.mute": "\u0414\u044B\u0431\u044B\u0441\u0442\u044B \u04E9\u0448\u0456\u0440\u0443",
     "player.unmute": "\u0414\u044B\u0431\u044B\u0441\u0442\u044B \u049B\u043E\u0441\u0443",
     "player.speed": "\u041E\u0439\u043D\u0430\u0442\u0443 \u0436\u044B\u043B\u0434\u0430\u043C\u0434\u044B\u0493\u044B",
-    "app.title": "\u0414\u0438\u0430\u043B\u043E\u0433 \u0441\u0430\u043F\u0430\u0441\u044B",
+    "app.title": "Qualio",
     "brand.name": "Freedom \u2014 \u0431\u0430\u0441\u0442\u044B \u0431\u0435\u0442",
     "nav.label": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0435\u0440",
     "nav.workspace": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443",
@@ -1442,7 +1456,14 @@
     "reports.loading": "\u0415\u0441\u0435\u043F \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
     "reports.failed": "\u0415\u0441\u0435\u043F\u0442\u0456 \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B. {error}",
     "reports.channel.chat": "\u0427\u0430\u0442",
-    "reports.channel.call": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443"
+    "reports.channel.call": "\u049A\u043E\u04A3\u044B\u0440\u0430\u0443",
+    "loader.dropTitle": "JSON \u0444\u0430\u0439\u043B\u044B\u043D \u043E\u0441\u044B\u043D\u0434\u0430 \u0441\u04AF\u0439\u0440\u0435\u043F \u04D9\u043A\u0435\u043B\u0456\u04A3\u0456\u0437",
+    "loader.dropHint": "\u043D\u0435\u043C\u0435\u0441\u0435 \u049B\u04B1\u0440\u044B\u043B\u0493\u044B\u0434\u0430\u043D \u0444\u0430\u0439\u043B \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437",
+    "loader.chooseFile": "\u0424\u0430\u0439\u043B \u0442\u0430\u04A3\u0434\u0430\u0443",
+    "loader.noFile": "\u0424\u0430\u0439\u043B \u0442\u0430\u04A3\u0434\u0430\u043B\u043C\u0430\u0493\u0430\u043D",
+    "loader.error.oneFile": "\u0411\u0456\u0440 JSON \u0444\u0430\u0439\u043B\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u04A3\u044B\u0437.",
+    "loader.error.fileType": "\u0422\u0435\u043A JSON \u0444\u0430\u0439\u043B\u0434\u0430\u0440\u044B \u049B\u043E\u043B\u0434\u0430\u043D\u044B\u043B\u0430\u0434\u044B.",
+    "loader.dropActive": "\u0416\u04AF\u043A\u0442\u0435\u0443 \u04AF\u0448\u0456\u043D \u0444\u0430\u0439\u043B\u0434\u044B \u0436\u0456\u0431\u0435\u0440\u0456\u04A3\u0456\u0437"
   };
 
   // src/i18n/ru.js
@@ -5368,6 +5389,7 @@
   function openLoader({ host, store, api, onImported, group = "" }) {
     let closed = false;
     let busy = false;
+    let dragDepth = 0;
     const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
     const result = h("div", { class: "cqa-ld-result" });
     const groupInput = h("input", {
@@ -5380,15 +5402,49 @@
     const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
     const fileInput = h("input", {
       class: "cqa-ld-file",
-      attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
+      attrs: { type: "file", accept: ".json,application/json", hidden: true, tabindex: "-1", "aria-label": t("loader.file") },
       data: { test: "upload-file" },
-      on: { change: () => upload() }
+      on: { change: () => uploadFiles(fileInput.files) }
     });
+    const chooseFile = h("button", {
+      class: "cqa-sc-btn",
+      attrs: { type: "button" },
+      text: t("loader.chooseFile"),
+      data: { test: "choose-upload-file" },
+      on: { click: () => fileInput.click() }
+    });
+    const fileName = h("span", { class: "cqa-ld-filename", text: t("loader.noFile"), data: { test: "upload-filename" }, attrs: { "aria-live": "polite" } });
+    const dropTitle = h("b", { class: "cqa-ld-drop-title", text: t("loader.dropTitle") });
+    const dropzone = h(
+      "div",
+      {
+        class: "cqa-ld-dropzone",
+        attrs: { role: "group", "aria-label": t("loader.file"), "aria-disabled": "false" },
+        data: { test: "upload-dropzone" }
+      },
+      svg(
+        "svg",
+        { class: "cqa-ld-drop-icon", viewBox: "0 0 24 24", width: 24, height: 24, fill: "none", stroke: "currentColor", "stroke-width": 1.6, "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" },
+        svg("path", { d: "M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" })
+      ),
+      dropTitle,
+      h("span", { class: "cqa-rv-hint", text: t("loader.dropHint") }),
+      chooseFile,
+      fileName,
+      fileInput
+    );
     const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
     function paint() {
       importButton.disabled = busy || groupInput.value.trim() === "";
       groupInput.disabled = busy;
       fileInput.disabled = busy;
+      chooseFile.disabled = busy;
+      dropzone.setAttribute("aria-disabled", String(busy));
+      dropzone.classList.toggle("is-busy", busy);
+      if (busy) {
+        dragDepth = 0;
+        setDragging(false);
+      }
     }
     function showError(text3) {
       clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text3, data: { test: "loader-error" } }));
@@ -5423,9 +5479,22 @@
       if (group2 === "") return;
       run(t("loader.importing", { group: group2 }), () => api.importDataset(group2));
     }
-    function upload() {
-      const file = fileInput.files?.[0];
-      if (!file) return;
+    function uploadFiles(files) {
+      if (busy || closed || !files?.length) return;
+      if (files.length !== 1) {
+        showError(t("loader.error.oneFile"));
+        fileInput.value = "";
+        return;
+      }
+      const file = files[0];
+      if (!/\.json$/i.test(file.name) && file.type !== "application/json") {
+        showError(t("loader.error.fileType"));
+        fileInput.value = "";
+        return;
+      }
+      fileName.setAttribute("data-i18n-verbatim", "");
+      fileName.replaceChildren(h("span", { text: file.name, verbatim: true }));
+      clear(result);
       run(t("loader.uploading", { name: file.name }), async () => {
         try {
           const text3 = await readText(file);
@@ -5436,9 +5505,39 @@
         }
       });
     }
+    function setDragging(active) {
+      active = active && !busy;
+      if (dropzone.classList.contains("is-dragging") === active) return;
+      dropzone.classList.toggle("is-dragging", active);
+      setLocalizedText(dropTitle, t(active ? "loader.dropActive" : "loader.dropTitle"));
+    }
+    const hasFiles = (event) => Array.from(event.dataTransfer?.types ?? []).includes("Files");
     const panel = h(
       "aside",
-      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") }, on: {
+        dragenter: (event) => {
+          if (!hasFiles(event)) return;
+          event.preventDefault();
+          dragDepth++;
+          setDragging(true);
+        },
+        dragover: (event) => {
+          if (!hasFiles(event)) return;
+          event.preventDefault();
+          event.dataTransfer.dropEffect = busy ? "none" : "copy";
+        },
+        dragleave: () => {
+          dragDepth = Math.max(0, dragDepth - 1);
+          if (!dragDepth) setDragging(false);
+        },
+        drop: (event) => {
+          if (!hasFiles(event) && !event.dataTransfer?.files?.length) return;
+          event.preventDefault();
+          dragDepth = 0;
+          setDragging(false);
+          uploadFiles(event.dataTransfer?.files);
+        }
+      } },
       h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
       h(
         "form",
@@ -5458,7 +5557,7 @@
       h(
         "div",
         { class: "cqa-ap-form" },
-        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
+        h("div", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), dropzone),
         h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") })
       ),
       status,
@@ -5472,6 +5571,13 @@
         class: "cqa-drawer-wrap",
         data: { test: "loader" },
         on: {
+          // Dropping outside the panel must not navigate the browser to the local file.
+          dragover: (event) => {
+            if (hasFiles(event)) event.preventDefault();
+          },
+          drop: (event) => {
+            if (hasFiles(event) || event.dataTransfer?.files?.length) event.preventDefault();
+          },
           keydown: (event) => {
             if (event.key === "Escape") {
               event.stopPropagation();
