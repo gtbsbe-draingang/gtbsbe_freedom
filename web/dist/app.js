@@ -9268,6 +9268,7 @@
     );
     const paint = (groupId) => {
       setLocalizedText(value2, groupId ?? "");
+      setLocalizedAttribute(value2, "title", groupId ?? "");
     };
     paint(store.get().groupId);
     track(watch(store, (state) => state.groupId, paint));

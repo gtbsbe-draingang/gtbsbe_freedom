@@ -187,8 +187,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   margin-left: auto;
   color: var(--text-2);
+}
+.cqa .cqa-right > * {
+  flex: none;
+}
+.cqa .cqa-right > .cqa-badge {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 .cqa .cqa-badge {
   display: inline-flex;
@@ -201,7 +209,10 @@
   white-space: nowrap;
 }
 .cqa .cqa-badge-value {
+  min-width: 0;
   margin-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 700;
   color: var(--text);
 }

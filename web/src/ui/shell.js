@@ -134,6 +134,7 @@ function datasetBadge(store, track) {
   );
   const paint = (groupId) => {
     setLocalizedText(value, groupId ?? "");
+    setLocalizedAttribute(value, "title", groupId ?? ""); // the whole id when the badge cuts it
   };
   paint(store.get().groupId);
   track(watch(store, (state) => state.groupId, paint));
