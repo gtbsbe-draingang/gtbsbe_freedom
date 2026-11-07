@@ -56,7 +56,7 @@ FROZEN = {
     "devrun.load_dev_conversations": "path, group_id='DEV'",
     "devrun.load_expectations": "path=<path>",
     "devrun.check_expectations": "run, expectations",
-    "devrun.run": "conversations, checklist_path, *, model=None, criteria=None, record_dir=None",
+    "devrun.run": "conversations, checklist_path, *, model=None, criteria=None, record_dir=None, with_info=True",
     "devrun.main": "argv=None",
     "run.evaluate": "dialogue, checklist, options=None",
 }
