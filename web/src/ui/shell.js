@@ -2,8 +2,9 @@ import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 // The app shell: header, the route outlet and the toasts. Views plug in through two registries,
 // so the pages that come later change one entry each instead of this file's structure:
 //
-//   panes  { queue(store, api), transcript(store, api, {id}), scorecard(store, api, {id}) }
-//          the three panes of the workspace route;
+//   panes  { queue(store, api), transcript(store, api, {id}), scorecard(store, api, {id}),
+//            board(store, api) } the panes of the workspace route; `board` takes the
+//          transcript's place while no dialogue is open;
 //   views  { <routeName>(store, api, route) } every other route.
 //
 // A pane or view returns an HTMLElement or { el, update?(route), destroy?() }. Each falls back to
@@ -248,7 +249,7 @@ function workspaceView(store, api, route, panes) {
     const args = { id };
     fill(
       transcriptHost,
-      id && panes.transcript ? () => panes.transcript(store, api, args) : null,
+      id ? (panes.transcript ? () => panes.transcript(store, api, args) : null) : panes.board ? () => panes.board(store, api) : null,
       () => placeholder(id ?? t("workspace.pick"), id ? t("view.soon") : null),
     );
     fill(

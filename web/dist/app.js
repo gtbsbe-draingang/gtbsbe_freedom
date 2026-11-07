@@ -104,6 +104,14 @@
     "batch.basket.label": "\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
     "batch.basket.toggle": "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0438",
     "batch.basket.remove": "\u0423\u0431\u0440\u0430\u0442\u044C {id} \u0438\u0437 \u0432\u044B\u0431\u043E\u0440\u0430",
+    "board.label": "\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u043F\u0430\u043A\u0435\u0442\u043D\u043E\u0439 \u043E\u0446\u0435\u043D\u043A\u0438",
+    "board.emptyNote": "\u0418\u043B\u0438 \u043E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435\xBB: \u0438\u0445 \u043E\u0446\u0435\u043D\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C.",
+    "board.hint": "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, \u0447\u0442\u043E\u0431\u044B \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443 \u0446\u0435\u043B\u0438\u043A\u043E\u043C.",
+    "board.queued": "\u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+    "board.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0446\u0435\u043D\u0438\u0442\u044C",
+    "board.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443",
+    "board.open": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443 \u0434\u0438\u0430\u043B\u043E\u0433\u0430 {id}",
+    "batch.showResults": "\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B",
     "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
     "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
     "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
@@ -629,6 +637,14 @@
     "batch.basket.label": "Selected conversations",
     "batch.basket.toggle": "Show the selected conversations",
     "batch.basket.remove": "Remove {id} from the selection",
+    "board.label": "Batch evaluation results",
+    "board.emptyNote": "Or tick several conversations and click \u201CEvaluate selected\u201D: their evaluations appear here.",
+    "board.hint": "Click a card to open the full evaluation.",
+    "board.queued": "queued",
+    "board.failed": "Evaluation failed",
+    "board.loadFailed": "Could not load the evaluation",
+    "board.open": "Open the evaluation of {id}",
+    "batch.showResults": "Results",
     "batch.keyMissing": "model key required: some answers need model calls",
     "batch.progress": "Evaluated {done} of {total}",
     "batch.failed": "failed: {n}",
@@ -1154,6 +1170,14 @@
     "batch.basket.label": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440",
     "batch.basket.toggle": "\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u0430\u0440\u0434\u044B \u043A\u04E9\u0440\u0441\u0435\u0442\u0443",
     "batch.basket.remove": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B\u043D \u0442\u0430\u04A3\u0434\u0430\u0443\u0434\u0430\u043D \u0430\u043B\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u0443",
+    "board.label": "\u0422\u043E\u043F\u0442\u044B\u049B \u0431\u0430\u0493\u0430\u043B\u0430\u0443 \u043D\u04D9\u0442\u0438\u0436\u0435\u043B\u0435\u0440\u0456",
+    "board.emptyNote": "\u041D\u0435\u043C\u0435\u0441\u0435 \u0431\u0456\u0440\u043D\u0435\u0448\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u0431\u0435\u043B\u0433\u0456\u043B\u0435\u043F, \xAB\u0422\u0430\u04A3\u0434\u0430\u043B\u0493\u0430\u043D\u0434\u0430\u0440\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0443\xBB \u0442\u04AF\u0439\u043C\u0435\u0441\u0456\u043D \u0431\u0430\u0441\u044B\u04A3\u044B\u0437: \u043E\u043B\u0430\u0440\u0434\u044B\u04A3 \u0431\u0430\u0493\u0430\u043B\u0430\u0440\u044B \u043E\u0441\u044B\u043D\u0434\u0430 \u0448\u044B\u0493\u0430\u0434\u044B.",
+    "board.hint": "\u0422\u043E\u043B\u044B\u049B \u0431\u0430\u0493\u0430\u043B\u0430\u0443\u0434\u044B \u0430\u0448\u0443 \u04AF\u0448\u0456\u043D \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430\u043D\u044B \u0431\u0430\u0441\u044B\u04A3\u044B\u0437.",
+    "board.queued": "\u043A\u0435\u0437\u0435\u043A\u0442\u0435",
+    "board.failed": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B",
+    "board.loadFailed": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443\u0434\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
+    "board.open": "{id} \u0434\u0438\u0430\u043B\u043E\u0433\u044B\u043D\u044B\u04A3 \u0431\u0430\u0493\u0430\u043B\u0430\u0443\u044B\u043D \u0430\u0448\u0443",
+    "batch.showResults": "\u041D\u04D9\u0442\u0438\u0436\u0435\u043B\u0435\u0440",
     "batch.keyMissing": "\u043C\u043E\u0434\u0435\u043B\u044C \u043A\u0456\u043B\u0442\u0456 \u049B\u0430\u0436\u0435\u0442: \u043A\u0435\u0439\u0431\u0456\u0440 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u04AF\u0448\u0456\u043D \u043C\u043E\u0434\u0435\u043B\u044C\u0433\u0435 \u0441\u04B1\u0440\u0430\u0443 \u043A\u0435\u0440\u0435\u043A",
     "batch.progress": "\u0411\u0430\u0493\u0430\u043B\u0430\u043D\u0493\u0430\u043D\u044B: {done} / {total}",
     "batch.failed": "\u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B: {n}",
@@ -5617,7 +5641,15 @@
     }
     return job;
   }
-  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+  var snapshot = (job, running) => ({
+    id: job.id,
+    done: job.done ?? 0,
+    total: job.total ?? 0,
+    failed: job.failed ?? 0,
+    running,
+    // per dialogue, for the batch board (batch-board.js)
+    items: (job.items ?? []).map((item) => ({ conversation: item.conversation, status: item.status, evaluation_id: item.evaluation_id ?? null, error: item.error ?? null }))
+  });
   function jobSlot(store, api, key, { pollMs = POLL_MS2 } = {}) {
     const state = () => store.get().jobs?.[key] ?? null;
     const put = (patch) => store.set((current2) => {
@@ -6042,6 +6074,9 @@
       } else if (job) {
         const running = lock === "watching";
         progress.append(h("span", { text: t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }) }));
+        if (store.get().route?.params?.id) {
+          progress.append(h("a", { class: ["cqa-link", "cqa-batch-results"], attrs: { href: href("workspace") }, text: t("batch.showResults"), data: { test: "batch-results" }, on: { click: () => store.set({ queueOpen: false, pane: "transcript" }) } }));
+        }
         if (job.failed > 0) {
           progress.append(
             h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
@@ -6163,7 +6198,21 @@
       const sel = current2();
       const picked = [...selection()];
       if (busy() || !sel || picked.length === 0) return void 0;
-      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
+      const dialogues = picked.map((id) => {
+        const item = describe(id);
+        return { id, name: item?.conversation_id ?? id.slice(id.indexOf(":") + 1), language: item?.language ?? null, channel: item?.channel ?? null };
+      });
+      const label = view.options.find((o) => o.checklist_id === sel.checklist_id && o.version === sel.version)?.label ?? "";
+      const started = slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), {
+        again: runBatch,
+        meta: { key: `${Date.now()}:${picked.length}`, dialogues, label }
+      });
+      showBoard();
+      return started;
+    }
+    function showBoard() {
+      if (store.get().route?.params?.id) return;
+      store.set({ queueOpen: false, pane: "transcript" });
     }
     stops.push(
       watch(store, (state) => state.selection, (next) => {
@@ -6172,6 +6221,8 @@
         scheduleEstimate();
       }),
       watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+      watch(store, (state) => state.route, () => paint()),
+      // «Результаты» shows only while a dialogue is open
       slot.watch((next, previous) => {
         if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
         else paint();
@@ -7259,6 +7310,166 @@
         if (destroyed) return;
         destroyed = true;
         panel?.destroy();
+      }
+    };
+  }
+
+  // src/ui/batch-board.js
+  var FETCH_SLOTS = 4;
+  function mergeBatch(previous, slot) {
+    const meta = slot?.meta;
+    if (!meta?.key || !Array.isArray(meta.dialogues)) return previous ?? null;
+    const same3 = previous?.key === meta.key;
+    const ignore = same3 ? previous.ignore : slot.job?.id ?? null;
+    const items = same3 ? { ...previous.items } : {};
+    if (slot.job && slot.job.id !== ignore) {
+      for (const item of slot.job.items ?? []) items[item.conversation] = { status: item.status, evaluation_id: item.evaluation_id ?? null, error: item.error ?? null };
+    }
+    return { key: meta.key, dialogues: meta.dialogues, label: meta.label ?? "", lock: slot.lock ?? null, ignore, items };
+  }
+  function cardState(batch, id) {
+    const status = batch.items[id]?.status;
+    if (status === "done" || status === "failed" || status === "running" || status === "queued") return status;
+    return batch.lock === "starting" || batch.lock === "watching" || batch.lock === "resuming" ? "queued" : "unknown";
+  }
+  function trackBatch(store) {
+    return watch(store, (state) => state.jobs?.batch ?? null, (slot) => {
+      if (!slot) return;
+      const next = mergeBatch(store.get().lastBatch ?? null, slot);
+      if (next !== (store.get().lastBatch ?? null)) store.set({ lastBatch: next });
+    });
+  }
+  function createBatchBoard(store, api) {
+    let destroyed = false;
+    const evaluations = /* @__PURE__ */ new Map();
+    const waiting = [];
+    let active = 0;
+    const cards = /* @__PURE__ */ new Map();
+    let cardsKey = null;
+    const title = h("h2", { class: "cqa-bb-title", text: t("board.label") });
+    const checklist = h("span", { class: "cqa-bb-checklist", verbatim: true });
+    const progress = h("p", { class: "cqa-bb-progress", attrs: { role: "status", "aria-live": "polite" }, data: { test: "board-progress" } });
+    const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
+    const grid2 = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
+    const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), grid2);
+    const empty = h(
+      "div",
+      { class: "cqa-empty", data: { test: "board-empty" } },
+      h("b", { class: "cqa-empty-title", text: t("workspace.pick") }),
+      h("p", { class: "cqa-empty-note", text: t("board.emptyNote") })
+    );
+    const el = h("section", { class: "cqa-bb", attrs: { "aria-label": t("board.label") }, data: { test: "batch-board" } }, empty, board);
+    function want(evaluationId) {
+      if (evaluations.has(evaluationId)) return;
+      evaluations.set(evaluationId, "loading");
+      waiting.push(evaluationId);
+      pump();
+    }
+    function pump() {
+      while (!destroyed && active < FETCH_SLOTS && waiting.length > 0) {
+        const id = waiting.shift();
+        active += 1;
+        api.getEvaluation(id).then(
+          (evaluation) => evaluations.set(id, { total: evaluation.final_total ?? null, gross: evaluation.gross_error?.flag === true }),
+          () => evaluations.set(id, "failed")
+        ).finally(() => {
+          active -= 1;
+          if (!destroyed) {
+            paint();
+            pump();
+          }
+        });
+      }
+    }
+    function buildCard(dialogue) {
+      const meta = h("span", { class: "cqa-bb-meta" });
+      if (dialogue.language) meta.append(h("span", { verbatim: true, text: dialogue.language }));
+      if (dialogue.language && dialogue.channel) meta.append(" \xB7 ");
+      if (dialogue.channel) meta.append(h("span", { text: t(dialogue.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }));
+      const status = h("div", { class: "cqa-bb-status" });
+      const el2 = h(
+        "a",
+        { class: "cqa-bb-card", attrs: { href: href("workspace", { id: dialogue.id }), "aria-label": t("board.open", { id: dialogue.name }) }, data: { test: "board-card", id: dialogue.id } },
+        h("div", { class: "cqa-bb-top" }, h("b", { class: "cqa-bb-id", verbatim: true, text: dialogue.name }), meta),
+        status
+      );
+      return { li: h("li", { class: "cqa-bb-cell" }, el2), el: el2, status, painted: null };
+    }
+    function paintCard(card, batch, id) {
+      const state = cardState(batch, id);
+      const evaluationId = batch.items[id]?.evaluation_id ?? null;
+      if (state === "done" && evaluationId) want(evaluationId);
+      const found = evaluationId ? evaluations.get(evaluationId) : void 0;
+      const shown = state === "done" ? found === void 0 || found === "loading" ? "loading" : found === "failed" ? "lost" : "done" : state;
+      const key = shown === "done" ? `done:${found.total}:${found.gross}` : shown;
+      if (card.painted === key) return;
+      card.painted = key;
+      card.el.setAttribute("data-state", shown);
+      card.el.classList.toggle("is-busy", shown === "queued" || shown === "running" || shown === "loading");
+      card.el.classList.toggle("is-failed", shown === "failed" || shown === "lost");
+      if (shown === "queued" || shown === "running" || shown === "loading") card.el.setAttribute("aria-busy", "true");
+      else card.el.removeAttribute("aria-busy");
+      clear(card.status);
+      const show = (...parts) => card.status.append(...parts.filter(Boolean));
+      if (shown === "done") {
+        const none = found.total === null;
+        show(
+          h(
+            "div",
+            { class: "cqa-bb-total" },
+            h("b", { class: ["cqa-bb-num", "num", none && "is-none"], text: none ? t("scorecard.totalNone") : fmt2(rat(found.total)), data: { test: "board-total" } }),
+            none ? null : h("span", { class: "cqa-bb-out", text: t("scorecard.outOf") })
+          ),
+          found.gross ? h("span", { class: "cqa-bb-gross", text: t("queue.tag.grossError"), data: { test: "board-gross" } }) : null
+        );
+      } else if (shown === "failed" || shown === "lost") {
+        const error = shown === "failed" ? batch.items[id]?.error : null;
+        show(
+          h("span", { class: "cqa-bb-fail", text: t(shown === "failed" ? "board.failed" : "board.loadFailed") }),
+          error ? h("span", { class: "cqa-bb-error", verbatim: true, text: error }) : null
+        );
+      } else if (shown !== "unknown") {
+        show(
+          h("span", { class: "cqa-sc-running" }, h("i", { class: "cqa-sc-pulse", attrs: { "aria-hidden": "true" } }), t(shown === "running" || shown === "loading" ? "scorecard.evaluating" : "board.queued")),
+          h("span", { class: ["cqa-sc-shimmer", "cqa-bb-shimmer"], attrs: { "aria-hidden": "true" } })
+        );
+      }
+    }
+    function paint() {
+      if (destroyed) return;
+      const batch = store.get().lastBatch ?? null;
+      empty.hidden = batch !== null;
+      board.hidden = batch === null;
+      if (!batch) return;
+      if (cardsKey !== batch.key) {
+        cardsKey = batch.key;
+        cards.clear();
+        clear(grid2);
+      }
+      setLocalizedText(checklist, batch.label);
+      checklist.hidden = !batch.label;
+      const nodes = batch.dialogues.map((dialogue) => {
+        let card = cards.get(dialogue.id);
+        if (!card) cards.set(dialogue.id, card = buildCard(dialogue));
+        paintCard(card, batch, dialogue.id);
+        return card.li;
+      });
+      placeChildren(grid2, nodes);
+      const total = batch.dialogues.length;
+      const states = batch.dialogues.map((d) => cardState(batch, d.id));
+      const done = states.filter((s) => s === "done").length;
+      const failed = states.filter((s) => s === "failed").length;
+      const running = batch.lock !== null && batch.lock !== "interrupted";
+      clear(progress).append(h("span", { text: t(running ? "batch.progress" : "batch.done", { done, total }) }));
+      if (failed > 0) progress.append(" \xB7 ", h("span", { class: "cqa-bb-fail", text: t("batch.failed", { n: failed }) }));
+    }
+    const stop = watch(store, (state) => state.lastBatch ?? null, paint);
+    paint();
+    return {
+      el,
+      destroy() {
+        destroyed = true;
+        stop();
       }
     };
   }
@@ -8608,7 +8819,7 @@
   // src/ui/queue.js
   var IMPORT_ON_EMPTY = "DEV";
   var TOPIC_MAX = 80;
-  var FETCH_SLOTS = 4;
+  var FETCH_SLOTS2 = 4;
   var SERVER_SEARCH_MS = 300;
   var SERVER_SEARCH_MIN = 2;
   var FILTERS2 = ["all", "chats", "calls", "disputed", "new"];
@@ -8885,7 +9096,7 @@
     const inflight = /* @__PURE__ */ new Set();
     let active = 0;
     function pump() {
-      while (!destroyed && active < FETCH_SLOTS && waiting.length > 0) {
+      while (!destroyed && active < FETCH_SLOTS2 && waiting.length > 0) {
         const id = waiting.shift();
         if (!visible.has(id) || firstLines.has(id) || inflight.has(id)) continue;
         active += 1;
@@ -9354,7 +9565,7 @@
       const args = { id };
       fill(
         transcriptHost,
-        id && panes.transcript ? () => panes.transcript(store, api, args) : null,
+        id ? panes.transcript ? () => panes.transcript(store, api, args) : null : panes.board ? () => panes.board(store, api) : null,
         () => placeholder(id ?? t("workspace.pick"), id ? t("view.soon") : null)
       );
       fill(
@@ -9548,8 +9759,9 @@
     };
     window.addEventListener("hashchange", onHashChange);
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
+    const stopBatch = trackBatch(store);
     const shell = createShell(store, api, {
-      panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
+      panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, board: createBatchBoard, ...options.panes },
       views: {
         appeals: createAppealsPage,
         appeal: createAppealsPage,
@@ -9587,6 +9799,7 @@
       destroy() {
         if (destroyed) return;
         destroyed = true;
+        stopBatch();
         window.removeEventListener("hashchange", onHashChange);
         stops.forEach((stop) => stop());
         shell.destroy();

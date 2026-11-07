@@ -405,6 +405,9 @@ export function createBatchBar(store, api, { describe = () => null } = {}) {
     } else if (job) {
       const running = lock === "watching";
       progress.append(h("span", {text: t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total })}));
+      if (store.get().route?.params?.id) {
+        progress.append(h("a", { class: ["cqa-link", "cqa-batch-results"], attrs: { href: href("workspace") }, text: t("batch.showResults"), data: { test: "batch-results" }, on: { click: () => store.set({ queueOpen: false, pane: "transcript" }) } }));
+      }
       if (job.failed > 0) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
@@ -540,7 +543,26 @@ export function createBatchBar(store, api, { describe = () => null } = {}) {
     const sel = current();
     const picked = [...selection()];
     if (busy() || !sel || picked.length === 0) return undefined;
-    return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
+    // What the batch board (batch-board.js) shows: these dialogues, under this checklist.
+    const dialogues = picked.map((id) => {
+      const item = describe(id);
+      return { id, name: item?.conversation_id ?? id.slice(id.indexOf(":") + 1), language: item?.language ?? null, channel: item?.channel ?? null };
+    });
+    const label = view.options.find((o) => o.checklist_id === sel.checklist_id && o.version === sel.version)?.label ?? "";
+    const started = slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), {
+      again: runBatch,
+      meta: { key: `${Date.now()}:${picked.length}`, dialogues, label },
+    });
+    showBoard();
+    return started;
+  }
+
+  // With no dialogue open the board is the middle pane: bring it into view (out of the narrow
+  // drawer, onto the transcript tab). An open dialogue stays: its scorecard refreshes when the
+  // batch ends, and «Результаты» in this bar leads to the board.
+  function showBoard() {
+    if (store.get().route?.params?.id) return;
+    store.set({ queueOpen: false, pane: "transcript" });
   }
 
   stops.push(
@@ -550,6 +572,7 @@ export function createBatchBar(store, api, { describe = () => null } = {}) {
       scheduleEstimate();
     }),
     watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+    watch(store, (state) => state.route, () => paint()), // «Результаты» shows only while a dialogue is open
     slot.watch((next, previous) => {
       // A batch that just ended changed what is cached: estimate again.
       if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
