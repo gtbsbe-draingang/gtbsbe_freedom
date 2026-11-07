@@ -962,6 +962,213 @@
   opacity: 0.45;
 }
 
+/* the batch board (ui/batch-board.js): the last batch's dialogues as brand-panel cards in the
+   middle pane. A slow sheen crosses every card; a card still being evaluated breathes and holds
+   a shimmer where its total will be, like the scorecard's loading card. */
+.cqa .cqa-bb-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.cqa .cqa-bb-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.cqa .cqa-bb-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.cqa .cqa-bb-checklist {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.cqa .cqa-bb-progress {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cqa .cqa-bb-progress .cqa-bb-fail {
+  color: var(--bad-ink);
+}
+
+.cqa .cqa-bb-hint {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.cqa .cqa-bb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cqa .cqa-bb-cell {
+  display: flex;
+  min-width: 0;
+}
+
+.cqa .cqa-bb-card {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 14px 16px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(116, 250, 151, 0.28);
+  border-radius: var(--r-card);
+  background: var(--brand-panel);
+  box-shadow: 0 6px 18px rgba(4, 19, 17, 0.18);
+  color: #fff;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.cqa .cqa-bb-card:hover {
+  border-color: rgba(116, 250, 151, 0.6);
+  box-shadow: 0 10px 26px rgba(4, 19, 17, 0.28), 0 0 24px rgba(116, 250, 151, 0.18);
+  transform: translateY(-2px);
+}
+
+.cqa .cqa-bb-card:focus-visible {
+  outline-color: var(--mint);
+}
+
+.cqa .cqa-bb-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 35%, rgba(116, 250, 151, 0.1) 50%, transparent 65%) 0 0 / 250% 100%;
+  pointer-events: none;
+  animation: cqa-sc-shimmer 4.5s linear infinite;
+}
+
+.cqa .cqa-bb-card.is-busy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(70% 90% at 100% 0%, rgba(116, 250, 151, 0.3), transparent 60%);
+  pointer-events: none;
+  animation: cqa-sc-breathe 3.2s ease-in-out infinite;
+}
+
+.cqa .cqa-bb-card.is-failed {
+  border-color: rgba(255, 138, 138, 0.45);
+}
+
+.cqa .cqa-bb-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cqa .cqa-bb-id {
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cqa .cqa-bb-meta {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.cqa .cqa-bb-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cqa .cqa-bb-total {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cqa .cqa-bb-num {
+  color: var(--mint);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cqa .cqa-bb-num.is-none {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cqa .cqa-bb-out {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+.cqa .cqa-bb-gross {
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: rgba(251, 85, 85, 0.18);
+  color: #FF8A8A;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cqa .cqa-bb-status .cqa-bb-fail {
+  color: #FF8A8A;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cqa .cqa-bb-error {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+}
+
+.cqa .cqa-bb-shimmer {
+  width: 110px;
+  max-width: 70%;
+  height: 32px;
+  border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-bb-card,
+  .cqa .cqa-bb-card.is-busy::before {
+    animation: none;
+    transition: none;
+  }
+
+  .cqa .cqa-bb-card::after {
+    display: none;
+  }
+
+  .cqa .cqa-bb-card:hover {
+    transform: none;
+  }
+}
+
 @keyframes cqa-sc-breathe {
   0%,
   100% {

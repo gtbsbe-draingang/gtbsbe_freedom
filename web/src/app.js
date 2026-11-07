@@ -7,6 +7,7 @@ import { createApi } from "./api/index.js";
 import { groupOf, readContext } from "./context.js";
 import { createStore, isCompact, watch } from "./state/store.js";
 import { createAppealsPage } from "./ui/appeals-page.js";
+import { createBatchBoard, trackBatch } from "./ui/batch-board.js";
 import { createChecklistEditor } from "./ui/checklist-editor.js";
 import { createChecklistsPage } from "./ui/checklists-page.js";
 import { createComparePage } from "./ui/compare-page.js";
@@ -105,8 +106,9 @@ export function mount(el, options = {}) {
 
   if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null }; // `transcript` is filled by the transcript pane
 
+  const stopBatch = trackBatch(store); // the batch board's copy of the last batch, kept across views
   const shell = createShell(store, api, {
-    panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
+    panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, board: createBatchBoard, ...options.panes },
     views: {
       appeals: createAppealsPage,
       appeal: createAppealsPage,
@@ -145,6 +147,7 @@ export function mount(el, options = {}) {
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopBatch();
       window.removeEventListener("hashchange", onHashChange);
       stops.forEach((stop) => stop());
       shell.destroy();

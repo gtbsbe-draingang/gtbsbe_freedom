@@ -71,10 +71,26 @@ describe("jobSlot", () => {
     const slot = jobSlot(store, api, "batch", OPTIONS);
     const job = await slot.start(() => api.startEvaluations());
     assert.equal(job.status, "done");
-    assert.deepEqual(slot.state().job, { id: "j1", done: 1, total: 2, failed: 1, running: false });
+    assert.deepEqual(slot.state().job, { id: "j1", done: 1, total: 2, failed: 1, running: false, items: [] });
     assert.equal(slot.state().lock, null);
     assert.equal(store.get().queueRefresh, 5);
     assert.deepEqual(api.calls.polls, ["j1", "j1"]);
+  });
+
+  test("the slot keeps each dialogue's status and evaluation id, for the batch board", async () => {
+    const store = createStore();
+    const api = fakeApi();
+    const items = [
+      { conversation: "DEV:a", status: "done", error: null, evaluation_id: "e1", extra: "dropped" },
+      { conversation: "DEV:b", status: "failed", error: "timeout", evaluation_id: null },
+    ];
+    api.answers.start = () => Promise.resolve({ ...settled("j1", 1), items });
+    const slot = jobSlot(store, api, "batch", OPTIONS);
+    await slot.start(() => api.startEvaluations());
+    assert.deepEqual(slot.state().job.items, [
+      { conversation: "DEV:a", status: "done", evaluation_id: "e1", error: null },
+      { conversation: "DEV:b", status: "failed", evaluation_id: null, error: "timeout" },
+    ]);
   });
 
   test("a view rebuilt while the job runs shares its slot: it sees the job and cannot start another", async () => {

@@ -19,7 +19,8 @@
 //                              may start; recovery polls the same job id again (resume), it never
 //                              starts another job
 //               "resuming"     the recovery poll is pending
-//       job   null | { id, done, total, failed, running }: the slot's last job
+//       job   null | { id, done, total, failed, running, items }: the slot's last job; items are
+//             { conversation, status, evaluation_id, error } per dialogue
 //       meta  what the view passed to start() (the apply dialog keeps its target there)
 //     start(request, {again, meta}?)  request() returns the new job; a failure before a job id
 //                                     exists frees the slot and the toast's retry calls again()
@@ -48,7 +49,15 @@ export async function followJob(api, first, onTick, { pollMs = POLL_MS } = {}) {
   return job;
 }
 
-const snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+const snapshot = (job, running) => ({
+  id: job.id,
+  done: job.done ?? 0,
+  total: job.total ?? 0,
+  failed: job.failed ?? 0,
+  running,
+  // per dialogue, for the batch board (batch-board.js)
+  items: (job.items ?? []).map((item) => ({ conversation: item.conversation, status: item.status, evaluation_id: item.evaluation_id ?? null, error: item.error ?? null })),
+});
 
 export function jobSlot(store, api, key, { pollMs = POLL_MS } = {}) {
   const state = () => store.get().jobs?.[key] ?? null;
