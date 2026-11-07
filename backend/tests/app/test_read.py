@@ -26,9 +26,7 @@ SECRET_URL = "https://media.example/call.mp3?sig=LEAK"
 
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
-# Same rule as test_models.py: stream A's contract/ once it is on the branch, nothing before.
-CONTRACT_DIR = REPO_ROOT / "contract" if (REPO_ROOT / "contract").is_dir() else HERE / "contract_examples"
-SCHEMAS_DIR = CONTRACT_DIR / "schemas"
+SCHEMAS_DIR = REPO_ROOT / "contract" / "schemas"
 
 DEV = "DEV"
 CHAT = f"{DEV}:p1-ru-001"
@@ -270,7 +268,7 @@ def test_final_open_appeals_come_from_the_store(setup, monkeypatch: pytest.Monke
     assert asked == [["graded-1", "graded-2"]]  # one batch for the whole queue, not one call each
 
 
-def test_count_open_appeals_is_a_batch_that_answers_every_id() -> None:
+def test_count_open_appeals_is_a_batch_that_answers_every_id(client: TestClient) -> None:
     assert store.count_open_appeals([]) == {}
     assert store.count_open_appeals(["a", "b", "a"]) == {"a": 0, "b": 0}
 

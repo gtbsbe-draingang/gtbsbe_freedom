@@ -19,6 +19,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from starlette.websockets import WebSocketClose
 
+from app import appeals
 from app.checklists import seed_into_db
 from app.db import migrate
 from app.jobs import recover_interrupted, shutdown as stop_jobs
@@ -141,8 +142,10 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     migrate()
     seed_into_db()
     recover_interrupted()  # nothing runs yet: what a previous process left running was cut off
+    appeals.recover_pending()  # likewise for second opinions
     yield
     await stop_jobs()
+    await appeals.shutdown()
 
 
 def create_app() -> FastAPI:

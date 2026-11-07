@@ -262,6 +262,9 @@ class Evaluation(BaseModel):
     final_total: Num | None = None
     sections: list[SectionScore] = Field(default_factory=list)
     gross_error: GrossError = Field(default_factory=lambda: GrossError(flag=False))
+    # Internal, never sent to the UI: the hash of the transcript a done evaluation graded. An
+    # appeal on it belongs to that transcript (carry-forward), even after a re-import.
+    transcript_hash: str | None = None
 
 
 # --- appeals -------------------------------------------------------------------------------
@@ -269,10 +272,13 @@ class Evaluation(BaseModel):
 
 class Decision(BaseModel):
     outcome: Literal["confirmed", "changed"]
-    answer: Answer
+    answer: Answer  # "confirmed": the model's original answer; "changed": the reviewer's
     reason: str
     role: Role
     decided_at: datetime
+    # Beyond the contract: the gross-error kinds that go with `answer` (the model's kinds when the
+    # answer is the model's, else none), so a carried decision scores exactly like the original.
+    kinds: list[str] = []
 
 
 class Appeal(BaseModel):
@@ -418,8 +424,9 @@ class Analytics(BaseModel):
 
 # --- output --------------------------------------------------------------------------------
 
-# What an evaluation never sends to the UI: the model-call log and the reuse hash.
-_EVALUATION_HIDDEN = {"results": {"__all__": {"calls", "reuse_key"}}}
+# What an evaluation never sends to the UI: the model-call log, the reuse hash and the hash of
+# the graded transcript.
+_EVALUATION_HIDDEN = {"transcript_hash": True, "results": {"__all__": {"calls", "reuse_key"}}}
 
 
 def dump(model: BaseModel) -> dict[str, Any]:

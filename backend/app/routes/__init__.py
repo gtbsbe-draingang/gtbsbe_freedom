@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.routes.appeals import router as appeals_router
 from app.routes.checklists import router as checklists_router
 from app.routes.config import router as config_router
 from app.routes.conversations import router as conversations_router
@@ -17,4 +18,5 @@ def all_routers() -> list[APIRouter]:
         checklists_router,
         evaluations_router,
         jobs_router,
+        appeals_router,
     ]

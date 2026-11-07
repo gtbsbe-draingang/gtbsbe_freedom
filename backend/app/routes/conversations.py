@@ -60,7 +60,7 @@ def list_queue(
     queue: list[dict[str, Any]] = []
     for conv in conversations:
         graded = latest.get(conv.id)
-        final = None if graded is None else _final_summary(graded, open_appeals[graded.id])
+        final = None if graded is None else _final_summary(graded, open_appeals.get(graded.id, 0))
         queue.append(dump(_queue_item(conv, final)))
     return queue
 
