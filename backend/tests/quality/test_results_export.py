@@ -111,3 +111,28 @@ def test_cli_writes_utf8_json_and_fails_on_a_wrong_count(client, tmp_path, capsy
     assert doc["results"][0]["conversation_id"] == "chat-1" and "пояснение" in out.read_text(encoding="utf-8")
     assert rx.main(["--group", "CTRL", "--out", str(out), "--expect", "10"]) == 1
     assert "expected 10" in capsys.readouterr().err
+
+
+def test_turns_from_text_reads_line_citations_only():
+    text = ("Оператор в первом сообщении (индекс 9) поздоровался; клиент (сообщение 0) описал проблему, "
+            "сообщения 13, 16 и 18 ведут диалог, ответы (21, 23) понятны, реплика [4]; сообщения 5–7. "
+            "Первая реакция 57 секунд, порог 3 минуты, сообщение 99 вне диалога.")
+    assert rx.turns_from_text(text, 30) == [1, 5, 6, 7, 8, 10, 14, 17, 19, 22, 24]
+
+
+def test_from_devrun_builds_a_valid_file_in_dataset_order():
+    rows = lambda: [{"criterion_id": k, "answer": a, "model": "claude-haiku-5-5",
+                     "explanation": f"{k}: см. сообщение 2 и реплику [0]."}
+                    for k, a in zip(rx.CODES, ["yes", "na", "na", {"step": 15}, "yes", {"step": 7}, "yes", "no"])]
+    report = {"model": None, "conversations": {
+        "DEV:b": {"results": rows(), "failures": []},
+        "DEV:a": {"results": rows()[:-1], "failures": [{"criterion_id": "c08", "reason": "x"}]}}}
+    records = [{"conversation_id": c, "transcript": [{"speaker": "client", "text": "t"}] * 3} for c in ("a", "b", "c")]
+    doc = rx.from_devrun(report, records, team="gtbsbe", mode="external_api")
+    assert rx.validate(doc, expect=3) == []
+    assert [r["conversation_id"] for r in doc["results"]] == ["a", "b", "c"]
+    assert [r["status"] for r in doc["results"]] == ["error", "ok", "error"]
+    ok = doc["results"][1]
+    assert ok["score"] == {"final_score": 85.38, "critical_flag": False}
+    assert ok["criteria"][0]["evidence_turns"] == [1, 3]
+    assert doc["model"]["name"] == "claude-haiku-5-5"

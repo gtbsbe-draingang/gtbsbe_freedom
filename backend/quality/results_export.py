@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
@@ -189,11 +190,74 @@ def build(store, group_id: str, checklist_id: str, version: int, *, team: str, m
             "results": results}
 
 
+# --- from an evaluator.devrun report --------------------------------------------------------
+# The DEV run of 7 November (PR #60) saved answers and explanations but not the evidence list.
+# Its explanations cite lines by their 0-based transcript index («сообщение 4», «реплика [9]»,
+# «(индекс 9)», «сообщения 13, 16, 18», «(21, 23)»); those citations become evidence_turns.
+
+_NUMS = r"\[?\d+\]?(?:\s*(?:,|и|and|-|–|—)\s*\[?\d+\]?)*"
+_CITES = [
+    re.compile(rf"(?:реплик\w*|сообщени\w*|индекс\w*|строк\w*|message\w*|turn\w*|line\w*)\s*№?\s*({_NUMS})", re.I),
+    re.compile(r"\[(\d+)\]"),
+    re.compile(r"\((\d+(?:\s*(?:,|и|-|–)\s*\d+)*)\)"),
+]
+
+
+def turns_from_text(text: str, n_lines: int) -> list[int]:
+    """1-based turns for the 0-based line numbers an explanation cites; numbers out of range are dropped."""
+    found: set[int] = set()
+    for pattern in _CITES:
+        for match in pattern.finditer(text or ""):
+            part = match.group(1)
+            for a, dash, b in re.findall(r"(\d+)\]?\s*([-–—]?)\s*\[?(\d*)", part):
+                lo = int(a)
+                hi = int(b) if dash and b and 0 <= int(b) - lo <= 15 else lo
+                found.update(range(lo, hi + 1))
+    return sorted(i + 1 for i in found if 0 <= i < n_lines)
+
+
+def from_devrun(report: dict, records: list[dict], *, team: str, mode: str) -> dict:
+    """The results file from an evaluator.devrun report plus the dataset it ran on (for ids and turns)."""
+    runs = report.get("conversations", {})
+    results, models = [], set()
+    for rec in records:
+        cid = rec["conversation_id"]
+        run = runs.get(f"{rec.get('group_id', 'DEV')}:{cid}") or runs.get(f"DEV:{cid}") or runs.get(cid)
+        if run is None:
+            results.append(error(cid, "Диалог не оценён в этом запуске."))
+            continue
+        by_id = {r["criterion_id"]: r for r in run.get("results", [])}
+        failed = [f.get("criterion_id") for f in run.get("failures", [])]
+        missing = [k for k in CODES if k not in by_id]
+        if missing or failed:
+            results.append(error(cid, f"Нет результата модели по критериям: {', '.join(missing or failed)}."))
+            continue
+        n_lines = len(rec["transcript"])
+        criteria = []
+        for k, code in CODES.items():
+            r = by_id[k]
+            evidence = [e["message_index"] + 1 for e in r.get("evidence") or [] if 0 <= e["message_index"] < n_lines]
+            criteria.append({"criterion_id": code, "value": value(r["answer"]),
+                             "rationale": " ".join((r.get("explanation") or "").split()),
+                             "evidence_turns": sorted(set(evidence)) or turns_from_text(r.get("explanation", ""), n_lines)})
+            if r.get("model"):
+                models.add(r["model"])
+        results.append({"conversation_id": cid, "status": "ok", "criteria": criteria,
+                        "score": {"final_score": expected_score(criteria), "critical_flag": criteria[-1]["value"]}})
+    if report.get("model"):
+        models.add(report["model"])
+    return {"schema_version": SCHEMA_VERSION, "team_name": team,
+            "model": {"mode": mode, "name": ", ".join(sorted(models)) or "нет результатов модели"},
+            "results": results}
+
+
 def main(argv: list[str] | None = None) -> int:
     from app.settings import DEFAULT_CHECKLIST_ID, DEFAULT_CHECKLIST_VERSION
 
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--group", required=True, help="group_id as imported, e.g. DEV")
+    parser.add_argument("--group", help="group_id as imported, e.g. DEV (reads the app's store)")
+    parser.add_argument("--from-devrun", type=Path, help="an evaluator.devrun --out report instead of the store")
+    parser.add_argument("--dev", type=Path, help="the dataset JSON the devrun report was made from")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--checklist-id", default=DEFAULT_CHECKLIST_ID)
     parser.add_argument("--version", type=int, default=DEFAULT_CHECKLIST_VERSION)
@@ -203,15 +267,25 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expect", type=int, help="the number of records the file must have (65 DEV, 10 prod)")
     args = parser.parse_args(argv)
 
-    from app import store
-    from app.db import migrate
+    if args.from_devrun:
+        if not args.dev:
+            parser.error("--from-devrun needs --dev")
+        data = json.loads(args.dev.read_text(encoding="utf-8"))
+        records = data["data"]["records"] if isinstance(data.get("data"), dict) else data.get("records", data)
+        doc = from_devrun(json.loads(args.from_devrun.read_text(encoding="utf-8")), records,
+                          team=args.team, mode=args.mode)
+    else:
+        if not args.group:
+            parser.error("give --group (store) or --from-devrun with --dev")
+        from app import store
+        from app.db import migrate
 
-    migrate()
-    doc = build(store, args.group, args.checklist_id, args.version, team=args.team, mode=args.mode,
-                answers=args.answers)
-    if not doc["results"]:
-        print(f"No conversations in group {args.group!r}; import it first.", file=sys.stderr)
-        return 1
+        migrate()
+        doc = build(store, args.group, args.checklist_id, args.version, team=args.team, mode=args.mode,
+                    answers=args.answers)
+        if not doc["results"]:
+            print(f"No conversations in group {args.group!r}; import it first.", file=sys.stderr)
+            return 1
     problems = validate(doc, args.expect)
     errors = [r for r in doc["results"] if r["status"] == "error"]
     args.out.parent.mkdir(parents=True, exist_ok=True)

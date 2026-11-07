@@ -85,6 +85,30 @@ directly to `main`; submit feature branches and draft PRs for review.
 | Second opinion pending | Reviewer can decide with a written reason; do not present a missing second opinion as agreement. |
 | Swap evaluation too slow | Show its dry run and the labelled rehearsal comparison; do not present it as the live control result. |
 
+## Results files for the organisers
+
+The appendix «Как сдать результаты» (JSON 1.0) wants `results/dev/results.json` and
+`results/prod/results.json` in the repository root, pushed before the stop code. Nothing else
+goes into those folders.
+
+- **DEV** is committed. It comes from the 65-dialogue run of 7 November (PR #60, Claude Haiku 5.5,
+  613 calls, $0.2685): `uv run python -m quality.results_export --from-devrun <run>.json --dev
+  ../data/dev.json --out ../results/dev/results.json --expect 65`. All 65 totals equal the run's
+  own report. That run saved no evidence list, so `evidence_turns` are the line numbers its
+  explanations cite.
+- **Prod (control set, 10 chats, 1 hour).** Put the organisers' control link in `backend/.env`
+  (`ORGANIZER_API_URL`) next to `ANTHROPIC_API_KEY`, import the control group, evaluate it with the
+  official checklist, then:
+
+  ```sh
+  uv run python -m quality.results_export --group <control group_id> --out ../results/prod/results.json --expect 10
+  ```
+
+  The command exits with an error and prints every problem if the file breaks a rule of the
+  appendix (missing criteria, wrong values, a score that does not follow from the values, not
+  exactly 10 records). A dialogue that failed stays in the file as `status: "error"`. Commit
+  only `results/prod/results.json` and push.
+
 ## Rehearsal record
 
 Status: **not performed**. A code/test pass does not complete the rehearsal.
