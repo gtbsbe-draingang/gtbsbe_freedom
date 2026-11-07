@@ -11,7 +11,7 @@ export default {
   "player.mute": "Дыбысты өшіру",
   "player.unmute": "Дыбысты қосу",
   "player.speed": "Ойнату жылдамдығы",
-  "app.title": "Диалог сапасы",
+  "app.title": "Qualio",
   "brand.name": "Freedom — басты бет",
   "nav.label": "Бөлімдер",
   "nav.workspace": "Бағалау",

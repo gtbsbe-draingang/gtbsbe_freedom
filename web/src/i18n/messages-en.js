@@ -11,7 +11,7 @@ export default {
   "player.mute": "Mute",
   "player.unmute": "Unmute",
   "player.speed": "Playback speed",
-  "app.title": "Conversation quality",
+  "app.title": "Qualio",
   "brand.name": "Freedom — home",
   "nav.label": "Sections",
   "nav.workspace": "Evaluation",

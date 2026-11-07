@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { format, pluralForm, t, tp } from "../../src/i18n/ru.js";
 
 describe("i18n t()", () => {
-  test("returns the Russian string for a known key", () => {
-    assert.equal(t("app.title"), "Качество диалогов");
+  test("returns the product name for a known key", () => {
+    assert.equal(t("app.title"), "Qualio");
   });
 
   test("a missing key returns the key and logs nothing", () => {

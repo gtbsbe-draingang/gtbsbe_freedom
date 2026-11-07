@@ -10,7 +10,7 @@ export const viewports = [
 
 export async function run(page) {
   await page.waitFor(".cqa");
-  assert.match(await page.text(".cqa"), /Качество диалогов/);
+  assert.match(await page.text(".cqa"), /Qualio/);
 
   // Light theme by default.
   assert.equal(await page.count(".cqa--dark"), 0);

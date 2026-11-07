@@ -11,7 +11,7 @@ export default {
   "player.mute": "Выключить звук",
   "player.unmute": "Включить звук",
   "player.speed": "Скорость воспроизведения",
-  "app.title": "Качество диалогов",
+  "app.title": "Qualio",
   "brand.name": "Freedom — на главную",
   "nav.label": "Разделы",
   "nav.workspace": "Оценка",
