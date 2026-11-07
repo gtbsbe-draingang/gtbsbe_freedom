@@ -15,8 +15,9 @@ import { finalAnswers, score } from "../domain/scoring.js";
 import { fmt2, rat } from "../domain/rational.js";
 import { formatOffset } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
+import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
-import { toast, toastError } from "./toast.js";
+import { toastError } from "./toast.js";
 
 export const POLL_MS = 500;
 export const JOB_TIMEOUT_MS = 15 * 60 * 1000;
@@ -129,6 +130,7 @@ export function createScorecard(store, api, args = {}) {
   };
   let destroyed = false;
   let loadRun = 0;
+  let drawer = null; // the open appeal drawer, if any
   const unwatch = [];
 
   // ---- toolbar (built once, repainted) --------------------------------------------------------
@@ -381,7 +383,79 @@ export function createScorecard(store, api, args = {}) {
       body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
       return;
     }
-    body.append(buildHero(view.evaluation, view.version), info, buildCards(view.evaluation, view.version));
+    body.append(...[buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+  }
+
+  // The card history (R8): the original total, each appeal with its decision, the decisions carried
+  // in from an earlier evaluation, and the final total. Shown once there is something to tell.
+  function buildHistory(evaluation, version) {
+    const appeals = view.appeals
+      .filter((appeal) => appeal.evaluation_id === evaluation.id)
+      .sort((a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? "")));
+    const carried = evaluation.results.filter((result) => result.carried_decision);
+    if (appeals.length === 0 && carried.length === 0) return null;
+
+    const criterionOf = (id) => version.criteria.find((c) => c.id === id) ?? { id, title: id };
+    const resultOf = (id) => evaluation.results.find((r) => r.criterion_id === id) ?? null;
+    const totalText = (value) => (value === null || value === undefined ? t("scorecard.totalNone") : money(value));
+    const items = [];
+    const item = (kind, what, note) =>
+      items.push(h("li", { class: ["cqa-sc-hist-item", `cqa-sc-hist-item--${kind}`], data: { test: "history-item", kind } }, h("b", { class: "cqa-sc-hist-what", text: what }), note ? h("p", { class: "cqa-sc-hist-note", text: note }) : null));
+
+    item("original", t("history.original", { total: totalText(evaluation.original_total) }));
+    for (const appeal of appeals) {
+      const criterion = criterionOf(appeal.criterion_id);
+      const result = resultOf(appeal.criterion_id);
+      item("appeal", t("history.appeal", { criterion: criterion.title, answer: result ? answerTag(criterion, result.answer).text : "—" }), appeal.comment);
+      const decision = appeal.decision;
+      if (decision) {
+        const what = decision.outcome === "changed" ? t("history.changed", { answer: answerTag(criterion, decision.answer).text }) : t("history.confirmed");
+        item("decision", what, decision.reason);
+      } else item("pending", t("history.pending"));
+    }
+    for (const result of carried) {
+      const criterion = criterionOf(result.criterion_id);
+      item("carried", t("history.carried", { criterion: criterion.title, answer: answerTag(criterion, result.final_answer ?? result.answer).text }));
+    }
+    item("final", t("history.final", { total: totalText(evaluation.final_total) }));
+
+    return h(
+      "section",
+      { class: "cqa-sc-hist", attrs: { "aria-label": t("history.title") }, data: { test: "history" } },
+      h("h3", { class: "cqa-sc-info-title", text: t("history.title") }),
+      h("ol", { class: "cqa-sc-hist-list" }, items),
+    );
+  }
+
+  // «Оспорить» (R7): the drawer offers every criterion of this evaluation without an open appeal.
+  function openDrawer(criterionId, button) {
+    const { evaluation, version } = view;
+    if (!evaluation || !version || destroyed) return;
+    const open = new Set(view.appeals.filter((a) => a.status === "open" && a.evaluation_id === evaluation.id).map((a) => a.criterion_id));
+    const byResult = new Map(evaluation.results.map((r) => [r.criterion_id, r]));
+    const sections = new Map(version.sections.map((s) => [s.id, s.order ?? 0]));
+    const choices = [...version.criteria]
+      .sort((a, b) => (sections.get(a.section_id) ?? 0) - (sections.get(b.section_id) ?? 0) || (a.order ?? 0) - (b.order ?? 0))
+      .filter((c) => byResult.has(c.id) && !open.has(c.id))
+      .map((c) => {
+        const result = byResult.get(c.id);
+        return { id: c.id, title: c.title, answer: answerTag(c, result.final_answer ?? result.answer).text };
+      });
+    drawer?.close();
+    drawer = openAppealDrawer({
+      host: el.closest(".cqa") ?? el,
+      store,
+      api,
+      evaluationId: evaluation.id,
+      choices,
+      criterionId,
+      returnFocus: button,
+      onFiled: () => {
+        drawer = null;
+        store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+        if (!destroyed) loadSelection({ quiet: true });
+      },
+    });
   }
 
   function buildHero(evaluation, version) {
@@ -576,7 +650,7 @@ export function createScorecard(store, api, args = {}) {
               text: t("scorecard.dispute"),
               attrs: { type: "button", disabled: openAppeal, title: openAppeal ? t("scorecard.disputeOpenTitle") : null },
               data: { test: "dispute" },
-              on: { click: () => toast(store, { kind: "info", text: t("scorecard.disputeSoon") }) },
+              on: { click: (event) => openDrawer(criterion.id, event.currentTarget) },
             }),
           )
         : null,
@@ -597,7 +671,9 @@ export function createScorecard(store, api, args = {}) {
   // ---- wiring ---------------------------------------------------------------------------------
 
   unwatch.push(store.subscribe((state, previous) => {
-    if (state.role !== previous.role && view.phase === "ready") drawBody();
+    if (state.role === previous.role) return;
+    if (state.role !== "controller") drawer?.close(); // only a controller files appeals
+    if (view.phase === "ready") drawBody();
   }));
 
   if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
@@ -608,6 +684,7 @@ export function createScorecard(store, api, args = {}) {
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      drawer?.close();
       unwatch.forEach((stop) => stop());
     },
   };

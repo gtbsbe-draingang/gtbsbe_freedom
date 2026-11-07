@@ -151,7 +151,9 @@ export async function run(page) {
   await page.eval(`window.__cqaTest.store.set({ role: "controller" })`);
   assert.equal(await page.count(sel("dispute")), checklist.criteria);
   await page.click(`${sel("crit")}[data-criterion="${criterion}"] ${sel("dispute")}`);
-  await page.waitFor(`${sel("toast")}[data-kind="info"]`);
+  await page.waitFor(sel("appeal-drawer")); // filing through the drawer is covered by 08-appeals
+  await page.click(sel("appeal-cancel"));
+  await until(page, `document.querySelector(${quote(sel("appeal-drawer"))}) === null`, "the drawer to close");
   const filed = await page.eval(`window.__cqaTest.api.listEvaluations({ conversation: ${quote(ID)} }).then((l) =>
     window.__cqaTest.api.fileAppeal({ evaluation_id: l[0].id, criterion_id: ${quote(criterion)}, comment: "проверка" }).then(() => true))`);
   assert.equal(filed, true);
