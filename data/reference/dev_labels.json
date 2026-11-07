@@ -1,0 +1,4440 @@
+{
+ "checklist_id": "official-chat",
+ "version": 1,
+ "labels": [
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Maya from support. A login stays on record after...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Noah. Open tradernet.global for the browser versi...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Eva. Open the account area, labelled «Кабинет» in...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Alex. Open Reports and Documents, choose Broker R...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Lina. In the app, open Menu, then Add Funds, then...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Hello, I'm Sam. I understand why you'd want to check. We'...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил валюту [#13] и время перевода [#18].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#12] до проверки счёта.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#29].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Отреагировал на беспокойство [#10]: «I understand why you'd want to check.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#29]: «We'll follow up here about the transfer. Goodbye!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Chris. Go to Menu, Orders, Personal Details, then...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Путь дан [#9]; вопрос, можно ли сразу подать вывод [#10], остался без ответа.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Повторный вопрос клиента [#10] проигнорирован.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Закрытие отмахивается от открытого вопроса [#11]: «That's where the profile request is.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Hi, I'm Sofia. Enter the ticker in the search bar under Q...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#19].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#18], оператор попрощался [#19]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Leo. Open Order Settings and untick Use Margin be...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: соединение прервано [#11] через 18 с после благодарности клиента.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Nina. Money in the D account can't be used direct...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Julia. Yes, the 1042-S form is provided in English.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hello, I'm Daniel. On the Freedom Holding Corp. website,...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Hi, I'm Adrian. Open Quotes and search by the bond's name...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор закрыл чат без прощания [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "paid_service_outside_company"
+   ],
+   "note": "Платная частная консультация [#11]: «Send me your personal number ... I charge»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Hi, I'm Tyler. I can see a withdrawal restriction on your...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c03",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ограничение на счёте названо без идентификации [#10], затем «We can skip that.» [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 5
+   },
+   "kinds": [],
+   "note": "Причина не названа; только «I'll send it to the team» [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Проигнорировал «How do you know it's my account?» [#11] и «Will I hear back here?» [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Вопрос клиента [#13] остался без ответа.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Только «Goodbye.» [#14] в ответ на вопрос клиента.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#10]: «I can see a withdrawal restriction»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "Первая реплика [#9] «Open settings then go back and log in again.»: нет приветствия и имени.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ответил наугад, не спросив приложение или сайт [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Первый совет ошибочен [#9], итоговый ответ верный [#11]: tradernet.global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось переспросить «Settings where?» [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, менің атым Аружан. Веб-нұсқада «Кабинет» б...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе! Мен Нұрланмын. «Меню → Пополнить → Перевод...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Сәлеметсіз бе, мен Дана. Ақша көрінбей қалса, алаңдайтыны...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил валюту [#13] и время перевода [#16].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#12] до проверки платежа.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#25].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Отреагировал на беспокойство [#10]: «алаңдайтыныңыз түсінікті»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#25]: «аударымға қатысты жауапты осында жібереміз. Сау болыңыз!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Айбекпін. «Меню → Поручения → Персонал...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Мадина. Профильге кіріңіз де, тапсырма...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Первая подсказка ошибочна [#9] «Профильге кіріңіз», затем точный путь [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось поправить расплывчатую подсказку [#10]: «Профильде ондай бөлім жоқ қой»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Закончил «Жақсы.» [#13] без прощания.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Әсел. «Отчёт брокера» тармағын ашыңыз....»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, менің атым Ермек. Бұрын қолданылған логин...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "Первая реплика [#9] «Сәлем. Қай сайтқа кірдіңіз?»: неформальное приветствие, имени нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Спросил то, что клиент уже написал [#4]: сайт Global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 7
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось повторить «Жоғарыда жаздым ғой» [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор не завершил чат: последняя реплика клиента [#12], события закрытия нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Сәлеметсіз бе! Мен Айсұлумын. Тикерді іздеу жолағына енгі...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#19].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#18], оператор попрощался [#19]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Алма. Өтінімді жібермей тұрып, «Настро...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Саматпын. D-шоттағы қаражат акция саты...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: соединение прервано [#13] через 28 с после «Жақсы.» клиента [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Дидармын. Қай облигацияны таңдадыңыз?...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил облигацию и тикер [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Корректный следующий шаг [#11]: прислать тикер и текст сообщения для проверки.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Следующий шаг и прощание [#13]: «дайын болғанда осы мәліметтерді жіберіңіз. Сау болыңыз!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Айданамын. «Котировки» бөлімін ашсаңыз...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор закрыл чат без прощания [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "paid_service_outside_company"
+   ],
+   "note": "Платная частная консультация [#11]: «Жеке нөміріңізді қалдырсаңыз ... ақылы түрде»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Ләззатпын. Иә, 1042-S нысаны ағылшын т...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "«Иә, ... ағылшын тілінде беріледі» [#9]: прямо не сказано, что казахской версии нет; «Иә» читается как «да» на вопрос.",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 7
+   },
+   "kinds": [],
+   "note": "Один заметный сбой: «Иә» перед «только на английском» [#9]. Если «Иә» подтверждает бота, то c04 = 20, c06 = 10.",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Сәлеметсіз бе, мен Мұратпын. Сіздің шотыңызда ақша шығару...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c03",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ограничение на счёте названо без идентификации [#9], затем «Қазір растаудың қажеті жоқ» [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 5
+   },
+   "kinds": [],
+   "note": "Причина не названа; только «Оны тексеруге жіберемін» [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Отмахнулся от опасения клиента о проверке личности [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось спросить «Ал себебі қандай?» [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Следующий шаг и прощание [#13]: «Оны тексеруге жіберемін. Сау болыңыз.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#9]: «шотыңызда ақша шығаруға шектеу»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Алина. В веб-версии откройте вкл...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-001",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Тимур. Понимаю, что неожиданное изменение...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил, где клиент сравнивал тарифы [#9]: «Где вы сравнивали названия тарифов?»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "Идентификацию предложил [#11], клиент отказался [#12]; данные счёта не раскрыты, поэтому N/A. Уточнение #25: N/A.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#18].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Отреагировал на беспокойство [#9]: «Понимаю, что неожиданное изменение тарифа может беспокоить»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Следующий шаг, предложение помощи и прощание [#18]: «Если вопрос останется, напишите нам. До свидания!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Добрый день! Я Лера из поддержки. Вы через приложение или...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил приложение или веб [#10] до ответа о тарифе.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Где тариф, ответил [#12]; вопрос о комиссии [#13] остался без ответа.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиент переспросил о комиссии [#13] и снова получил ответ про тариф [#14].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Закрыл разговор с открытым вопросом [#14]: «Название тарифа смотрите там же. Хорошего дня!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Артём. Вам нужны реквизиты для пополнения...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день, меня зовут Нина. Сумму комиссии без условий...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "Путь к реквизитам дан после переспроса [#13]; берёт ли комиссию брокер, не сказано, только «проверьте комиссию в банке» [#15].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Расплывчатое «сверху вниз в меню» [#11] вынудило переспросить «В каком меню?» [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Следующий шаг и прощание [#15]: «Перед переводом проверьте комиссию в банке. До свидания!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Роман. Понимаю, что вы переживае...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил валюту перевода для обращения [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#11] до проверки счёта.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Корректный следующий шаг: вопрос передан специалистам с валютой [#12], [#14].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Отреагировал на беспокойство [#9]: «Понимаю, что вы переживаете из-за платежа»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#14]: «Когда по платежу будет ответ, мы сообщим вам в этом чате»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, я Дамир. В приложении откройте «Меню → Пору...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Путь к «Изменению сведений» дан [#10]; когда снова подавать вывод, спрошено дважды [#4], [#11], ответа нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиент повторил вопрос [#11], оператор отмахнулся [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Закрытие отмахивается от открытого вопроса [#12]: «Путь к обновлению я указал. Хорошего дня!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день! Меня зовут Вера. Если поручение ещё в обрабо...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Руслан. Какое сообщение вы видите в прило...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил, какое сообщение видно в приложении [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c03",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ограничение на счёте названо без идентификации [#11], затем «Подтверждение пока не нужно» [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 5
+   },
+   "kinds": [],
+   "note": "Причина не названа; совет про зависание приложения ошибочен [#13]; только «Передам вопрос на проверку» [#15].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Отмахнулся от опасения клиента [#12] и от вопроса «почему вывод ограничен» [#14].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось повторить вопрос [#14].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Следующий шаг и прощание [#15]: «Передам вопрос на проверку. До свидания.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "confidential_disclosure"
+   ],
+   "note": "Сведения о счёте раскрыты неподтверждённому клиенту [#11]: «на вашем счёте есть ограничение на вывод»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, я Соня. Понимаю, что пропавшая строка в пор...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил приложение или веб [#10], затем название бумаги [#15].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Личность подтверждена [#14] до проверки позиции.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#31].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#31]: «Вопрос о позиции передан. Хорошего вечера!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Я Лиза. В приложении откройте «Меню → Отчёт...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте. Я Илья. Форма 1042-S предоставляется на анг...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: клиент закончил [#10], через 18 с соединение прервано [#11]; оператор не успел завершить.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Я Кира. На сайте Freedom Holding Corp. откр...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#11]: «Да, нужный раздел в меню для инвесторов. Хорошего дня!»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "Первая реплика [#9] «Привет, где именно ищете?»: неформальное приветствие, имени нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Спросил то, что клиент уже написал [#4]: сайт Freedom Finance Global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 7
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось повторить «Я уже писал» [#10]; дальше разговор шёл нормально.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Дина. Да, использованный ранее л...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Итог и прощание [#11]: «Для регистрации сейчас выберите другой логин.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Антон. Переустановите приложение.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Ответил наугад «Переустановите приложение» [#9], не спросив, где клиент входит.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Первый совет ошибочен [#9], итоговый ответ верный [#13]: tradernet.global.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось переспрашивать после [#9] и «Ну, тогда сайт.» [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#14], оператор попрощался [#15]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте! Я Олег. Вы знаете точный тикер нужной бумаг...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил, знает ли клиент точный тикер [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#14].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#13], оператор попрощался [#14]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, меня зовут Саша. Сейчас точно биржа отменяе...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Назвал причину, не спросив бумагу и приказ [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 0
+   },
+   "kinds": [],
+   "note": "«точно биржа отменяет ваш приказ» [#9], затем «Тогда не знаю» [#11]: ответа по существу нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Не разобрался в проблеме и закрыл чат [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 0
+   },
+   "kinds": [],
+   "note": "Противоречивые реплики: уверенный ответ [#9], затем «Тогда не знаю» [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор закрыл чат без прощания [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Мария. У вас есть тикер нужной бумаги?»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил, есть ли у клиента тикер [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Егор. Пока приказ не отправлен, откройте...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Олеся. Это две разные биржи. Nas...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#10], оператор попрощался [#11]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Кирилл. Скиньте деньги мне на карту, я са...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Не выяснил запрос, сразу частное предложение [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 0
+   },
+   "kinds": [],
+   "note": "Консультации нет; ключевая рекомендация: перевести деньги на карту оператора [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Настоял на своём после «Вы серьёзно?» [#10], [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось пояснить «Я про консультацию в приложении спрашивал» [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор закрыл чат без прощания [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "paid_service_outside_company"
+   ],
+   "note": "Предложение в обход компании [#9]: «Скиньте деньги мне на карту, я сам их вложу с выгодой»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Марк. Откройте «Котировки». Если знаете н...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "paid_service_outside_company"
+   ],
+   "note": "Платная частная консультация [#11]: «Можете дать личный номер? ... за плату объясню»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Света. Средства на D-счёте напрямую для п...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "Сказал, что деньги D-счёта напрямую не используются [#9]; как перевести их на торговый счёт, не объяснил.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте! Меня зовут Валерия, поддержка Freedom Broke...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Спросил «С чем помочь?» [#9], так как запроса не было; N/A по условию не подходит. Другое прочтение: N/A.",
+   "disputed": true
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c04",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: клиент ушёл [#10] до того, как сформулировал запрос.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: клиент покинул чат [#10] через 13 с после приветствия.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Добрый день, я Виктор. Чем могу помочь?»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "«Чем могу помочь?» [#9] игнорирует уже написанный запрос [#0].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 0
+   },
+   "kinds": [],
+   "note": "«Всё есть в приложении.» [#11]: ответа по существу нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Пренебрежительный ответ [#11] на «Я писал выше» [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось повторить запрос [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оператор закрыл чат без прощания [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#10]: «Здравствуйте, меня зовут Инга. Откройте «Меню → Отчёты и...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#10], [#23].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#22], оператор попрощался [#23]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Ирина. Сейчас проверю путь.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#15].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Предупредил об ожидании [#9] «Сейчас проверю путь» и поблагодарил после него [#11].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#14], оператор попрощался [#15]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Алексей. Вы вообще читать умеете? Бот всё...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорбление [#9] и нет реакции на «со мной так говорить не надо» [#12].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "В первой реплике [#9] ответа нет, клиенту пришлось переспросить [#10].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c07",
+   "answer": "no",
+   "kinds": [],
+   "note": "Только «До свидания.» [#13] после жалобы клиента.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "criterion_id": "c08",
+   "answer": "yes",
+   "kinds": [
+    "insult"
+   ],
+   "note": "Оскорбление клиента [#9]: «Вы вообще читать умеете? Бот всё написал.»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#9]: «Здравствуйте, я Полина. Как называется скачанный документ?»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил, какой документ открыт [#9].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Запрос решён или дан корректный следующий шаг [#9], [#13].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Ответы ясные и связные; необъяснённого ожидания нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#12], оператор попрощался [#13]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#12]: «меня зовут [Имя скрыто] Здравствуйте»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c02",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: данных для ответа хватало с самого начала, ответ их учёл.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: общий вопрос, данные счёта не раскрывались, защищённых действий нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Рамки поддержки объяснены [#25]; на «нет персонального менеджера ... тогда что?» [#28] только «самостоятельно совершаете торги» [#29].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c05",
+   "answer": "no",
+   "kinds": [],
+   "note": "Клиент чувствует, что его «отфутболили» [#33]; сухое «Нет, не делаем.» [#39]; понимание выражено лишь в конце [#42].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 7
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось спросить, что значит «техническая часть» [#34].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: клиент завершил звонок [#43], пока оператор говорил.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "[#2] «Да компания федеброкер меня зовут [Имя скрыто]»: имя есть, приветствия в тексте нет; по тексту: Нет (уточнение #25).",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Опирался на прошлый разговор [#2] и попросил сначала выставить лимитный приказ [#5].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Запросил ФИО и адрес [#11] до проверки бумаги клиента у трейдеров.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "Бумага торгуется только во внебиржевой сделке [#63]; как её провести и комиссию (трейдер [#41], [#42]) клиенту не сказал.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 10
+   },
+   "kinds": [],
+   "note": "Предупредил об удержании [#14] и поблагодарил за ожидание [#59].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Клиент подтвердил решение [#69], оператор попрощался [#70]; по уточнению #25 это Да.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#12]: «Здравствуйте, Фридом брокер меня зовут [Имя скрыто], чем...»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c02",
+   "answer": "no",
+   "kinds": [],
+   "note": "Перебил и ответил про «изменения сведений» [#26], не разобравшись в вопросе о торговом поручении.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "ФИО, ИИН и код из СМС [#39], [#53] до проверки счёта: «идентификацию успешно» [#64].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 20
+   },
+   "kinds": [],
+   "note": "Корректный следующий шаг [#70]: запрос в технический отдел и обратный звонок.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиенту пришлось объяснять заново [#27]; срок обратной связи неясен: «до 12» [#73] и «до 00:00» [#75].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: итог обратной связи дан [#75], клиент завершил звонок через секунду после «спасибо» [#77].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c01",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Приветствие и имя в первой реплике [#14]: «Фридом брокера [Имя скрыто] Здравствуйте»",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил облигации и тикер [#29], [#33] до проверки.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c03",
+   "answer": "yes",
+   "kinds": [],
+   "note": "ФИО, адрес и код из СМС [#46], [#70] до «я наблюдаю, что вы выставляли приказ» [#78].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "Объяснил, что бумагу берут только через трейдеров и рынок закрыт [#89]; на «постоянно писать надо?» прямо не ответил.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Предложил почту как альтернативу звонкам с работы [#93].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 4
+   },
+   "kinds": [],
+   "note": "Клиент четыре раза спросил «каждый раз?» [#96], [#110] и получал повтор адреса почты.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c07",
+   "answer": "na",
+   "kinds": [],
+   "note": "N/A: клиент завершил звонок [#113], когда оператор спрашивал о других вопросах [#114].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c01",
+   "answer": "no",
+   "kinds": [],
+   "note": "[#16] «Компания fernetbark и операции Здравствуйте»: приветствие есть, имя в тексте не распознано; по тексту: Нет (уточнение #25).",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c02",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Уточнил номер телефона регистрации [#19] и ВНЖ или удостоверение [#61].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c03",
+   "answer": "na",
+   "kinds": [],
+   "note": "Удаление счёта перенесено на завтра [#43], в звонке не выполнено; данные счёта не раскрыты. Уточнение #25: N/A.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c04",
+   "answer": {
+    "step": 15
+   },
+   "kinds": [],
+   "note": "Выйти сейчас, позвонить с 09:00 для удаления, заново зарегистрироваться с паспортом КР [#70]; сроки размыты.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c05",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Вежлив; жалоб без реакции нет.",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c06",
+   "answer": {
+    "step": 7
+   },
+   "kinds": [],
+   "note": "Неясные сроки [#39]: «обычно это через 02:00», «если успеем сегодня» [#34].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c07",
+   "answer": "yes",
+   "kinds": [],
+   "note": "Предложил ещё помощь [#54] и закрыл «благодарю вас за обращение» [#71].",
+   "disputed": false
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "criterion_id": "c08",
+   "answer": "no",
+   "kinds": [],
+   "note": "Оскорблений, услуг в обход компании и раскрытия конфиденциальных данных нет.",
+   "disputed": false
+  }
+ ]
+}

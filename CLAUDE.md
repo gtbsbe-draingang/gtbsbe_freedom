@@ -108,3 +108,14 @@ CSS and the brand slides.
 - `web/dist/` **is** committed: the jury runs the frozen commit without Node. Rebuild it with
   `npm run build` in every pull request that changes `web/`.
 - No AI attribution anywhere (commits, PRs, README).
+
+## Git: never push to `main`
+
+- **Never push to `main`.** Not directly, not with `--force`, not by merging locally and
+  pushing. A change reaches `main` only through a pull request that a teammate merges.
+- Work on one branch per issue, named with the stream letter (`d/24-reference-answers`),
+  and push only that branch.
+- Create every branch from a fresh `origin/main` (`git fetch`, then
+  `git switch -c <branch> origin/main`), never from whatever happens to be checked out.
+- Check `git branch --show-current` before every commit and push. If it says `main`, stop
+  and move the work to a branch.
