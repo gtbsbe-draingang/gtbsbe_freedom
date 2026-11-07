@@ -63,6 +63,7 @@ All you need is `uv` and internet access for the first dependency installation. 
 3. **Optional: a `.env` file.** Copy `backend/.env.example` to `backend/.env`, then restart.
    - `ORGANIZER_API_URL`: the GET link from the guide. It lets you import a dataset group. When the queue is empty, the UI imports the `DEV` group by itself.
    - `ANTHROPIC_API_KEY`: needed only for new evaluations (a new or reworded criterion, or a new dialogue).
+   - `ANTHROPIC_BASE_URL`, `DEFAULT_MODEL`, `MODEL_TIMEOUT_SECONDS`: run the evaluator on the local model instead of the Claude API ([ops/LOCAL_MODEL.md](ops/LOCAL_MODEL.md)).
 4. **Useful URLs** once it runs:
    - <http://127.0.0.1:8000/>: the UI.
    - <http://127.0.0.1:8000/dynamics-mock.html>: the UI inside a mock Dynamics form, 600 px wide.
@@ -558,6 +559,16 @@ Settings come from environment variables or `backend/.env`. Real environment var
 | `WEB_DIST` | `web/dist` | Directory of the static UI |
 
 ## Models and cost
+
+**Main model: `Qwen3.8-27B-FP8`, local.** The demo and the control set are evaluated by Qwen3.8-27B-FP8 served by vLLM on our own GPU, through the same evaluator code (decision of 7 November 2026; setup, settings and measurements in [ops/LOCAL_MODEL.md](ops/LOCAL_MODEL.md)). The code default stays `claude-haiku-5-5`, so a clone without a GPU still runs; the switch is four lines in `backend/.env`.
+
+| Model | Agreement with references (517) | Planted violations | All 65 DEV dialogues | Cost |
+|---|---|---|---|---|
+| Claude Haiku 5.5 (API) | 80.7% | 21 / 25 | about 11 min | $0.27 |
+| Claude Sonnet 5.5 (API) | 79.5% | 23 / 25 | 10 min 40 s | $3.31 |
+| **Qwen3.8-27B-FP8 (local)** | **88.2%** | 20 / 25 | 15 min 13 s | $0 |
+
+Same 65 DEV dialogues, official checklist v1, same evaluator. References are the draft labels in `data/reference/` (not organiser ground truth); planted violations are listed in `backend/quality/planted.py`. The local time is on a GPU shared with other workloads.
 
 The real DEV run used `claude-haiku-5-5` with the official eight-criterion checklist. `claude-sonnet-5-5` is also configured, and each criterion can select its own model. Dialogue information and translation use the default model. An appeal's second opinion uses the criterion's model. Scores, rounding and N/A redistribution are computed in Python, not by the model.
 

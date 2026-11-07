@@ -14,15 +14,18 @@ Requirements this stack is built around:
 
 ## Status on 7 November 2026: what the prototype actually runs
 
-The rest of this document is the **target architecture** for fully local inference. The
-prototype that ships for the defence does not use local models: it calls **Claude Haiku 5.5
-through the Claude API**. Results files say `mode: external_api`; never present the demo as local.
+The rest of this document is the **target architecture** for fully local inference. Its brain
+now runs: on 7 November the team chose **`Qwen3.8-27B-FP8` on vLLM** as the main model for the
+demo and the control set ([ops/LOCAL_MODEL.md](ops/LOCAL_MODEL.md)): 88.2% agreement with the 517
+undisputed references and 20 of 25 planted violations, against 80.7% / 21 for Claude Haiku 5.5
+and 79.5% / 23 for Claude Sonnet 5.5, all 65 DEV dialogues in 15 min on a shared H200. Results
+files then say `mode: local`. The Claude API stays one `.env` change away and is the code default.
 
 | Layer | Planned below | Built and running |
 |---|---|---|
 | UI | Web Components, WaveSurfer call player | Plain JS bundled to one `app.js` and one `app.css`, strict CSP, Dynamics mock form (e2e passes); waveform call player linked to the transcript (#77, #86) |
 | Backend | FastAPI, Pydantic, httpx, SQLite | As planned |
-| Brain (judges criteria) | Qwen3.8-27B-FP8, local | **Claude Haiku 5.5 via the API** (per-criterion override, e.g. Sonnet 5.5); one call per criterion, JSON schema output, every quote checked against the transcript, one retry, then «проверить» |
+| Brain (judges criteria) | Qwen3.8-27B-FP8, local | **Qwen3.8-27B-FP8 on vLLM** (main model; Claude Haiku 5.5 or Sonnet 5.5 via the API by `.env`, per-criterion override allowed); one call per criterion, JSON schema output, every quote checked against the transcript, one retry, then «проверить» |
 | Ear (audio questions) | Qolda-AVL-9B, local | Not built |
 | Emotion specialist | emotion2vec+ large plus a trained head | Training script only (`training/emotion/`); the first full Kaggle run stopped on missing Dusha podcast audio, a fixed run is in progress; not used by the app |
 | Measurements | Silero VAD, Parselmouth | Voiced speech detection (Praat pitch, 6 dB above the floor) plus Parselmouth pitch, rate and pauses; stored when alignment is on; overlap is null; the evaluator does not read them, so c09 is not scored |
@@ -30,8 +33,8 @@ through the Claude API**. Results files say `mode: external_api`; never present 
 | STT fallback, diarization | Whisper-family ASR, pyannote | Not built (the brief supplies transcripts) |
 | Scoring | Plain Python | As planned: exact fractions, N/A redistribution, half-up rounding, gross error as a separate flag |
 | Admin checklists | Versions, fingerprints, reuse | As planned: immutable versions, fingerprint reuse, weight-only change makes zero model calls, dry run, comparison |
-| Hardware | 140 GB local VRAM | Not needed: hosted API |
-| Cost (section 10) | Local compute only | About **$0.0041 per dialogue**: $0.2685 for the 65 DEV dialogues, 613 calls |
+| Hardware | 140 GB local VRAM | One shared H200: about 75 GB for vLLM (28 GiB FP8 weights, 44 GiB KV cache) |
+| Cost (section 10) | Local compute only | **$0 per call** on the local model (GPU time only); on the Claude API about $0.0041 per dialogue with Haiku 5.5 ($0.2685 for DEV) and $0.051 with Sonnet 5.5 ($3.31 for DEV) |
 | Testing (section 9) | Human gold labels, ablations, latency | 520 draft reference labels, #25 readings approved; agreement 80.66% on the 517 undisputed ones; 21 of 25 planted violations caught (`data/reference/`); no human-reviewed gold set, ablations or capacity tests yet |
 
 ## TL;DR (target architecture)

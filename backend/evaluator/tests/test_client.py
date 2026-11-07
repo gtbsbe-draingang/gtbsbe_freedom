@@ -229,3 +229,34 @@ async def test_unpaid_failures_carry_no_records(fake_anthropic: FakeAsyncAnthrop
 def test_judgment_failed_calls_is_trailing_optional() -> None:
     assert JudgmentFailed("x").calls == []
     assert JudgmentFailed("x", calls=[1]).calls == [1]  # type: ignore[list-item]
+
+
+def test_base_url_from_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """ANTHROPIC_BASE_URL (env or .env) points the real SDK client at a compatible local server."""
+    from app.settings import get_settings
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "local")
+    monkeypatch.setenv("ANTHROPIC_BASE_URL", "http://127.0.0.1:8038")
+    get_settings.cache_clear()
+    assert str(client.get_client().base_url).rstrip("/") == "http://127.0.0.1:8038"
+
+
+def test_base_url_unset_is_the_claude_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.settings import get_settings
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    get_settings.cache_clear()
+    assert str(client.get_client().base_url).rstrip("/") == "https://api.anthropic.com"
+
+
+def test_timeout_default_and_setting(monkeypatch: pytest.MonkeyPatch) -> None:
+    """MODEL_TIMEOUT_SECONDS sets the client timeout; unset it stays client.TIMEOUT_SECONDS."""
+    from app.settings import get_settings
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    get_settings.cache_clear()
+    assert client.get_client().timeout == client.TIMEOUT_SECONDS == 60.0
+    client.set_client(None)
+    monkeypatch.setenv("MODEL_TIMEOUT_SECONDS", "300")
+    get_settings.cache_clear()
+    assert client.get_client().timeout == 300.0
