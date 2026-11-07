@@ -88,7 +88,9 @@ MODEL_TIMEOUT_SECONDS=300
 - A restart of the backend fails the job items it was running with `interrupted`; the job's
   retry (`POST /jobs/{id}/retry`) finishes them.
 
-**Back to Claude:** remove `ANTHROPIC_BASE_URL`, set the real `ANTHROPIC_API_KEY` and
+**Back to Claude:** start with `uv run cqa-serve --llm-api`. It ignores `ANTHROPIC_BASE_URL` and
+`DEFAULT_MODEL` and evaluates with `claude-haiku-5-5` on the Claude API, so `ANTHROPIC_API_KEY` in
+`.env` must be the real key. For good: remove `ANTHROPIC_BASE_URL`, set the real `ANTHROPIC_API_KEY` and
 `DEFAULT_MODEL=claude-haiku-5-5` (or Sonnet), restart.
 
 ## Results files
