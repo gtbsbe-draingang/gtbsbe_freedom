@@ -296,6 +296,9 @@
     "scorecard.grossOn": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
     "scorecard.grossOnKinds": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430: {kinds}",
     "scorecard.grossOff": "\u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A \u043D\u0435\u0442",
+    "grossKind.insult": "\u043E\u0441\u043A\u043E\u0440\u0431\u043B\u0435\u043D\u0438\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+    "grossKind.paid_service_outside_company": "\u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u043B\u0430\u0442\u043D\u043E\u0439 \u0443\u0441\u043B\u0443\u0433\u0438 \u0432 \u043E\u0431\u0445\u043E\u0434 \u043A\u043E\u043C\u043F\u0430\u043D\u0438\u0438",
+    "grossKind.confidential_disclosure": "\u0440\u0430\u0441\u043A\u0440\u044B\u0442\u0438\u0435 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438",
     "scorecard.sections": "\u0418\u0442\u043E\u0433 \u043F\u043E \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u043C",
     "scorecard.sectionScore": "{points} \u0438\u0437 {available} \xB7 {percent} %",
     "scorecard.sectionNone": "\u043D\u0435\u0442 \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u043C\u044B\u0445 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
@@ -794,6 +797,9 @@
     "scorecard.grossOn": "gross error",
     "scorecard.grossOnKinds": "gross error: {kinds}",
     "scorecard.grossOff": "no gross errors",
+    "grossKind.insult": "insulting the client",
+    "grossKind.paid_service_outside_company": "offering a paid service outside the company",
+    "grossKind.confidential_disclosure": "disclosure of confidential information",
     "scorecard.sections": "Section totals",
     "scorecard.sectionScore": "{points} of {available} \xB7 {percent} %",
     "scorecard.sectionNone": "no applicable criteria",
@@ -1292,6 +1298,9 @@
     "scorecard.grossOn": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435",
     "scorecard.grossOnKinds": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435: {kinds}",
     "scorecard.grossOff": "\u04E9\u0440\u0435\u0441\u043A\u0435\u043B \u049B\u0430\u0442\u0435\u043B\u0435\u0440 \u0436\u043E\u049B",
+    "grossKind.insult": "\u043A\u043B\u0438\u0435\u043D\u0442\u0442\u0456 \u049B\u043E\u0440\u043B\u0430\u0443",
+    "grossKind.paid_service_outside_company": "\u043A\u043E\u043C\u043F\u0430\u043D\u0438\u044F\u043D\u044B \u0430\u0439\u043D\u0430\u043B\u044B\u043F \u04E9\u0442\u0456\u043F \u0430\u049B\u044B\u043B\u044B \u049B\u044B\u0437\u043C\u0435\u0442 \u04B1\u0441\u044B\u043D\u0443",
+    "grossKind.confidential_disclosure": "\u049B\u04B1\u043F\u0438\u044F \u0430\u049B\u043F\u0430\u0440\u0430\u0442\u0442\u044B \u0436\u0430\u0440\u0438\u044F \u0435\u0442\u0443",
     "scorecard.sections": "\u0411\u04E9\u043B\u0456\u043C\u0434\u0435\u0440 \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B\u0441\u044B",
     "scorecard.sectionScore": "{available} \u0456\u0448\u0456\u043D\u0435\u043D {points} \xB7 {percent} %",
     "scorecard.sectionNone": "\u049B\u043E\u043B\u0434\u0430\u043D\u044B\u043B\u0430\u0442\u044B\u043D \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u0436\u043E\u049B",
@@ -1502,7 +1511,7 @@
   var listeners = /* @__PURE__ */ new Set();
   var recipes = /* @__PURE__ */ new Map();
   var has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
-  var DATA_PARAMS = /* @__PURE__ */ new Set(["id", "name", "title", "criterion", "kinds", "model", "group", "time"]);
+  var DATA_PARAMS = /* @__PURE__ */ new Set(["id", "name", "title", "criterion", "model", "group", "time"]);
   var language = "ru";
   function normalizeLanguage(value2) {
     if (typeof value2 !== "string") return null;
@@ -1566,6 +1575,16 @@
   function t(key, params) {
     if (!has(catalogs[language], key)) return key;
     const read = messageReader(key, params);
+    return remember(read(), read);
+  }
+  function grossKindName(kind) {
+    const id = String(kind ?? "").trim();
+    const key = `grossKind.${id}`;
+    return has(catalogs[language], key) ? catalogs[language][key] : id.replace(/[_-]+/g, " ").trim();
+  }
+  function grossKindsText(kinds) {
+    const list = Array.isArray(kinds) ? kinds : [];
+    const read = () => list.map(grossKindName).filter(Boolean).join(", ");
     return remember(read(), read);
   }
   function pluralForm(n) {
@@ -5168,7 +5187,7 @@
       const totalText2 = none ? t("scorecard.totalNone") : money(evaluation.final_total);
       const changed = evaluation.original_total !== evaluation.final_total;
       const gross = evaluation.gross_error;
-      const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn") : t("scorecard.grossOff");
+      const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: grossKindsText(gross.kinds) }) : t("scorecard.grossOn") : t("scorecard.grossOff");
       const rows = scoredSections(version2).map((section) => {
         const row = evaluation.sections?.find((s) => s.section_id === section.id);
         const has2 = row && row.points !== null && row.points !== void 0 && row.available !== null && row.available !== void 0;
@@ -8158,7 +8177,7 @@
       const gross = data.gross_errors ?? {};
       body.append(
         h("h2", { text: t("reports.gross", { n: gross.count ?? 0 }), data: { test: "analytics-gross" } }),
-        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(r.kind), num(r.count)])),
+        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(grossKindsText([r.kind])), num(r.count)])),
         h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id))))
       );
     }
