@@ -274,6 +274,8 @@ export default {
   "scorecard.jobFailed": "Evaluation failed",
   "scorecard.retry": "Retry",
   "scorecard.loading": "Loading evaluation…",
+  "scorecard.evaluating": "evaluating…",
+  "scorecard.evaluatingNote": "The model is reading the dialogue and checking each criterion…",
   "scorecard.loadFailed": "Could not load evaluation",
   "scorecard.noChecklist": "No checklists available",
   "scorecard.noChecklistNote": "Create a checklist in the Checklists section.",

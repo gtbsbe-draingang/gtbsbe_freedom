@@ -131,6 +131,10 @@ function cssViolations(css, { allowRoot = false, scopes = [".cqa"] } = {}) {
         // allowed as is
       } else if (/^@media\b/.test(prelude)) {
         walkBlocks(body);
+      } else if (/^@keyframes\s/.test(prelude)) {
+        // animation names are global: they must carry the scope's prefix (cqa-…), as class names do
+        const name = prelude.replace(/^@keyframes\s+/, "");
+        if (!scopes.some((scope) => name.startsWith(`${scope.slice(1)}-`))) found.push(`at-rule "${prelude}"`);
       } else if (prelude.startsWith("@")) {
         found.push(`at-rule "${prelude}"`);
       } else {
@@ -323,6 +327,8 @@ describe("scanners catch violations", () => {
       "button.cqa { color: red }",
       "@media (max-width: 600px) { body { margin: 0 } }",
       "@keyframes spin { to { opacity: 0 } }",
+      "@keyframes cqaspin { to { opacity: 0 } }",
+      "@keyframes dynmock-spin { to { opacity: 0 } }",
       ":root { --a: 1 }",
     ]) {
       assert.ok(cssViolations(css).length > 0, `not detected: ${css}`);
@@ -344,8 +350,11 @@ describe("scanners catch violations", () => {
       .cqa:is(.a, .b) > p { color: red }
       .cqa.cqa--dark { color: white }
       @media (max-width: 600px) { .cqa .panes { display: block } .cqa .x, .cqa .y { gap: 0 } }
+      @keyframes cqa-sc-sweep { from { transform: translateX(-100%) } 50% { opacity: 1 } to { transform: none } }
     `;
     assert.deepEqual(cssViolations(css), []);
+    // an animation name carries its scope's prefix, like a class name does
+    assert.deepEqual(cssViolations("@keyframes dynmock-pulse { to { opacity: 0 } }", { scopes: [".dynmock"] }), []);
   });
 
   test("html violations", () => {

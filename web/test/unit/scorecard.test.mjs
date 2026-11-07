@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { answerTag, cardAppeals, jobSettled, pickSelection, thresholdCheck } from "../../src/ui/scorecard.js";
+import { answerTag, cardAppeals, elapsedText, jobSettled, pickSelection, thresholdCheck } from "../../src/ui/scorecard.js";
 
 describe("cardAppeals: the appeals that concern the card on screen", () => {
   const ev = (id, created_at, carried = []) => ({ id, created_at, results: carried.map((appeal_id, i) => ({ criterion_id: `c${i}`, carried_decision: { appeal_id, evaluation_id: "old" } })) });
@@ -113,5 +113,18 @@ describe("pickSelection", () => {
   });
   test("no checklists, no selection", () => {
     assert.equal(pickSelection(null, {}, []), null);
+  });
+});
+
+describe("elapsedText: the loading card's clock", () => {
+  test("minutes and zero-padded seconds", () => {
+    assert.equal(elapsedText(0), "0:00");
+    assert.equal(elapsedText(7_999), "0:07");
+    assert.equal(elapsedText(102_000), "1:42");
+    assert.equal(elapsedText(725_000), "12:05");
+  });
+  test("a clock that went backwards or a bad value shows zero", () => {
+    assert.equal(elapsedText(-500), "0:00");
+    assert.equal(elapsedText(Number.NaN), "0:00");
   });
 });
