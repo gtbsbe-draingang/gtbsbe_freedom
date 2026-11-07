@@ -12,13 +12,17 @@ Checklist versions: one row per (checklist_id, version), the whole `ChecklistVer
 the `locked` flag as a column (the flag is the part that changes after a version is saved).
 
 Shared names (shared-interfaces.md): `get_conversation`, `get_audio_url`, `save_audio_results`,
-`get_checklist_version`, `latest_versions`, `save_checklist_version`.
+`get_checklist_version`, `latest_versions`, `save_checklist_version`, `list_evaluations`.
 
 Evaluation jobs (app/jobs.py): the judgment cache (one row per reuse key, the evaluator's
 `Judgment` as JSON), evaluations (the whole `Evaluation` as JSON plus the columns filtered on) and
 jobs (the whole `Job` as JSON, items included, plus the checklist version and role it runs with).
 Every status change of a job item is one write transaction together with its evaluation, so the
 two never disagree and `GET /jobs/{id}` shows progress as it happens.
+
+Reads for the UI's lists (`list_conversations`, `list_evaluations`, `find_evaluations`,
+`count_open_appeals`): each is one query (or one per call), so the queue costs the same for ten
+conversations as for a thousand.
 """
 
 import sqlite3
@@ -246,6 +250,52 @@ def get_conversation(conversation: str) -> Conversation | None:
     finally:
         conn.close()
     return None if row is None else _read_conversation(row["conversation_json"])
+
+
+def list_conversations(
+    *,
+    group_id: str | None = None,
+    status: str | None = None,
+    channel: str | None = None,
+    language: str | None = None,
+    q: str | None = None,
+) -> list[Conversation]:
+    """The conversations that match every filter given, ordered by group id, then conversation id.
+
+    `group_id`, `status`, `channel` and `language` are exact matches (None or "" means no filter).
+    `q` is case-insensitive (casefolded) and matches when it occurs in the conversation id, in
+    `info.topic` or in the text of any message; blanks around it are ignored and a blank `q` is no
+    filter. It is matched against the parsed fields, never against the stored JSON, so keys and
+    escapes of the JSON text cannot match."""
+    clauses: list[str] = []
+    args: list[str] = []
+    for column, value in (("group_id", group_id), ("channel", channel), ("language", language)):
+        if value:
+            clauses.append(f"{column} = ?")
+            args.append(value)
+    if status:
+        clauses.append("json_extract(conversation_json, '$.status') = ?")
+        args.append(status)
+    where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+    conn = connect()
+    try:
+        rows = conn.execute(
+            f"SELECT conversation_json FROM conversations{where} ORDER BY group_id, conversation_id", args
+        ).fetchall()
+    finally:
+        conn.close()
+    found = [_read_conversation(row["conversation_json"]) for row in rows]
+    needle = (q or "").strip().casefold()
+    return [conv for conv in found if _mentions(conv, needle)] if needle else found
+
+
+def _mentions(conv: Conversation, needle: str) -> bool:
+    """Whether the casefolded `needle` occurs in the conversation id, the topic or a message."""
+    if needle in conv.conversation_id.casefold():
+        return True
+    if conv.info is not None and needle in conv.info.topic.casefold():
+        return True
+    return any(needle in message.text.casefold() for message in conv.transcript)
 
 
 def get_audio_url(conversation: str) -> str | None:
@@ -503,6 +553,62 @@ def get_evaluation(evaluation_id: str) -> Evaluation | None:
         return _read_evaluation(conn, evaluation_id)
     finally:
         conn.close()
+
+
+def list_evaluations(checklist_id: str, version: int, group_id: str | None = None) -> list[Evaluation]:
+    """The latest `done` evaluation of each conversation for this checklist version, sorted by
+    conversation id; with `group_id`, only the conversations of that group. A conversation with no
+    done evaluation of the version (never evaluated, or queued, running or failed only) is absent.
+
+    "Latest" is the newest `created_at` (the id breaks a tie), the same order `find_evaluations`
+    lists in. One query, whatever the number of conversations."""
+    group = "AND e.conversation IN (SELECT id FROM conversations WHERE group_id = ?) " if group_id else ""
+    args: list[object] = [checklist_id, version]
+    if group_id:
+        args.append(group_id)
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT json FROM ("
+            "  SELECT e.json, e.conversation, ROW_NUMBER() OVER ("
+            "    PARTITION BY e.conversation ORDER BY e.created_at DESC, e.id DESC) AS newest "
+            "  FROM evaluations e "
+            f"  WHERE e.checklist_id = ? AND e.version = ? AND e.status = 'done' {group}"
+            ") WHERE newest = 1 ORDER BY conversation",
+            args,
+        ).fetchall()
+    finally:
+        conn.close()
+    return [Evaluation.model_validate_json(row["json"]) for row in rows]
+
+
+def find_evaluations(conversation: str | None = None, checklist_id: str | None = None) -> list[Evaluation]:
+    """Every evaluation (any status, any version) of `conversation` and/or `checklist_id`, newest
+    first: `created_at` descending, then id descending. None or "" means no filter on that field."""
+    clauses: list[str] = []
+    args: list[str] = []
+    for column, value in (("conversation", conversation), ("checklist_id", checklist_id)):
+        if value:
+            clauses.append(f"{column} = ?")
+            args.append(value)
+    where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+    conn = connect()
+    try:
+        rows = conn.execute(
+            f"SELECT json FROM evaluations{where} ORDER BY created_at DESC, id DESC", args
+        ).fetchall()
+    finally:
+        conn.close()
+    return [Evaluation.model_validate_json(row["json"]) for row in rows]
+
+
+def count_open_appeals(evaluation_ids: list[str]) -> dict[str, int]:
+    """The number of open appeals of each evaluation, as `{evaluation id: count}` with an entry for
+    every id given. A batch, so the queue asks once for all of its evaluations.
+
+    There is no appeals table yet, so every count is 0 for now; the appeals task (#12) gives this
+    function a real query, and callers do not change."""
+    return {evaluation_id: 0 for evaluation_id in evaluation_ids}
 
 
 def _set_evaluation_status(conn: sqlite3.Connection, evaluation_id: str | None, status: str) -> None:
