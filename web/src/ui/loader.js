@@ -36,6 +36,23 @@ export function estimateText(dry) {
   return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
 }
 
+/**
+ * Polls a job until it is over, calling onTick(job, running) after every answer (and once at the
+ * start). It does not stop when the caller's view is gone: results must still refresh. A failed
+ * poll throws; the caller keeps the job id and can follow it again.
+ * @returns {Promise<object>} the settled job
+ */
+export async function followJob(api, first, onTick) {
+  let job = first;
+  onTick(job, !jobSettled(job));
+  while (!jobSettled(job)) {
+    await sleep(POLL_MS);
+    job = await api.getJob(job.id);
+    onTick(job, !jobSettled(job));
+  }
+  return job;
+}
+
 const summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
 const bump = (store) => store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -201,7 +218,8 @@ export function createBatchBar(store, api) {
     options: [], // [{checklist_id, version, label}]
     estimate: null, // the dry-run answer for the current selection and checklist
     estimating: false,
-    job: null, // null | {id, done, total, failed, running}
+    job: null, // null | {id, done, total, failed}: the last job of this bar
+    lock: null, // null | "starting" | "watching" | "interrupted" | "resuming" (see runBatch)
   };
   let destroyed = false;
   let estimateTimer = null;
@@ -250,7 +268,7 @@ export function createBatchBar(store, api) {
   function paint() {
     if (destroyed) return;
     const picked = selection();
-    const active = view.job?.running === true;
+    const active = busy();
     const show = picked.size > 0 || active;
     if (!show) {
       host.replaceChildren();
@@ -272,12 +290,19 @@ export function createBatchBar(store, api) {
 
     clear(progress);
     const job = view.job;
-    if (job) {
-      progress.append(t(job.running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+    if (view.lock === "starting") progress.append(t("batch.starting"));
+    else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+      progress.append(
+        h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+        h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => resume() } }),
+      );
+    } else if (job) {
+      const running = view.lock === "watching";
+      progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
       if (job.failed > 0) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
-          job.running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } }),
+          running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } }),
         );
       }
     }
@@ -335,50 +360,88 @@ export function createBatchBar(store, api) {
     }, ESTIMATE_DELAY_MS);
   }
 
+  // ---- running: one job at a time ----
+  // view.lock is taken synchronously, before the first await, and released on one path each:
+  //   "starting"     the start (or retry) request is pending: no job id yet
+  //   "watching"     polling the job
+  //   "interrupted"  a poll failed: the job may still run on the server, so nothing new may start;
+  //                  recovery polls the same job id again (resume), it never starts another job
+  //   "resuming"     the recovery poll is pending
+  const busy = () => view.lock !== null;
+  const snapshot = (job) => ({ id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0 });
+
   // Polls the job to the end. It keeps going if the queue is closed: the totals must still refresh.
-  async function follow(first) {
-    let job = first;
-    view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: true };
-    paint();
-    while (!jobSettled(job)) {
-      await sleep(POLL_MS);
-      job = await api.getJob(job.id);
-      view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: !jobSettled(job) };
+  async function watchJob(first) {
+    view.lock = "watching";
+    try {
+      const job = await followJob(api, first, (tick) => {
+        view.job = snapshot(tick);
+        paint();
+      });
+      view.job = snapshot(job);
+      view.lock = null;
       paint();
+      bump(store);
+      scheduleEstimate(); // what is cached now
+    } catch (error) {
+      view.lock = "interrupted";
+      paint();
+      toastError(store, error, { retry: resume });
     }
-    view.job = { id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0, running: false };
-    bump(store);
-    scheduleEstimate(); // what is cached now
   }
 
-  async function runBatch() {
+  async function resume() {
+    const id = view.job?.id;
+    if (!id || view.lock !== "interrupted") return;
+    view.lock = "resuming";
+    paint();
+    let job;
+    try {
+      job = await api.getJob(id);
+    } catch (error) {
+      const gone = error?.code === "not_found"; // the server forgot the job: nothing left to watch
+      view.lock = gone ? null : "interrupted";
+      if (gone) view.job = null;
+      paint();
+      toastError(store, error, { retry: gone ? undefined : resume });
+      return;
+    }
+    await watchJob(job);
+  }
+
+  // A failure before a job id exists frees the bar; the toast's retry repeats the whole request.
+  async function start(request, again) {
+    if (busy()) return;
+    view.lock = "starting";
+    paint();
+    let first;
+    try {
+      first = await request();
+    } catch (error) {
+      view.lock = null;
+      paint();
+      toastError(store, error, { retry: again });
+      return;
+    }
+    await watchJob(first);
+  }
+
+  function runBatch() {
     const sel = current();
     const picked = [...selection()];
-    if (!sel || picked.length === 0 || view.job?.running) return;
-    try {
-      await follow(await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }));
-    } catch (error) {
-      if (view.job) view.job.running = false;
-      paint();
-      toastError(store, error, { retry: runBatch });
-    }
+    if (busy() || !sel || picked.length === 0) return undefined;
+    return start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), runBatch);
   }
 
-  async function retry() {
+  function retry() {
     const id = view.job?.id;
-    if (!id || view.job.running) return;
-    try {
-      await follow(await api.retryJob(id));
-    } catch (error) {
-      if (view.job) view.job.running = false;
-      paint();
-      toastError(store, error, { retry });
-    }
+    if (busy() || !id) return undefined;
+    return start(() => api.retryJob(id), retry);
   }
 
   stops.push(
     watch(store, (state) => state.selection, (next) => {
-      if (!view.job?.running) view.job = null; // a new selection starts a new batch
+      if (!busy()) view.job = null; // a new selection starts a new batch
       if ((next?.size ?? 0) > 0) boot();
       scheduleEstimate();
     }),
