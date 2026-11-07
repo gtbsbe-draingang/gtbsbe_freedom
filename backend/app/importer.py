@@ -12,7 +12,6 @@ import asyncio
 import importlib
 import importlib.util
 import logging
-import re
 import sys
 from collections import Counter
 from datetime import UTC, datetime
@@ -26,6 +25,7 @@ from pydantic import ValidationError
 from app import store
 from app.errors import ApiError
 from app.models import ImportSummary
+from app.redaction import redact_signed_urls  # noqa: F401  (also importable from here, its first home)
 from app.settings import get_settings
 from app.transcript import normalize_record
 
@@ -74,70 +74,8 @@ def organizer_url_for(group_id: str) -> str:
     return f"{path}?{'&'.join(parts)}{hash_mark}{fragment}"
 
 
-# httpx logs every request, URL included, at INFO ("HTTP Request: GET <url> ..."), and that URL has
-# the signature in it. So does any other signed link a library logs (the audio recordings'). The
-# filter below rewrites such a URL to "<redacted>" and keeps the rest of the record (method, status).
-#
-# It is a filter on the loggers themselves, and a logger's filters do not apply to its children, so
-# httpcore's loggers are named one by one.
-_HTTP_LOGGERS = (
-    "httpx",
-    "httpcore",
-    "httpcore.connection",
-    "httpcore.http11",
-    "httpcore.http2",
-    "httpcore.proxy",
-    "httpcore.socks",
-)
-_REDACTED = "<redacted>"
-_URL_IN_TEXT = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
-_SIGNATURE = re.compile(r"sig(?:nature)?=", re.IGNORECASE)
-
-
-def _organizer_endpoints() -> list[str]:
-    """The configured URL without its query, as written and as httpx writes it (host in lower
-    case, the default port dropped), lower-cased for comparing."""
-    configured = _configured_url()
-    if configured is None:
-        return []
-    forms = [configured]
-    try:
-        forms.append(str(httpx.URL(configured)))
-    except httpx.InvalidURL:
-        pass
-    return [form.partition("#")[0].partition("?")[0].lower() for form in forms]
-
-
-def redact_signed_urls(message: str) -> str:
-    """`message` with every signed URL (a `sig=` / `signature=` parameter, any case) and every URL
-    of the configured organiser endpoint replaced by "<redacted>". A signature or the endpoint that
-    sits outside anything shaped like a URL makes the whole message "<redacted>"."""
-    endpoints = _organizer_endpoints()
-
-    def is_secret(url: str) -> bool:
-        return bool(_SIGNATURE.search(url)) or any(url.lower().startswith(e) for e in endpoints)
-
-    redacted = _URL_IN_TEXT.sub(lambda m: _REDACTED if is_secret(m.group()) else m.group(), message)
-    if _SIGNATURE.search(redacted) or any(e in redacted.lower() for e in endpoints):
-        return _REDACTED
-    return redacted
-
-
-class _RedactSignedUrls(logging.Filter):
-    def filter(self, record: logging.LogRecord) -> bool:
-        try:
-            message = record.getMessage()
-            redacted = redact_signed_urls(message)
-        except Exception:  # a logging problem must not break a request, nor let a message through
-            message, redacted = "", _REDACTED
-        if redacted != message:
-            record.msg, record.args = redacted, None
-        return True
-
-
-_redact_filter = _RedactSignedUrls()
-for _name in _HTTP_LOGGERS:
-    logging.getLogger(_name).addFilter(_redact_filter)
+# httpx logs every request, URL included, and that URL has the signature in it. app.redaction
+# (imported above) installs the filter that rewrites it to "<redacted>" when it is imported.
 
 
 def _organizer_error(message: str) -> ApiError:

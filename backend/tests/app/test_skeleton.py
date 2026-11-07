@@ -1,3 +1,4 @@
+import io
 import json
 import logging
 import re
@@ -199,6 +200,53 @@ def test_unhandled_exception_is_500_internal_error(
     assert len(logged) == 1
     assert logged[0].exc_info is not None and logged[0].exc_info[0] is RuntimeError
     assert "secret-detail" in "".join(logging.Formatter().format(rec) for rec in logged)
+
+
+SIGNED = "https://media.example.invalid/calls/a.mp3?sv=2024&sig=FAKESIGNATURE"
+
+
+def test_the_unhandled_exception_log_never_carries_a_signed_url(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    def explode() -> None:
+        raise RuntimeError(f"download failed for {SIGNED} (timeout)")
+
+    client.app.add_api_route("/api/explode-signed", explode, methods=["GET"])
+    quiet = TestClient(client.app, raise_server_exceptions=False)
+    with caplog.at_level(logging.ERROR, logger="app.errors"):
+        r = quiet.get("/api/explode-signed")
+    assert r.status_code == 500
+    logged = [rec for rec in caplog.records if rec.name == "app.errors"]
+    formatted = "".join(logging.Formatter().format(rec) for rec in logged)
+    assert "Traceback" in formatted
+    assert "RuntimeError: download failed for <redacted> (timeout)" in formatted  # the rest is kept
+    assert "sig=FAKE" not in formatted and "media.example.invalid" not in formatted
+    assert "sig=FAKE" not in caplog.text
+
+
+@pytest.mark.parametrize("name", ["app.errors", "uvicorn.error"])
+def test_exception_text_is_redacted_on_the_error_loggers(name: str) -> None:
+    """uvicorn logs the same exception again on `uvicorn.error` ("Exception in ASGI application"),
+    through its own formatter."""
+    from uvicorn.logging import DefaultFormatter
+
+    stream = io.StringIO()
+    handler = logging.StreamHandler(stream)
+    handler.setFormatter(DefaultFormatter("%(levelprefix)s %(message)s", use_colors=False))
+    logger = logging.getLogger(name)
+    logger.addHandler(handler)
+    try:
+        try:
+            raise RuntimeError(f"download failed for {SIGNED}")
+        except RuntimeError as exc:
+            logger.error("Exception in ASGI application\n", exc_info=exc)
+            logger.error("while fetching %s", SIGNED, stack_info=True)
+    finally:
+        logger.removeHandler(handler)
+    output = stream.getvalue()
+    assert "Exception in ASGI application" in output and "RuntimeError: download failed for <redacted>" in output
+    assert "while fetching <redacted>" in output and "Stack (most recent call last)" in output
+    assert "sig=FAKE" not in output and "FAKESIGNATURE" not in output
 
 
 # --- SQLite ------------------------------------------------------------------------------
