@@ -104,28 +104,37 @@ class Api:
 
 
 class HttpStore:
-    """What `results_export.build` needs from `app.store`, answered by the running server, so the
-    file comes from exactly the data the UI shows. Evaluations are fetched per conversation of the
-    group (each list newest first, which is all `pick_runs` relies on)."""
+    """What `results_export.build` needs from `app.store` (same signatures, same order), answered
+    by the running server, so the file comes from exactly the data the UI shows. The models are
+    the app's own, parsed back from the API's JSON: transcripts keep their speakers, results keep
+    evidence, `checked_range`, explanations and both answers; only what `dump()` hides (the call
+    log, reuse keys, the transcript hash) is absent."""
 
     def __init__(self, api: Api) -> None:
         self.api = api
-        self._group: list[QueueItem] = []
+        self._group: list[QueueItem] | None = None
 
-    def list_conversations(self, *, group_id: str) -> list[QueueItem]:
-        rows = self.api.call("GET", "/conversations", params={"group_id": group_id})
+    def list_conversations(self, *, group_id: str | None = None) -> list[QueueItem]:
+        rows = self.api.call("GET", "/conversations", params={"group_id": group_id} if group_id else None)
         self._group = [QueueItem.model_validate(row) for row in rows]
         return self._group
 
     def get_conversation(self, conversation: str) -> Conversation:
         return Conversation.model_validate(self.api.call("GET", f"/conversations/{quote(conversation, safe='')}"))
 
-    def find_evaluations(self, *, checklist_id: str) -> list[Evaluation]:
-        found: list[Evaluation] = []
-        for conv in self._group:
-            rows = self.api.call("GET", "/evaluations", params={"conversation": conv.id, "checklist_id": checklist_id})
-            found.extend(Evaluation.model_validate(row) for row in rows)
-        return found
+    def _evaluations(self, conversation: str | None, checklist_id: str | None) -> list[Evaluation]:
+        params = {k: v for k, v in (("conversation", conversation), ("checklist_id", checklist_id)) if v}
+        return [Evaluation.model_validate(row) for row in self.api.call("GET", "/evaluations", params=params)]
+
+    def find_evaluations(self, conversation: str | None = None, checklist_id: str | None = None) -> list[Evaluation]:
+        """Like `store.find_evaluations`: newest first (`created_at`, then id, both descending).
+        Without a conversation, after `list_conversations`, it asks once per conversation of that
+        listing instead of for every evaluation on the server (other groups, DEV), and merges the
+        lists in the store's order; before any listing it asks for all of them."""
+        if conversation or self._group is None:
+            return self._evaluations(conversation, checklist_id)
+        found = [e for conv in self._group for e in self._evaluations(conv.id, checklist_id)]
+        return sorted(found, key=lambda e: (e.created_at, e.id), reverse=True)
 
 
 # --- the steps ---------------------------------------------------------------------------------
