@@ -147,8 +147,8 @@ def test_official_is_seeded_and_locked(client: TestClient) -> None:
     assert r.status_code == 200
     official = [c for c in r.json() if c["checklist_id"] == "official-chat"]
     assert len(official) == 1
-    assert official[0]["version"] == 2 and official[0]["locked"] is True
-    assert official[0]["versions"] == [1, 2]
+    assert official[0]["version"] == 3 and official[0]["locked"] is True
+    assert official[0]["versions"] == [1, 2, 3]
     assert client.get("/api/checklists/official-chat/versions/1").json()["locked"] is True
 
 
