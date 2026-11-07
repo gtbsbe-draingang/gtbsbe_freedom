@@ -2,7 +2,7 @@
 import copy
 import json
 
-from app.models import Conversation, CriterionResult, Evaluation, Evidence, Message, StepAnswer
+from app.models import CheckedRange, Conversation, CriterionResult, Evaluation, Evidence, Message, StepAnswer
 from quality import results_export as rx
 
 # The appendix's own example, word for word in structure: its 85.38 must come out of the values.
@@ -99,6 +99,55 @@ def test_export_from_the_real_store(client, tmp_path):
     assert by["chat-3"]["status"] == "error" and "мок" in by["chat-3"]["error"]
     assert by["chat-4"] == {"conversation_id": "chat-4", "status": "error", "criteria": [], "score": None,
                             "error": "Диалог не оценён: нет запуска модели по этому чек-листу."}
+
+
+def skipped(criterion_id="c07", *, rng=None, evidence=(), answer="no"):
+    """A result where the operator skipped the action: no lines to quote, only what was checked."""
+    return CriterionResult(criterion_id=criterion_id, answer=answer, explanation="не сделал", confidence="high",
+                           points=None, effective_weight=None, model="claude-haiku-5-5", evidence=list(evidence),
+                           checked_range=None if rng is None else CheckedRange(**{"from": rng[0], "to": rng[1]}))
+
+
+def test_a_skipped_action_points_at_the_operator_lines_it_checked():
+    lines = conversation("chat-1").transcript  # operator at 0, 2, 4; client at 1, 3, 5
+    assert rx.evidence_turns(skipped(rng=(1, 4)), lines) == [3, 5]  # 1-based, over the full array
+    assert rx.evidence_turns(skipped(rng=(3, 3)), lines) == [4]  # only a client line: the range itself
+    assert rx.evidence_turns(skipped(rng=(-2, 99)), lines) == [1, 3, 5]  # clipped to the transcript
+    assert rx.evidence_turns(skipped(rng=(7, 9)), lines) == []  # nothing of it exists
+    assert rx.evidence_turns(skipped(rng=(4, 2)), lines) == []  # a reversed range is not guessed at
+    assert rx.evidence_turns(skipped(), lines) == []  # neither evidence nor range: no turns invented
+    assert rx.evidence_turns(skipped(answer="na"), lines) == []
+
+
+def test_a_range_without_operator_lines_is_given_whole():
+    lines = [Message(timestamp=f"00:0{i}", speaker=s, text=f"line {i}")
+             for i, s in enumerate(["client", "bot", "system", "client", "operator"])]
+    assert rx.evidence_turns(skipped(rng=(0, 3)), lines) == [1, 2, 3, 4]
+    assert rx.evidence_turns(skipped(rng=(0, 4)), lines) == [5]
+
+
+def test_evidence_lines_win_over_the_checked_range():
+    lines = conversation("chat-1").transcript
+    cited = [Evidence(message_index=4, quote="q", role="expected_here"), Evidence(message_index=1, quote="q", role="supports")]
+    assert rx.evidence_turns(skipped(rng=(0, 5), evidence=cited), lines) == [2, 5]
+    stale = [Evidence(message_index=40, quote="q", role="supports")]  # out of range: no valid turn, so the range
+    assert rx.evidence_turns(skipped(rng=(0, 3), evidence=stale), lines) == [1, 3]
+
+
+def test_the_checked_range_survives_the_store_and_backs_final_answers_too(client):
+    from app import store
+    store.upsert_conversation(conversation("chat-1"), None)
+    ev = run("CTRL:chat-1")
+    ev.results[6] = skipped(rng=(1, 5))  # closure: the operator never said goodbye
+    ev.results[6].final_answer = "yes"  # a reviewer disagreed; the checked lines stay the same
+    ev.original_total = "77.69"  # closure no: 50.5 of 65; the final total keeps the fixture's 85.38
+    store.insert_evaluation(ev)
+    for answers in ("original", "final"):
+        doc = rx.build(store, "CTRL", "official-chat", 1, team="gtbsbe", mode="external_api", answers=answers)
+        closure = next(c for c in doc["results"][0]["criteria"] if c["criterion_id"] == "closure")
+        assert closure["evidence_turns"] == [3, 5]
+        assert closure["value"] is (answers == "final")
+        assert rx.validate(doc, expect=1) == []
 
 
 def test_cli_writes_utf8_json_and_fails_on_a_wrong_count(client, tmp_path, capsys):

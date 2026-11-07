@@ -108,6 +108,54 @@ goes into those folders.
   appendix (missing criteria, wrong values, a score that does not follow from the values, not
   exactly 10 records). A dialogue that failed stays in the file as `status: "error"`. Commit
   only `results/prod/results.json` and push.
+- **Right before the final push**, re-check both committed files (reads only, writes nothing;
+  catches a BOM, NaN, duplicate keys, a signed URL, a wrong count, missing or extra ids, an
+  evidence turn past the transcript): `uv run python -m quality.results_export --check
+  ../results/dev/results.json --expect 65 --dev ../data/dev.json` and `... --check
+  ../results/prod/results.json --expect 10 --group <control group_id>`. Push only on `OK`.
+  `--group` reads the SQLite file at `DB_PATH` (`cqa.db` under `backend/` by default), so run it
+  from `backend/` against the same database as the server. `control_run` (below) runs this same
+  check over the server's API at the end of every run and `--export-only`, without that caveat.
+
+### Fallback: the control hour in one command
+
+The UI stays the primary path (it is what the jury sees). If clicking through is too slow or the
+UI misbehaves, one command drives the **running** server over HTTP, so it shares the server's
+database with the UI and everything it does shows up there:
+
+```sh
+cd backend
+uv run cqa-serve        # if it is not running yet (another terminal)
+uv run python -m quality.control_run --group <control group_id> --out ../results/prod/results.json --expect 10
+```
+
+It checks the server (`/config`), imports the group through the server (`GET /datasets/{group}`),
+dry-runs and starts the official checklist job (`official-chat` v1, reuse mode, role
+`controller`), polls it, retries failed dialogues once (`--retries`), then builds and validates the
+file with `quality.results_export` reading the server's API (never a guessed SQLite path),
+re-reads the written file with `--check`'s rules and cross-checks its ids and evidence turns
+against the group on the server, and prints the git commands to commit it. It never runs git
+itself.
+
+- Exit 0: valid, every record ok. Exit 1: written, but with problems, `status: "error"` records
+  or a timeout (`--timeout-minutes`, default 40); fix and re-export with `--export-only` (no model
+  calls), or commit it as it is when time is up. Exit 2: nothing written (no server, the import or
+  the job could not start, no conversations in the group).
+- Organisers' API down but they hand out a JSON file: `--from-json <file>` uploads it into
+  `--group` through `POST /conversations` (the full response, `{records}` or a bare list).
+- Group already imported or evaluated in the UI: `--skip-import`, or `--export-only` to only write
+  the file.
+- Rehearsal with ten DEV chats as a fake group (needs the model key; about 80 model calls):
+  `--group REHEARSAL --from-json ../data/dev.json --limit 10 --expect 10 --mode full --out
+  /tmp/rehearsal.json`. `--mode full` makes every criterion a fresh model call; in reuse mode
+  results already stored for the same text may be reused and the timing means nothing. Never
+  commit a rehearsal file.
+- **Measured on 7 November** (server on a scratch database, 10 DEV chats: 4 RU, 3 KZ, 3 EN,
+  official checklist, `claude-haiku-5-5`, `--mode full`): import to written, checked file in
+  **51 s**, 80 model calls, 0 failed, $0.036 in total ($0.0036 per dialogue). Exit 0;
+  `--export-only` re-export identical; `--check --dev` OK. 79 of 80 criteria got evidence turns;
+  the one empty list is an N/A with neither evidence nor checked range, which the appendix allows.
+  The hour is dominated by getting the `group_id`, the push and the PR, not by the evaluation.
 
 ## Rehearsal record
 
