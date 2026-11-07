@@ -5,6 +5,7 @@ data/dev.json
 data/audio/
 *.pdf
 graphify-out/
+presentation/
 
 # Build and tooling
 node_modules/
