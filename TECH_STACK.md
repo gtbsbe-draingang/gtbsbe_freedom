@@ -20,13 +20,13 @@ through the Claude API**. Results files say `mode: external_api`; never present 
 
 | Layer | Planned below | Built and running |
 |---|---|---|
-| UI | Web Components, WaveSurfer call player | Plain JS bundled to one `app.js` and one `app.css`, strict CSP, Dynamics mock form (e2e passes); own call player linked to the transcript (#77) |
+| UI | Web Components, WaveSurfer call player | Plain JS bundled to one `app.js` and one `app.css`, strict CSP, Dynamics mock form (e2e passes); waveform call player linked to the transcript (#77, #86) |
 | Backend | FastAPI, Pydantic, httpx, SQLite | As planned |
 | Brain (judges criteria) | Qwen3.8-27B-FP8, local | **Claude Haiku 5.5 via the API** (per-criterion override, e.g. Sonnet 5.5); one call per criterion, JSON schema output, every quote checked against the transcript, one retry, then «проверить» |
 | Ear (audio questions) | Qolda-AVL-9B, local | Not built |
 | Emotion specialist | emotion2vec+ large plus a trained head | Training script only (`training/emotion/`); the first full Kaggle run stopped on missing Dusha podcast audio, a fixed run is in progress; not used by the app |
-| Measurements | Silero VAD, Parselmouth | Energy-based speech detection plus Parselmouth pitch, rate and pauses; stored when alignment is on; overlap is null; the evaluator does not read them, so c09 is not scored |
-| Transcript to audio alignment | Per-call shift, checked against hand-labelled boundaries | Per-call shift, length guess, faster-whisper word snapping; listening check 29 of 30 within about 2 s (`backend/audio/README.md`) |
+| Measurements | Silero VAD, Parselmouth | Voiced speech detection (Praat pitch, 6 dB above the floor) plus Parselmouth pitch, rate and pauses; stored when alignment is on; overlap is null; the evaluator does not read them, so c09 is not scored |
+| Transcript to audio alignment | Per-call shift, checked against hand-labelled boundaries | Recording clock, separate delays for people and the bot, 15.4 chars/s, nearest voiced onset (#93): 86% of 168 lines within 2 s against an offline Whisper reference. Off by default until a listening check of this method passes |
 | STT fallback, diarization | Whisper-family ASR, pyannote | Not built (the brief supplies transcripts) |
 | Scoring | Plain Python | As planned: exact fractions, N/A redistribution, half-up rounding, gross error as a separate flag |
 | Admin checklists | Versions, fingerprints, reuse | As planned: immutable versions, fingerprint reuse, weight-only change makes zero model calls, dry run, comparison |
