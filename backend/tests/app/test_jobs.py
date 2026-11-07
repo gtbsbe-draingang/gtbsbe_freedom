@@ -15,7 +15,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import evaluator_port, jobs, store
-from app.models import ChecklistVersion, Evaluation, Job, JobItem
+from app.models import ChecklistVersion, Evaluation, Job, JobItem, StepAnswer
 from app.settings import get_settings
 from tests.app.fakes import FakeEvaluator, copy_body, ensure_official, load_dev_subset
 
@@ -379,20 +379,22 @@ def test_error_texts_never_carry_exception_messages(setup, fake: FakeEvaluator) 
 
 
 @pytest.mark.parametrize(
-    ("failure", "expected_error", "calls_per_criterion"),
+    ("failure", "expected_error", "calls"),
     [
+        # final refusal on the first criterion: the other seven are not launched
         (lambda: FakeEvaluator.JudgmentFailed("bad_answer", retryable=False), "bad_answer", 1),
-        (lambda: FakeEvaluator.JudgmentFailed("overloaded", retryable=True), "overloaded", 2),
-        (lambda: ValueError("x"), "ValueError", 2),
+        # retryable: every criterion is tried twice
+        (lambda: FakeEvaluator.JudgmentFailed("overloaded", retryable=True), "overloaded", 16),
+        (lambda: ValueError("x"), "ValueError", 16),
     ],
 )
-def test_retry_policy(setup, fake: FakeEvaluator, failure, expected_error, calls_per_criterion) -> None:
+def test_retry_policy(setup, fake: FakeEvaluator, failure, expected_error, calls) -> None:
     client, ids, official = setup()
     fake.fail_for = {FAILING}
     fake.failure = failure
     job = run(client, [FAILING], official)
     assert job["items"][0]["error"] == expected_error
-    assert fake.calls == 8 * calls_per_criterion
+    assert fake.calls == calls
 
 
 def test_model_key_missing_is_not_retried(setup, fake: FakeEvaluator) -> None:
@@ -401,7 +403,8 @@ def test_model_key_missing_is_not_retried(setup, fake: FakeEvaluator) -> None:
     fake.failure = lambda: FakeEvaluator.ModelKeyMissing()
     job = run(client, [FAILING], official)
     assert job["items"][0]["error"] == "model_key_missing"
-    assert fake.calls == 8
+    assert fake.calls == 1  # neither retried nor followed by the other criteria
+    assert fake.info_calls == 0
 
 
 def test_a_transient_failure_recovers_on_the_retry(setup, fake: FakeEvaluator) -> None:
@@ -409,7 +412,7 @@ def test_a_transient_failure_recovers_on_the_retry(setup, fake: FakeEvaluator) -
     fake.fail_for = {FAILING}
 
     def first_attempt_fails():
-        criterion_id = fake.judged[-1][1]
+        criterion_id = fake.current
         if sum(1 for _, cid in fake.judged if cid == criterion_id) == 1:
             return FakeEvaluator.JudgmentFailed("overloaded", retryable=True)
         return None
@@ -516,3 +519,161 @@ def test_cost_counts_only_new_calls(setup, fake: FakeEvaluator) -> None:
     job = run(client, ids[:1], official)
     ev = evaluation(client, job["items"][0]["evaluation_id"])
     assert Decimal(str(ev["cost_usd"])) == Decimal("0.009")
+
+
+# --- fix round 1 ---------------------------------------------------------------------------
+
+
+def test_start_item_failure_leaves_a_retryable_item(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    client, ids, official = setup()
+    real = store.start_item
+
+    def flaky(job_id: str, conversation: str):
+        if conversation == FAILING:
+            raise RuntimeError("database is locked at https://secret.example/?sig=LEAK")
+        return real(job_id, conversation)
+
+    monkeypatch.setattr(store, "start_item", flaky)
+    job = run(client, ids, official)
+    item = next(i for i in job["items"] if i["conversation"] == FAILING)
+    assert item["status"] == "queued" and job["status"] == "running" and job["done"] == 5
+    assert "RuntimeError" in caplog.text and "sig=" not in caplog.text
+
+    monkeypatch.setattr(store, "start_item", real)
+    retried = retry(client, job["id"])  # a queued item no run owns is picked up
+    assert retried["status"] == "done" and retried["done"] == 6
+
+
+def test_finish_item_failure_falls_back_to_store_failed(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, ids, official = setup()
+    real = store.finish_item
+
+    def flaky(job_id, conversation, *, evaluation=None, error=None):
+        if conversation == FAILING and error is None:
+            raise RuntimeError("disk I/O error")
+        return real(job_id, conversation, evaluation=evaluation, error=error)
+
+    monkeypatch.setattr(store, "finish_item", flaky)
+    job = run(client, ids, official)
+    item = next(i for i in job["items"] if i["conversation"] == FAILING)
+    assert (item["status"], item["error"]) == ("failed", "store_failed")
+
+    monkeypatch.setattr(store, "finish_item", real)
+    assert retry(client, job["id"])["done"] == 6
+
+
+def test_both_finish_attempts_failing_leaves_a_retryable_item(
+    setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, ids, official = setup()
+    real = store.finish_item
+
+    def broken(job_id, conversation, *, evaluation=None, error=None):
+        if conversation == FAILING:
+            raise RuntimeError("disk I/O error")
+        return real(job_id, conversation, evaluation=evaluation, error=error)
+
+    monkeypatch.setattr(store, "finish_item", broken)
+    job = run(client, ids, official)
+    item = next(i for i in job["items"] if i["conversation"] == FAILING)
+    assert item["status"] == "running"  # stuck in the database, but owned by no run
+
+    monkeypatch.setattr(store, "finish_item", real)
+    assert retry(client, job["id"])["done"] == 6
+
+
+def test_retry_does_not_reset_items_a_run_still_owns(setup, fake: FakeEvaluator) -> None:
+    client, ids, official = setup()
+    fake.delay = 0.05
+    started = client.post("/api/evaluations", json=body(ids, official)).json()
+    r = client.post(f"/api/jobs/{started['id']}/retry", json={"role": "controller"})
+    assert r.status_code == 200
+    assert r.json()["retries"] == []  # every unfinished item belongs to the running run
+    wait(client, started["id"])
+    assert fake.calls == 48  # nothing ran twice
+
+
+def test_retry_records_the_role(setup, fake: FakeEvaluator) -> None:
+    client, ids, official = setup()
+    fake.fail_for = {FAILING}
+    job = run(client, ids, official)
+    assert job["retries"] == []
+    fake.fail_for = set()
+    r = client.post(f"/api/jobs/{job['id']}/retry", json={"role": "reviewer"})
+    assert r.status_code == 200
+    retries = wait(client, job["id"])["retries"]
+    assert len(retries) == 1
+    assert retries[0]["role"] == "reviewer" and retries[0]["items"] == [FAILING]
+    assert datetime.fromisoformat(retries[0]["at"]).tzinfo is not None
+
+
+def test_invalid_cached_answer_counts_as_a_call(setup, fake: FakeEvaluator) -> None:
+    client, ids, official = setup()
+    run(client, ids[:1], official)
+    conv = store.get_conversation(ids[0])
+    c06 = next(c for c in official.criteria if c.id == "c06")
+    key = fake.reuse_key(conv, official, c06, "claude-haiku-5-5")
+    broken = store.get_judgments([key])[key].model_copy(update={"answer": StepAnswer(step=3)})
+    store.save_judgment(broken)  # not a step of c06's scale
+
+    assert dry_run(client, ids[:1], official) == {"total": 1, "model_calls": 1, "reused": 7}
+    fake.judged = []
+    job = run(client, ids[:1], official)
+    assert job["status"] == "done"
+    assert fake.judged == [(ids[0], "c06")]  # the run agrees with the estimate
+
+
+def test_invalid_cached_answer_needs_a_key(setup, fake: FakeEvaluator, monkeypatch: pytest.MonkeyPatch) -> None:
+    client, ids, official = setup()
+    run(client, ids[:1], official)
+    conv = store.get_conversation(ids[0])
+    c01 = official.criteria[0]
+    key = fake.reuse_key(conv, official, c01, "claude-haiku-5-5")
+    store.save_judgment(store.get_judgments([key])[key].model_copy(update={"answer": StepAnswer(step=1)}))
+    set_key(monkeypatch, False)
+    r = client.post("/api/evaluations", json=body(ids[:1], official))
+    assert r.status_code == 409 and r.json()["error"] == "model_key_missing"
+
+
+def test_two_jobs_share_the_limit(setup, fake: FakeEvaluator) -> None:
+    client, ids, official = setup(MAX_PARALLEL_CALLS="2")
+    fake.delay = 0.02
+    first = client.post("/api/evaluations", json=body(ids[:3], official, mode="full")).json()
+    second = client.post("/api/evaluations", json=body(ids[3:], official, mode="full")).json()
+    wait(client, first["id"])
+    wait(client, second["id"])
+    assert fake.calls == 48
+    assert fake.max_concurrency == 2
+
+
+def test_unknown_conversation_is_404_even_without_an_evaluator(
+    make_client: MakeClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    jobs.reset_evaluator()
+    monkeypatch.setattr(evaluator_port, "_import_evaluator", lambda: None)
+    client = make_client(**KEY)
+    official = ensure_official()
+    for dry in (True, False):
+        r = client.post("/api/evaluations", json=body(["DEV:nope"], official, dry_run=dry))
+        assert r.status_code == 404 and r.json()["error"] == "not_found"
+
+
+def test_no_call_outlives_its_failed_item(setup, fake: FakeEvaluator) -> None:
+    client, ids, official = setup()
+    fake.fail_for = {FAILING}
+
+    def c02_refused():
+        if fake.current == "c02":
+            return FakeEvaluator.JudgmentFailed("refused", retryable=False)
+        return None
+
+    fake.failure = c02_refused
+    job = run(client, [FAILING], official)
+    assert job["items"][0]["error"] == "refused"
+    # the siblings were all awaited before the item was resolved
+    assert fake.in_flight == 0
+    assert [kind for kind, _, _ in fake.events].count("end") == 8

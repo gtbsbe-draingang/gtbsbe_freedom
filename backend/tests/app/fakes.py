@@ -60,8 +60,9 @@ class FakeEvaluator:
         self.events: list[tuple[str, str, str]] = []  # ("start" | "end", conversation, criterion)
         self.fail_for: set[str] = set()  # conversation ids whose calls raise `failure()`
         # What a call for a conversation in fail_for raises: a fresh exception every time, or None
-        # for "this call succeeds" (`judged[-1]` is the call being made).
+        # for "this call succeeds". `current` is the criterion id of the call asking.
         self.failure = lambda: JudgmentFailed("model_timeout", retryable=True)
+        self.current: str | None = None
         self.answers: dict[str, Answer] = {}  # criterion id -> answer, instead of the default
         self.in_flight = 0
         self.max_concurrency = 0
@@ -90,6 +91,7 @@ class FakeEvaluator:
         try:
             await asyncio.sleep(self.delay)
             if conv.id in self.fail_for:
+                self.current = criterion.id  # no await before failure() reads it
                 exc = self.failure()
                 if exc is not None:
                     raise exc

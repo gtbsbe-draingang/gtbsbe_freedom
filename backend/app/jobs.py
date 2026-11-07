@@ -10,11 +10,15 @@ decides what needs a call, caches what comes back, scores in code and stores eve
 * **Dry run.** `plan_run` counts the calls a run would make, without making any.
 * **Order and limits.** Per dialogue the first uncached criterion is awaited alone, then the rest
   run at once, so they read the prompt cache the first call wrote (C's request). Dialogues run
-  concurrently; one semaphore per job (`settings.max_parallel_calls`) bounds the model calls in
-  flight across the whole job.
+  concurrently; one process-wide semaphore (`settings.max_parallel_calls`) bounds the model calls
+  in flight across all jobs. If the first call fails with ModelKeyMissing or a non-retryable
+  JudgmentFailed, the rest are not launched; otherwise every sibling call finishes before the
+  dialogue is resolved.
 * **Failures.** A criterion call is retried once, except on ModelKeyMissing or a non-retryable
   JudgmentFailed. A dialogue whose criterion still fails, or whose answer is invalid, ends
-  `failed` with a short error code; the others carry on. `retry_job` re-runs the failed items.
+  `failed` with a short error code; the others carry on. A store failure never leaves an item
+  stuck for good: `retry_job` re-runs failed items and queued or running ones no run of this
+  process owns, and records who retried in the job's `retries`.
   An item's error is never an exception's own text (it may carry a URL): it is C's
   `JudgmentFailed.reason`, `validation:<code>`, `scoring:<code>` or the exception's class name.
 * **Recovery.** `recover_interrupted` (at startup) fails the items a dead process left queued or
@@ -27,6 +31,7 @@ connection is held across an await.
 import asyncio
 import logging
 import uuid
+import weakref
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -136,17 +141,33 @@ def plan_run(
     reuse when its key is cached (and the mode is `reuse`), else a model call. `total` is the
     number of conversations. Blocking (database reads): call it off the event loop.
 
-    Raises ApiError 404 for an unknown conversation and 503 when there is no evaluator."""
-    evaluator = evaluator or get_evaluator()
+    A cached judgment counts as reused only when its answer is valid for the current criterion,
+    the same test the run applies (`_reusable`), so the estimate and the keyless 409 match the run.
+
+    Raises ApiError 404 for an unknown conversation (checked first) and 503 when there is no
+    evaluator."""
     convs = _load_conversations(_unique(conversations))
+    evaluator = evaluator or get_evaluator()
     keyed = [
-        (conv.id, c.id, evaluator.reuse_key(conv, version, c, model_for(c)))
+        (conv.id, c, evaluator.reuse_key(conv, version, c, model_for(c)))
         for conv in convs
         for c in version.criteria
     ]
     cached = store.get_judgments([key for _, _, key in keyed]) if mode == "reuse" else {}
-    work = [entry for entry in keyed if entry[2] not in cached]
+    work = [
+        (conversation, c.id, key)
+        for conversation, c, key in keyed
+        if _reusable(c, cached.get(key)) is None
+    ]
     return RunPlan(total=len(convs), model_calls=len(work), reused=len(keyed) - len(work), work=work)
+
+
+def _reusable(c: Criterion, cached: Judgment | None) -> Judgment | None:
+    """A cached judgment usable for `c`: its answer must fit the criterion. The key covers what the
+    criterion asks, not its id, so a renamed copy reuses it too, under its own id."""
+    if cached is None or validate_answer(c, cached.answer) is not None:
+        return None
+    return cached.model_copy(update={"criterion_id": c.id, "calls": []})
 
 
 def _require_key_for(plan: RunPlan) -> None:
@@ -226,25 +247,35 @@ async def dry_run(
     return await asyncio.to_thread(plan_run, ids, checklist, mode)
 
 
-async def retry_job(job_id: str, role: Role | None = None) -> Job:
-    """Re-run the job's failed items (and only those). A job with nothing failed is returned as
-    it is. 404 for an unknown job, 409 `model_key_missing` when the failed items need model calls
-    and no key is configured (nothing is reset then)."""
+async def retry_job(job_id: str, role: Role) -> Job:
+    """Re-run the job's unfinished items: the failed ones, and queued or running ones that no run
+    of this process owns (left behind by a store failure). Done items are never re-run. A job with
+    nothing to retry is returned as it is. The retry is recorded in the job's `retries` with
+    `role`. 404 for an unknown job, 409 `model_key_missing` when those items need model calls and
+    no key is configured (nothing is reset then)."""
     job = await asyncio.to_thread(store.get_job, job_id)
     context = await asyncio.to_thread(store.get_job_checklist, job_id)
     if job is None or context is None:
         raise _not_found(f"No job {job_id!r}.")
-    failed = [item.conversation for item in job.items if item.status == "failed"]
-    if not failed:
+    owned = _owned_items(job_id)
+    candidates = [
+        item.conversation
+        for item in job.items
+        if item.status == "failed" or (item.status in ("queued", "running") and item.conversation not in owned)
+    ]
+    if not candidates:
         return job
     checklist_id, version, _ = context
     checklist = await asyncio.to_thread(load_version, checklist_id, version)
-    plan = await asyncio.to_thread(plan_run, failed, checklist, job.mode)
+    plan = await asyncio.to_thread(plan_run, candidates, checklist, job.mode)
     _require_key_for(plan)
 
-    reset = await asyncio.to_thread(store.requeue_failed_items, job_id, failed)
+    # Ownership is read again: a run scheduled while we were planning keeps its items.
+    owned = _owned_items(job_id)
+    candidates = [conversation for conversation in candidates if conversation not in owned]
+    reset = await asyncio.to_thread(store.requeue_items, job_id, candidates, role)
     if reset:
-        logger.info("Job %s: %d failed item(s) retried by %s", job_id, len(reset), role)
+        logger.info("Job %s: %d item(s) retried by %s", job_id, len(reset), role)
         _schedule(job_id, reset)
     refreshed = await asyncio.to_thread(store.get_job, job_id)
     assert refreshed is not None  # jobs are never deleted
@@ -262,35 +293,53 @@ def recover_interrupted() -> None:
 # --- background tasks ----------------------------------------------------------------------
 
 # Runs in flight, by job id. The event loop only holds tasks weakly, so this keeps them alive; it
-# also lets tests (and shutdown) wait for them. One semaphore per job, shared by every run of it
-# (a retry while the first run is still going stays under the same limit).
+# also lets tests (and shutdown) wait for them. `_remaining` holds, per run, the items it has not
+# finished yet: the items "owned" by this process, which a retry must not reset.
 _tasks: dict[str, set[asyncio.Task[None]]] = {}
-_semaphores: dict[str, asyncio.Semaphore] = {}
+_remaining: dict[asyncio.Task[None], set[str]] = {}
+
+# One semaphore for all jobs: model calls in flight across the whole process stay under
+# settings.max_parallel_calls. An asyncio primitive belongs to one event loop, so there is one per
+# running loop (tests run several), created lazily and dropped with its loop.
+_semaphores: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore]" = (
+    weakref.WeakKeyDictionary()
+)
 
 
 def _schedule(job_id: str, conversations: list[str]) -> None:
     task = asyncio.get_running_loop().create_task(run_job(job_id, conversations))
     _tasks.setdefault(job_id, set()).add(task)
+    _remaining[task] = set(conversations)
     task.add_done_callback(lambda done: _forget(job_id, done))
 
 
 def _forget(job_id: str, task: asyncio.Task[None]) -> None:
+    _remaining.pop(task, None)
     running = _tasks.get(job_id)
-    if running is None:
-        return
-    running.discard(task)
-    if not running:
-        del _tasks[job_id]
-        _semaphores.pop(job_id, None)
+    if running is not None:
+        running.discard(task)
+        if not running:
+            del _tasks[job_id]
     if not task.cancelled() and task.exception() is not None:
         # run_job handles every failure itself; reaching here is a bug. Type only, as everywhere.
         logger.error("Job %s run ended with %s", job_id, type(task.exception()).__name__)
 
 
-def _semaphore(job_id: str) -> asyncio.Semaphore:
-    if job_id not in _semaphores:
-        _semaphores[job_id] = asyncio.Semaphore(max(1, get_settings().max_parallel_calls))
-    return _semaphores[job_id]
+def _owned_items(job_id: str) -> set[str]:
+    """The job's items that a run of this process still has to finish."""
+    owned: set[str] = set()
+    for task in _tasks.get(job_id, ()):
+        if not task.done():
+            owned |= _remaining.get(task, set())
+    return owned
+
+
+def _semaphore() -> asyncio.Semaphore:
+    loop = asyncio.get_running_loop()
+    semaphore = _semaphores.get(loop)
+    if semaphore is None:
+        semaphore = _semaphores[loop] = asyncio.Semaphore(max(1, get_settings().max_parallel_calls))
+    return semaphore
 
 
 async def wait_for_job(job_id: str) -> None:
@@ -336,16 +385,19 @@ async def run_job(job_id: str, conversations: list[str] | None = None) -> None:
     checklist_id, version_number, _ = context
     version = await asyncio.to_thread(store.get_checklist_version, checklist_id, version_number)
     evaluator = find_evaluator()
-    semaphore = _semaphore(job_id)
-    # _run_item handles its own failures; return_exceptions keeps one database error from
-    # abandoning the other items' results.
-    await asyncio.gather(
+    semaphore = _semaphore()
+    remaining = _remaining.get(asyncio.current_task(), set())  # type: ignore[arg-type]
+    items = _unique(conversations)
+    outcomes = await asyncio.gather(
         *(
-            _run_item(job_id, conversation, version, job.mode, evaluator, semaphore)
-            for conversation in _unique(conversations)
+            _run_item(job_id, conversation, version, job.mode, evaluator, semaphore, remaining)
+            for conversation in items
         ),
         return_exceptions=True,
     )
+    for conversation, outcome in zip(items, outcomes, strict=True):
+        if isinstance(outcome, BaseException):  # _run_item catches everything: a bug if reached
+            logger.error("Item %s of job %s ended with %s", conversation, job_id, type(outcome).__name__)
 
 
 async def _run_item(
@@ -355,8 +407,28 @@ async def _run_item(
     mode: Mode,
     evaluator: EvaluatorPort | None,
     semaphore: asyncio.Semaphore,
+    remaining: set[str],
 ) -> None:
-    evaluation_id = await asyncio.to_thread(store.start_item, job_id, conversation)
+    try:
+        await _run_claimed_item(job_id, conversation, version, mode, evaluator, semaphore)
+    finally:
+        remaining.discard(conversation)  # no longer owned: a retry may reset it
+
+
+async def _run_claimed_item(
+    job_id: str,
+    conversation: str,
+    version: ChecklistVersion | None,
+    mode: Mode,
+    evaluator: EvaluatorPort | None,
+    semaphore: asyncio.Semaphore,
+) -> None:
+    try:
+        evaluation_id = await asyncio.to_thread(store.start_item, job_id, conversation)
+    except Exception as exc:
+        # The item stays queued and unowned: POST /jobs/{id}/retry picks it up.
+        logger.error("Could not start %s in job %s: %s", conversation, job_id, type(exc).__name__)
+        return
     if evaluation_id is None:
         return  # not queued: another run has it
     evaluation: Evaluation | None = None
@@ -377,11 +449,19 @@ async def _run_item(
         logger.error("Evaluation of %s in job %s failed: %s", conversation, job_id, error)
     try:
         await asyncio.to_thread(store.finish_item, job_id, conversation, evaluation=evaluation, error=error)
-        if evaluation is not None and error is None and evaluated_hash is not None:
-            await asyncio.to_thread(store.mark_conversation_evaluated, conversation, evaluated_hash)
     except Exception as exc:
-        # The item stays `running` until the next startup marks it interrupted.
         logger.error("Could not store the outcome of %s in job %s: %s", conversation, job_id, type(exc).__name__)
+        try:
+            await asyncio.to_thread(store.finish_item, job_id, conversation, error="store_failed")
+        except Exception as again:
+            # Left `running` and unowned: a retry (or the next startup) resets it.
+            logger.error("Could not mark %s in job %s failed: %s", conversation, job_id, type(again).__name__)
+        return
+    if evaluation is not None and error is None and evaluated_hash is not None:
+        try:
+            await asyncio.to_thread(store.mark_conversation_evaluated, conversation, evaluated_hash)
+        except Exception as exc:
+            logger.error("Could not update the status of %s: %s", conversation, type(exc).__name__)
 
 
 @dataclass
@@ -390,6 +470,7 @@ class _Judged:
     error: str | None = None
     reused: bool = False
     cost: Decimal = Decimal(0)
+    fatal: bool = False  # no point in calling the other criteria (no key, or a final refusal)
 
 
 async def _evaluate(
@@ -412,11 +493,9 @@ async def _evaluate(
     judged: dict[str, _Judged] = {}
     pending: list[Criterion] = []
     for c in version.criteria:
-        hit = cached.get(keys[c.id])
-        if hit is not None and validate_answer(c, hit.answer) is None:
-            # The key covers what the criterion asks, not its id: a renamed copy reuses it too.
-            judgment = hit.model_copy(update={"criterion_id": c.id, "reuse_key": keys[c.id], "calls": []})
-            judged[c.id] = _Judged(judgment=judgment, reused=True)
+        reusable = _reusable(c, cached.get(keys[c.id]))
+        if reusable is not None:
+            judged[c.id] = _Judged(judgment=reusable.model_copy(update={"reuse_key": keys[c.id]}), reused=True)
         else:
             pending.append(c)
 
@@ -432,10 +511,19 @@ async def _evaluate(
 
     if pending:
         await judge(pending[0])  # alone: the rest then read the prompt cache it wrote
+        first = judged[pending[0].id]
+        if first.fatal:
+            raise _ItemFailed(first.error or "failed")  # the rest would fail the same way
     rest = [judge(c) for c in pending[1:]]
     if wants_info:
         rest.append(info())
-    await asyncio.gather(*rest)
+    # Every sibling call finishes before the item is resolved: no call outlives its item.
+    outcomes = await asyncio.gather(*rest, return_exceptions=True)
+    unexpected = next((o for o in outcomes if isinstance(o, BaseException)), None)
+    if unexpected is not None:
+        if not isinstance(unexpected, Exception):
+            raise unexpected  # cancellation and the like are not an item failure
+        raise _ItemFailed(type(unexpected).__name__)
 
     for c in version.criteria:  # the first failure in checklist order names the item's error
         if judged[c.id].error is not None:
@@ -471,12 +559,13 @@ async def _judge(
                 judgment = await evaluator.judge_criterion(conv, version, c, model=model_for(c))
             break
         except model_key_missing:
-            return _Judged(error="model_key_missing")
+            return _Judged(error="model_key_missing", fatal=True)
         except judgment_failed as exc:
             reason = getattr(exc, "reason", None)
             error = _short(reason) if isinstance(reason, str) and reason else type(exc).__name__
-            if not getattr(exc, "retryable", False) or attempt == 2:
-                return _Judged(error=error)
+            retryable = bool(getattr(exc, "retryable", False))
+            if not retryable or attempt == 2:
+                return _Judged(error=error, fatal=not retryable)
         except Exception as exc:
             if attempt == 2:
                 return _Judged(error=type(exc).__name__)

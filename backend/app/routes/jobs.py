@@ -26,5 +26,6 @@ def get_job(job_id: str) -> dict[str, Any]:
 
 @router.post("/jobs/{job_id}/retry")
 async def retry_job(job_id: str, request: RetryRequest) -> dict[str, Any]:
-    """Re-run the job's failed items; the job as it is now (items back to `queued`)."""
+    """Re-run the job's unfinished items; the job as it is now (items back to `queued`, the retry
+    recorded with its role in `retries`)."""
     return dump(await jobs.retry_job(job_id, request.role))

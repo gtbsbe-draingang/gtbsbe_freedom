@@ -37,6 +37,7 @@ from app.models import (
     Evaluation,
     Job,
     JobItem,
+    JobRetry,
     Judgment,
     Role,
     VoiceMeasurement,
@@ -655,10 +656,12 @@ def finish_item(
         _write_job(conn, job)
 
 
-def requeue_failed_items(job_id: str, conversations: list[str]) -> list[str]:
-    """Put the job's failed items among `conversations` back to `queued` (their evaluations too)
-    and return the ones that were reset. Items that are no longer failed are left alone, so two
-    retries at once never run an item twice."""
+def requeue_items(job_id: str, conversations: list[str], role: Role) -> list[str]:
+    """Put the job's items among `conversations` that are failed, or queued or running without a
+    run of this process owning them (the caller decides which those are), back to `queued` (their
+    evaluations too). Records the retry (`role`, time, the items) in the job's `retries` and
+    returns the items reset. Done items are never touched; a run claims an item before working on
+    it (`start_item`), so an item reset twice is still run once."""
     wanted = set(conversations)
     reset: list[str] = []
     with write_transaction() as conn:
@@ -667,11 +670,12 @@ def requeue_failed_items(job_id: str, conversations: list[str]) -> list[str]:
             return reset
         job = Job.model_validate_json(row["json"])
         for item in job.items:
-            if item.conversation in wanted and item.status == "failed" and item.evaluation_id:
+            if item.conversation in wanted and item.status != "done" and item.evaluation_id:
                 item.status, item.error = "queued", None
                 _set_evaluation_status(conn, item.evaluation_id, "queued")
                 reset.append(item.conversation)
         if reset:
+            job.retries.append(JobRetry(role=role, at=_now(), items=reset))
             _write_job(conn, job)
     return reset
 
