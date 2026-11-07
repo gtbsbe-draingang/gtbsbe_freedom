@@ -2523,6 +2523,48 @@
     "queue.tag.grossError": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
     "queue.tag.needsReview": "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443",
     "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u0447\u0430\u0441\u0442\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "queue.groupFilter": "\u041D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445",
+    "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
+    "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
+    "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+    "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
+    "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+    "loader.group": "\u0413\u0440\u0443\u043F\u043F\u0430 \u043F\u043E group_id",
+    "loader.groupHint": "\u0414\u0438\u0430\u043B\u043E\u0433\u0438 \u043F\u0440\u0438\u0434\u0443\u0442 \u043E\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 \u043D\u0430\u0448 \u0441\u0435\u0440\u0432\u0435\u0440.",
+    "loader.groupPlaceholder": "\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, CTRL",
+    "loader.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
+    "loader.importing": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0433\u0440\u0443\u043F\u043F\u0443 {group}\u2026",
+    "loader.file": "\u0424\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438 (JSON)",
+    "loader.fileHint": "\u041E\u0434\u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C, \u043C\u0430\u0441\u0441\u0438\u0432 \u0437\u0430\u043F\u0438\u0441\u0435\u0439 \u0438\u043B\u0438 \u0432\u0435\u0441\u044C \u043E\u0442\u0432\u0435\u0442 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432.",
+    "loader.uploading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0444\u0430\u0439\u043B {name}\u2026",
+    "loader.summary": "\u0412\u0441\u0435\u0433\u043E {total} \xB7 \u043D\u043E\u0432\u044B\u0445 {imported} \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E {updated} \xB7 \u0431\u0435\u0437 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439 {unchanged}",
+    "loader.summaryGroup": "\u041D\u0430\u0431\u043E\u0440 {group}",
+    "loader.error.not_json": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432 \u0444\u043E\u0440\u043C\u0430\u0442\u0435 JSON.",
+    "loader.error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
+    "loader.error.bad_record": "\u0417\u0430\u043F\u0438\u0441\u044C \u2116{n} \u0432 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430: \u043D\u0443\u0436\u043D\u044B conversation_id, channel, language \u0438 transcript.",
+    "loader.error.read": "\u0424\u0430\u0439\u043B \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C.",
+    "batch.label": "\u041F\u0430\u043A\u0435\u0442\u043D\u0430\u044F \u043E\u0446\u0435\u043D\u043A\u0430",
+    "batch.selected": "\u0412\u044B\u0431\u0440\u0430\u043D\u043E: {n}",
+    "batch.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442",
+    "batch.estimating": "\u0421\u0447\u0438\u0442\u0430\u044E, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0437\u043E\u0432\u043E\u0432\u2026",
+    "batch.estimate": "{dialogs} \xB7 {calls} \u043C\u043E\u0434\u0435\u043B\u0438 \xB7 {cached} \u0438\u0437 \u043A\u044D\u0448\u0430",
+    "batch.run": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0435",
+    "batch.clear": "\u0421\u043D\u044F\u0442\u044C \u0432\u044B\u0431\u043E\u0440",
+    "batch.keyMissing": "\u043D\u0443\u0436\u0435\u043D \u043A\u043B\u044E\u0447 \u043C\u043E\u0434\u0435\u043B\u0438: \u0447\u0430\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0443 \u043C\u043E\u0434\u0435\u043B\u0438",
+    "batch.progress": "\u041E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.failed": "\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C: {n}",
+    "batch.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u044B\u0435",
+    "batch.done": "\u0413\u043E\u0442\u043E\u0432\u043E: \u043E\u0446\u0435\u043D\u0435\u043D\u043E {done} \u0438\u0437 {total}",
+    "batch.starting": "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "batch.interrupted": "\u0421\u0432\u044F\u0437\u044C \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C \u043F\u0440\u0435\u0440\u0432\u0430\u043B\u0430\u0441\u044C \u043D\u0430 {done} \u0438\u0437 {total}: \u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442\u0441\u044F \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435.",
+    "batch.resume": "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0438\u0442\u044C",
+    "batch.dialogs.one": "{n} \u0434\u0438\u0430\u043B\u043E\u0433",
+    "batch.dialogs.few": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u0430",
+    "batch.dialogs.many": "{n} \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
+    "batch.calls.one": "{n} \u0432\u044B\u0437\u043E\u0432",
+    "batch.calls.few": "{n} \u0432\u044B\u0437\u043E\u0432\u0430",
+    "batch.calls.many": "{n} \u0432\u044B\u0437\u043E\u0432\u043E\u0432",
     "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
     "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
     "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
@@ -2714,6 +2756,17 @@
   }
   function t(key, params) {
     return has(messages, key) ? format(messages[key], params) : key;
+  }
+  function pluralForm(n) {
+    const abs = Math.abs(Math.trunc(Number(n)));
+    const ten = abs % 10;
+    const hundred = abs % 100;
+    if (ten === 1 && hundred !== 11) return "one";
+    if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "few";
+    return "many";
+  }
+  function tp(base, n, params = {}) {
+    return t(`${base}.${pluralForm(n)}`, { ...params, n });
   }
 
   // src/ui/dom.js
@@ -3207,6 +3260,23 @@
       // the criterion id whose evidence is marked in the transcript
     };
     let destroyed = false;
+    let pendingSel = null;
+    function followShared(ref) {
+      pendingSel = null;
+      if (destroyed || !ref || id === null) return;
+      if (view.sel && view.sel.checklist_id === ref.checklist_id && view.sel.version === ref.version) return;
+      if (view.busy) {
+        pendingSel = ref;
+        return;
+      }
+      if (!view.options.some((o) => o.checklist_id === ref.checklist_id && o.version === ref.version)) {
+        boot();
+        return;
+      }
+      view.sel = { checklist_id: ref.checklist_id, version: ref.version };
+      fillSelect();
+      loadSelection();
+    }
     let loadRun = 0;
     let drawer = null;
     const unwatch = [];
@@ -3392,6 +3462,7 @@
       } finally {
         view.busy = false;
         paintBar();
+        if (pendingSel) followShared(pendingSel);
       }
     }
     function run(mode) {
@@ -3689,6 +3760,12 @@
       transcript.highlight(criterion.id, result.evidence, result.checked_range, criterion.title);
       transcript.focusMessage(item.message_index);
     }
+    unwatch.push(
+      watch(store, (state) => state.queueRefresh, () => {
+        if (!view.busy && view.phase === "ready" && view.sel) loadSelection({ quiet: true });
+      })
+    );
+    unwatch.push(watch(store, (state) => state.checklistSel, (ref) => followShared(ref)));
     unwatch.push(store.subscribe((state, previous) => {
       if (state.role === previous.role) return;
       if (state.role !== "controller") drawer?.close();
@@ -3729,6 +3806,10 @@
     }
     return marks;
   }
+  function shownKey(conversation) {
+    const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+    return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
+  }
   function openId2(store, args) {
     if (typeof args?.id === "string" && args.id !== "") return args.id;
     const { route: route2, conversationId } = store.get();
@@ -3764,6 +3845,8 @@
     let loaded = false;
     let marked = [];
     let pending2 = { highlight: null, focus: null };
+    let lastHighlight = null;
+    let shown = null;
     const flashTimers = /* @__PURE__ */ new Map();
     function clearMarks() {
       for (const i of marked) {
@@ -3776,7 +3859,8 @@
     }
     function applyHighlight(criterionId, evidence, range, label) {
       clearMarks();
-      if (criterionId === null || criterionId === void 0) return;
+      lastHighlight = criterionId === null || criterionId === void 0 ? null : [criterionId, evidence, range, label];
+      if (lastHighlight === null) return;
       const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
       const plan = highlightPlan(rows.length, evidence, range);
       plan.forEach((mark, i) => {
@@ -3834,6 +3918,7 @@
       rows = [];
       marked = [];
       loaded = true;
+      shown = shownKey(conversation);
       if (transcript.length === 0) {
         scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
       } else {
@@ -3873,15 +3958,36 @@
         showError(error);
       }
     }
+    async function refresh() {
+      if (destroyed || id === null) return;
+      if (!loaded) {
+        load2();
+        return;
+      }
+      const mine = ++run;
+      try {
+        const conversation = await api.getConversation(id);
+        if (destroyed || mine !== run || shownKey(conversation) === shown) return;
+        const top = scroller.scrollTop;
+        if (pending2.highlight === null && lastHighlight !== null) pending2.highlight = lastHighlight;
+        show(conversation);
+        scroller.scrollTop = top;
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        toastError(store, error, { retry: refresh });
+      }
+    }
     function destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopRefresh();
       flashTimers.forEach((timer) => clearTimeout(timer));
       flashTimers.clear();
       if (store.get().transcript === handle) store.set({ transcript: null });
       const hook2 = window.__cqaTest;
       if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
     }
+    const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
     if (hook?.store === store) hook.transcript = { focusMessage, highlight };
@@ -4399,6 +4505,404 @@
     };
   }
 
+  // src/ui/job-runner.js
+  var POLL_MS3 = 500;
+  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  async function followJob(api, first, onTick, { pollMs = POLL_MS3 } = {}) {
+    let job = first;
+    onTick(job, !jobSettled(job));
+    while (!jobSettled(job)) {
+      await sleep2(pollMs);
+      job = await api.getJob(job.id);
+      onTick(job, !jobSettled(job));
+    }
+    return job;
+  }
+  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+  function jobSlot(store, api, key, { pollMs = POLL_MS3 } = {}) {
+    const state = () => store.get().jobs?.[key] ?? null;
+    const put = (patch) => store.set((current2) => {
+      const jobs = { ...current2.jobs ?? {} };
+      if (patch === null) delete jobs[key];
+      else jobs[key] = { lock: null, job: null, meta: null, ...jobs[key], ...patch };
+      return { jobs };
+    });
+    const busy = () => (state()?.lock ?? null) !== null;
+    async function follow(first) {
+      put({ lock: "watching", job: snapshot(first, !jobSettled(first)) });
+      try {
+        const job = await followJob(api, first, (tick, running) => put({ job: snapshot(tick, running) }), { pollMs });
+        put({ lock: null, job: snapshot(job, false) });
+        store.set((current2) => ({ queueRefresh: (current2.queueRefresh ?? 0) + 1 }));
+        return job;
+      } catch (error) {
+        put({ lock: "interrupted" });
+        toastError(store, error, { retry: resume });
+        return null;
+      }
+    }
+    async function resume() {
+      const slot = state();
+      const id = slot?.job?.id;
+      if (!id || slot.lock !== "interrupted") return null;
+      put({ lock: "resuming" });
+      let job;
+      try {
+        job = await api.getJob(id);
+      } catch (error) {
+        const gone = error?.code === "not_found";
+        put(gone ? { lock: null, job: null } : { lock: "interrupted" });
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return null;
+      }
+      return follow(job);
+    }
+    async function start(request, { again, meta } = {}) {
+      if (busy()) return null;
+      put(meta === void 0 ? { lock: "starting" } : { lock: "starting", meta });
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        put({ lock: null });
+        toastError(store, error, { retry: again });
+        return null;
+      }
+      return follow(first);
+    }
+    function retry() {
+      const id = state()?.job?.id;
+      if (busy() || !id) return Promise.resolve(null);
+      return start(() => api.retryJob(id), { again: retry });
+    }
+    function reset() {
+      if (!busy() && state() !== null) put(null);
+    }
+    return { state, busy, start, resume, retry, reset, watch: (fn) => watch(store, (current2) => current2.jobs?.[key] ?? null, fn) };
+  }
+
+  // src/ui/loader.js
+  var ESTIMATE_DELAY_MS = 250;
+  var BATCH_SLOT = "batch";
+  function uploadErrorText(code) {
+    const match = /^bad_record:(\d+)$/.exec(String(code ?? ""));
+    if (match) return t("loader.error.bad_record", { n: Number(match[1]) + 1 });
+    if (code === "not_json" || code === "no_records") return t(`loader.error.${code}`);
+    return t("loader.error.read");
+  }
+  function estimateText(dry) {
+    return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
+  }
+  var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
+  function readText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+      reader.readAsText(file);
+    });
+  }
+  function openLoader({ host, store, api, onImported }) {
+    let closed = false;
+    let busy = false;
+    const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
+    const result = h("div", { class: "cqa-ld-result" });
+    const groupInput = h("input", {
+      class: "cqa-sc-select",
+      attrs: { type: "text", autocomplete: "off", spellcheck: "false", placeholder: t("loader.groupPlaceholder"), "aria-label": t("loader.group") },
+      data: { test: "group-id" },
+      on: { input: () => paint() }
+    });
+    const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
+    const fileInput = h("input", {
+      class: "cqa-ld-file",
+      attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
+      data: { test: "upload-file" },
+      on: { change: () => upload() }
+    });
+    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
+    function paint() {
+      importButton.disabled = busy || groupInput.value.trim() === "";
+      groupInput.disabled = busy;
+      fileInput.disabled = busy;
+    }
+    function showError(text2) {
+      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text2, data: { test: "loader-error" } }));
+    }
+    function showSummary(summary) {
+      clear(result).append(
+        h("p", { class: "cqa-ld-summary", text: summaryText(summary), data: { test: "import-summary" } }),
+        summary.group_id ? h("p", { class: "cqa-rv-hint", text: t("loader.summaryGroup", { group: summary.group_id }), data: { test: "import-group-name" } }) : null
+      );
+    }
+    async function run(label, action) {
+      if (busy || closed) return;
+      busy = true;
+      status.textContent = label;
+      paint();
+      try {
+        const summary = await action();
+        if (summary) {
+          if (!closed) showSummary(summary);
+          onImported?.(summary);
+        }
+      } catch (error) {
+        if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
+      } finally {
+        busy = false;
+        status.textContent = "";
+        if (!closed) paint();
+      }
+    }
+    function importGroup() {
+      const group = groupInput.value.trim();
+      if (group === "") return;
+      run(t("loader.importing", { group }), () => api.importDataset(group));
+    }
+    function upload() {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      run(t("loader.uploading", { name: file.name }), async () => {
+        try {
+          const text2 = await readText(file);
+          parseUpload(text2);
+          return await api.uploadConversations(JSON.parse(text2.replace(/^﻿/, "")));
+        } finally {
+          fileInput.value = "";
+        }
+      });
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
+      h(
+        "form",
+        {
+          class: "cqa-ap-form",
+          on: {
+            submit: (event) => {
+              event.preventDefault();
+              importGroup();
+            }
+          }
+        },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.group") }), groupInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.groupHint") }),
+        h("div", { class: "cqa-rv-acts" }, importButton)
+      ),
+      h(
+        "div",
+        { class: "cqa-ap-form" },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") })
+      ),
+      status,
+      result,
+      h("div", { class: "cqa-rv-acts" }, closeButton)
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("loader.close") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "loader" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.remove();
+    }
+    paint();
+    host.append(el);
+    groupInput.focus();
+    return { el, close };
+  }
+  var versionsOf2 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  function createBatchBar(store, api) {
+    const view = {
+      ready: false,
+      // config and checklists loaded
+      server: null,
+      options: [],
+      // [{checklist_id, version, label}]
+      estimate: null,
+      // the dry-run answer for the current selection and checklist
+      estimating: false
+    };
+    const slot = jobSlot(store, api, BATCH_SLOT);
+    const busy = () => slot.busy();
+    let destroyed = false;
+    let estimateTimer = null;
+    let estimateRun = 0;
+    let booting = null;
+    const stops = [];
+    const host = h("div", { class: "cqa-batch-host" });
+    const count = h("b", { class: "cqa-batch-count" });
+    const select = h("select", {
+      class: "cqa-sc-select",
+      attrs: { "aria-label": t("batch.checklist") },
+      data: { test: "batch-checklist" },
+      on: {
+        change: () => {
+          const option = view.options[Number(select.value)];
+          if (!option) return;
+          store.set({ checklistSel: { checklist_id: option.checklist_id, version: option.version } });
+        }
+      }
+    });
+    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "batch-estimate" } });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("batch.run"), data: { test: "batch-run" }, on: { click: () => runBatch() } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing"), data: { test: "batch-key-hint" } });
+    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "batch-progress" } });
+    const bar = h(
+      "section",
+      { class: "cqa-batch", attrs: { "aria-label": t("batch.label") }, data: { test: "batch-bar" } },
+      h(
+        "div",
+        { class: "cqa-batch-row" },
+        count,
+        h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: /* @__PURE__ */ new Set() }) } })
+      ),
+      h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
+      estimate,
+      hint,
+      h("div", { class: "cqa-batch-row" }, runButton),
+      progress
+    );
+    let checklists = [];
+    const selection = () => store.get().selection ?? /* @__PURE__ */ new Set();
+    const current2 = () => pickSelection(store.get().checklistSel, view.server, checklists);
+    function paint() {
+      if (destroyed) return;
+      const picked = selection();
+      const active = busy();
+      const show = picked.size > 0 || active;
+      if (!show) {
+        host.replaceChildren();
+        return;
+      }
+      if (!bar.isConnected) host.replaceChildren(bar);
+      count.textContent = t("batch.selected", { n: picked.size });
+      const sel = current2();
+      const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
+      if (at >= 0) select.value = String(at);
+      select.disabled = active || view.options.length === 0;
+      if (view.estimate) estimate.textContent = estimateText(view.estimate);
+      else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
+      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
+      hint.hidden = !keyMissing;
+      runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
+      clear(progress);
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } })
+        );
+      } else if (job) {
+        const running = lock === "watching";
+        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        if (job.failed > 0) {
+          progress.append(
+            h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
+            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } })
+          );
+        }
+      }
+    }
+    function boot() {
+      booting ?? (booting = Promise.all([api.getConfig(), api.listChecklists()]).then(
+        ([server, rows]) => {
+          if (destroyed) return;
+          view.server = server;
+          checklists = rows;
+          view.options = rows.flatMap(
+            (row) => [...versionsOf2(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+          );
+          clear(select);
+          view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
+          view.ready = true;
+          scheduleEstimate();
+        },
+        (error) => {
+          booting = null;
+          if (!destroyed) toastError(store, error);
+        }
+      ));
+      return booting;
+    }
+    function scheduleEstimate() {
+      clearTimeout(estimateTimer);
+      estimateRun += 1;
+      view.estimate = null;
+      const picked = [...selection()];
+      if (picked.length === 0 || !view.ready) {
+        view.estimating = false;
+        paint();
+        return;
+      }
+      view.estimating = true;
+      paint();
+      const mine = estimateRun;
+      estimateTimer = setTimeout(async () => {
+        const sel = current2();
+        if (!sel) return;
+        try {
+          const dry = await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, dry_run: true });
+          if (destroyed || mine !== estimateRun) return;
+          view.estimate = dry;
+        } catch (error) {
+          if (destroyed || mine !== estimateRun) return;
+          toastError(store, error, { retry: scheduleEstimate });
+        }
+        view.estimating = false;
+        paint();
+      }, ESTIMATE_DELAY_MS);
+    }
+    function runBatch() {
+      const sel = current2();
+      const picked = [...selection()];
+      if (busy() || !sel || picked.length === 0) return void 0;
+      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
+    }
+    stops.push(
+      watch(store, (state) => state.selection, (next) => {
+        slot.reset();
+        if ((next?.size ?? 0) > 0) boot();
+        scheduleEstimate();
+      }),
+      watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+      slot.watch((next, previous) => {
+        if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
+        else paint();
+      })
+    );
+    if (selection().size > 0) boot();
+    paint();
+    return {
+      el: host,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(estimateTimer);
+        stops.forEach((stop) => stop());
+      }
+    };
+  }
+
   // src/ui/queue.js
   var IMPORT_ON_EMPTY = "DEV";
   var TOPIC_MAX = 80;
@@ -4441,8 +4945,10 @@
       language: "",
       remote: null,
       // { q, ids: Set } from the server's text search
-      groups: false
+      groups: false,
       // more than one group is loaded: rows then name theirs
+      group: store.get().queueGroup ?? ""
+      // "" = every group; store `queueGroup`, set by an import
     };
     const rows = /* @__PURE__ */ new Map();
     const firstLines = /* @__PURE__ */ new Map();
@@ -4474,12 +4980,85 @@
         }
       }
     });
+    const groupSelect = h("select", {
+      class: "cqa-q-select",
+      attrs: { "aria-label": t("queue.groupFilter") },
+      data: { test: "queue-group-filter" },
+      on: { change: () => store.set({ queueGroup: groupSelect.value }) }
+    });
+    const selectAll = h("input", {
+      class: "cqa-q-check",
+      attrs: { type: "checkbox", "aria-label": t("queue.selectAll") },
+      data: { test: "queue-select-all" },
+      on: { change: () => toggleAllShown() }
+    });
+    const loadButton = h("button", {
+      class: ["cqa-sc-btn", "cqa-q-load"],
+      attrs: { type: "button", title: t("queue.loadTitle") },
+      text: t("queue.load"),
+      data: { test: "open-loader" },
+      on: { click: () => openLoaderDrawer() }
+    });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
     const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
     const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
-    const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
-    const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
+    const batch = createBatchBar(store, api);
+    const controls = h(
+      "div",
+      { class: "cqa-q-controls" },
+      pillBar,
+      h("div", { class: "cqa-q-sub" }, groupSelect, language),
+      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary))
+    );
+    const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
+    const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
+    let loader = null;
+    function openLoaderDrawer() {
+      loader?.close();
+      loader = openLoader({
+        host: el.closest(".cqa") ?? el,
+        store,
+        api,
+        onImported: (summary2) => {
+          const group = summary2?.group_id;
+          store.set((state) => ({
+            ...group ? { groupId: group, queueGroup: group } : {},
+            queueRefresh: (state.queueRefresh ?? 0) + 1,
+            importRefresh: (state.importRefresh ?? 0) + 1
+            // the open dialogue may have new lines
+          }));
+        }
+      });
+    }
+    const shownItems = () => view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, queryText()) && MATCHES[view.filter](item));
+    function toggleAllShown() {
+      const shown = shownItems().map((item) => item.id);
+      const next = new Set(store.get().selection ?? []);
+      const all = shown.length > 0 && shown.every((id) => next.has(id));
+      for (const id of shown) {
+        if (all) next.delete(id);
+        else next.add(id);
+      }
+      store.set({ selection: next });
+    }
+    function paintSelectAll(shown) {
+      const picked = store.get().selection ?? /* @__PURE__ */ new Set();
+      const on = shown.filter((item) => picked.has(item.id)).length;
+      selectAll.checked = shown.length > 0 && on === shown.length;
+      selectAll.indeterminate = on > 0 && on < shown.length;
+      selectAll.disabled = shown.length === 0;
+    }
+    function paintGroups() {
+      const groups = [...new Set(view.items.map((item) => item.group_id).filter((g) => typeof g === "string" && g !== ""))].sort();
+      if (view.group !== "" && !groups.includes(view.group)) {
+        view.group = "";
+        if ((store.get().queueGroup ?? "") !== "") store.set({ queueGroup: "" });
+      }
+      groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+      groupSelect.value = view.group;
+      groupSelect.hidden = groups.length < 2;
+    }
     const queryText = () => view.query.trim().toLowerCase();
     function matchesQuery(item, q) {
       if (q === "") return true;
@@ -4696,7 +5275,7 @@
       let shown = [];
       if (hasItems) {
         const q = queryText();
-        const base = view.items.filter((item) => (view.language === "" || item.language === view.language) && matchesQuery(item, q));
+        const base = view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, q));
         for (const pill of pills) {
           pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
           pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
@@ -4718,6 +5297,7 @@
         clear(list);
         summary.textContent = "";
       }
+      paintSelectAll(shown);
       if (hasItems) paintState(shown.length === 0 ? "nomatch" : null);
       else paintState(view.phase === "ready" ? "empty" : view.phase);
     }
@@ -4750,6 +5330,7 @@
         view.error = null;
         view.remote = null;
         paintLanguages();
+        paintGroups();
         pruneSelection();
         if (queryText().length >= SERVER_SEARCH_MIN) scheduleServerSearch();
         paint();
@@ -4774,10 +5355,18 @@
     subs.push(
       watch(store, (state) => state.selection, (selection) => {
         for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
+        paint();
       })
     );
     subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));
     subs.push(watch(store, (state) => state.queueRefresh, () => load2()));
+    subs.push(
+      watch(store, (state) => state.queueGroup, (group) => {
+        view.group = group ?? "";
+        groupSelect.value = view.group;
+        paint();
+      })
+    );
     paint();
     load2();
     return {
@@ -4787,6 +5376,8 @@
         destroyed = true;
         clearTimeout(searchTimer);
         subs.forEach((off) => off());
+        batch.destroy();
+        loader?.close();
         observer?.disconnect();
         rows.clear();
       }

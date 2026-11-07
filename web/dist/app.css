@@ -602,7 +602,7 @@
   .cqa .cqa-pane-queue > .cqa-q {
     position: sticky;
     top: 16px;
-    max-height: calc(100vh - 32px);
+    max-height: calc(100vh - 32px - 61px);
   }
   .cqa .cqa-q-body {
     overflow-y: auto;
@@ -1308,6 +1308,107 @@
   display: flex;
   gap: 8px;
   margin-top: 10px;
+}
+.cqa .cqa-q-top {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+.cqa .cqa-q-top .cqa-q-search {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.cqa .cqa-q-load {
+  flex: none;
+}
+.cqa .cqa-q-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  cursor: pointer;
+}
+.cqa .cqa-batch-host:empty {
+  display: none;
+}
+.cqa .cqa-batch {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.06);
+}
+.cqa .cqa-batch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.cqa .cqa-batch-clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cqa .cqa-batch-estimate {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.cqa .cqa-batch .cqa-sc-btn--cta {
+  width: 100%;
+}
+.cqa .cqa-ld-file {
+  max-width: 100%;
+  font-size: 13px;
+}
+.cqa .cqa-ld-status {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
+.cqa .cqa-ld-status:empty {
+  display: none;
+}
+.cqa .cqa-ld-summary {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--r-ctl);
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+  font-weight: 600;
+}
+.cqa .cqa-ld-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--r-ctl);
+  background: var(--bad-bg);
+  color: var(--bad-ink);
+  font-weight: 600;
+}
+@media (max-width: 899.98px) {
+  .cqa .cqa-ws--queue-open .cqa-batch {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 25;
+    width: min(320px, 88%);
+    margin: 0;
+    border-radius: var(--r-card) var(--r-card) 0 0;
+  }
+  .cqa .cqa-q:has(.cqa-batch) .cqa-q-body {
+    padding-bottom: 260px;
+  }
 }
 
 /* src/styles/appeals.css */
