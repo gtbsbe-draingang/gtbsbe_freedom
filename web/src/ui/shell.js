@@ -11,6 +11,7 @@ import { t } from "../i18n/ru.js";
 import { isCompact, watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { icon } from "./icons.js";
+import { logoMark, logoWord } from "./logo.js";
 import { href, navFor } from "./router.js";
 import { renderToasts } from "./toast.js";
 
@@ -156,7 +157,7 @@ function buildHeader(store, compact, track) {
   return h(
     "header",
     { class: "cqa-top" },
-    h("a", { class: "cqa-logo", attrs: { href: href("workspace") }, data: { test: "logo" } }, h("i", { class: "cqa-logo-mark", attrs: { "aria-hidden": "true" } }), h("span", { class: "cqa-logo-word", text: t("brand.name") })),
+    h("a", { class: "cqa-logo", attrs: { href: href("workspace"), "aria-label": t("brand.name") }, data: { test: "logo" } }, logoMark(), logoWord()),
     prod,
     h("nav", { class: "cqa-nav", attrs: { "aria-label": t("nav.label") } }, items),
     right,

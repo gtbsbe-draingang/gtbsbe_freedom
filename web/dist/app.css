@@ -131,24 +131,25 @@
   border-bottom: 1px solid var(--line-2);
 }
 .cqa .cqa-logo {
+  --logo-h: 30px;
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 8px;
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: 0.01em;
+  gap: calc(var(--logo-h) * 26.9365 / 111.565);
   color: var(--text);
   text-decoration: none;
 }
 .cqa .cqa-logo-mark {
-  width: 20px;
-  height: 23px;
-  background:
-    linear-gradient(
-      160deg,
-      var(--accent),
-      var(--accent-2));
-  border-radius: 3px 3px 11px 11px;
+  display: block;
+  flex: none;
+  width: calc(var(--logo-h) * 96.9945 / 111.565);
+  height: var(--logo-h);
+}
+.cqa .cqa-logo-word {
+  display: block;
+  flex: none;
+  width: calc(var(--logo-h) * 373.829 / 111.565);
+  height: calc(var(--logo-h) * 59.8106 / 111.565);
 }
 .cqa .cqa-prod {
   color: var(--text-2);
@@ -677,6 +678,23 @@
   justify-content: space-between;
   gap: 8px;
 }
+.cqa .cqa-q-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-2);
+}
+.cqa .cqa-q-export:hover,
+.cqa .cqa-q-export:focus-visible {
+  color: var(--text);
+  outline: 2px solid var(--line-2);
+  outline-offset: 2px;
+}
 .cqa .cqa-q-select {
   flex: none;
   max-width: 55%;
@@ -814,6 +832,37 @@
 .cqa .cqa-tr-meta {
   color: var(--text-2);
 }
+.cqa .cqa-tr-player:empty {
+  display: none;
+}
+.cqa .cqa-tr-player {
+  margin-bottom: 12px;
+}
+.cqa .cqa-player {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cqa .cqa-player-audio {
+  display: block;
+  width: 100%;
+  height: 40px;
+}
+.cqa .cqa-player--none {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-ctl);
+}
+.cqa .cqa-player-note {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
 .cqa .cqa-tr-scroll {
   position: relative;
   min-height: 0;
@@ -834,6 +883,9 @@
   }
   .cqa .cqa-tr-scroll {
     max-height: max(300px, calc(100vh - 130px));
+  }
+  .cqa .cqa-tr:has(.cqa-player) .cqa-tr-scroll {
+    max-height: max(300px, calc(100vh - 182px));
   }
 }
 .cqa .cqa-tr-retry {
@@ -961,6 +1013,34 @@
 }
 .cqa .cqa-msg.is-expected .cqa-msg-text {
   outline: 2px dashed var(--accent);
+  outline-offset: 1px;
+}
+.cqa .cqa-msg.is-playing .cqa-msg-text {
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+.cqa .cqa-msg.is-playing.is-evidence .cqa-msg-text {
+  box-shadow: inset 4px 0 0 var(--accent), 0 0 0 2px var(--accent);
+}
+.cqa .cqa-msg.is-playing .cqa-msg-time {
+  color: var(--nav-on);
+  font-weight: 700;
+}
+.cqa .cqa-msg-seek {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.cqa .cqa-msg-seek:hover {
+  color: var(--nav-on);
+}
+.cqa .cqa-msg-seek:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 .cqa .cqa-msg.is-flash .cqa-msg-text {

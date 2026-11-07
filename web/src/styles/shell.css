@@ -21,22 +21,32 @@
   border-bottom: 1px solid var(--line-2);
 }
 
+/* The Freedom logo (ui/logo.js). One height, --logo-h, sizes the shield; the wordmark and the gap
+   are scaled from it with the original artwork's proportions (498x112, shield 96.99x111.57, gap
+   26.94, wordmark 373.83x59.81), so the pair looks exactly like the source file. The two parts
+   are centred on the same line in the original, so align-items: center keeps them aligned. */
 .cqa .cqa-logo {
+  --logo-h: 30px;
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 8px;
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: 0.01em;
+  gap: calc(var(--logo-h) * 26.9365 / 111.565);
   color: var(--text);
   text-decoration: none;
 }
 
 .cqa .cqa-logo-mark {
-  width: 20px;
-  height: 23px;
-  background: linear-gradient(160deg, var(--accent), var(--accent-2));
-  border-radius: 3px 3px 11px 11px;
+  display: block;
+  flex: none;
+  width: calc(var(--logo-h) * 96.9945 / 111.565);
+  height: var(--logo-h);
+}
+
+.cqa .cqa-logo-word {
+  display: block;
+  flex: none;
+  width: calc(var(--logo-h) * 373.829 / 111.565);
+  height: calc(var(--logo-h) * 59.8106 / 111.565);
 }
 
 .cqa .cqa-prod {

@@ -2473,7 +2473,7 @@
   // src/i18n/ru.js
   var messages = {
     "app.title": "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
-    "brand.name": "FREEDOM",
+    "brand.name": "Freedom \u2014 \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E",
     "nav.label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B",
     "nav.workspace": "\u041E\u0446\u0435\u043D\u043A\u0430",
     "nav.checklists": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B",
@@ -2530,6 +2530,7 @@
     "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
     "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
     "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+    "queue.export": "\u0421\u043A\u0430\u0447\u0430\u0442\u044C Excel (CSV)",
     "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
     "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
     "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
@@ -2656,6 +2657,13 @@
     "apply.run": "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
     "apply.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
     "apply.compare": "\u0421\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
+    "player.label": "\u0417\u0430\u043F\u0438\u0441\u044C \u0437\u0432\u043E\u043D\u043A\u0430",
+    "player.needsImport": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0433\u0440\u0443\u043F\u043F\u0443, \u0447\u0442\u043E\u0431\u044B \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
+    "player.none": "\u0417\u0430\u043F\u0438\u0441\u0438 \u044D\u0442\u043E\u0433\u043E \u0437\u0432\u043E\u043D\u043A\u0430 \u043D\u0435\u0442.",
+    "player.import": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
+    "player.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C.",
+    "player.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "player.seek": "\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A {time} \u0432 \u0437\u0430\u043F\u0438\u0441\u0438",
     "compare.title": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0434\u043E \u0438 \u043F\u043E\u0441\u043B\u0435",
     "compare.note": "\u0421\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0438\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0431\u0430\u043B\u043B\u044B (\u0441 \u0440\u0435\u0448\u0435\u043D\u0438\u044F\u043C\u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u0449\u0438\u0445), \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u043A\u0430\u0436\u0434\u0430\u044F \u0440\u0430\u0437\u043D\u0438\u0446\u0430 \u0438\u0434\u0451\u0442 \u043E\u0442 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430.",
     "compare.from": "\u0411\u044B\u043B\u043E",
@@ -3077,6 +3085,7 @@
     list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
     close: [["path", { d: "M6 6l12 12M18 6 6 18" }]],
     check: [["path", { d: "m5 12.5 4.5 4.5L19 7.5" }]],
+    download: [["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" }]],
     alert: [
       ["path", { d: "M12 3.5 2.5 20h19L12 3.5Z" }],
       ["path", { d: "M12 10v4.5M12 17.5h.01" }]
@@ -3918,6 +3927,502 @@
     };
   }
 
+  // src/ui/job-runner.js
+  var POLL_MS2 = 500;
+  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  async function followJob(api, first, onTick, { pollMs = POLL_MS2 } = {}) {
+    let job = first;
+    onTick(job, !jobSettled(job));
+    while (!jobSettled(job)) {
+      await sleep2(pollMs);
+      job = await api.getJob(job.id);
+      onTick(job, !jobSettled(job));
+    }
+    return job;
+  }
+  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+  function jobSlot(store, api, key, { pollMs = POLL_MS2 } = {}) {
+    const state = () => store.get().jobs?.[key] ?? null;
+    const put = (patch) => store.set((current2) => {
+      const jobs = { ...current2.jobs ?? {} };
+      if (patch === null) delete jobs[key];
+      else jobs[key] = { lock: null, job: null, meta: null, ...jobs[key], ...patch };
+      return { jobs };
+    });
+    const busy = () => (state()?.lock ?? null) !== null;
+    async function follow(first) {
+      put({ lock: "watching", job: snapshot(first, !jobSettled(first)) });
+      try {
+        const job = await followJob(api, first, (tick, running) => put({ job: snapshot(tick, running) }), { pollMs });
+        put({ lock: null, job: snapshot(job, false) });
+        store.set((current2) => ({ queueRefresh: (current2.queueRefresh ?? 0) + 1 }));
+        return job;
+      } catch (error) {
+        put({ lock: "interrupted" });
+        toastError(store, error, { retry: resume });
+        return null;
+      }
+    }
+    async function resume() {
+      const slot = state();
+      const id = slot?.job?.id;
+      if (!id || slot.lock !== "interrupted") return null;
+      put({ lock: "resuming" });
+      let job;
+      try {
+        job = await api.getJob(id);
+      } catch (error) {
+        const gone = error?.code === "not_found";
+        put(gone ? { lock: null, job: null } : { lock: "interrupted" });
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return null;
+      }
+      return follow(job);
+    }
+    async function start(request, { again, meta } = {}) {
+      if (busy()) return null;
+      put(meta === void 0 ? { lock: "starting" } : { lock: "starting", meta });
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        put({ lock: null });
+        toastError(store, error, { retry: again });
+        return null;
+      }
+      return follow(first);
+    }
+    function retry() {
+      const id = state()?.job?.id;
+      if (busy() || !id) return Promise.resolve(null);
+      return start(() => api.retryJob(id), { again: retry });
+    }
+    function reset() {
+      if (!busy() && state() !== null) put(null);
+    }
+    return { state, busy, start, resume, retry, reset, watch: (fn) => watch(store, (current2) => current2.jobs?.[key] ?? null, fn) };
+  }
+
+  // src/ui/loader.js
+  var ESTIMATE_DELAY_MS = 250;
+  var BATCH_SLOT = "batch";
+  function uploadErrorText(code) {
+    const match = /^bad_record:(\d+)$/.exec(String(code ?? ""));
+    if (match) return t("loader.error.bad_record", { n: Number(match[1]) + 1 });
+    if (code === "not_json" || code === "no_records") return t(`loader.error.${code}`);
+    return t("loader.error.read");
+  }
+  function estimateText(dry) {
+    return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
+  }
+  var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
+  function readText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+      reader.readAsText(file);
+    });
+  }
+  function openLoader({ host, store, api, onImported, group = "" }) {
+    let closed = false;
+    let busy = false;
+    const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
+    const result = h("div", { class: "cqa-ld-result" });
+    const groupInput = h("input", {
+      class: "cqa-sc-select",
+      attrs: { type: "text", autocomplete: "off", spellcheck: "false", placeholder: t("loader.groupPlaceholder"), "aria-label": t("loader.group") },
+      data: { test: "group-id" },
+      on: { input: () => paint() }
+    });
+    groupInput.value = typeof group === "string" ? group : "";
+    const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
+    const fileInput = h("input", {
+      class: "cqa-ld-file",
+      attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
+      data: { test: "upload-file" },
+      on: { change: () => upload() }
+    });
+    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
+    function paint() {
+      importButton.disabled = busy || groupInput.value.trim() === "";
+      groupInput.disabled = busy;
+      fileInput.disabled = busy;
+    }
+    function showError(text3) {
+      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text3, data: { test: "loader-error" } }));
+    }
+    function showSummary(summary) {
+      clear(result).append(
+        h("p", { class: "cqa-ld-summary", text: summaryText(summary), data: { test: "import-summary" } }),
+        summary.group_id ? h("p", { class: "cqa-rv-hint", text: t("loader.summaryGroup", { group: summary.group_id }), data: { test: "import-group-name" } }) : null
+      );
+    }
+    async function run(label, action) {
+      if (busy || closed) return;
+      busy = true;
+      status.textContent = label;
+      paint();
+      try {
+        const summary = await action();
+        if (summary) {
+          if (!closed) showSummary(summary);
+          onImported?.(summary);
+        }
+      } catch (error) {
+        if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
+      } finally {
+        busy = false;
+        status.textContent = "";
+        if (!closed) paint();
+      }
+    }
+    function importGroup() {
+      const group2 = groupInput.value.trim();
+      if (group2 === "") return;
+      run(t("loader.importing", { group: group2 }), () => api.importDataset(group2));
+    }
+    function upload() {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      run(t("loader.uploading", { name: file.name }), async () => {
+        try {
+          const text3 = await readText(file);
+          parseUpload(text3);
+          return await api.uploadConversations(JSON.parse(text3.replace(/^﻿/, "")));
+        } finally {
+          fileInput.value = "";
+        }
+      });
+    }
+    const panel = h(
+      "aside",
+      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
+      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
+      h(
+        "form",
+        {
+          class: "cqa-ap-form",
+          on: {
+            submit: (event) => {
+              event.preventDefault();
+              importGroup();
+            }
+          }
+        },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.group") }), groupInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.groupHint") }),
+        h("div", { class: "cqa-rv-acts" }, importButton)
+      ),
+      h(
+        "div",
+        { class: "cqa-ap-form" },
+        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
+        h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") })
+      ),
+      status,
+      result,
+      h("div", { class: "cqa-rv-acts" }, closeButton)
+    );
+    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("loader.close") }, on: { click: () => close() } });
+    const el = h(
+      "div",
+      {
+        class: "cqa-drawer-wrap",
+        data: { test: "loader" },
+        on: {
+          keydown: (event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              close();
+            }
+          }
+        }
+      },
+      scrim,
+      panel
+    );
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.remove();
+    }
+    paint();
+    host.append(el);
+    groupInput.focus();
+    return { el, close };
+  }
+  function openImport(store, api, host, { group } = {}) {
+    return openLoader({
+      host,
+      store,
+      api,
+      group,
+      onImported: (summary) => {
+        const imported = summary?.group_id;
+        store.set((state) => ({
+          ...imported ? { groupId: imported, queueGroup: imported } : {},
+          queueRefresh: (state.queueRefresh ?? 0) + 1,
+          importRefresh: (state.importRefresh ?? 0) + 1
+          // the open dialogue may have new lines or a recording
+        }));
+      }
+    });
+  }
+  var versionsOf2 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
+  function createBatchBar(store, api) {
+    const view = {
+      ready: false,
+      // config and checklists loaded
+      server: null,
+      options: [],
+      // [{checklist_id, version, label}]
+      estimate: null,
+      // the dry-run answer for the current selection and checklist
+      estimating: false
+    };
+    const slot = jobSlot(store, api, BATCH_SLOT);
+    const busy = () => slot.busy();
+    let destroyed = false;
+    let estimateTimer = null;
+    let estimateRun = 0;
+    let booting = null;
+    const stops = [];
+    const host = h("div", { class: "cqa-batch-host" });
+    const count = h("b", { class: "cqa-batch-count" });
+    const select = h("select", {
+      class: "cqa-sc-select",
+      attrs: { "aria-label": t("batch.checklist") },
+      data: { test: "batch-checklist" },
+      on: {
+        change: () => {
+          const option = view.options[Number(select.value)];
+          if (!option) return;
+          store.set({ checklistSel: { checklist_id: option.checklist_id, version: option.version } });
+        }
+      }
+    });
+    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "batch-estimate" } });
+    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("batch.run"), data: { test: "batch-run" }, on: { click: () => runBatch() } });
+    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing"), data: { test: "batch-key-hint" } });
+    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "batch-progress" } });
+    const bar = h(
+      "section",
+      { class: "cqa-batch", attrs: { "aria-label": t("batch.label") }, data: { test: "batch-bar" } },
+      h(
+        "div",
+        { class: "cqa-batch-row" },
+        count,
+        h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: /* @__PURE__ */ new Set() }) } })
+      ),
+      h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
+      estimate,
+      hint,
+      h("div", { class: "cqa-batch-row" }, runButton),
+      progress
+    );
+    let checklists = [];
+    const selection = () => store.get().selection ?? /* @__PURE__ */ new Set();
+    const current2 = () => pickSelection(store.get().checklistSel, view.server, checklists);
+    function paint() {
+      if (destroyed) return;
+      const picked = selection();
+      const active = busy();
+      const show = picked.size > 0 || active;
+      if (!show) {
+        host.replaceChildren();
+        return;
+      }
+      if (!bar.isConnected) host.replaceChildren(bar);
+      count.textContent = t("batch.selected", { n: picked.size });
+      const sel = current2();
+      const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
+      if (at >= 0) select.value = String(at);
+      select.disabled = active || view.options.length === 0;
+      if (view.estimate) estimate.textContent = estimateText(view.estimate);
+      else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
+      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
+      hint.hidden = !keyMissing;
+      runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
+      clear(progress);
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
+        progress.append(
+          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } })
+        );
+      } else if (job) {
+        const running = lock === "watching";
+        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
+        if (job.failed > 0) {
+          progress.append(
+            h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
+            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } })
+          );
+        }
+      }
+    }
+    function boot() {
+      booting ?? (booting = Promise.all([api.getConfig(), api.listChecklists()]).then(
+        ([server, rows]) => {
+          if (destroyed) return;
+          view.server = server;
+          checklists = rows;
+          view.options = rows.flatMap(
+            (row) => [...versionsOf2(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
+          );
+          clear(select);
+          view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
+          view.ready = true;
+          scheduleEstimate();
+        },
+        (error) => {
+          booting = null;
+          if (!destroyed) toastError(store, error);
+        }
+      ));
+      return booting;
+    }
+    function scheduleEstimate() {
+      clearTimeout(estimateTimer);
+      estimateRun += 1;
+      view.estimate = null;
+      const picked = [...selection()];
+      if (picked.length === 0 || !view.ready) {
+        view.estimating = false;
+        paint();
+        return;
+      }
+      view.estimating = true;
+      paint();
+      const mine = estimateRun;
+      estimateTimer = setTimeout(async () => {
+        const sel = current2();
+        if (!sel) return;
+        try {
+          const dry = await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, dry_run: true });
+          if (destroyed || mine !== estimateRun) return;
+          view.estimate = dry;
+        } catch (error) {
+          if (destroyed || mine !== estimateRun) return;
+          toastError(store, error, { retry: scheduleEstimate });
+        }
+        view.estimating = false;
+        paint();
+      }, ESTIMATE_DELAY_MS);
+    }
+    function runBatch() {
+      const sel = current2();
+      const picked = [...selection()];
+      if (busy() || !sel || picked.length === 0) return void 0;
+      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
+    }
+    stops.push(
+      watch(store, (state) => state.selection, (next) => {
+        slot.reset();
+        if ((next?.size ?? 0) > 0) boot();
+        scheduleEstimate();
+      }),
+      watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+      slot.watch((next, previous) => {
+        if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
+        else paint();
+      })
+    );
+    if (selection().size > 0) boot();
+    paint();
+    return {
+      el: host,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(estimateTimer);
+        stops.forEach((stop) => stop());
+      }
+    };
+  }
+
+  // src/ui/player.js
+  var isTime = (value) => typeof value === "number" && Number.isFinite(value);
+  function startTimes(conversation) {
+    const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+    const given = Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [];
+    if (given.length === 0) return offsets(transcript).map((value) => isTime(value) ? value : null);
+    const starts = transcript.map(() => null);
+    for (const entry of given) {
+      const index = entry?.message_index;
+      if (Number.isInteger(index) && index >= 0 && index < starts.length && isTime(entry.seconds)) starts[index] = entry.seconds;
+    }
+    return starts;
+  }
+  function playingIndex(starts, seconds) {
+    if (!isTime(seconds)) return null;
+    let best = null;
+    for (let i = 0; i < starts.length; i += 1) {
+      const start = starts[i];
+      if (!isTime(start) || start > seconds) continue;
+      if (best === null || start >= starts[best]) best = i;
+    }
+    return best;
+  }
+  function renderPlayer(conversation, api, transcript) {
+    if (conversation?.channel !== "voice call") return null;
+    const src = api.audioUrl(conversation);
+    if (!src) {
+      const needsImport = conversation.audio_unavailable_reason === "needs_import";
+      const el2 = h(
+        "div",
+        { class: ["cqa-player", "cqa-player--none"], data: { test: "player" } },
+        h("p", { class: "cqa-player-note", text: t(needsImport ? "player.needsImport" : "player.none") }),
+        needsImport ? h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("player.import"), data: { test: "player-import" }, on: { click: () => transcript.openImport?.() } }) : null
+      );
+      return { el: el2, seek: () => false, destroy() {
+      } };
+    }
+    const starts = startTimes(conversation);
+    const status = h("p", { class: "cqa-player-note", attrs: { role: "status" } });
+    status.hidden = true;
+    const audio = h("audio", { class: "cqa-player-audio", attrs: { controls: true, preload: "metadata", src, "aria-label": t("player.label") } });
+    const el = h("div", { class: "cqa-player", data: { test: "player" } }, audio, status);
+    let current2 = null;
+    let destroyed = false;
+    function mark() {
+      const index = playingIndex(starts, audio.currentTime);
+      if (index === current2) return;
+      current2 = index;
+      transcript.markPlaying(index, { follow: !audio.paused });
+    }
+    audio.addEventListener("timeupdate", mark);
+    audio.addEventListener("seeked", mark);
+    audio.addEventListener("loadedmetadata", () => {
+      status.hidden = true;
+    });
+    audio.addEventListener("error", () => {
+      if (destroyed) return;
+      status.replaceChildren(
+        t("player.failed"),
+        " ",
+        h("button", { class: ["cqa-link", "cqa-player-retry"], attrs: { type: "button" }, text: t("player.retry"), data: { test: "player-retry" }, on: { click: () => audio.load() } })
+      );
+      status.hidden = false;
+    });
+    return {
+      el,
+      seek(index) {
+        const start = starts[index];
+        if (destroyed || !isTime(start)) return false;
+        audio.currentTime = start;
+        mark();
+        return true;
+      },
+      destroy() {
+        destroyed = true;
+        audio.pause();
+      }
+    };
+  }
+
   // src/ui/transcript.js
   var FLASH_MS = 1200;
   var KNOWN = /* @__PURE__ */ new Set(["client", "operator", "bot", "system"]);
@@ -3942,7 +4447,16 @@
   }
   function shownKey(conversation) {
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
-    return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
+    return canonicalJson({
+      conversation_id: conversation?.conversation_id ?? null,
+      channel: conversation?.channel ?? null,
+      language: conversation?.language ?? null,
+      transcript,
+      audio: conversation?.audio ?? null,
+      // an import can make the recording playable
+      audio_unavailable_reason: conversation?.audio_unavailable_reason ?? null,
+      audio_offsets: Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : []
+    });
   }
   function openId2(store, args) {
     if (typeof args?.id === "string" && args.id !== "") return args.id;
@@ -3952,17 +4466,19 @@
   function stateBox2(test, title, note, extra) {
     return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
   }
-  function buildMessage(message, index, offset) {
+  function buildMessage(message, index, offset, seek) {
     const kind = speakerKind(message?.speaker);
     const raw = typeof message?.timestamp === "string" ? message.timestamp.trim() : "";
     const clock = formatOffset(offset) || raw;
+    const timeAttrs = raw === "" ? {} : { title: raw };
+    const time = clock === "" ? null : seek ? h("button", { class: ["cqa-msg-time", "cqa-msg-seek"], attrs: { type: "button", title: t("player.seek", { time: clock }) }, text: clock, data: { test: "msg-time" }, on: { click: () => seek(index) } }) : h("span", { class: "cqa-msg-time", text: clock, attrs: timeAttrs, data: { test: "msg-time" } });
     const flag = h("b", { class: "cqa-msg-flag", data: { test: "msg-flag" } });
     const who = h(
       "div",
       { class: "cqa-msg-who" },
       flag,
       kind === "system" ? null : h("span", { class: "cqa-msg-speaker", text: t(`transcript.speaker.${kind}`), attrs: kind === "other" && message?.speaker ? { title: String(message.speaker) } : {}, data: { test: "msg-speaker" } }),
-      clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
+      time,
       message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
     );
     const text3 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
@@ -3973,7 +4489,8 @@
     const id = openId2(store, args);
     const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
     const head = h("div", { class: "cqa-tr-head" });
-    const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
+    const playerHost = h("div", { class: "cqa-tr-player" });
+    const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, playerHost, scroller);
     let destroyed = false;
     let rows = [];
     let loaded = false;
@@ -3981,6 +4498,8 @@
     let pending2 = { highlight: null, focus: null };
     let lastHighlight = null;
     let shown = null;
+    let player = null;
+    let playingAt = null;
     const flashTimers = /* @__PURE__ */ new Map();
     function clearMarks() {
       for (const i of marked) {
@@ -4027,6 +4546,11 @@
         }, FLASH_MS)
       );
     }
+    function centre(index) {
+      const row = rows[index].el;
+      const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
+      scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+    }
     function focusMessage(index) {
       if (destroyed) return false;
       if (!loaded) {
@@ -4034,11 +4558,21 @@
         return Number.isInteger(index) && index >= 0;
       }
       if (!validIndex(index, rows.length)) return false;
-      const row = rows[index].el;
-      const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
-      scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+      centre(index);
       flash(index);
+      player?.seek(index);
       return true;
+    }
+    function markPlaying(index, { follow = false } = {}) {
+      if (destroyed || !loaded) return;
+      if (playingAt !== null) rows[playingAt]?.el.classList.remove("is-playing");
+      playingAt = validIndex(index, rows.length) ? index : null;
+      if (playingAt === null) return;
+      const row = rows[playingAt].el;
+      row.classList.add("is-playing");
+      const above = row.offsetTop < scroller.scrollTop;
+      const below = row.offsetTop + row.offsetHeight > scroller.scrollTop + scroller.clientHeight;
+      if (follow && (above || below)) centre(playingAt);
     }
     const handle = { el, highlight, focusMessage, destroy };
     function show(conversation) {
@@ -4051,13 +4585,25 @@
       clear(scroller);
       rows = [];
       marked = [];
+      playingAt = null;
       loaded = true;
       shown = shownKey(conversation);
+      player?.destroy();
+      player = renderPlayer(conversation, api, {
+        markPlaying,
+        openImport: () => openImport(store, api, el.closest(".cqa") ?? el, { group: conversation?.group_id })
+      });
+      clear(playerHost);
+      if (player) playerHost.append(player.el);
       if (transcript.length === 0) {
         scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
       } else {
-        const at = offsets(transcript);
-        rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
+        const audible = Boolean(api.audioUrl?.(conversation)) && conversation?.channel === "voice call";
+        const clock = offsets(transcript);
+        const starts = audible ? startTimes(conversation) : null;
+        const at = audible ? starts.map((start, i) => start ?? clock[i]) : clock;
+        const seek = (index) => player?.seek(index);
+        rows = transcript.map((message, i) => buildMessage(message, i, at[i], audible && starts[i] !== null ? seek : null));
         scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
       }
       const { highlight: waiting, focus } = pending2;
@@ -4066,6 +4612,9 @@
       if (focus !== null) focusMessage(focus);
     }
     function showError(error) {
+      player?.destroy();
+      player = null;
+      clear(playerHost);
       clear(head);
       clear(scroller).append(
         stateBox2(
@@ -4115,6 +4664,7 @@
       if (destroyed) return;
       destroyed = true;
       stopRefresh();
+      player?.destroy();
       flashTimers.forEach((timer) => clearTimeout(timer));
       flashTimers.clear();
       if (store.get().transcript === handle) store.set({ transcript: null });
@@ -4131,7 +4681,7 @@
   }
 
   // src/ui/review-panel.js
-  var POLL_MS2 = 2e3;
+  var POLL_MS3 = 2e3;
   var CONTEXT_LINES = 2;
   var validIndex2 = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
   function fragmentIndexes(result, count) {
@@ -4217,7 +4767,7 @@
         } catch {
         }
         schedulePoll();
-      }, POLL_MS2);
+      }, POLL_MS3);
     }
     function draw() {
       const { appeal, conversation } = view;
@@ -4713,404 +5263,6 @@
     const sum = sumOf(scored.map((c) => c.weight));
     if (scored.length > 0 && sum !== 100) warnings.push({ code: "weight_sum", sum });
     return { value: { ...source, sections, criteria }, errors, warnings };
-  }
-
-  // src/ui/job-runner.js
-  var POLL_MS3 = 500;
-  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  async function followJob(api, first, onTick, { pollMs = POLL_MS3 } = {}) {
-    let job = first;
-    onTick(job, !jobSettled(job));
-    while (!jobSettled(job)) {
-      await sleep2(pollMs);
-      job = await api.getJob(job.id);
-      onTick(job, !jobSettled(job));
-    }
-    return job;
-  }
-  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
-  function jobSlot(store, api, key, { pollMs = POLL_MS3 } = {}) {
-    const state = () => store.get().jobs?.[key] ?? null;
-    const put = (patch) => store.set((current2) => {
-      const jobs = { ...current2.jobs ?? {} };
-      if (patch === null) delete jobs[key];
-      else jobs[key] = { lock: null, job: null, meta: null, ...jobs[key], ...patch };
-      return { jobs };
-    });
-    const busy = () => (state()?.lock ?? null) !== null;
-    async function follow(first) {
-      put({ lock: "watching", job: snapshot(first, !jobSettled(first)) });
-      try {
-        const job = await followJob(api, first, (tick, running) => put({ job: snapshot(tick, running) }), { pollMs });
-        put({ lock: null, job: snapshot(job, false) });
-        store.set((current2) => ({ queueRefresh: (current2.queueRefresh ?? 0) + 1 }));
-        return job;
-      } catch (error) {
-        put({ lock: "interrupted" });
-        toastError(store, error, { retry: resume });
-        return null;
-      }
-    }
-    async function resume() {
-      const slot = state();
-      const id = slot?.job?.id;
-      if (!id || slot.lock !== "interrupted") return null;
-      put({ lock: "resuming" });
-      let job;
-      try {
-        job = await api.getJob(id);
-      } catch (error) {
-        const gone = error?.code === "not_found";
-        put(gone ? { lock: null, job: null } : { lock: "interrupted" });
-        toastError(store, error, { retry: gone ? void 0 : resume });
-        return null;
-      }
-      return follow(job);
-    }
-    async function start(request, { again, meta } = {}) {
-      if (busy()) return null;
-      put(meta === void 0 ? { lock: "starting" } : { lock: "starting", meta });
-      let first;
-      try {
-        first = await request();
-      } catch (error) {
-        put({ lock: null });
-        toastError(store, error, { retry: again });
-        return null;
-      }
-      return follow(first);
-    }
-    function retry() {
-      const id = state()?.job?.id;
-      if (busy() || !id) return Promise.resolve(null);
-      return start(() => api.retryJob(id), { again: retry });
-    }
-    function reset() {
-      if (!busy() && state() !== null) put(null);
-    }
-    return { state, busy, start, resume, retry, reset, watch: (fn) => watch(store, (current2) => current2.jobs?.[key] ?? null, fn) };
-  }
-
-  // src/ui/loader.js
-  var ESTIMATE_DELAY_MS = 250;
-  var BATCH_SLOT = "batch";
-  function uploadErrorText(code) {
-    const match = /^bad_record:(\d+)$/.exec(String(code ?? ""));
-    if (match) return t("loader.error.bad_record", { n: Number(match[1]) + 1 });
-    if (code === "not_json" || code === "no_records") return t(`loader.error.${code}`);
-    return t("loader.error.read");
-  }
-  function estimateText(dry) {
-    return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
-  }
-  var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
-  function readText(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result ?? ""));
-      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
-      reader.readAsText(file);
-    });
-  }
-  function openLoader({ host, store, api, onImported }) {
-    let closed = false;
-    let busy = false;
-    const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
-    const result = h("div", { class: "cqa-ld-result" });
-    const groupInput = h("input", {
-      class: "cqa-sc-select",
-      attrs: { type: "text", autocomplete: "off", spellcheck: "false", placeholder: t("loader.groupPlaceholder"), "aria-label": t("loader.group") },
-      data: { test: "group-id" },
-      on: { input: () => paint() }
-    });
-    const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
-    const fileInput = h("input", {
-      class: "cqa-ld-file",
-      attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
-      data: { test: "upload-file" },
-      on: { change: () => upload() }
-    });
-    const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
-    function paint() {
-      importButton.disabled = busy || groupInput.value.trim() === "";
-      groupInput.disabled = busy;
-      fileInput.disabled = busy;
-    }
-    function showError(text3) {
-      clear(result).append(h("p", { class: "cqa-ld-error", attrs: { role: "alert" }, text: text3, data: { test: "loader-error" } }));
-    }
-    function showSummary(summary) {
-      clear(result).append(
-        h("p", { class: "cqa-ld-summary", text: summaryText(summary), data: { test: "import-summary" } }),
-        summary.group_id ? h("p", { class: "cqa-rv-hint", text: t("loader.summaryGroup", { group: summary.group_id }), data: { test: "import-group-name" } }) : null
-      );
-    }
-    async function run(label, action) {
-      if (busy || closed) return;
-      busy = true;
-      status.textContent = label;
-      paint();
-      try {
-        const summary = await action();
-        if (summary) {
-          if (!closed) showSummary(summary);
-          onImported?.(summary);
-        }
-      } catch (error) {
-        if (!closed) showError(error instanceof UploadError ? uploadErrorText(error.code) : errorText(error));
-      } finally {
-        busy = false;
-        status.textContent = "";
-        if (!closed) paint();
-      }
-    }
-    function importGroup() {
-      const group = groupInput.value.trim();
-      if (group === "") return;
-      run(t("loader.importing", { group }), () => api.importDataset(group));
-    }
-    function upload() {
-      const file = fileInput.files?.[0];
-      if (!file) return;
-      run(t("loader.uploading", { name: file.name }), async () => {
-        try {
-          const text3 = await readText(file);
-          parseUpload(text3);
-          return await api.uploadConversations(JSON.parse(text3.replace(/^﻿/, "")));
-        } finally {
-          fileInput.value = "";
-        }
-      });
-    }
-    const panel = h(
-      "aside",
-      { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
-      h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
-      h(
-        "form",
-        {
-          class: "cqa-ap-form",
-          on: {
-            submit: (event) => {
-              event.preventDefault();
-              importGroup();
-            }
-          }
-        },
-        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.group") }), groupInput),
-        h("p", { class: "cqa-rv-hint", text: t("loader.groupHint") }),
-        h("div", { class: "cqa-rv-acts" }, importButton)
-      ),
-      h(
-        "div",
-        { class: "cqa-ap-form" },
-        h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
-        h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") })
-      ),
-      status,
-      result,
-      h("div", { class: "cqa-rv-acts" }, closeButton)
-    );
-    const scrim = h("button", { class: "cqa-drawer-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("loader.close") }, on: { click: () => close() } });
-    const el = h(
-      "div",
-      {
-        class: "cqa-drawer-wrap",
-        data: { test: "loader" },
-        on: {
-          keydown: (event) => {
-            if (event.key === "Escape") {
-              event.stopPropagation();
-              close();
-            }
-          }
-        }
-      },
-      scrim,
-      panel
-    );
-    function close() {
-      if (closed) return;
-      closed = true;
-      el.remove();
-    }
-    paint();
-    host.append(el);
-    groupInput.focus();
-    return { el, close };
-  }
-  var versionsOf2 = (row) => Array.isArray(row.versions) && row.versions.length > 0 ? row.versions.map((v) => v.version) : [row.version];
-  function createBatchBar(store, api) {
-    const view = {
-      ready: false,
-      // config and checklists loaded
-      server: null,
-      options: [],
-      // [{checklist_id, version, label}]
-      estimate: null,
-      // the dry-run answer for the current selection and checklist
-      estimating: false
-    };
-    const slot = jobSlot(store, api, BATCH_SLOT);
-    const busy = () => slot.busy();
-    let destroyed = false;
-    let estimateTimer = null;
-    let estimateRun = 0;
-    let booting = null;
-    const stops = [];
-    const host = h("div", { class: "cqa-batch-host" });
-    const count = h("b", { class: "cqa-batch-count" });
-    const select = h("select", {
-      class: "cqa-sc-select",
-      attrs: { "aria-label": t("batch.checklist") },
-      data: { test: "batch-checklist" },
-      on: {
-        change: () => {
-          const option = view.options[Number(select.value)];
-          if (!option) return;
-          store.set({ checklistSel: { checklist_id: option.checklist_id, version: option.version } });
-        }
-      }
-    });
-    const estimate = h("p", { class: "cqa-batch-estimate", attrs: { "aria-live": "polite" }, data: { test: "batch-estimate" } });
-    const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("batch.run"), data: { test: "batch-run" }, on: { click: () => runBatch() } });
-    const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing"), data: { test: "batch-key-hint" } });
-    const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "batch-progress" } });
-    const bar = h(
-      "section",
-      { class: "cqa-batch", attrs: { "aria-label": t("batch.label") }, data: { test: "batch-bar" } },
-      h(
-        "div",
-        { class: "cqa-batch-row" },
-        count,
-        h("button", { class: ["cqa-link", "cqa-batch-clear"], attrs: { type: "button" }, text: t("batch.clear"), data: { test: "batch-clear" }, on: { click: () => store.set({ selection: /* @__PURE__ */ new Set() }) } })
-      ),
-      h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("batch.checklist") }), select),
-      estimate,
-      hint,
-      h("div", { class: "cqa-batch-row" }, runButton),
-      progress
-    );
-    let checklists = [];
-    const selection = () => store.get().selection ?? /* @__PURE__ */ new Set();
-    const current2 = () => pickSelection(store.get().checklistSel, view.server, checklists);
-    function paint() {
-      if (destroyed) return;
-      const picked = selection();
-      const active = busy();
-      const show = picked.size > 0 || active;
-      if (!show) {
-        host.replaceChildren();
-        return;
-      }
-      if (!bar.isConnected) host.replaceChildren(bar);
-      count.textContent = t("batch.selected", { n: picked.size });
-      const sel = current2();
-      const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
-      if (at >= 0) select.value = String(at);
-      select.disabled = active || view.options.length === 0;
-      if (view.estimate) estimate.textContent = estimateText(view.estimate);
-      else estimate.textContent = view.estimating || !view.ready ? t("batch.estimating") : "";
-      const keyMissing = view.server?.model_key_configured === false && (view.estimate?.model_calls ?? 0) > 0;
-      hint.hidden = !keyMissing;
-      runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
-      clear(progress);
-      const { lock = null, job = null } = slot.state() ?? {};
-      if (lock === "starting") progress.append(t("batch.starting"));
-      else if (job && (lock === "interrupted" || lock === "resuming")) {
-        progress.append(
-          h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
-          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } })
-        );
-      } else if (job) {
-        const running = lock === "watching";
-        progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
-        if (job.failed > 0) {
-          progress.append(
-            h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
-            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } })
-          );
-        }
-      }
-    }
-    function boot() {
-      booting ?? (booting = Promise.all([api.getConfig(), api.listChecklists()]).then(
-        ([server, rows]) => {
-          if (destroyed) return;
-          view.server = server;
-          checklists = rows;
-          view.options = rows.flatMap(
-            (row) => [...versionsOf2(row)].sort((a, b) => b - a).map((version2) => ({ checklist_id: row.checklist_id, version: version2, label: t("scorecard.checklistOption", { name: row.name ?? row.checklist_id, version: version2 }) }))
-          );
-          clear(select);
-          view.options.forEach((option, index) => select.append(h("option", { text: option.label, attrs: { value: index } })));
-          view.ready = true;
-          scheduleEstimate();
-        },
-        (error) => {
-          booting = null;
-          if (!destroyed) toastError(store, error);
-        }
-      ));
-      return booting;
-    }
-    function scheduleEstimate() {
-      clearTimeout(estimateTimer);
-      estimateRun += 1;
-      view.estimate = null;
-      const picked = [...selection()];
-      if (picked.length === 0 || !view.ready) {
-        view.estimating = false;
-        paint();
-        return;
-      }
-      view.estimating = true;
-      paint();
-      const mine = estimateRun;
-      estimateTimer = setTimeout(async () => {
-        const sel = current2();
-        if (!sel) return;
-        try {
-          const dry = await api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, dry_run: true });
-          if (destroyed || mine !== estimateRun) return;
-          view.estimate = dry;
-        } catch (error) {
-          if (destroyed || mine !== estimateRun) return;
-          toastError(store, error, { retry: scheduleEstimate });
-        }
-        view.estimating = false;
-        paint();
-      }, ESTIMATE_DELAY_MS);
-    }
-    function runBatch() {
-      const sel = current2();
-      const picked = [...selection()];
-      if (busy() || !sel || picked.length === 0) return void 0;
-      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
-    }
-    stops.push(
-      watch(store, (state) => state.selection, (next) => {
-        slot.reset();
-        if ((next?.size ?? 0) > 0) boot();
-        scheduleEstimate();
-      }),
-      watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
-      slot.watch((next, previous) => {
-        if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
-        else paint();
-      })
-    );
-    if (selection().size > 0) boot();
-    paint();
-    return {
-      el: host,
-      destroy() {
-        if (destroyed) return;
-        destroyed = true;
-        clearTimeout(estimateTimer);
-        stops.forEach((stop) => stop());
-      }
-    };
   }
 
   // src/ui/apply-dialog.js
@@ -6197,6 +6349,22 @@
       on: { click: () => openLoaderDrawer() }
     });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
+    const exportLink = h("a", {
+      class: "cqa-q-export",
+      attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
+      data: { test: "queue-export" },
+      on: {
+        click: (event) => {
+          try {
+            exportLink.href = api.exportCsvUrl(view.group);
+            exportLink.download = `cqa-${view.group ? view.group.replace(/[^A-Za-z0-9._-]/g, "_") : "all"}.csv`;
+          } catch (error) {
+            event.preventDefault();
+            toastError(store, error);
+          }
+        }
+      }
+    }, icon("download", { size: 16 }));
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
     const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
     const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
@@ -6206,27 +6374,14 @@
       { class: "cqa-q-controls" },
       pillBar,
       h("div", { class: "cqa-q-sub" }, groupSelect, language),
-      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary))
+      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink)
     );
     const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
     const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
     let loader = null;
     function openLoaderDrawer() {
       loader?.close();
-      loader = openLoader({
-        host: el.closest(".cqa") ?? el,
-        store,
-        api,
-        onImported: (summary2) => {
-          const group = summary2?.group_id;
-          store.set((state) => ({
-            ...group ? { groupId: group, queueGroup: group } : {},
-            queueRefresh: (state.queueRefresh ?? 0) + 1,
-            importRefresh: (state.importRefresh ?? 0) + 1
-            // the open dialogue may have new lines
-          }));
-        }
-      });
+      loader = openImport(store, api, el.closest(".cqa") ?? el);
     }
     const shownItems = () => view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, queryText()) && MATCHES[view.filter](item));
     function toggleAllShown() {
@@ -6581,6 +6736,36 @@
     };
   }
 
+  // src/ui/logo.js
+  var SHIELD = [
+    ["#164734", "M96.9942 0V26.9824C96.9942 97.2299 48.5809 111.542 48.5809 111.542L48.4978 111.565L48.4153 111.542C48.4153 111.542 43.9448 110.221 37.7221 106.411C23.4632 97.6801 0 75.8861 0 26.9824V0H96.9942Z"],
+    ["#02B140", "M96.9945 10.687C96.9945 19.6639 89.7167 26.9414 80.7398 26.9416H37.7106V48.467H75.4271V59.154C75.4271 67.7761 68.7078 74.8346 60.2174 75.3744H37.7087V106.402C23.4485 97.6657 8.6014e-05 75.8705 0 26.9826V0H96.9945V10.687Z"]
+  ];
+  var WORDMARK = [
+    [false, "M159.197 39.3053H137.919V51.3461H155.453V63.5845H137.722V84.9022H123.931V27.0669H159.197V39.3053Z"],
+    [true, "M187.371 27.0669C192.494 27.0669 196.237 27.4625 198.602 28.4486C201.95 29.8305 204.513 31.8028 206.482 34.7642C208.451 37.7258 209.239 41.0798 209.239 45.2253C209.239 48.3845 208.451 51.5408 207.073 54.5022C205.495 57.4638 203.526 59.6338 200.769 61.0156V61.2135C201.359 62.0018 201.95 62.9911 202.936 64.7655L214.166 84.8991H198.405L188.159 65.3589H181.46V84.8991H167.275V27.0669H187.371ZM181.263 53.1204H187.371C189.737 53.1204 191.507 52.5269 192.691 51.3429C194.07 50.1589 194.661 48.3814 194.661 46.0135C194.661 42.8542 193.479 40.8819 191.313 39.8958C190.132 39.3022 188.358 39.1075 185.993 39.1075H181.263V53.1204Z"],
+    [false, "M256.33 39.1075H234.461V49.5686H251.995V61.807H234.461V72.6637H257.513V84.7043H220.276V27.0669H256.33V39.1075Z"],
+    [false, "M302.628 39.1075H280.562V49.5686H298.096V61.807H280.562V72.6637H303.812V84.7043H266.574V27.0669H302.628V39.1075Z"],
+    [true, "M333.167 27.0669C342.23 27.0669 349.519 29.6327 354.84 34.7642C360.16 39.8958 362.917 46.805 362.917 55.8841C362.917 64.9633 360.16 72.0702 354.84 77.2017C349.519 82.3333 342.23 84.8991 333.167 84.8991H312.677V27.0669H333.167ZM327.055 72.6606H326.857L326.86 72.6637H332.573C337.498 72.6637 341.439 71.2819 344.196 68.3205C346.954 65.3589 348.332 61.2135 348.332 55.8841C348.332 50.5547 346.954 46.4092 344.196 43.4478C341.439 40.6841 337.497 39.1044 332.768 39.1044H327.055V72.6606Z"],
+    [true, "M398.242 25.8837C407.108 25.8837 414.2 28.6474 419.916 34.3724C425.628 40.0975 428.388 47.0035 428.388 55.4923C428.388 63.981 425.631 71.2827 419.916 77.0079C414.203 82.7329 407.108 85.6943 398.242 85.6943C389.377 85.6943 382.285 82.7329 376.57 77.0079C370.856 71.2827 368.096 64.1788 368.096 55.4923C368.096 47.0035 370.853 40.0975 376.57 34.3724C382.282 28.8452 389.377 25.8837 398.242 25.8837ZM398.242 38.9136C393.71 38.9136 389.967 40.4933 387.011 43.6495C384.057 46.8057 382.678 50.7564 382.678 55.4923C382.678 60.426 384.057 64.5715 387.011 67.9286C389.967 71.2827 393.71 72.8624 398.242 72.8624C402.774 72.8624 406.518 71.2827 409.473 67.9286C412.428 64.5715 413.807 60.6238 413.807 55.4923C413.807 50.7564 412.428 46.8088 409.473 43.6495C406.518 40.4902 402.774 38.9136 398.242 38.9136Z"],
+    [false, "M466.041 60.7244H466.235L477.664 26.9705H497.76V84.6079H483.574V44.525H483.381L472.146 75.3278H460.13L448.895 44.525H448.7V84.6079H434.515V26.9705H454.611L466.041 60.7244Z"]
+  ];
+  var decorative = { "aria-hidden": "true", focusable: "false" };
+  function logoMark() {
+    return svg(
+      "svg",
+      { class: "cqa-logo-mark", viewBox: "0 0 96.9945 111.565", ...decorative },
+      ...SHIELD.map(([fill, d]) => svg("path", { d, fill }))
+    );
+  }
+  function logoWord() {
+    return svg(
+      "svg",
+      { class: "cqa-logo-word", viewBox: "123.931 25.8837 373.829 59.8106", fill: "currentColor", ...decorative },
+      ...WORDMARK.map(([evenOdd, d]) => svg("path", evenOdd ? { d, "fill-rule": "evenodd", "clip-rule": "evenodd" } : { d }))
+    );
+  }
+
   // src/ui/shell.js
   var NAV = ["workspace", "checklists", "appeals", "analytics", "accuracy"];
   var ROLES4 = ["controller", "reviewer"];
@@ -6712,7 +6897,7 @@
     return h(
       "header",
       { class: "cqa-top" },
-      h("a", { class: "cqa-logo", attrs: { href: href("workspace") }, data: { test: "logo" } }, h("i", { class: "cqa-logo-mark", attrs: { "aria-hidden": "true" } }), h("span", { class: "cqa-logo-word", text: t("brand.name") })),
+      h("a", { class: "cqa-logo", attrs: { href: href("workspace"), "aria-label": t("brand.name") }, data: { test: "logo" } }, logoMark(), logoWord()),
       prod,
       h("nav", { class: "cqa-nav", attrs: { "aria-label": t("nav.label") } }, items),
       right

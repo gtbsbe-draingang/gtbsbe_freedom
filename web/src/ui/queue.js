@@ -11,13 +11,13 @@
 //
 // Store state used: `selection` (Set of ids, replaced on every change), `route` (the open row),
 // `queueOpen` (closed again after a click, for the narrow drawer) and `queueRefresh` (any number
-// that changes: the queue reloads; other views bump it after an import or an evaluation). An
-// import from the loader also bumps `importRefresh`: the open transcript checks its dialogue.
+// that changes: the queue reloads; other views bump it after an import or an evaluation). The
+// loader is opened with openImport (loader.js), which also bumps `importRefresh`.
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { icon } from "./icons.js";
-import { createBatchBar, openLoader } from "./loader.js";
+import { createBatchBar, openImport } from "./loader.js";
 import { href } from "./router.js";
 import { errorText, toastError } from "./toast.js";
 
@@ -144,6 +144,22 @@ export function createQueue(store, api) {
   });
 
   const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
+  const exportLink = h("a", {
+    class: "cqa-q-export",
+    attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
+    data: { test: "queue-export" },
+    on: {
+      click: (event) => {
+        try {
+          exportLink.href = api.exportCsvUrl(view.group);
+          exportLink.download = `cqa-${view.group ? view.group.replace(/[^A-Za-z0-9._-]/g, "_") : "all"}.csv`;
+        } catch (error) {
+          event.preventDefault();
+          toastError(store, error);
+        }
+      },
+    },
+  }, icon("download", { size: 16 }));
   const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
   const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
   const body = h("div", { class: "cqa-q-body" }, stateBox, list);
@@ -154,7 +170,7 @@ export function createQueue(store, api) {
     { class: "cqa-q-controls" },
     pillBar,
     h("div", { class: "cqa-q-sub" }, groupSelect, language),
-    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary)),
+    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink),
   );
   const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
   const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
@@ -162,19 +178,7 @@ export function createQueue(store, api) {
   let loader = null;
   function openLoaderDrawer() {
     loader?.close();
-    loader = openLoader({
-      host: el.closest(".cqa") ?? el,
-      store,
-      api,
-      onImported: (summary) => {
-        const group = summary?.group_id;
-        store.set((state) => ({
-          ...(group ? { groupId: group, queueGroup: group } : {}),
-          queueRefresh: (state.queueRefresh ?? 0) + 1,
-          importRefresh: (state.importRefresh ?? 0) + 1, // the open dialogue may have new lines
-        }));
-      },
-    });
+    loader = openImport(store, api, el.closest(".cqa") ?? el);
   }
 
   const shownItems = () => view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, queryText()) && MATCHES[view.filter](item));

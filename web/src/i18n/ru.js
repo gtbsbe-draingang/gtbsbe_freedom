@@ -2,7 +2,7 @@
 // Mock-generated "model" text is not UI chrome and lives in the mock module instead.
 const messages = {
   "app.title": "Качество диалогов",
-  "brand.name": "FREEDOM",
+  "brand.name": "Freedom — на главную",
 
   "nav.label": "Разделы",
   "nav.workspace": "Оценка",
@@ -63,6 +63,7 @@ const messages = {
   "queue.group.all": "Все наборы",
   "queue.selectAll": "Выбрать все показанные",
   "queue.load": "Загрузить",
+  "queue.export": "Скачать Excel (CSV)",
   "queue.loadTitle": "Загрузить группу по group_id или файл с диалогами",
 
   "loader.title": "Загрузка диалогов",
@@ -195,6 +196,13 @@ const messages = {
   "apply.close": "Закрыть",
   "apply.compare": "Сравнить до и после",
 
+  "player.label": "Запись звонка",
+  "player.needsImport": "Загрузите группу, чтобы включить запись.",
+  "player.none": "Записи этого звонка нет.",
+  "player.import": "Загрузить группу",
+  "player.failed": "Не удалось загрузить запись.",
+  "player.retry": "Повторить",
+  "player.seek": "Перейти к {time} в записи",
   "compare.title": "Сравнение до и после",
   "compare.note": "Сравниваются итоговые баллы (с решениями проверяющих), поэтому каждая разница идёт от изменения чек-листа.",
   "compare.from": "Было",

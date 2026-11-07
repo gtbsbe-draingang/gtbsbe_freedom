@@ -19,6 +19,7 @@ const SHAPES = {
   list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
   close: [["path", { d: "M6 6l12 12M18 6 6 18" }]],
   check: [["path", { d: "m5 12.5 4.5 4.5L19 7.5" }]],
+  download: [["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" }]],
   alert: [
     ["path", { d: "M12 3.5 2.5 20h19L12 3.5Z" }],
     ["path", { d: "M12 10v4.5M12 17.5h.01" }],
