@@ -1,10 +1,17 @@
 // Loading data and batch runs (R3, R9, control check 1).
 //
-//   openLoader({host, store, api, onImported?}) -> { el, close }
+//   openLoader({host, store, api, onImported?, group?}) -> { el, close }
 //     The loader drawer: «Загрузить группу» by group_id (api.importDataset) and «Загрузить файл»
 //     (read with FileReader, checked with parseUpload first, so a bad file gets a precise message
 //     by code; then api.uploadConversations with the file's JSON as it is). Each import shows the
 //     summary «Всего N · новых I · обновлено U · без изменений K» and calls onImported(summary).
+//     `group` fills in the group_id field.
+//
+//   openImport(store, api, host, {group}?) -> { el, close }
+//     openLoader with what every import does to the store: the dataset badge and the queue's group
+//     filter follow the imported group (`groupId`, `queueGroup`), the queue reloads (`queueRefresh`)
+//     and the open transcript checks its dialogue (`importRefresh`). The queue's «Загрузить» and
+//     the call player's «Загрузить группу» both open it.
 //
 //   createBatchBar(store, api) -> { el, destroy }
 //     Shown while dialogues are selected in the queue (store `selection`) or a batch runs: the
@@ -52,7 +59,7 @@ function readText(file) {
 
 // ---- the loader drawer ------------------------------------------------------------------------
 
-export function openLoader({ host, store, api, onImported }) {
+export function openLoader({ host, store, api, onImported, group = "" }) {
   let closed = false;
   let busy = false;
 
@@ -65,6 +72,7 @@ export function openLoader({ host, store, api, onImported }) {
     data: { test: "group-id" },
     on: { input: () => paint() },
   });
+  groupInput.value = typeof group === "string" ? group : "";
   const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
   const fileInput = h("input", {
     class: "cqa-ld-file",
@@ -189,6 +197,23 @@ export function openLoader({ host, store, api, onImported }) {
   host.append(el);
   groupInput.focus();
   return { el, close };
+}
+
+export function openImport(store, api, host, { group } = {}) {
+  return openLoader({
+    host,
+    store,
+    api,
+    group,
+    onImported: (summary) => {
+      const imported = summary?.group_id;
+      store.set((state) => ({
+        ...(imported ? { groupId: imported, queueGroup: imported } : {}),
+        queueRefresh: (state.queueRefresh ?? 0) + 1,
+        importRefresh: (state.importRefresh ?? 0) + 1, // the open dialogue may have new lines or a recording
+      }));
+    },
+  });
 }
 
 // ---- the batch bar ----------------------------------------------------------------------------

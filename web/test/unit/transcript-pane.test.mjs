@@ -65,6 +65,12 @@ describe("shownKey: a re-import redraws the pane only when what it shows changed
     assert.notEqual(shownKey(conv), shownKey({ ...conv, language: "kk" }));
   });
 
+  test("a call whose recording became playable (an import) changes the key", () => {
+    const call = { ...conv, channel: "voice call", audio: null, audio_unavailable_reason: "needs_import", audio_offsets: [] };
+    assert.notEqual(shownKey(call), shownKey({ ...call, audio: "conversations/DEV%3A1/audio", audio_unavailable_reason: null }));
+    assert.notEqual(shownKey(call), shownKey({ ...call, audio_offsets: [{ message_index: 0, seconds: 2 }] }));
+  });
+
   test("a missing transcript reads as an empty one", () => {
     assert.equal(shownKey({ ...conv, transcript: undefined }), shownKey({ ...conv, transcript: [] }));
   });
