@@ -18,9 +18,16 @@ LANGUAGES = {"RU": "ru", "KZ": "kk", "EN": "en"}  # conversation.language to rec
 
 
 def alignment_enabled() -> bool:
-    """Offsets and measurements are published only when CQA_AUDIO_ALIGNMENT=on (#28). Turn it on
-    after the listening check in tests/manual/alignment_check.py has passed."""
-    return os.environ.get("CQA_AUDIO_ALIGNMENT", "").strip().lower() == "on"
+    """Whether offsets and voice measurements are published (#28).
+
+    CQA_AUDIO_ALIGNMENT=on or =off decides when set. Otherwise they are on exactly when
+    faster-whisper is installed (`uv sync --extra asr`): the listening check passed for the
+    length guess plus recogniser snapping (29 of 30 samples within about 2 s), not for the
+    length guess alone."""
+    value = os.environ.get("CQA_AUDIO_ALIGNMENT", "").strip().lower()
+    if value in ("on", "off"):
+        return value == "on"
+    return asr_align.available()
 
 
 def analyse(transcript: list[Message], samples: np.ndarray, sr: int, language: str = "RU", refine: bool = True):
@@ -73,11 +80,9 @@ async def _download(player: str) -> bytes:
 async def process_call(conversation: str) -> None:
     """Store a call's line offsets and voice measurements, or clear them while alignment is off.
 
-    By default nothing is published: the timing has not passed the independent listening check
-    (#28), and stored results from older builds are cleared. With CQA_AUDIO_ALIGNMENT=on the
-    recording is fetched into memory, aligned (length guess, then recogniser snapping when
-    faster-whisper is installed) and the results are stored. Failures never escape into the
-    import job.
+    When alignment is enabled (see `alignment_enabled`) the recording is fetched into memory,
+    aligned (length guess, then recogniser snapping) and the results are stored; otherwise
+    stored results are cleared. Failures never escape into the import job.
     """
     try:
         from app import store

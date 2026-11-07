@@ -25,6 +25,7 @@ def test_empty_short_duplicate_and_open_pause():
 def test_shared_models_and_unknown_overlap(monkeypatch):
     import audio.pipeline as pipeline
     monkeypatch.setattr(pipeline, 'compute_spans', lambda *a: ([dict(message_index=0, start=0., end=1.)], {}))
+    monkeypatch.setattr(pipeline.asr_align, 'available', lambda: False)  # no recogniser in a unit test
     monkeypatch.setattr(pipeline, 'measure_operator', lambda *a: [dict(message_index=0, from_seconds=0.,
         to_seconds=1., pitch_range=4., rate_wpm=120., pauses=0., overlap=3.)])
     offsets, measurements = analyse([Message(timestamp='2026-01-01T00:00:00Z', speaker='operator', text='Hi')],
@@ -45,6 +46,7 @@ async def test_processing_storage_failure_does_not_escape_or_leak(monkeypatch, c
 
 
 async def test_production_gate_clears_previous_results_without_fetching(client, monkeypatch):
+    monkeypatch.setenv('CQA_AUDIO_ALIGNMENT', 'off')
     from app import store
     from app.models import Conversation
     conv = Conversation(id='DEV:call', conversation_id='call', group_id='DEV',
