@@ -63,7 +63,7 @@ While the recording plays, the current line is highlighted. Clicking a line jump
 
 ## 8. Hiding personal data before it goes to the model
 
-Phone numbers, card and account numbers, and names are masked before the transcript is sent to Claude. The original stays in our storage and in the UI.
+E-mails, IBANs, card numbers, 12-digit IINs and phone numbers are masked before the transcript is sent to the model. Names are masked only when introduced by a cue phrase («меня зовут», «я …», «менің атым», «мен …», "my name is", "I'm …"); a name mentioned any other way, addresses and dates of birth are sent as they are. The original stays in our storage and in the UI.
 
 ## 9. Export to Excel/CSV
 
