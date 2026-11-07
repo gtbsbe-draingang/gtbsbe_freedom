@@ -3,7 +3,7 @@ from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/ and its .env, found from this file so they are the same whatever the working directory is
@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ENV_FILE, extra="ignore", env_ignore_empty=True)
 
     anthropic_api_key: SecretStr | None = None  # env ANTHROPIC_API_KEY
+    # env ANTHROPIC_BASE_URL: an Anthropic-compatible server (e.g. a local vLLM, no `/v1`).
+    # Unset means the Claude API. Read here because .env values are not exported to the SDK.
+    anthropic_base_url: str | None = None
+    # env MODEL_TIMEOUT_SECONDS: how long one model request may take before the client gives up and
+    # retries. 60 suits the Claude API; a local model on a shared GPU can need several minutes for a
+    # long answer.
+    model_timeout_seconds: float = Field(default=60.0, gt=0)
     organizer_api_url: SecretStr | None = None  # env ORGANIZER_API_URL; group_id is replaced, nothing else
     base_path: str = "/api"
     cors_origins: list[str] = []
