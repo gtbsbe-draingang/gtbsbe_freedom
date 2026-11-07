@@ -8569,7 +8569,7 @@
       attrs: { "aria-label": t("language.label") },
       data: { test: "ui-language" },
       on: { change: () => setLanguage(language2.value) }
-    }, [["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"], ["en", "English"], ["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430"]].map(([value2, label]) => h("option", { verbatim: true, attrs: { value: value2 }, text: label })));
+    }, [["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430 (KAZ)"], ["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (RU)"], ["en", "English (EN)"]].map(([value2, label]) => h("option", { verbatim: true, attrs: { value: value2 }, text: label })));
     language2.value = currentLanguage();
     const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language2, roleSwitch(store, track), themeToggle(store, track));
     if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);

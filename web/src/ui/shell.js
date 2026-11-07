@@ -144,7 +144,7 @@ function buildHeader(store, compact, track) {
   const language = h("select", {
     class: "cqa-language", attrs: { "aria-label": t("language.label") }, data: { test: "ui-language" },
     on: { change: () => setLanguage(language.value) },
-  }, [["ru", "Русский"], ["en", "English"], ["kk", "Қазақша"]].map(([value,label]) => h("option", {verbatim:true, attrs:{value}, text:label})));
+  }, [["kk", "Қазақша (KAZ)"], ["ru", "Русский (RU)"], ["en", "English (EN)"]].map(([value,label]) => h("option", {verbatim:true, attrs:{value}, text:label})));
   language.value = currentLanguage();
   const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language, roleSwitch(store, track), themeToggle(store, track));
   if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
