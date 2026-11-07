@@ -13,7 +13,7 @@ import { parseUpload, UploadError } from "../../domain/normalize.js";
 import { validateAnswer } from "../../domain/scoring.js";
 import { ChecklistBodyError, completeBody } from "./checklists.js";
 import { compactTimestamp, toConversation } from "./datasets.js";
-import { buildEvaluation, collectReusable, fullyReusable, recompute } from "./evaluation.js";
+import { buildEvaluation, collectReusable, countCalls, recompute } from "./evaluation.js";
 import { DEFAULT_CHECKLIST, exampleRecords, MODEL, OFFICIAL_SEED } from "./fixtures.js";
 import { mockInfo, secondOpinion } from "./grader.js";
 import { openStore } from "./persist.js";
@@ -444,12 +444,15 @@ export function createMockApi(options = {}) {
     const convs = [];
     for (const id of [...new Set(conversations)]) convs.push(await resolveConversation(id));
 
+    // `total` counts dialogues; `model_calls` and `reused` count criterion calls (the backend's unit).
+    let modelCalls = 0;
     let reused = 0;
     for (const conv of convs) {
       const reusable = collectReusable(state.evaluations, state.evalMeta, conv.id, state.hashes[conv.id]);
-      if (fullyReusable(checklist, reusable, mode)) reused += 1;
+      const counted = countCalls(checklist, reusable, mode);
+      modelCalls += counted.modelCalls;
+      reused += counted.reused;
     }
-    const modelCalls = convs.length - reused;
     if (dry_run) return { total: convs.length, model_calls: modelCalls, reused };
     if (modelCalls > 0 && !hasKey) {
       throw fail("model_key_missing", "A new model call is needed and no model key is configured");

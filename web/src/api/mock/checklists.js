@@ -76,7 +76,7 @@ export async function completeBody(body, fallback = null) {
     c.na_condition = c.na_allowed ? c.na_condition ?? null : null;
     c.kinds = c.kind === "gross_error" && Array.isArray(c.kinds) ? c.kinds : [];
     c.wording = typeof c.wording === "string" ? c.wording : "";
-    c.guidance = c.guidance ?? null;
+    c.guidance = typeof c.guidance === "string" && c.guidance !== "" ? c.guidance : null; // null when empty
     if (!Number.isInteger(c.order)) c.order = i + 1;
     if (c.model === undefined || c.model === null) delete c.model;
     c.fingerprint = await fingerprint(c);

@@ -373,14 +373,14 @@ describe("grading", () => {
     const dry = (extra = {}) => api.startEvaluations({ conversations: [P1, P4], ...OFFICIAL, dry_run: true, ...extra });
     const first = await dry();
     assertValid("dry-run", first);
-    assert.deepEqual(first, { total: 2, model_calls: 2, reused: 0 });
+    assert.deepEqual(first, { total: 2, model_calls: 16, reused: 0 }, "two dialogues times eight criteria");
     assert.equal((await api.listEvaluations({})).length, 0, "nothing was created");
 
     await evaluate(api, [P1]);
-    assert.deepEqual(await dry(), { total: 2, model_calls: 1, reused: 1 });
-    assert.deepEqual(await dry({ mode: "full" }), { total: 2, model_calls: 2, reused: 0 });
+    assert.deepEqual(await dry(), { total: 2, model_calls: 8, reused: 8 });
+    assert.deepEqual(await dry({ mode: "full" }), { total: 2, model_calls: 16, reused: 0 });
     await evaluate(api, [P4]);
-    assert.deepEqual(await dry(), { total: 2, model_calls: 0, reused: 2 });
+    assert.deepEqual(await dry(), { total: 2, model_calls: 0, reused: 16 });
     assert.equal((await api.listEvaluations({})).length, 2, "dry runs created no evaluations");
     const next = await api.startEvaluations({ conversations: [P1], ...OFFICIAL });
     assert.equal(next.id, "job-0003", "the dry runs did not use up job ids");
@@ -593,7 +593,7 @@ describe("appeals", () => {
     assertValid("error", { error: err.code, message: err.message });
     await rejects(api.startEvaluations({ conversations: [P1], ...OFFICIAL, mode: "full" }), "model_key_missing");
     // a dry run is only an estimate; a batch that needs no model call is allowed
-    assert.deepEqual(await api.startEvaluations({ conversations: [P4], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 1, reused: 0 });
+    assert.deepEqual(await api.startEvaluations({ conversations: [P4], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 8, reused: 0 });
     const reuse = await api.startEvaluations({ conversations: [P1], ...OFFICIAL });
     assert.equal(reuse.mode, "reuse");
 
@@ -671,6 +671,11 @@ describe("carried decisions", () => {
       criteria: copy.criteria.map((c) => (c.id === "c05" ? { ...c, weight: 30 } : c)),
     });
     assert.equal(weightOnly.version, 2);
+    assert.deepEqual(
+      await api.startEvaluations({ conversations: [P1], checklist_id: copy.checklist_id, version: 2, dry_run: true }),
+      { total: 1, model_calls: 0, reused: 8 },
+      "a weight-only change needs no model call",
+    );
     await evaluate(api, [P1], { checklist_id: copy.checklist_id, version: 2 });
     const w = await latestEvaluation(api, P1, { checklist_id: copy.checklist_id, version: 2 });
     assert.ok(w.results.every((r) => r.reused));
@@ -684,7 +689,7 @@ describe("carried decisions", () => {
     assert.equal(reworded.version, 3);
     assert.notEqual(reworded.criteria.find((c) => c.id === "c05").fingerprint, copy.criteria.find((c) => c.id === "c05").fingerprint);
     const dry = await api.startEvaluations({ conversations: [P1], checklist_id: copy.checklist_id, version: 3, dry_run: true });
-    assert.deepEqual(dry, { total: 1, model_calls: 1, reused: 0 }, "one changed criterion needs a model call");
+    assert.deepEqual(dry, { total: 1, model_calls: 1, reused: 7 }, "only the reworded criterion needs a model call");
     await evaluate(api, [P1], { checklist_id: copy.checklist_id, version: 3 });
     const r = await latestEvaluation(api, P1, { checklist_id: copy.checklist_id, version: 3 });
     const c05 = r.results.find((x) => x.criterion_id === "c05");
@@ -711,7 +716,7 @@ describe("carried decisions", () => {
 
     text = "Добрый день! Чем могу помочь?";
     assert.equal((await api.importDataset("DEV")).updated, 1);
-    assert.deepEqual(await api.startEvaluations({ conversations: ["DEV:d-1"], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 1, reused: 0 });
+    assert.deepEqual(await api.startEvaluations({ conversations: ["DEV:d-1"], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 8, reused: 0 });
     await evaluate(api, ["DEV:d-1"]);
     const fresh = await latestEvaluation(api, "DEV:d-1");
     assert.ok(fresh.results.every((r) => r.reused === false && r.carried_decision === null));
@@ -749,7 +754,10 @@ describe("checklists", () => {
     assertValid("checklist-version", v1);
     assert.equal(v1.criteria.length, seed.criteria.length);
     assert.equal(v1.guidance, seed.guidance);
-    for (const c of v1.criteria) assert.equal(c.fingerprint, await fingerprint(c));
+    for (const [i, c] of v1.criteria.entries()) {
+      assert.equal(c.fingerprint, await fingerprint(seed.criteria[i]), "computed from the seed as it is");
+      assert.equal(c.guidance, seed.criteria[i].guidance);
+    }
     assert.deepEqual((await api.getConfig()).default_checklist, OFFICIAL);
     await rejects(api.getChecklistVersion("official-chat", 2), "not_found");
     await rejects(api.getChecklistVersion("nope", 1), "not_found");
@@ -803,6 +811,12 @@ describe("checklists", () => {
     assert.equal(created.based_on, null);
     assert.equal(new Set(created.criteria.map((c) => c.id)).size, 2);
     assert.ok(created.criteria.every((c) => c.id && c.fingerprint && c.kind === "scored" && Array.isArray(c.kinds)));
+    assert.ok(created.criteria.every((c) => c.guidance === null), "criterion guidance is null when none");
+    const blank = await api.createChecklist({ name: "Пустое пояснение", sections: created.sections,
+      criteria: created.criteria.map((c) => ({ ...c, guidance: "" })) });
+    assert.ok(blank.criteria.every((c) => c.guidance === null), "an empty guidance becomes null");
+    assert.deepEqual(blank.criteria.map((c) => c.fingerprint), created.criteria.map((c) => c.fingerprint), "null and empty are the same criterion");
+    assert.equal(created.guidance, "", "the checklist's own guidance stays a string");
     await rejects(api.createChecklist({ name: "Пусто", sections: [], criteria: [] }), "invalid_checklist");
     await rejects(api.createChecklist({ sections: created.sections, criteria: created.criteria }), "invalid_checklist");
     await rejects(api.createChecklist({ name: "x", sections: created.sections,
@@ -830,7 +844,7 @@ describe("isolation, faults and storage", () => {
     assert.equal(byId["B:p1-ru-001"].final, null);
     assert.equal(byId["B:p1-ru-001"].status, "new");
     // equal content in another group is not reused
-    assert.deepEqual(await api.startEvaluations({ conversations: ["B:p1-ru-001"], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 1, reused: 0 });
+    assert.deepEqual(await api.startEvaluations({ conversations: ["B:p1-ru-001"], ...OFFICIAL, dry_run: true }), { total: 1, model_calls: 8, reused: 0 });
 
     await evaluate(api, ["B:p1-ru-001"]);
     const evA = (await api.listEvaluations({ conversation: "A:p1-ru-001" }))[0];

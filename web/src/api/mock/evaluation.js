@@ -36,9 +36,14 @@ export function collectReusable(evaluations, evalMeta, conversationId, hash) {
   return found;
 }
 
-/** True when every criterion of the version has a reusable result (and the mode allows reuse). */
-export const fullyReusable = (version, reusable, mode) =>
-  mode !== "full" && version.criteria.every((criterion) => reusable.has(criterion.fingerprint));
+/**
+ * Criterion calls of one dialogue against a version, the unit of a dry run: `reused` criteria have
+ * a stored result to copy, `modelCalls` need the model. Mode "full" reuses nothing.
+ */
+export function countCalls(version, reusable, mode) {
+  const reused = mode === "full" ? 0 : version.criteria.filter((c) => reusable.has(c.fingerprint)).length;
+  return { modelCalls: version.criteria.length - reused, reused };
+}
 
 // The latest decided appeal that carries into `criterion` of a new evaluation, or null.
 function carriedAppeal(criterion, conversationId, hash, appeals, evalMeta) {
