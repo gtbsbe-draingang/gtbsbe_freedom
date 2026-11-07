@@ -1,3 +1,4 @@
+import { getAudioWaveform } from "../audio-waveform.js";
 // The in-browser mock of the API contract (spec sections 6-7): the same interface as the HTTP
 // adapter, answered from a small state kept in localStorage (or memory). Everything it returns is
 // a copy, validates against contract/schemas, and is deterministic for a given dialogue and
@@ -663,6 +664,7 @@ export function createMockApi(options = {}) {
   }
 
   return {
+    getAudioWaveform,
     getConfig: method("getConfig", async () => ({
       models: [MODEL],
       prices: { [MODEL]: { input_per_mtok_usd: 0, output_per_mtok_usd: 0 } },

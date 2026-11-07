@@ -139,7 +139,8 @@ describe("http adapter: contract paths, methods and bodies", () => {
   test("the table covers every async method of the interface", () => {
     const covered = new Set(TABLE.map(([name]) => name));
     const { api } = make();
-    const sync = new Set(["audioUrl", "exportCsvUrl"]);
+    // Waveform decoding is a client helper over audioUrl, not a JSON API endpoint.
+    const sync = new Set(["audioUrl", "exportCsvUrl", "getAudioWaveform"]);
     for (const name of Object.keys(api)) if (!sync.has(name)) assert.ok(covered.has(name), `${name} not in the table`);
     for (const name of covered) assert.equal(typeof api[name], "function", name);
   });
