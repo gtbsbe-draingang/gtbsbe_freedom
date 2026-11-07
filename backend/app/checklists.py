@@ -113,10 +113,23 @@ def _insert_if_missing(path: Path) -> None:
     logger.info("Seeded checklist %s from %s", version.id, path.name)
 
 
+def _later_official_versions() -> list[Path]:
+    """Later published versions of the official checklist next to OFFICIAL_SEED
+    (`official-chat-v2.json`, ...), oldest first. A changed interpretation is a new immutable
+    version, never an edit of v1 (#25 added v2 with the team guidance)."""
+    found = []
+    for path in OFFICIAL_SEED.parent.glob("official-chat-v*.json"):
+        match = re.fullmatch(r"official-chat-v(\d+)\.json", path.name)
+        if match and int(match[1]) > 1:
+            found.append((int(match[1]), path))
+    return [path for _, path in sorted(found)]
+
+
 def seed_files() -> list[Path]:
     """The checklist files that ship with the repo and exist now, in the order they are seeded:
-    the official chat checklist, then stream D's calls checklist."""
-    return [path for path in (OFFICIAL_SEED, CALLS_SEED) if path.is_file()]
+    the official chat checklist, its later versions, then stream D's calls checklist."""
+    paths = [OFFICIAL_SEED, *_later_official_versions(), CALLS_SEED]
+    return [path for path in paths if path.is_file()]
 
 
 def seed_into_db() -> None:

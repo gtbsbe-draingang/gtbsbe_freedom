@@ -10,11 +10,20 @@ dependencies = [
     "pydantic>=2.14.3",
     "pydantic-settings>=2.16.2",
     "uvicorn[standard]>=0.54.0",
+    "numpy==2.1.1",
+    "scipy==1.15.2",
+    "soundfile==0.14.0",
+    "praat-parselmouth==0.4.7",
 ]
 
 [project.scripts]
 cqa-serve = "app.cli:serve"
 cqa-snapshot = "app.cli:snapshot"
+
+[project.optional-dependencies]
+asr = [
+    "faster-whisper>=1.2",
+]
 
 [build-system]
 requires = ["hatchling"]

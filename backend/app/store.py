@@ -155,6 +155,17 @@ register_migration(
     """,
 )
 
+# Earlier D builds persisted heuristic alignment without an acceptance marker.
+# Clear those derived fields once on upgrade, before API reads or jobs can use them.
+register_migration(
+    "d_001_withhold_unvalidated_audio",
+    """
+    UPDATE conversations SET conversation_json = json_set(
+        conversation_json, '$.audio_offsets', json('[]'), '$.voice_measurements', json('[]')
+    ) WHERE channel = 'voice call';
+    """,
+)
+
 # Checklist version numbers are small positive integers. The bound keeps a huge number from
 # reaching SQLite, which raises OverflowError for an integer beyond 64 bits.
 MAX_CHECKLIST_VERSION = 2**31 - 1

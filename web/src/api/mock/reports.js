@@ -19,6 +19,7 @@ const round2 = (x) => fromHundredths(hundredths(x));
 const sameAnswer = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 const rate = (part, whole) => (whole === 0 ? 0 : round2(part / whole));
+const agreement = (part, whole) => (whole === 0 ? null : rate(part, whole));
 
 // ---- comparison ----------------------------------------------------------------------------
 
@@ -113,11 +114,11 @@ export function buildAccuracy(ctx) {
     }
   }
 
-  const strip = ({ hit: h, n: count, ...rest }) => ({ ...rest, agreement: rate(h, count), n: count });
+  const strip = ({ hit: h, n: count, ...rest }) => ({ ...rest, agreement: agreement(h, count), n: count });
   return {
     reference_note: REFERENCE_NOTE,
     model: MODEL,
-    overall: { agreement: rate(hit, n), n },
+    overall: { agreement: agreement(hit, n), n },
     by_criterion: [...byCriterion.values()].filter((r) => r.n > 0).map(strip),
     by_language: [...byLanguage.values()].map(strip),
     by_channel: [...byChannel.values()].map(strip),

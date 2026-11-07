@@ -147,8 +147,8 @@ def test_official_is_seeded_and_locked(client: TestClient) -> None:
     assert r.status_code == 200
     official = [c for c in r.json() if c["checklist_id"] == "official-chat"]
     assert len(official) == 1
-    assert official[0]["version"] == 1 and official[0]["locked"] is True
-    assert official[0]["versions"] == [1]
+    assert official[0]["version"] == 2 and official[0]["locked"] is True
+    assert official[0]["versions"] == [1, 2]
     assert client.get("/api/checklists/official-chat/versions/1").json()["locked"] is True
 
 
@@ -807,9 +807,10 @@ def test_locked_refuses_new_version(client: TestClient) -> None:
 
 @needs_seed
 def test_official_refuses_new_version(client: TestClient) -> None:
+    before = listed(client, "official-chat")["versions"]
     r = new_version(client, "official-chat", official_like())
     assert (r.status_code, r.json()["error"]) == (409, "checklist_locked")
-    assert listed(client, "official-chat")["versions"] == [1]
+    assert listed(client, "official-chat")["versions"] == before
 
 
 def test_the_latest_version_decides_whether_a_checklist_is_locked(client: TestClient) -> None:

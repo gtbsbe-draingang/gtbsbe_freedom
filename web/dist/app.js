@@ -1609,6 +1609,7 @@
   var round22 = (x) => fromHundredths(hundredths2(x));
   var sameAnswer2 = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   var rate = (part, whole) => whole === 0 ? 0 : round22(part / whole);
+  var agreement = (part, whole) => whole === 0 ? null : rate(part, whole);
   function buildComparison(ctx, { from, to, groupId, conversations }) {
     const header = (ref) => ({ checklist_id: ref.checklist_id, version: ref.version, name: ctx.version(ref.checklist_id, ref.version).name });
     const wanted = conversations ? new Set(conversations) : null;
@@ -1683,11 +1684,11 @@
         tick(byChannel, conv.channel, "channel", matched);
       }
     }
-    const strip = ({ hit: h2, n: count, ...rest }) => ({ ...rest, agreement: rate(h2, count), n: count });
+    const strip = ({ hit: h2, n: count, ...rest }) => ({ ...rest, agreement: agreement(h2, count), n: count });
     return {
       reference_note: REFERENCE_NOTE,
       model: MODEL,
-      overall: { agreement: rate(hit, n), n },
+      overall: { agreement: agreement(hit, n), n },
       by_criterion: [...byCriterion.values()].filter((r) => r.n > 0).map(strip),
       by_language: [...byLanguage.values()].map(strip),
       by_channel: [...byChannel.values()].map(strip),

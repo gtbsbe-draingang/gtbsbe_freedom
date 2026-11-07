@@ -31,7 +31,10 @@
       ],
       "properties": {
         "agreement": {
-          "type": "number",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0,
           "maximum": 1
         },
@@ -39,7 +42,12 @@
           "type": "integer",
           "minimum": 0
         }
-      }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/observations"
+        }
+      ]
     },
     "by_criterion": {
       "type": "array",
@@ -60,7 +68,10 @@
             "type": "string"
           },
           "agreement": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 1
           },
@@ -68,7 +79,12 @@
             "type": "integer",
             "minimum": 0
           }
-        }
+        },
+        "allOf": [
+          {
+            "$ref": "#/$defs/observations"
+          }
+        ]
       }
     },
     "by_language": {
@@ -86,7 +102,10 @@
             "description": "Same code as conversation.language (RU, KZ, EN)."
           },
           "agreement": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 1
           },
@@ -94,7 +113,12 @@
             "type": "integer",
             "minimum": 0
           }
-        }
+        },
+        "allOf": [
+          {
+            "$ref": "#/$defs/observations"
+          }
+        ]
       }
     },
     "by_channel": {
@@ -111,7 +135,10 @@
             "type": "string"
           },
           "agreement": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 1
           },
@@ -119,7 +146,12 @@
             "type": "integer",
             "minimum": 0
           }
-        }
+        },
+        "allOf": [
+          {
+            "$ref": "#/$defs/observations"
+          }
+        ]
       }
     },
     "missing": {
@@ -186,6 +218,51 @@
           ],
           "properties": {
             "step": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "observations": {
+      "type": "object",
+      "properties": {
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agreement": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "n",
+        "agreement"
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "n": {
+              "const": 0,
+              "type": "integer"
+            },
+            "agreement": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "n": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "agreement": {
               "type": "number"
             }
           }
