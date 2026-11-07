@@ -139,6 +139,64 @@ def test_load_checklist_file_recomputes_a_fingerprint_it_finds(tmp_path: Path) -
     assert re.fullmatch(r"[0-9a-f]{64}", load_checklist_file(path).criteria[0].fingerprint)
 
 
+def test_load_checklist_file_fingerprints_the_validated_criterion(tmp_path: Path) -> None:
+    # `na_allowed: 0` and a scale value `5.0` are valid input that pydantic coerces to False and 5.
+    # The fingerprint must be that of the stored criterion, not of the raw dict (where 0 and 5.0
+    # hash differently), or a fingerprint computed again later would not match the stored one.
+    data = checklist_dict()
+    data["criteria"][0]["na_allowed"] = 0
+    data["criteria"][1]["scale_steps"] = [
+        {"value": 0.0, "label": "Нет"},
+        {"value": 60.0, "label": "Да"},
+    ]
+    path = tmp_path / "x.json"
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    loaded = load_checklist_file(path)
+    for criterion in loaded.criteria:
+        assert criterion.fingerprint == criterion_fingerprint(criterion)
+    typed = checklist_dict()["criteria"]  # the same checklist written with the proper types
+    assert [c.fingerprint for c in loaded.criteria] == [criterion_fingerprint(c) for c in typed]
+
+
+def write_raw(path: Path, data: dict) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize(
+    ("change", "fragment"),
+    [
+        (lambda d: d["criteria"][0].update(weight="1e400"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight="1e100000"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight=1001), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight="12.1234567890123456789"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][1].update(id="c01"), "duplicate criterion id 'c01'"),
+        (lambda d: d["criteria"][0].update(section_id="nowhere"), "unknown section 'nowhere'"),
+        (lambda d: d.update(name="  "), "needs a name"),
+        (lambda d: d.update(criteria=[]), "at least one criterion"),
+    ],
+)
+def test_load_checklist_file_rejects_a_checklist_that_breaks_the_editing_rules(
+    tmp_path: Path, change, fragment: str
+) -> None:
+    # The same rules as the API's: a seed that would poison the database is a loud error.
+    data = checklist_dict()
+    change(data)
+    with pytest.raises(ValueError, match=re.escape(fragment)):
+        load_checklist_file(write_raw(tmp_path / "x.json", data))
+
+
+def test_a_seed_that_breaks_the_rules_is_an_error_and_stores_nothing(migrated: None, seed_files) -> None:
+    official, _ = seed_files
+    data = checklist_dict()
+    data["criteria"][0]["weight"] = "1e400"
+    write_raw(official, data)
+    with pytest.raises(ValueError, match="official-chat-v1.json"):
+        seed_into_db()
+    assert stored_rows() == []
+
+
 def test_load_checklist_file_keeps_locked_as_written(tmp_path: Path) -> None:
     unlocked = write_checklist(tmp_path / "u.json", locked=False)
     assert load_checklist_file(unlocked).locked is False
