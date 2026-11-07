@@ -21,6 +21,8 @@ backend/cqa.db*
 data/snapshot/*.tmp
 __pycache__/
 .pytest_cache/
+# Stream D: reference-label batches stay local
+data/reference/batches/
 
 # evaluator run reports (real dialogues, never committed)
 eval-runs/

@@ -117,7 +117,8 @@ export async function launch({ width = 1920, height = 1080, scale = 1 } = {}) {
       ws.close();
       chrome.kill();
       await sleep(300);
-      rmSync(profile, { recursive: true, force: true });
+      // Windows keeps the profile busy for a moment after kill; retry instead of failing the run.
+      rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
     },
   };
 }

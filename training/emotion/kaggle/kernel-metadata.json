@@ -1,0 +1,14 @@
+{
+  "id": "iskoxi/cqa-emotion-head",
+  "title": "CQA Emotion Head",
+  "code_file": "train_emotion_head.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": ["primerq19/dusha-dataset", "mutashevdarkhan/kazemotts", "ar4ikov/resd-dataset"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

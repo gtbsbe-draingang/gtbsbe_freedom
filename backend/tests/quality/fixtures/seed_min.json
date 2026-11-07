@@ -1,0 +1,12 @@
+{
+  "checklist_id": "official-chat",
+  "version": 1,
+  "criteria": [
+    {"id": "c01", "answer_type": "yes_no", "scale_steps": [], "na_allowed": false, "kind": "scored", "kinds": []},
+    {"id": "c04", "answer_type": "scale", "na_allowed": true, "kind": "scored", "kinds": [],
+     "scale_steps": [{"value": 0, "label": "0"}, {"value": 5, "label": "5"}, {"value": 10, "label": "10"},
+                     {"value": 15, "label": "15"}, {"value": 20, "label": "20"}]},
+    {"id": "c08", "answer_type": "yes_no", "scale_steps": [], "na_allowed": false, "kind": "gross_error",
+     "kinds": ["insult", "paid_service_outside_company", "confidential_disclosure"]}
+  ]
+}
