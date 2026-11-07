@@ -43,7 +43,7 @@ export async function run(page) {
   await page.waitFor(sel("workspace"));
   // a conversation route keeps the workspace and names the dataset
   await page.eval(`location.hash = "#/c/CTRL%3Ax-1"`);
-  await page.waitFor(`${sel("transcript-pane")} .cqa-empty`);
+  await page.waitFor(`${sel("transcript-pane")} ${sel("transcript-error")}`); // no such record: the pane says so and names it
   assert.match(await page.text(sel("transcript-pane")), /CTRL:x-1/);
   assert.match(await page.text(sel("dataset-badge")), /CTRL/);
   await page.eval(`location.hash = "#/"`);

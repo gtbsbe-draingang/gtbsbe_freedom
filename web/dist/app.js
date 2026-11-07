@@ -301,6 +301,17 @@
       return p.kind === "clock" ? p.seconds - base.seconds : (p.epochMs - base.epochMs) / 1e3;
     });
   }
+  function formatOffset(sec) {
+    if (typeof sec !== "number" || !Number.isFinite(sec)) return "";
+    const negative = sec < 0;
+    const whole = Math.floor(Math.abs(sec) + 1e-6);
+    const h2 = Math.floor(whole / 3600);
+    const mm = Math.floor(whole % 3600 / 60);
+    const ss = whole % 60;
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const body = h2 > 0 ? `${h2}:${pad2(mm)}:${pad2(ss)}` : `${mm}:${pad2(ss)}`;
+    return negative ? `-${body}` : body;
+  }
 
   // src/domain/normalize.js
   var HANDOVER = /^(Эскалация на оператора|Чат операторға жіберілді|Chat transferred to an agent|Агент присоединился к разговору)/;
@@ -2599,6 +2610,21 @@
     "queue.tag.grossError": "\u0433\u0440\u0443\u0431\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430",
     "queue.tag.needsReview": "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443",
     "queue.tag.needsReviewTitle": "\u041C\u043E\u0434\u0435\u043B\u044C \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u0430 \u0432 \u0447\u0430\u0441\u0442\u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u0432",
+    "transcript.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0434\u0438\u0430\u043B\u043E\u0433 {id}\u2026",
+    "transcript.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u0438\u0430\u043B\u043E\u0433 {id}",
+    "transcript.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
+    "transcript.empty": "\u041D\u0435\u0442 \u0440\u0435\u043F\u043B\u0438\u043A",
+    "transcript.emptyNote": "\u0412 \u044D\u0442\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438.",
+    "transcript.label": "\u0414\u0438\u0430\u043B\u043E\u0433",
+    "transcript.lines": "\u0420\u0435\u043F\u043B\u0438\u043A: {n}",
+    "transcript.speaker.client": "\u041A\u043B\u0438\u0435\u043D\u0442",
+    "transcript.speaker.operator": "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440",
+    "transcript.speaker.bot": "\u0411\u043E\u0442",
+    "transcript.speaker.system": "\u0421\u0438\u0441\u0442\u0435\u043C\u0430",
+    "transcript.speaker.other": "\u0414\u0440\u0443\u0433\u043E\u0435",
+    "transcript.duplicate": "\u043F\u043E\u0432\u0442\u043E\u0440",
+    "transcript.duplicateTitle": "\u041F\u043E\u0432\u0442\u043E\u0440 \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0435\u0439 \u0440\u0435\u043F\u043B\u0438\u043A\u0438",
+    "transcript.expectedHere": "\u0437\u0434\u0435\u0441\u044C \u043E\u0436\u0438\u0434\u0430\u043B\u043E\u0441\u044C",
     "view.soon": "\u0420\u0430\u0437\u0434\u0435\u043B \u0435\u0449\u0451 \u043D\u0435 \u0433\u043E\u0442\u043E\u0432.",
     "notfound.title": "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430",
     "notfound.home": "\u041A \u043E\u0446\u0435\u043D\u043A\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
@@ -2904,8 +2930,8 @@
     });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
-    const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
-    const body = h("div", { class: "cqa-q-body" }, stateBox, list);
+    const stateBox2 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
+    const body = h("div", { class: "cqa-q-body" }, stateBox2, list);
     const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
     const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
     const queryText = () => view.query.trim().toLowerCase();
@@ -3086,8 +3112,8 @@
       waiting.length = 0;
     }
     function paintState(kind) {
-      clear(stateBox);
-      stateBox.hidden = kind === null;
+      clear(stateBox2);
+      stateBox2.hidden = kind === null;
       if (kind === null) return;
       const notes = {
         loading: [t("queue.loading")],
@@ -3097,7 +3123,7 @@
         nomatch: [t("queue.noMatch"), t("queue.noMatchNote")]
       };
       const [title, note] = notes[kind];
-      stateBox.append(
+      stateBox2.append(
         h(
           "div",
           { class: "cqa-empty", data: { test: `queue-${kind}` } },
@@ -3509,6 +3535,189 @@
     };
   }
 
+  // src/ui/transcript.js
+  var FLASH_MS = 1200;
+  var KNOWN = /* @__PURE__ */ new Set(["client", "operator", "bot", "system"]);
+  function speakerKind(speaker) {
+    const name = typeof speaker === "string" ? speaker.trim().toLowerCase() : "";
+    return KNOWN.has(name) ? name : "other";
+  }
+  var validIndex = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
+  function highlightPlan(count, evidence, range) {
+    const marks = Array.from({ length: count }, () => ({ supports: false, expected: false, checked: false }));
+    for (const item of Array.isArray(evidence) ? evidence : []) {
+      if (!item || !validIndex(item.message_index, count)) continue;
+      if (item.role === "supports") marks[item.message_index].supports = true;
+      else if (item.role === "expected_here") marks[item.message_index].expected = true;
+    }
+    if (range && Number.isInteger(range.from) && Number.isInteger(range.to)) {
+      const from = Math.max(0, Math.min(range.from, range.to));
+      const to = Math.min(count - 1, Math.max(range.from, range.to));
+      for (let i = from; i <= to; i += 1) marks[i].checked = true;
+    }
+    return marks;
+  }
+  function openId(store, args) {
+    if (typeof args?.id === "string" && args.id !== "") return args.id;
+    const { route: route2, conversationId } = store.get();
+    return route2?.name === "workspace" && route2.params?.id ? route2.params.id : conversationId ?? null;
+  }
+  function stateBox(test, title, note, extra) {
+    return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
+  }
+  function buildMessage(message, index, offset) {
+    const kind = speakerKind(message?.speaker);
+    const raw = typeof message?.timestamp === "string" ? message.timestamp.trim() : "";
+    const clock = formatOffset(offset) || raw;
+    const flag = h("b", { class: "cqa-msg-flag", data: { test: "msg-flag" } });
+    const who = h(
+      "div",
+      { class: "cqa-msg-who" },
+      flag,
+      kind === "system" ? null : h("span", { class: "cqa-msg-speaker", text: t(`transcript.speaker.${kind}`), attrs: kind === "other" && message?.speaker ? { title: String(message.speaker) } : {}, data: { test: "msg-speaker" } }),
+      clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
+      message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null
+    );
+    const text2 = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
+    const el = h("li", { class: ["cqa-msg", `cqa-msg--${kind}`, message?.duplicate && "is-duplicate"], data: { test: "msg", index, speaker: kind } }, who, text2);
+    return { el, flag };
+  }
+  function renderTranscript(store, api, args = {}) {
+    const id = openId(store, args);
+    const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
+    const head = h("div", { class: "cqa-tr-head" });
+    const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
+    let destroyed = false;
+    let rows = [];
+    let loaded = false;
+    let marked = [];
+    let pending2 = { highlight: null, focus: null };
+    const flashTimers = /* @__PURE__ */ new Map();
+    function clearMarks() {
+      for (const i of marked) {
+        const row = rows[i];
+        row.el.classList.remove("is-evidence", "is-expected", "is-checked");
+        row.el.removeAttribute("data-criterion");
+        row.flag.textContent = "";
+      }
+      marked = [];
+    }
+    function applyHighlight(criterionId, evidence, range, label) {
+      clearMarks();
+      if (criterionId === null || criterionId === void 0) return;
+      const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
+      const plan = highlightPlan(rows.length, evidence, range);
+      plan.forEach((mark, i) => {
+        if (!mark.supports && !mark.expected && !mark.checked) return;
+        const { el: row, flag } = rows[i];
+        row.classList.toggle("is-evidence", mark.supports);
+        row.classList.toggle("is-expected", mark.expected);
+        row.classList.toggle("is-checked", mark.checked);
+        row.setAttribute("data-criterion", String(criterionId));
+        flag.textContent = [mark.supports ? name : "", mark.expected ? t("transcript.expectedHere") : ""].filter(Boolean).join(" \xB7 ");
+        marked.push(i);
+      });
+    }
+    function highlight(criterionId, evidence, checkedRange, label) {
+      if (destroyed) return;
+      if (!loaded) pending2.highlight = [criterionId, evidence, checkedRange, label];
+      else applyHighlight(criterionId, evidence, checkedRange, label);
+    }
+    function flash(index) {
+      const { el: row } = rows[index];
+      clearTimeout(flashTimers.get(index));
+      row.classList.remove("is-flash");
+      void row.offsetWidth;
+      row.classList.add("is-flash");
+      flashTimers.set(
+        index,
+        setTimeout(() => {
+          row.classList.remove("is-flash");
+          flashTimers.delete(index);
+        }, FLASH_MS)
+      );
+    }
+    function focusMessage(index) {
+      if (destroyed) return false;
+      if (!loaded) {
+        pending2.focus = index;
+        return Number.isInteger(index) && index >= 0;
+      }
+      if (!validIndex(index, rows.length)) return false;
+      const row = rows[index].el;
+      const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
+      scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+      flash(index);
+      return true;
+    }
+    const handle = { el, highlight, focusMessage, destroy };
+    function show(conversation) {
+      const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+      const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
+      clear(head).append(
+        h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
+        h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" \xB7 "), data: { test: "transcript-meta" } })
+      );
+      clear(scroller);
+      rows = [];
+      marked = [];
+      loaded = true;
+      if (transcript.length === 0) {
+        scroller.append(stateBox("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
+      } else {
+        const at = offsets(transcript);
+        rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
+        scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
+      }
+      const { highlight: waiting, focus } = pending2;
+      pending2 = { highlight: null, focus: null };
+      if (waiting) applyHighlight(...waiting);
+      if (focus !== null) focusMessage(focus);
+    }
+    function showError(error) {
+      clear(head);
+      clear(scroller).append(
+        stateBox(
+          "transcript-error",
+          t("transcript.loadFailed", { id }),
+          errorText(error),
+          h("button", { class: "cqa-tr-retry", attrs: { type: "button" }, text: t("transcript.retry"), data: { test: "transcript-retry" }, on: { click: load2 } })
+        )
+      );
+    }
+    let run = 0;
+    async function load2() {
+      const mine = ++run;
+      loaded = false;
+      rows = [];
+      marked = [];
+      clear(scroller).append(stateBox("transcript-loading", t("transcript.loading", { id })));
+      try {
+        const conversation = await api.getConversation(id);
+        if (destroyed || mine !== run) return;
+        show(conversation);
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        showError(error);
+      }
+    }
+    function destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      flashTimers.forEach((timer) => clearTimeout(timer));
+      flashTimers.clear();
+      if (store.get().transcript === handle) store.set({ transcript: null });
+      const hook2 = window.__cqaTest;
+      if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
+    }
+    store.set({ transcript: handle });
+    const hook = window.__cqaTest;
+    if (hook?.store === store) hook.transcript = { focusMessage, highlight };
+    if (id === null) scroller.append(stateBox("transcript-empty", t("workspace.pick")));
+    else load2();
+    return handle;
+  }
+
   // src/app.js
   var THEME_KEY = "cqa-theme";
   var DEFAULT_GROUP = "DEV";
@@ -3546,8 +3755,10 @@
       // any change reloads the queue (after an import or an evaluation)
       queueOpen: false,
       // the queue drawer below 900 px
-      pane: "transcript"
+      pane: "transcript",
       // the visible pane below 700 px: "transcript" | "scorecard"
+      transcript: null
+      // handle of the open transcript pane: {highlight, focusMessage}; set by the pane itself
     });
     const roleNow = () => store.get().role;
     const api = createApi(
@@ -3570,7 +3781,7 @@
     };
     window.addEventListener("hashchange", onHashChange);
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
-    const shell = createShell(store, api, { panes: { queue: createQueue, ...options.panes }, views: options.views });
+    const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, ...options.panes }, views: options.views });
     el.replaceChildren(shell.el);
     let destroyed = false;
     return {

@@ -7,6 +7,7 @@ import { createStore, isCompact, watch } from "./state/store.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
 import { createQueue } from "./ui/queue.js";
 import { createShell } from "./ui/shell.js";
+import { renderTranscript } from "./ui/transcript.js";
 
 const THEME_KEY = "cqa-theme";
 const DEFAULT_GROUP = "DEV";
@@ -60,6 +61,7 @@ export function mount(el, options = {}) {
     queueRefresh: 0, // any change reloads the queue (after an import or an evaluation)
     queueOpen: false, // the queue drawer below 900 px
     pane: "transcript", // the visible pane below 700 px: "transcript" | "scorecard"
+    transcript: null, // handle of the open transcript pane: {highlight, focusMessage}; set by the pane itself
   });
   const roleNow = () => store.get().role;
   const api = createApi(
@@ -92,7 +94,7 @@ export function mount(el, options = {}) {
 
   if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null }; // `transcript` is filled by the transcript pane
 
-  const shell = createShell(store, api, { panes: { queue: createQueue, ...options.panes }, views: options.views });
+  const shell = createShell(store, api, { panes: { queue: createQueue, transcript: renderTranscript, ...options.panes }, views: options.views });
   el.replaceChildren(shell.el);
 
   let destroyed = false;
