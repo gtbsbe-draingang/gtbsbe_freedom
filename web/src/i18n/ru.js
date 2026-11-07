@@ -7,7 +7,7 @@ export const languages = ['ru', 'en', 'kk'];
 const listeners = new Set();
 const recipes = new Map();
 const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
-const DATA_PARAMS = new Set(['id','name','title','criterion','kinds','model','group','time']);
+const DATA_PARAMS = new Set(['id','name','title','criterion','model','group','time']);
 let language = 'ru';
 export function normalizeLanguage(value) {
   if (typeof value !== 'string') return null;
@@ -64,6 +64,18 @@ function messageReader(key, params, plural) {
 export function t(key, params) {
   if (!has(catalogs[language],key)) return key;
   const read = messageReader(key,params);
+  return remember(read(),read);
+}
+// Gross-error kinds are checklist ids. The official ones have catalog names (grossKind.<id>); a kind
+// typed into the checklist editor shows its id with underscores and dashes read as spaces.
+function grossKindName(kind) {
+  const id = String(kind ?? '').trim();
+  const key = `grossKind.${id}`;
+  return has(catalogs[language],key) ? catalogs[language][key] : id.replace(/[_-]+/g,' ').trim();
+}
+export function grossKindsText(kinds) {
+  const list = Array.isArray(kinds) ? kinds : [];
+  const read = () => list.map(grossKindName).filter(Boolean).join(', ');
   return remember(read(),read);
 }
 export function pluralForm(n) {

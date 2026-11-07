@@ -44,3 +44,19 @@ test('blocked storage still allows an in-session preference; invalid languages d
   } finally {globalThis.localStorage=prior;}
   assert.equal(normalizeLanguage('kk-KZ'),'kk');assert.equal(normalizeLanguage('KZ'),'kk');assert.equal(normalizeLanguage('en-US'),'en');
 });
+test('gross-error kinds show readable, live-translated names; unknown kinds show the id without underscores',async()=>{
+  const {grossKindsText}=await import('../../src/i18n/ru.js');
+  const official=['insult','paid_service_outside_company','confidential_disclosure'];
+  for(const lang of ['ru','en','kk']) {
+    setLanguage(lang,{persist:false});
+    for(const kind of official) assert.ok(catalogs[lang][`grossKind.${kind}`]?.trim(),`${lang}:${kind}`);
+    assert.doesNotMatch(grossKindsText(official),/_/);
+  }
+  setLanguage('ru',{persist:false});
+  const badge=captureMessage(t('scorecard.grossOnKinds',{kinds:grossKindsText(['paid_service_outside_company'])}));
+  assert.equal(badge(),'грубая ошибка: предложение платной услуги в обход компании');
+  setLanguage('en',{persist:false});
+  assert.equal(badge(),'gross error: offering a paid service outside the company');
+  assert.equal(grossKindsText(['insult',' my_custom-kind ']),'insulting the client, my custom kind');
+  assert.equal(grossKindsText([]),'');
+});

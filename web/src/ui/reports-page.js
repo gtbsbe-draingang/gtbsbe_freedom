@@ -1,4 +1,4 @@
-import { t, formatNumber, catalogs } from "../i18n/ru.js";
+import { t, formatNumber, catalogs, grossKindsText } from "../i18n/ru.js";
 // Server-owned report populations and final totals; no inferred accuracy or client-side scoring.
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
@@ -125,7 +125,7 @@ export function createReportsPage(store, api, route = store.get().route) {
     }
     const gross = data.gross_errors ?? {};
     body.append(h("h2", { text: t("reports.gross", {n:gross.count ?? 0}), data: { test: "analytics-gross" } }),
-      table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(r.kind), num(r.count)])),
+      table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(grossKindsText([r.kind])), num(r.count)])),
       h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id)))));
   }
   async function load() {
