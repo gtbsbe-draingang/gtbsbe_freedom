@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { format, t } from "../../src/i18n/ru.js";
+import { format, pluralForm, t, tp } from "../../src/i18n/ru.js";
 
 describe("i18n t()", () => {
   test("returns the Russian string for a known key", () => {
@@ -43,5 +43,18 @@ describe("i18n format()", () => {
   test("does not read inherited properties and does not re-expand values", () => {
     assert.equal(format("{constructor}", {}), "{constructor}");
     assert.equal(format("{a}", { a: "{b}", b: "!" }), "{b}");
+  });
+});
+
+describe("Russian plurals", () => {
+  test("pluralForm picks one / few / many by the Russian rule", () => {
+    const cases = { 1: "one", 21: "one", 101: "one", 2: "few", 3: "few", 4: "few", 22: "few", 0: "many", 5: "many", 11: "many", 12: "many", 14: "many", 25: "many", 111: "many" };
+    for (const [n, form] of Object.entries(cases)) assert.equal(pluralForm(Number(n)), form, `n = ${n}`);
+  });
+
+  test("tp() fills {n} into the right form", () => {
+    assert.equal(tp("batch.dialogs", 1), "1 диалог");
+    assert.equal(tp("batch.dialogs", 3), "3 диалога");
+    assert.equal(tp("batch.dialogs", 65), "65 диалогов");
   });
 });

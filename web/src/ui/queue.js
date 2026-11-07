@@ -11,11 +11,13 @@
 //
 // Store state used: `selection` (Set of ids, replaced on every change), `route` (the open row),
 // `queueOpen` (closed again after a click, for the narrow drawer) and `queueRefresh` (any number
-// that changes: the queue reloads; other views bump it after an import or an evaluation).
+// that changes: the queue reloads; other views bump it after an import or an evaluation). An
+// import from the loader also bumps `importRefresh`: the open transcript checks its dialogue.
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { icon } from "./icons.js";
+import { createBatchBar, openLoader } from "./loader.js";
 import { href } from "./router.js";
 import { errorText, toastError } from "./toast.js";
 
@@ -79,6 +81,7 @@ export function createQueue(store, api) {
     language: "",
     remote: null, // { q, ids: Set } from the server's text search
     groups: false, // more than one group is loaded: rows then name theirs
+    group: store.get().queueGroup ?? "", // "" = every group; store `queueGroup`, set by an import
   };
   const rows = new Map(); // id -> { el, topic, check, link, item }
   const firstLines = new Map(); // id -> first client line ("" when none), for rows without a topic
@@ -116,13 +119,97 @@ export function createQueue(store, api) {
     },
   });
 
+  // The group filter: shown once more than one group is loaded; an import switches it to its group.
+  const groupSelect = h("select", {
+    class: "cqa-q-select",
+    attrs: { "aria-label": t("queue.groupFilter") },
+    data: { test: "queue-group-filter" },
+    on: { change: () => store.set({ queueGroup: groupSelect.value }) },
+  });
+
+  // Select (or unselect) every row the filters show: the control set in one click.
+  const selectAll = h("input", {
+    class: "cqa-q-check",
+    attrs: { type: "checkbox", "aria-label": t("queue.selectAll") },
+    data: { test: "queue-select-all" },
+    on: { change: () => toggleAllShown() },
+  });
+
+  const loadButton = h("button", {
+    class: ["cqa-sc-btn", "cqa-q-load"],
+    attrs: { type: "button", title: t("queue.loadTitle") },
+    text: t("queue.load"),
+    data: { test: "open-loader" },
+    on: { click: () => openLoaderDrawer() },
+  });
+
   const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
   const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
   const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
   const body = h("div", { class: "cqa-q-body" }, stateBox, list);
+  const batch = createBatchBar(store, api);
 
-  const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
-  const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
+  const controls = h(
+    "div",
+    { class: "cqa-q-controls" },
+    pillBar,
+    h("div", { class: "cqa-q-sub" }, groupSelect, language),
+    h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary)),
+  );
+  const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
+  const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
+
+  let loader = null;
+  function openLoaderDrawer() {
+    loader?.close();
+    loader = openLoader({
+      host: el.closest(".cqa") ?? el,
+      store,
+      api,
+      onImported: (summary) => {
+        const group = summary?.group_id;
+        store.set((state) => ({
+          ...(group ? { groupId: group, queueGroup: group } : {}),
+          queueRefresh: (state.queueRefresh ?? 0) + 1,
+          importRefresh: (state.importRefresh ?? 0) + 1, // the open dialogue may have new lines
+        }));
+      },
+    });
+  }
+
+  const shownItems = () => view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, queryText()) && MATCHES[view.filter](item));
+
+  function toggleAllShown() {
+    const shown = shownItems().map((item) => item.id);
+    const next = new Set(store.get().selection ?? []);
+    const all = shown.length > 0 && shown.every((id) => next.has(id));
+    for (const id of shown) {
+      if (all) next.delete(id);
+      else next.add(id);
+    }
+    store.set({ selection: next });
+  }
+
+  function paintSelectAll(shown) {
+    const picked = store.get().selection ?? new Set();
+    const on = shown.filter((item) => picked.has(item.id)).length;
+    selectAll.checked = shown.length > 0 && on === shown.length;
+    selectAll.indeterminate = on > 0 && on < shown.length;
+    selectAll.disabled = shown.length === 0;
+  }
+
+  // The groups of the loaded items; an unknown chosen group falls back to every group, but only
+  // once the list is fresh (an import sets the group before its rows arrive).
+  function paintGroups() {
+    const groups = [...new Set(view.items.map((item) => item.group_id).filter((g) => typeof g === "string" && g !== ""))].sort();
+    if (view.group !== "" && !groups.includes(view.group)) {
+      view.group = "";
+      if ((store.get().queueGroup ?? "") !== "") store.set({ queueGroup: "" });
+    }
+    groupSelect.replaceChildren(h("option", { attrs: { value: "" }, text: t("queue.group.all") }), ...groups.map((g) => h("option", { attrs: { value: g }, text: g })));
+    groupSelect.value = view.group;
+    groupSelect.hidden = groups.length < 2;
+  }
 
   // ---- filtering ------------------------------------------------------------------------------
 
@@ -381,7 +468,7 @@ export function createQueue(store, api) {
     let shown = [];
     if (hasItems) {
       const q = queryText();
-      const base = view.items.filter((item) => (view.language === "" || item.language === view.language) && matchesQuery(item, q));
+      const base = view.items.filter((item) => (view.group === "" || item.group_id === view.group) && (view.language === "" || item.language === view.language) && matchesQuery(item, q));
       for (const pill of pills) {
         pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
         pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
@@ -403,6 +490,7 @@ export function createQueue(store, api) {
       clear(list);
       summary.textContent = "";
     }
+    paintSelectAll(shown);
 
     if (hasItems) paintState(shown.length === 0 ? "nomatch" : null);
     else paintState(view.phase === "ready" ? "empty" : view.phase);
@@ -440,6 +528,7 @@ export function createQueue(store, api) {
       view.error = null;
       view.remote = null;
       paintLanguages();
+      paintGroups();
       pruneSelection();
       if (queryText().length >= SERVER_SEARCH_MIN) scheduleServerSearch();
       paint();
@@ -469,10 +558,18 @@ export function createQueue(store, api) {
   subs.push(
     watch(store, (state) => state.selection, (selection) => {
       for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
+      paint(); // the select-all box
     }),
   );
   subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));
   subs.push(watch(store, (state) => state.queueRefresh, () => load()));
+  subs.push(
+    watch(store, (state) => state.queueGroup, (group) => {
+      view.group = group ?? "";
+      groupSelect.value = view.group;
+      paint();
+    }),
+  );
 
   paint();
   load();
@@ -484,6 +581,8 @@ export function createQueue(store, api) {
       destroyed = true;
       clearTimeout(searchTimer);
       subs.forEach((off) => off());
+      batch.destroy();
+      loader?.close();
       observer?.disconnect();
       rows.clear();
     },

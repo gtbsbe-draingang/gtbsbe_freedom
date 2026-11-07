@@ -5,6 +5,9 @@ import { createApi } from "./api/index.js";
 import { groupOf, readContext } from "./context.js";
 import { createStore, isCompact, watch } from "./state/store.js";
 import { createAppealsPage } from "./ui/appeals-page.js";
+import { createChecklistEditor } from "./ui/checklist-editor.js";
+import { createChecklistsPage } from "./ui/checklists-page.js";
+import { createComparePage } from "./ui/compare-page.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
 import { createQueue } from "./ui/queue.js";
 import { createScorecard } from "./ui/scorecard.js";
@@ -99,7 +102,15 @@ export function mount(el, options = {}) {
 
   const shell = createShell(store, api, {
     panes: { queue: createQueue, transcript: renderTranscript, scorecard: createScorecard, ...options.panes },
-    views: { appeals: createAppealsPage, appeal: createAppealsPage, ...options.views },
+    views: {
+      appeals: createAppealsPage,
+      appeal: createAppealsPage,
+      checklists: createChecklistsPage,
+      checklist: createChecklistEditor,
+      editor: createChecklistEditor,
+      compare: createComparePage,
+      ...options.views,
+    },
   });
   el.replaceChildren(shell.el);
 
