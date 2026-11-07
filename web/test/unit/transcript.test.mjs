@@ -473,6 +473,11 @@ describe("fingerprint", () => {
     assert.equal(await fingerprint(sparse), await fingerprint(official));
   });
 
+  test("missing kind fingerprints as scored", async () => {
+    const { kind, ...withoutKind } = official;
+    assert.equal(await fingerprint(withoutKind), await fingerprint({ ...official, kind: "scored" }));
+  });
+
   test("stable under key order, changes when wording or kind changes, ignores weight, order and model", async () => {
     const base = await fingerprint(official);
     const shuffled = Object.fromEntries(Object.entries(official).reverse());

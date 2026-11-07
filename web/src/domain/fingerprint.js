@@ -131,7 +131,7 @@ export function fingerprint(criterion) {
     })),
     na_allowed: orNull(c.na_allowed),
     na_condition: orNull(c.na_condition),
-    kind: orNull(c.kind),
+    kind: c.kind ?? "scored",
     kinds: Array.isArray(c.kinds) ? c.kinds : [],
     guidance: orNull(c.guidance),
   };
