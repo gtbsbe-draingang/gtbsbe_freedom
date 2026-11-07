@@ -274,12 +274,15 @@ class Evaluation(BaseModel):
 
 class Decision(BaseModel):
     outcome: Literal["confirmed", "changed"]
-    answer: Answer  # "confirmed": the model's original answer; "changed": the reviewer's
+    # "confirmed": the answer under appeal (the evaluation's final answer when it was decided, a
+    # carried or earlier decision included); "changed": the reviewer's.
+    answer: Answer
     reason: str
     role: Role
     decided_at: datetime
-    # Beyond the contract: the gross-error kinds that go with `answer` (the model's kinds when the
-    # answer is the model's, else none), so a carried decision scores exactly like the original.
+    # Beyond the contract: the gross-error kinds that go with `answer`, so a carried decision scores
+    # exactly like the original. "confirmed": the kinds under appeal; "changed": none, or the
+    # model's when the answer is the model's.
     kinds: list[str] = []
 
 

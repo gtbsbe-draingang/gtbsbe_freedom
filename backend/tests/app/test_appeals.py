@@ -758,3 +758,36 @@ def test_a_decision_reaches_later_evaluations_of_any_checklist_with_the_same_cri
     assert (after["original_total"], after["final_total"]) == (86.43, 93.57)
     for unchanged in (reworded, other_text):
         assert client.get(f"/api/evaluations/{unchanged['id']}").json() == unchanged
+
+
+# --- final review: "confirmed" keeps the score under appeal --------------------------------
+
+
+def test_confirm_keeps_a_carried_answer(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    decide(client, file(client, first["id"], "c03")["id"], answer="no")  # the model said N/A
+    second = grade(client, official)
+    assert result(second, "c03")["final_answer"] == "no"  # carried
+
+    appeal = file(client, second["id"], "c03")
+    decided = decide(client, appeal["id"], outcome="confirmed")
+
+    c03 = result(decided, "c03")
+    assert (c03["answer"], c03["final_answer"]) == ("na", "no")  # the carried answer is what was confirmed
+    assert decided["final_total"] == second["final_total"]
+    assert decided["sections"] == second["sections"]
+    assert client.get(f"/api/appeals/{appeal['id']}").json()["decision"]["answer"] == "no"
+
+
+def test_confirm_keeps_the_evaluations_own_earlier_decision(setup) -> None:
+    client, official = setup
+    ev = grade(client, official)
+    decide(client, file(client, ev["id"])["id"], answer={"step": 20})
+    again = file(client, ev["id"])  # the controller disputes the changed answer
+
+    decided = decide(client, again["id"], outcome="confirmed")
+
+    assert result(decided, "c04")["final_answer"] == {"step": 20}
+    assert decided["final_total"] == 92.5
+    assert client.get(f"/api/appeals/{again['id']}").json()["decision"]["answer"] == {"step": 20}

@@ -29,7 +29,7 @@ class AppealRequest(BaseModel):
 
 class DecisionRequest(BaseModel):
     outcome: Literal["confirmed", "changed"]
-    answer: Answer | None = None  # required for "changed"; ignored for "confirmed"
+    answer: Answer | None = None  # required for "changed"; ignored for "confirmed" (it keeps the appealed one)
     reason: str = ""  # a blank reason is 422 reason_required, checked after 404/403/409
     role: Role
 

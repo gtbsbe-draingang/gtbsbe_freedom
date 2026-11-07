@@ -10,9 +10,11 @@ design sections 6 and 7).
 * **Second opinion**: `unavailable` without a key or an evaluator; otherwise `pending` until a
   background task stores C's `second_opinion` (`done`) or fails (`unavailable`). Failures are
   logged by exception class only (an exception's text may carry a URL).
-* **Deciding** (`decide`): a reviewer confirms (the stored answer is the model's original one) or
-  changes the answer, with a reason. The appeal, the recalculated evaluation and the
-  conversation's status are written in one transaction.
+* **Deciding** (`decide`): a reviewer confirms or changes the answer, with a reason. A
+  confirmation keeps the score that was under appeal: it stores the evaluation's final answer (and
+  gross-error kinds) at that moment, which is a carried or an earlier decision's when there is one,
+  else the model's. The appeal, the recalculated evaluation and the conversation's status are
+  written in one transaction.
 * **Final answers** (`final_answers`, `recompute`): per result, the evaluation's own decided
   appeal, else its carried decision, else the model's answer. `original_total` always comes from
   the model's answers; `final_total`, points, effective weights, sections and the gross-error flag
@@ -448,8 +450,9 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
     Checked in this order: 404 for an unknown appeal, 403 `role_not_allowed` unless `role` is
     `reviewer`, 409 `appeal_already_decided`, 422 `reason_required` for a blank reason, then for
     `changed` 422 `invalid_request` without an answer or 422 with the `validate_answer` code. For
-    `confirmed` the stored answer is the model's original one (a sent answer is ignored). A
-    recalculation that fails is 422 with the scoring code, and nothing is stored.
+    `confirmed` the stored answer and kinds are the ones under appeal, the evaluation's final ones
+    (a sent answer is ignored). A recalculation that fails is 422 with the scoring code, and
+    nothing is stored.
 
     The decision, the recalculated evaluation, the later evaluations it carries into (see
     `_carry_into_later`) and the conversation's status (`evaluated` once no appeal on its current
@@ -477,7 +480,9 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
         if current is None or result is None:
             raise _not_found(f"The evaluation of appeal {appeal_id!r} has no criterion {appeal.criterion_id!r}.")
         if outcome == "confirmed":
-            decided_answer: Answer = result.answer
+            # What was under appeal: the final answer now, a carried or earlier decision included.
+            own, carried = _load_decisions(current, conn)
+            decided_answer, kinds = _final_answers(current, own, carried)[appeal.criterion_id]
         else:
             if answer is None:
                 raise ApiError(422, "invalid_request", "answer: required when the outcome is changed.")
@@ -485,8 +490,8 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
             if code is not None:
                 raise ApiError(422, code, f"The answer does not fit criterion {criterion.id!r}.")
             decided_answer = answer
-        # The model's kinds go with the model's answer; a different answer has none.
-        kinds = list(result.kinds) if decided_answer == result.answer else []
+            # The model's kinds go with the model's answer; a different answer has none.
+            kinds = list(result.kinds) if decided_answer == result.answer else []
         decision = Decision(
             outcome=outcome, answer=decided_answer, reason=reason.strip(), role=role, decided_at=_now(), kinds=kinds
         )
