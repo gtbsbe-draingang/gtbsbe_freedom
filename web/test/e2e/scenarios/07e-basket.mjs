@@ -86,6 +86,14 @@ export async function run(page) {
   await page.click(sel("batch-basket"));
   await page.click(sel("queue-search"));
   assert.equal(await isOpen(page), false);
+  // an empty part of the basket card or of the bar closes it as well
+  await page.click(sel("batch-basket"));
+  await page.click(`${sel("batch-basket-panel")} > .cqa-rv-label`);
+  assert.equal(await isOpen(page), false, "a press on the basket's title closes it");
+  await page.click(sel("batch-basket"));
+  await page.click(sel("batch-estimate"));
+  assert.equal(await isOpen(page), false, "a press on the bar's empty space closes it");
+  assert.deepEqual(await selection(page), ["DEV:p1-ru-002", "DEV:p1-kz-004"], "closing keeps the selection");
 
   // ---- a row's link opens the dialogue ----
   await page.click(sel("batch-basket"));
