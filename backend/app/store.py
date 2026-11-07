@@ -121,6 +121,10 @@ register_migration(
     """,
 )
 
+# Checklist version numbers are small positive integers. The bound keeps a huge number from
+# reaching SQLite, which raises OverflowError for an integer beyond 64 bits.
+MAX_CHECKLIST_VERSION = 2**31 - 1
+
 UpsertOutcome = Literal["imported", "updated", "unchanged"]
 
 
@@ -281,8 +285,10 @@ def _read_checklist_version(json_text: str, locked: int) -> ChecklistVersion:
 
 
 def get_checklist_version(checklist_id: str, version: int) -> ChecklistVersion | None:
-    """The stored checklist version, or None. `created_at` is always set; `locked` is the column's
-    current value."""
+    """The stored checklist version, or None (also for a number outside 1..MAX_CHECKLIST_VERSION,
+    which cannot exist). `created_at` is always set; `locked` is the column's current value."""
+    if not 1 <= version <= MAX_CHECKLIST_VERSION:
+        return None
     conn = connect()
     try:
         row = conn.execute(
@@ -358,10 +364,12 @@ def save_checklist_version(v: ChecklistVersion) -> ChecklistVersion:
         return _insert_checklist_version(conn, v)
 
 
-def append_checklist_version(checklist_id: str, v: ChecklistVersion) -> ChecklistVersion:
+def append_checklist_version(
+    checklist_id: str, v: ChecklistVersion, *, inherit_based_on: bool = False
+) -> ChecklistVersion:
     """Store `v` as the next version of an existing checklist: its `checklist_id` becomes the one
     given and its `version` the latest stored one + 1 (both of `v` are ignored). Returns it as
-    stored.
+    stored. With `inherit_based_on`, `v.based_on` is replaced by the latest version's.
 
     The latest version is read and the new one inserted in one write transaction, so concurrent
     saves get consecutive numbers instead of colliding. Raises ApiError(404, "not_found") for an
@@ -369,7 +377,7 @@ def append_checklist_version(checklist_id: str, v: ChecklistVersion) -> Checklis
     (the column's value)."""
     with write_transaction() as conn:
         latest = conn.execute(
-            "SELECT version, locked FROM checklist_versions WHERE checklist_id = ? "
+            "SELECT version, locked, json FROM checklist_versions WHERE checklist_id = ? "
             "ORDER BY version DESC LIMIT 1",
             (checklist_id,),
         ).fetchone()
@@ -381,9 +389,10 @@ def append_checklist_version(checklist_id: str, v: ChecklistVersion) -> Checklis
                 "checklist_locked",
                 f"Checklist {checklist_id!r} is locked; save the changes as a new checklist.",
             )
-        return _insert_checklist_version(
-            conn, v.model_copy(update={"checklist_id": checklist_id, "version": latest["version"] + 1})
-        )
+        update: dict[str, object] = {"checklist_id": checklist_id, "version": latest["version"] + 1}
+        if inherit_based_on:
+            update["based_on"] = ChecklistVersion.model_validate_json(latest["json"]).based_on
+        return _insert_checklist_version(conn, v.model_copy(update=update))
 
 
 # --- conversations: what an evaluation writes back -------------------------------------------

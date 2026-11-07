@@ -9,7 +9,8 @@ What the server decides, never the client: the checklist id (create), the versio
 (always False for a new version), `created_at`, `id`, and every fingerprint (computed from the
 criterion as validated; a fingerprint in the body is ignored, so the UI may leave it out or post
 back what it read). What the client decides: name, description, channel, rounding, guidance,
-sections, criteria and `based_on`.
+sections, criteria and `based_on`, which must name a stored version. A new version posted without
+a `based_on` key inherits the previous version's; an explicit null clears it.
 """
 
 from typing import Any, Literal
@@ -53,9 +54,19 @@ class ChecklistRequest(BaseModel):
     checklist: ChecklistIn
 
 
+def _based_on_error(based_on: BasedOn | None) -> str | None:
+    if based_on is None or store.get_checklist_version(based_on.checklist_id, based_on.version):
+        return None
+    return (
+        f"based_on refers to checklist {based_on.checklist_id!r} version {based_on.version}, "
+        "which does not exist"
+    )
+
+
 def _draft(request: ChecklistRequest) -> tuple[ChecklistVersion, list[str]]:
     """The version to store (id and version still to be set by the store) and its warnings.
-    Raises ApiError(422, "invalid_checklist") when it breaks a rule."""
+    Raises ApiError(422, "invalid_checklist") when it breaks a rule or its `based_on` is not a
+    stored version."""
     body = request.checklist
     draft = ChecklistVersion(
         checklist_id="",
@@ -72,6 +83,9 @@ def _draft(request: ChecklistRequest) -> tuple[ChecklistVersion, list[str]]:
         criteria=[Criterion(**{**dict(c), "fingerprint": ""}) for c in body.criteria],
     )
     errors = validate_checklist(draft)
+    based_on_error = _based_on_error(body.based_on)
+    if based_on_error:
+        errors.append(based_on_error)
     if errors:
         raise ApiError(422, "invalid_checklist", "; ".join(errors))
     return with_fingerprints(draft), weight_warnings(draft)
@@ -89,6 +103,7 @@ def list_checklists() -> list[dict[str, Any]]:
 
 @router.get("/checklists/{checklist_id}/versions/{version}")
 def get_checklist_version(checklist_id: str, version: int) -> dict[str, Any]:
+    # A number outside 1..2**31-1 is a version that cannot exist: the store answers None, so 404.
     found = store.get_checklist_version(checklist_id, version)
     if found is None:
         raise ApiError(404, "not_found", f"No version {version} of checklist {checklist_id!r}.")
@@ -117,6 +132,8 @@ def create_checklist(request: ChecklistRequest) -> dict[str, Any]:
 
 @router.post("/checklists/{checklist_id}/versions", status_code=201)
 def create_checklist_version(checklist_id: str, request: ChecklistRequest) -> dict[str, Any]:
-    """The next version (latest + 1) of an unlocked checklist."""
+    """The next version (latest + 1) of an unlocked checklist. Without a `based_on` key in the body
+    it keeps the previous version's; `"based_on": null` clears it."""
     draft, warnings = _draft(request)
-    return _saved(store.append_checklist_version(checklist_id, draft), warnings)
+    inherit = "based_on" not in request.checklist.model_fields_set
+    return _saved(store.append_checklist_version(checklist_id, draft, inherit_based_on=inherit), warnings)
