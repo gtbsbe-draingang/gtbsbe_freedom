@@ -4,6 +4,7 @@ uvicorn.run is replaced by a recorder, so nothing binds a port. Every URL and ke
 """
 
 import logging
+import sqlite3
 import tomllib
 from pathlib import Path
 
@@ -11,11 +12,13 @@ import pytest
 import uvicorn
 from fastapi import FastAPI
 
-from app import cli, snapshot as snapshot_store, store
+from app import checklists, cli, snapshot as snapshot_store, store
 from app.checklists import seed_into_db
 from app.db import migrate
 from app.settings import BACKEND_DIR, ENV_FILE, Settings, get_settings
+from app.snapshot import SNAPSHOT as REAL_SNAPSHOT
 from tests.app.fakes import load_dev_subset
+from tests.app.helpers import changed_official_seed
 
 # Read at collection time, before the autouse fixture takes the .env file away.
 DEFAULT_ENV_FILE = Settings.model_config.get("env_file")
@@ -82,6 +85,28 @@ def test_dotenv_is_found_from_the_package_not_from_the_working_directory() -> No
     assert DEFAULT_ENV_FILE == ENV_FILE
     assert ENV_FILE.is_absolute()
     assert (BACKEND_DIR / "app" / "settings.py").is_file()
+
+
+def test_no_test_can_reach_the_real_snapshot_file(tmp_path: Path) -> None:
+    # The autouse fixture in tests/conftest.py points the path into tmp_path for every test.
+    assert REAL_SNAPSHOT.parts[-3:] == ("data", "snapshot", "cqa-snapshot.json")
+    assert snapshot_store.SNAPSHOT != REAL_SNAPSHOT
+    assert snapshot_store.SNAPSHOT.is_relative_to(tmp_path)
+
+
+def test_cqa_snapshot_with_the_default_path_writes_under_tmp_path(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    use_database(monkeypatch, tmp_path / "source.db")
+    migrate()
+    seed_into_db()
+    load_dev_subset()
+    before = REAL_SNAPSHOT.read_bytes() if REAL_SNAPSHOT.is_file() else None  # None: not committed yet
+
+    cli.snapshot([])  # the path is not patched here: it is the fixture's
+
+    assert snapshot_store.SNAPSHOT.is_file() and snapshot_store.SNAPSHOT.is_relative_to(tmp_path)
+    assert (REAL_SNAPSHOT.read_bytes() if REAL_SNAPSHOT.is_file() else None) == before
 
 
 # --- cqa-serve -----------------------------------------------------------------------------
@@ -165,6 +190,55 @@ def test_serve_survives_a_snapshot_that_cannot_be_loaded(
     assert store.list_conversations() == []
     assert any("snapshot" in message.lower() for message in caplog.messages)
     assert "SECRETSIGNATURE" not in caplog.text
+
+
+def test_serve_survives_a_snapshot_that_is_not_text(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, uvicorn_calls: list[dict], caplog: pytest.LogCaptureFixture
+) -> None:
+    use_database(monkeypatch, tmp_path / "serve.db")
+    undecodable = tmp_path / "cqa-snapshot.json"
+    undecodable.write_bytes(b'\xff\xfe{"format": 1, "x": "sig=SECRETSIGNATURE')
+    monkeypatch.setattr(snapshot_store, "SNAPSHOT", undecodable)
+    with caplog.at_level(logging.WARNING, logger="app.cli"):
+        cli.serve([])
+    assert len(uvicorn_calls) == 1
+    assert store.list_conversations() == []
+    assert any("UnicodeDecodeError" in message for message in caplog.messages)  # the type only
+    assert "SECRETSIGNATURE" not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        PermissionError("denied: SECRETDETAIL"),
+        ValueError("bad value: SECRETDETAIL"),
+        sqlite3.OperationalError("database is locked: SECRETDETAIL"),
+    ],
+    ids=["unreadable file", "other value error", "database locked"],
+)
+def test_serve_survives_an_import_that_fails_for_any_other_reason(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    uvicorn_calls: list[dict],
+    caplog: pytest.LogCaptureFixture,
+    error: Exception,
+) -> None:
+    use_database(monkeypatch, tmp_path / "serve.db")
+    present = tmp_path / "cqa-snapshot.json"
+    present.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(snapshot_store, "SNAPSHOT", present)
+
+    def failing(path: Path) -> int:
+        raise error
+
+    monkeypatch.setattr(snapshot_store, "import_snapshot", failing)
+    with caplog.at_level(logging.WARNING, logger="app.cli"):
+        cli.serve([])  # no traceback: the app starts with whatever the database holds
+
+    assert len(uvicorn_calls) == 1
+    assert store.get_checklist_version("official-chat", 1) is not None  # still migrated and seeded
+    assert any(type(error).__name__ in message for message in caplog.messages)
+    assert "SECRETDETAIL" not in caplog.text  # the type only, never the text
 
 
 def test_serve_never_prints_the_key_or_the_organisers_url(
@@ -276,6 +350,28 @@ def test_snapshot_refuses_signed_text(
     shown = capsys.readouterr()
     assert "refus" in shown.err.lower()
     assert "SECRETSIGNATURE" not in shown.out + shown.err
+    assert "conversations[" in shown.err  # says where, not what
+    assert target.read_text(encoding="utf-8") == "OLD"
+
+
+def test_snapshot_refuses_a_seeded_checklist_that_differs_from_its_seed_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    target = build_snapshot(monkeypatch, tmp_path)
+    use_database(monkeypatch, tmp_path / "source.db")  # seeded from the original seed file
+    changed = changed_official_seed(tmp_path / "seeds", lambda d: d["criteria"][0].update(guidance="New guidance."))
+    monkeypatch.setattr(checklists, "OFFICIAL_SEED", changed)
+    monkeypatch.setattr(checklists, "CALLS_SEED", tmp_path / "seeds" / "none.json")
+    target.write_text("OLD", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as caught:
+        cli.snapshot([])
+
+    assert caught.value.code == 1
+    shown = capsys.readouterr()
+    assert "official-chat" in shown.err and "version 1" in shown.err
+    assert "fresh database" in shown.err
+    assert "New guidance" not in shown.out + shown.err
     assert target.read_text(encoding="utf-8") == "OLD"
 
 

@@ -10,6 +10,7 @@ the app on a second, empty database, which is what a jury machine has.
 """
 
 import json
+import logging
 import re
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
@@ -19,7 +20,8 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app import jobs, store
+from app import checklists, jobs, snapshot as snapshots, store
+from app.checklists import criterion_fingerprint
 from app.db import connect, migrate
 from app.models import Appeal, ChecklistVersion, Evaluation, StepAnswer
 from app.settings import get_settings
@@ -35,7 +37,7 @@ from app.snapshot import (
 )
 from app.transcript import normalize_record
 from tests.app.fakes import OFFICIAL, FakeEvaluator, dev_records, ensure_official, load_dev_subset
-from tests.app.helpers import criterion, decide, file, save_copy
+from tests.app.helpers import changed_official_seed, criterion, decide, file, save_copy
 
 MakeClient = Callable[..., TestClient]
 KEY = {"ANTHROPIC_API_KEY": "test-key"}
@@ -169,6 +171,48 @@ def exported(source: Source, tmp_path: Path) -> tuple[Path, dict]:
     return path, export_snapshot(path)
 
 
+def seed_from(monkeypatch: pytest.MonkeyPatch, path: Path) -> None:
+    """Make `path` the only seed file: the one `seed_into_db` loads and the export compares against."""
+    monkeypatch.setattr(checklists, "OFFICIAL_SEED", path)
+    monkeypatch.setattr(checklists, "CALLS_SEED", path.parent / "no-calls-seed.json")
+
+
+def alter_stored(version: tuple[str, int], change: Callable[[dict], None], *, refingerprint: bool) -> None:
+    """Edit a stored checklist version in place, as an older database might hold it. With
+    `refingerprint` the fingerprints are recomputed to match (an older, consistent version);
+    without, they stay as they were (a hand-edited row)."""
+    conn = connect()
+    try:
+        where = "WHERE checklist_id = ? AND version = ?"
+        data = json.loads(conn.execute(f"SELECT json FROM checklist_versions {where}", version).fetchone()["json"])
+        change(data)
+        if refingerprint:
+            for c in data["criteria"]:
+                c["fingerprint"] = criterion_fingerprint(c)
+        conn.execute(
+            f"UPDATE checklist_versions SET json = ? {where}", (json.dumps(data, ensure_ascii=False), *version)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def with_guidance(data: dict) -> None:
+    data["criteria"][0]["guidance"] = "Changed after the database was seeded."
+
+
+def with_new_title(data: dict) -> None:
+    data["criteria"][1]["title"] += " (new)"
+
+
+def with_swapped_criteria(data: dict) -> None:
+    data["criteria"][0], data["criteria"][1] = data["criteria"][1], data["criteria"][0]
+
+
+def with_heavier_c01(data: dict) -> None:
+    data["criteria"][0]["weight"] = 20  # a weight is not part of the fingerprint
+
+
 # --- the brief's tests ---------------------------------------------------------------------
 
 
@@ -223,6 +267,143 @@ def test_export_refuses_signed_text(source: Source, tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         export_snapshot(fresh_target)
     assert not fresh_target.exists()
+
+
+def test_export_still_checks_the_whole_text_before_writing(
+    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    checked: list[str] = []
+    real_check = snapshots.assert_no_signed_urls
+
+    def spy(text: str) -> None:
+        checked.append(text)
+        real_check(text)
+
+    monkeypatch.setattr(snapshots, "assert_no_signed_urls", spy)
+    path, _ = exported(source, tmp_path)
+    assert checked[-1] == path.read_text(encoding="utf-8")  # the full serialized text, as written
+
+
+@pytest.mark.parametrize("part", ["conversations", "checklists"])
+def test_the_refusal_names_the_part_and_the_row_but_not_the_text(source: Source, tmp_path: Path, part: str) -> None:
+    signed = "https://files.example.invalid/a?sig=SECRETSIGNATURE"
+    if part == "conversations":
+        conv = store.get_conversation(CHAT)
+        first = conv.transcript[0].model_copy(update={"text": signed})
+        store.upsert_conversation(conv.model_copy(update={"transcript": [first, *conv.transcript[1:]]}), None)
+        index = [r[0] for r in rows("SELECT id FROM conversations ORDER BY id")].index(CHAT)
+    else:
+        alter_stored((source.copy.checklist_id, 1), lambda data: data.update(description=signed), refingerprint=False)
+        index = [r[0] for r in rows("SELECT checklist_id FROM checklist_versions ORDER BY rowid")].index(
+            source.copy.checklist_id
+        )
+
+    target = tmp_path / "snapshot.json"
+    with pytest.raises(SnapshotError) as caught:
+        export_snapshot(target)
+    message = str(caught.value)
+    assert f"{part}[{index}]" in message
+    assert "SECRETSIGNATURE" not in message and "files.example.invalid" not in message
+    assert not target.exists()
+
+
+# --- a seeded checklist that differs from its seed file ------------------------------------
+
+
+@pytest.mark.parametrize("change", [with_guidance, with_new_title, with_swapped_criteria])
+def test_export_refuses_when_the_seed_file_changed_since_the_database_was_seeded(
+    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: Callable[[dict], None]
+) -> None:
+    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", change))
+    target = tmp_path / "out" / "snapshot.json"
+    target.parent.mkdir()
+    target.write_text("OLD", encoding="utf-8")
+
+    with pytest.raises(SnapshotError) as caught:
+        export_snapshot(target)
+
+    message = str(caught.value)
+    assert "official-chat" in message and "version 1" in message
+    assert "fresh database" in message
+    assert "Changed after" not in message  # names the checklist, never its text
+    assert target.read_text(encoding="utf-8") == "OLD"  # nothing was written
+    assert [p.name for p in target.parent.iterdir()] == ["snapshot.json"]  # and no temp file is left
+    fresh_target = tmp_path / "never.json"
+    with pytest.raises(SnapshotError):
+        export_snapshot(fresh_target)
+    assert not fresh_target.exists()
+
+
+@pytest.mark.parametrize(
+    ("change", "refingerprint"),
+    [
+        (with_guidance, True), (with_guidance, False),
+        (with_new_title, True), (with_new_title, False),
+        (with_swapped_criteria, False),
+    ],
+    ids=[
+        "guidance, older version", "guidance, hand-edited row",
+        "title, older version", "title, hand-edited row",
+        "order",
+    ],
+)  # fmt: skip
+def test_export_refuses_a_stored_seeded_checklist_that_was_altered(
+    source: Source, tmp_path: Path, change: Callable[[dict], None], refingerprint: bool
+) -> None:
+    alter_stored(OFFICIAL, change, refingerprint=refingerprint)
+    target = tmp_path / "snapshot.json"
+
+    with pytest.raises(SnapshotError) as caught:
+        export_snapshot(target)
+
+    assert "official-chat" in str(caught.value) and "version 1" in str(caught.value)
+    assert "fresh database" in str(caught.value)
+    assert not target.exists()
+
+
+def test_export_accepts_a_seeded_checklist_that_differs_only_in_weight(
+    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # A weight is not in the fingerprint: stored judgments are still reused, decisions still carry over.
+    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", with_heavier_c01))
+    path, document = exported(source, tmp_path)
+    assert path.is_file() and document["checklists"]
+
+
+def test_export_ignores_checklists_that_are_not_seeded(source: Source, tmp_path: Path) -> None:
+    alter_stored((source.copy.checklist_id, 1), with_new_title, refingerprint=True)  # a user's own checklist
+    path, _ = exported(source, tmp_path)
+    assert path.is_file()
+
+
+def test_export_without_seed_files_or_with_a_seed_the_database_lacks(
+    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def other_id(data: dict) -> None:
+        data["checklist_id"] = "not-in-this-database"
+
+    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", other_id))
+    assert exported(source, tmp_path / "one")[0].is_file()  # nothing stored under that id: nothing to compare
+
+    seed_from(monkeypatch, tmp_path / "seeds" / "gone.json")  # no seed file at all
+    assert exported(source, tmp_path / "two")[0].is_file()
+
+
+def test_export_refuses_a_seed_file_it_cannot_read(
+    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    broken = tmp_path / "seeds" / "official-chat-v1.json"
+    broken.parent.mkdir()
+    broken.write_text('{"checklist_id": "official-chat", "sig=SECRET', encoding="utf-8")
+    seed_from(monkeypatch, broken)
+    target = tmp_path / "snapshot.json"
+
+    with pytest.raises(SnapshotError) as caught:
+        export_snapshot(target)
+
+    assert "official-chat-v1.json" in str(caught.value)
+    assert "SECRET" not in str(caught.value)
+    assert not target.exists()
 
 
 def test_keyless_reapply_from_snapshot(source: Source, fresh, fake: FakeEvaluator, tmp_path: Path) -> None:
@@ -395,6 +576,41 @@ def test_import_skips_checklist_versions_that_exist(source: Source, fresh, tmp_p
     assert (copy.locked, copy.created_at, copy.criteria) == (
         source.copy.locked, source.copy.created_at, source.copy.criteria,
     )  # fmt: skip
+
+
+def test_import_warns_when_the_seeded_checklist_differs_from_the_snapshots_copy(
+    source: Source, fresh, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    path, _ = exported(source, tmp_path)  # exported while the seed file was still the original
+    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", with_guidance))
+    fresh()  # the new database is seeded from the changed file
+    seeded = rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'")
+
+    with caplog.at_level(logging.WARNING, logger="app.snapshot"):
+        count = import_snapshot(path)
+
+    warned = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warned) == 1
+    assert "official-chat" in warned[0].getMessage() and "version 1" in warned[0].getMessage()
+    assert "Changed after" not in caplog.text  # names the checklist, never its text
+    assert count > 0 and len(store.list_conversations()) == 6  # the import still went ahead
+    assert rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'") == seeded  # seeded one kept
+
+
+@pytest.mark.parametrize("change", [None, with_heavier_c01], ids=["same seed", "weight only"])
+def test_import_does_not_warn_when_the_seeded_checklist_has_the_same_fingerprints(
+    source: Source, fresh, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture,
+    change: Callable[[dict], None] | None,
+) -> None:
+    path, _ = exported(source, tmp_path)
+    if change is not None:
+        seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", change))
+    fresh()
+
+    with caplog.at_level(logging.WARNING, logger="app.snapshot"):
+        import_snapshot(path)
+
+    assert [r for r in caplog.records if r.levelno >= logging.WARNING] == []
 
 
 def test_import_restores_every_row_as_it_was(source: Source, fresh, tmp_path: Path) -> None:

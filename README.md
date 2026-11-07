@@ -2,7 +2,7 @@
 
 A prototype for the Freedom Broker × Nazarbayev University Data Challenge. It scores support operators' chats and calls against a configurable checklist, explains every score with evidence from the dialog, and lets a score be appealed and reviewed.
 
-**Status:** in development. Run steps for the jury will be added here before the stop-code.
+**Status:** in development. The run steps for the jury are below. The results snapshot (`data/snapshot/cqa-snapshot.json`) is committed after the first real DEV run. Until then the first start has no stored results.
 
 ## Run it
 
@@ -24,7 +24,7 @@ All you need is `uv`. You do not need a model key to see the results.
 
    Measured average cost per evaluation: to be filled in after the DEV run
 
-5. **Privacy.** This repo holds no signed links and no call recordings. The snapshot has no audio links, and your link and key stay in `backend/.env`, which git ignores. Dialogue text goes to the Claude API only when you set a key and start a new evaluation.
+5. **Privacy.** This repo holds no signed links and no call recordings. The snapshot has no audio links, and your link and key stay in `backend/.env`, which git ignores. Dialogue text goes to the Claude API only when you set a key. Three things then send it: a new evaluation, the second opinion on an appeal, and a translation. Without a key, no dialogue text leaves your machine.
 
 ## For the team
 

@@ -10,12 +10,13 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from app import appeals
+from app import appeals, checklists
 from app.models import ChecklistVersion
 from tests.app.fakes import copy_body
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCHEMAS_DIR = REPO_ROOT / "contract" / "schemas"
+REAL_OFFICIAL_SEED = checklists.OFFICIAL_SEED  # read before any test points the seed elsewhere
 
 
 def save_copy(client: TestClient, version: ChecklistVersion, change: Callable[[dict], None]) -> ChecklistVersion:
@@ -57,3 +58,15 @@ def decide(client: TestClient, appeal_id: str, outcome: str = "changed", answer=
     r = client.post(f"/api/appeals/{appeal_id}/decision", json=body)
     assert r.status_code == 200, r.text
     return r.json()
+
+
+def changed_official_seed(folder: Path, change: Callable[[dict], None]) -> Path:
+    """A copy of the official seed file in `folder`, after `change` edited its data. Point
+    `checklists.OFFICIAL_SEED` at it (and `CALLS_SEED` at a file that does not exist) to seed
+    from it."""
+    data = json.loads(REAL_OFFICIAL_SEED.read_text(encoding="utf-8"))
+    change(data)
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / REAL_OFFICIAL_SEED.name
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return path

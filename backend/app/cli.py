@@ -15,6 +15,7 @@ app/settings.py) and a relative `DB_PATH` (the default is `cqa.db`) is resolved 
 import argparse
 import logging
 import os
+import sqlite3
 import sys
 from pathlib import Path
 from typing import NoReturn
@@ -75,7 +76,9 @@ def _address(host: str, port: int) -> str:
 
 def _restore_snapshot() -> None:
     """Load the shipped snapshot when the database has no conversations. A snapshot that is
-    missing or cannot be loaded is a warning, not a failure: the app starts empty."""
+    missing or cannot be loaded is a warning, not a failure: the app starts with whatever the
+    database holds (empty, when nothing was loaded). A warning names an exception's type, never its
+    text: the text may hold part of the file."""
     if snapshots.has_conversations():
         return
     path = snapshots.SNAPSHOT
@@ -87,9 +90,13 @@ def _restore_snapshot() -> None:
     except snapshots.SnapshotError as exc:
         logger.warning("The results snapshot was not loaded: %s Starting with an empty database.", exc)
     except (ValueError, OSError) as exc:
-        # Only the type: another exception's text may hold part of the file.
         logger.warning(
             "The results snapshot could not be read (%s). Starting with an empty database.", type(exc).__name__
+        )
+    except sqlite3.OperationalError as exc:  # e.g. another process held the database lock too long
+        logger.warning(
+            "The results snapshot was not loaded (%s). Starting with whatever the database holds.",
+            type(exc).__name__,
         )
     else:
         print(f"Loaded the results snapshot ({rows} rows).")

@@ -24,7 +24,15 @@ they are, and the JSON column as a nested object under its own key (`conversatio
 
 No signed URL may be in the file, and none is: the text is checked (`assert_no_signed_urls`) before
 anything is written, and again before anything is loaded. The check is blunt on purpose: any
-`sig=` or `audio_url`, anywhere, refuses the export, even one a transcript merely mentions.
+`sig=` or `audio_url`, anywhere, refuses the export, even one a transcript merely mentions. A refusal
+names the part and the row (`conversations[3]`), never the text.
+
+The checklists that ship as files (`checklists/*.json`) are seeded by `cqa-serve` before the import,
+and the import keeps a version that is already stored. So the snapshot must agree with the seed
+files, or the results in it would not match the checklist a fresh machine seeds (reuse keys and
+appeal fingerprints stop matching). The export refuses a database whose seeded version differs from
+its seed file (`SnapshotError`, nothing written); the import logs a warning when the snapshot's copy
+differs from the seeded one.
 """
 
 import json
@@ -40,6 +48,7 @@ from typing import Any
 from pydantic import BaseModel, ValidationError
 
 from app import store
+from app.checklists import load_checklist_file, seed_files, with_fingerprints
 from app.db import connect
 from app.models import Appeal, ChecklistVersion, Conversation, Evaluation, Judgment
 
@@ -73,6 +82,12 @@ def assert_no_signed_urls(text: str) -> None:
 # --- what is exported ----------------------------------------------------------------------
 
 
+def _criteria_signature(version: ChecklistVersion) -> list[tuple[str, str]]:
+    """What reuse and carry-forward depend on: the criteria ids in order, each with its fingerprint.
+    Weights and names are not part of it: a weight-only change keeps every stored result valid."""
+    return [(c.id, c.fingerprint) for c in version.criteria]
+
+
 @dataclass(frozen=True)
 class Table:
     key: str  # the part of the snapshot
@@ -85,6 +100,9 @@ class Table:
     where: str = ""  # which rows are exported
     skip_if_present: tuple[str, ...] = ()  # columns that identify a row that is not inserted twice
     replace: bool = False  # a row with the same key replaces the stored one
+    # Called when a row is skipped because it is stored already: (connection, the identifying
+    # columns and their values, the row's JSON).
+    on_present: Callable[[sqlite3.Connection, dict[str, Any], str], None] | None = None
 
 
 def _voice_call_without_audio(conversation: Conversation) -> Conversation:
@@ -96,12 +114,35 @@ def _voice_call_without_audio(conversation: Conversation) -> Conversation:
 
 _RESTORE: dict[str, Callable[[Any], Any]] = {"conversations": _voice_call_without_audio}
 
+
+def _warn_if_checklist_differs(conn: sqlite3.Connection, key: dict[str, Any], payload: str) -> None:
+    """A checklist version the snapshot holds is stored already (the seeded one wins). Warn when the
+    two have other criteria or fingerprints. Names the checklist and version, nothing else."""
+    row = conn.execute(
+        "SELECT json FROM checklist_versions WHERE checklist_id = ? AND version = ?",
+        (key["checklist_id"], key["version"]),
+    ).fetchone()
+    try:
+        same = _criteria_signature(ChecklistVersion.model_validate_json(row["json"])) == _criteria_signature(
+            ChecklistVersion.model_validate_json(payload)
+        )
+    except ValidationError:
+        same = False
+    if not same:
+        logger.warning(
+            "The seeded checklist %s version %s differs from the snapshot's copy. The seeded one is kept, "
+            "so the snapshot's stored results may not be reused and its decided appeals may not carry over. "
+            "Export the snapshot again from a fresh database.",
+            key["checklist_id"], key["version"],
+        )  # fmt: skip
+
+
 # In the order they are loaded.
 TABLES: tuple[Table, ...] = (
     Table(
         "checklists", "checklist_versions",
         ("checklist_id", "version", "locked", "created_at"), "json", "checklist", ChecklistVersion,
-        order="rowid", skip_if_present=("checklist_id", "version"),
+        order="rowid", skip_if_present=("checklist_id", "version"), on_present=_warn_if_checklist_differs,
     ),
     Table(
         "conversations", "conversations",
@@ -169,18 +210,63 @@ def _write_atomically(path: Path, text: str) -> None:
         raise
 
 
+def _check_seeded_checklists(exported: list[dict[str, Any]]) -> None:
+    """Refuse (SnapshotError) when a seeded checklist version in the database differs from the one
+    its seed file builds: other criteria ids or order, or other fingerprints, computed from the
+    stored criteria as well as read as stored. A version the database lacks is not compared."""
+    stored = {(row["checklist_id"], row["version"]): row["checklist"] for row in exported}
+    for path in seed_files():
+        try:
+            seeded = load_checklist_file(path)
+        except (ValueError, OSError) as exc:
+            raise SnapshotError(
+                f"The seed file {path.name} cannot be checked against the database ({type(exc).__name__}), "
+                "so the snapshot was not written."
+            ) from None
+        row = stored.get((seeded.checklist_id, seeded.version))
+        if row is None:
+            continue
+        wanted = _criteria_signature(seeded)
+        try:
+            version = ChecklistVersion.model_validate(row)
+            same = _criteria_signature(version) == wanted and _criteria_signature(with_fingerprints(version)) == wanted
+        except ValidationError:
+            same = False
+        if not same:
+            raise SnapshotError(
+                f"The seeded checklist {seeded.checklist_id} version {seeded.version} in the database differs "
+                f"from its seed file {path.name} (its criteria or their fingerprints). A fresh machine seeds the "
+                "file's version and keeps it, so the stored results in the snapshot would not match it. "
+                "Start from a fresh database, run the evaluations again, then export."
+            )
+
+
+def _check_rows_for_signed_urls(document: dict[str, Any]) -> None:
+    """The same check as the whole text gets, one row at a time, so a refusal can say where the
+    problem is. The whole-text check still runs after this one: it covers everything."""
+    for table in TABLES:
+        for i, row in enumerate(document[table.key]):
+            try:
+                assert_no_signed_urls(json.dumps(row, ensure_ascii=False))
+            except SnapshotError as exc:
+                raise SnapshotError(f"{table.key}[{i}]: {exc}") from None
+
+
 def export_snapshot(path: Path) -> dict:
     """Write the snapshot of the current database to `path` and return the document written.
 
-    Sorted keys, `ensure_ascii=False`, indent 1. The text is checked for signed URLs before
-    anything is written: on a hit nothing is written (an existing file stays as it is) and
-    SnapshotError is raised."""
+    Sorted keys, `ensure_ascii=False`, indent 1. Two things refuse the export (SnapshotError):
+    a seeded checklist version that differs from its seed file, and a signed URL anywhere in the
+    text (the message names the part and the row, never the text). The checks run before anything
+    is written: on a refusal nothing is written (an existing file stays as it is)."""
     conn = connect()
     try:
         conn.execute("BEGIN")  # one read snapshot, so every part describes the same moment
         document: dict[str, Any] = {"format": FORMAT, **{t.key: _dump(conn, t) for t in TABLES}, "jobs": []}
     finally:
         conn.close()
+    _check_seeded_checklists(document["checklists"])
+    _check_rows_for_signed_urls(document)
     text = json.dumps(document, sort_keys=True, ensure_ascii=False, indent=1) + "\n"
     assert_no_signed_urls(text)
     _write_atomically(Path(path), text)
@@ -282,6 +368,8 @@ def _insert(conn: sqlite3.Connection, table: Table, items: list[tuple[tuple, str
     inserted = 0
     for values, payload in items:
         if present is not None and conn.execute(present, [values[i] for i in key_positions]).fetchone():
+            if table.on_present is not None:
+                table.on_present(conn, dict(zip(table.skip_if_present, (values[i] for i in key_positions))), payload)
             continue  # e.g. the seeded official checklist: it stays as it is
         try:
             conn.execute(insert, (*values, payload))
@@ -298,8 +386,10 @@ def import_snapshot(path: Path) -> int:
     Only into a database without conversations, evaluations and appeals (SnapshotError, a
     ValueError, otherwise). The whole file is checked first and the rows go in as one transaction:
     on any error nothing is stored. Checklist versions that are already stored (the seeded official
-    one) are skipped, not duplicated and not counted. Voice calls come back without audio, with the
-    reason `needs_import`. The schema must already be migrated (`app.db.migrate`)."""
+    one) are skipped, not duplicated and not counted; the seeded one stays authoritative, and a
+    warning names it when the snapshot's copy has other criteria or fingerprints. Voice calls come
+    back without audio, with the reason `needs_import`. The schema must already be migrated
+    (`app.db.migrate`)."""
     text = Path(path).read_text(encoding="utf-8")
     assert_no_signed_urls(text)
     prepared = _prepare(text)
