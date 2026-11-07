@@ -24,7 +24,7 @@ import { setLocalizedText } from "../i18n/dom.js";
 import { parseUpload, UploadError } from "../domain/normalize.js";
 import { t, tp } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
-import { clear, h } from "./dom.js";
+import { clear, h, svg } from "./dom.js";
 import { jobSlot } from "./job-runner.js";
 import { pickSelection } from "./scorecard.js";
 import { errorText, toastError } from "./toast.js";
@@ -64,6 +64,7 @@ function readText(file) {
 export function openLoader({ host, store, api, onImported, group = "" }) {
   let closed = false;
   let busy = false;
+  let dragDepth = 0;
 
   const status = h("p", { class: "cqa-ld-status", attrs: { role: "status", "aria-live": "polite" } });
   const result = h("div", { class: "cqa-ld-result" });
@@ -78,16 +79,31 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
   const importButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "submit" }, text: t("loader.import"), data: { test: "import-group" } });
   const fileInput = h("input", {
     class: "cqa-ld-file",
-    attrs: { type: "file", accept: ".json,application/json", "aria-label": t("loader.file") },
+    attrs: { type: "file", accept: ".json,application/json", hidden: true, tabindex: "-1", "aria-label": t("loader.file") },
     data: { test: "upload-file" },
-    on: { change: () => upload() },
+    on: { change: () => uploadFiles(fileInput.files) },
   });
+  const chooseFile = h("button", {
+    class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.chooseFile"),
+    data: { test: "choose-upload-file" }, on: { click: () => fileInput.click() },
+  });
+  const fileName = h("span", { class: "cqa-ld-filename", text: t("loader.noFile"), data: { test: "upload-filename" }, attrs: { "aria-live": "polite" } });
+  const dropTitle = h("b", { class: "cqa-ld-drop-title", text: t("loader.dropTitle") });
+  const dropzone = h("div", {
+    class: "cqa-ld-dropzone", attrs: { role: "group", "aria-label": t("loader.file"), "aria-disabled": "false" }, data: { test: "upload-dropzone" },
+  }, svg("svg", { class: "cqa-ld-drop-icon", viewBox: "0 0 24 24", width: 24, height: 24, fill: "none", stroke: "currentColor", "stroke-width": 1.6, "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" },
+    svg("path", { d: "M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" })),
+    dropTitle, h("span", { class: "cqa-rv-hint", text: t("loader.dropHint") }), chooseFile, fileName, fileInput);
   const closeButton = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("loader.close"), data: { test: "loader-close" }, on: { click: () => close() } });
 
   function paint() {
     importButton.disabled = busy || groupInput.value.trim() === "";
     groupInput.disabled = busy;
     fileInput.disabled = busy;
+    chooseFile.disabled = busy;
+    dropzone.setAttribute("aria-disabled", String(busy));
+    dropzone.classList.toggle("is-busy", busy);
+    if (busy) { dragDepth = 0; setDragging(false); }
   }
 
   function showError(text) {
@@ -127,9 +143,23 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
     run(t("loader.importing", { group }), () => api.importDataset(group));
   }
 
-  function upload() {
-    const file = fileInput.files?.[0];
-    if (!file) return;
+  function uploadFiles(files) {
+    if (busy || closed || !files?.length) return;
+    if (files.length !== 1) {
+      showError(t("loader.error.oneFile"));
+      fileInput.value = "";
+      return;
+    }
+    const file = files[0];
+    // File-picker and drop paths share validation, locking, parsing and upload behavior.
+    if (!/\.json$/i.test(file.name) && file.type !== "application/json") {
+      showError(t("loader.error.fileType"));
+      fileInput.value = "";
+      return;
+    }
+    fileName.setAttribute("data-i18n-verbatim", "");
+    fileName.replaceChildren(h("span", { text: file.name, verbatim: true }));
+    clear(result);
     run(t("loader.uploading", { name: file.name }), async () => {
       try {
         const text = await readText(file);
@@ -141,9 +171,41 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
     });
   }
 
+  function setDragging(active) {
+    active = active && !busy;
+    if (dropzone.classList.contains("is-dragging") === active) return;
+    dropzone.classList.toggle("is-dragging", active);
+    setLocalizedText(dropTitle, t(active ? "loader.dropActive" : "loader.dropTitle"));
+  }
+
+  const hasFiles = (event) => Array.from(event.dataTransfer?.types ?? []).includes("Files");
+
   const panel = h(
     "aside",
-    { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") } },
+    { class: "cqa-drawer", attrs: { role: "dialog", "aria-modal": "true", "aria-label": t("loader.title") }, on: {
+      dragenter: (event) => {
+        if (!hasFiles(event)) return;
+        event.preventDefault();
+        dragDepth++;
+        setDragging(true);
+      },
+      dragover: (event) => {
+        if (!hasFiles(event)) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = busy ? "none" : "copy";
+      },
+      dragleave: () => {
+        dragDepth = Math.max(0, dragDepth - 1);
+        if (!dragDepth) setDragging(false);
+      },
+      drop: (event) => {
+        if (!hasFiles(event) && !event.dataTransfer?.files?.length) return;
+        event.preventDefault();
+        dragDepth = 0;
+        setDragging(false);
+        uploadFiles(event.dataTransfer?.files);
+      },
+    } },
     h("div", { class: "cqa-drawer-head" }, h("h2", { class: "cqa-drawer-title", text: t("loader.title") })),
     h(
       "form",
@@ -163,7 +225,7 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
     h(
       "div",
       { class: "cqa-ap-form" },
-      h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), fileInput),
+      h("div", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: t("loader.file") }), dropzone),
       h("p", { class: "cqa-rv-hint", text: t("loader.fileHint") }),
     ),
     status,
@@ -177,6 +239,9 @@ export function openLoader({ host, store, api, onImported, group = "" }) {
       class: "cqa-drawer-wrap",
       data: { test: "loader" },
       on: {
+        // Dropping outside the panel must not navigate the browser to the local file.
+        dragover: (event) => { if (hasFiles(event)) event.preventDefault(); },
+        drop: (event) => { if (hasFiles(event) || event.dataTransfer?.files?.length) event.preventDefault(); },
         keydown: (event) => {
           if (event.key === "Escape") {
             event.stopPropagation();
