@@ -52,13 +52,45 @@ const OFFICIAL = { checklist_id: "official-chat", version: 1 };
 const P1 = "A:p1-ru-001";
 const P4 = "A:p4-ru-001";
 
-async function rejects(promise, code) {
+// The backend's agreed error codes and their HTTP statuses (error-codes.md).
+const STATUS = {
+  invalid_request: 422,
+  invalid_checklist: 422,
+  reason_required: 422,
+  na_not_allowed: 422,
+  step_not_in_scale: 422,
+  bad_answer: 422,
+  no_records: 422,
+  appeal_already_decided: 409,
+  appeal_already_open: 409,
+  checklist_locked: 409,
+  model_key_missing: 409,
+  role_not_allowed: 403,
+  not_found: 404,
+};
+
+// Asserts the code and, unless `status` says otherwise, the status the agreed table gives it.
+// Client-side codes (network, timeout, bad_response) have no status: null.
+async function rejects(promise, code, status = code.startsWith("bad_record:") ? 422 : STATUS[code] ?? null) {
   await assert.rejects(promise, (error) => {
     assert.ok(error instanceof ApiError, `ApiError expected, got ${error}`);
     assert.equal(error.code, code);
+    assert.equal(error.status, status, `${code}: status`);
     return true;
   });
 }
+
+// Runs `fn` with the adapter's role() set to `role`, then puts the previous role back.
+async function asRole(role, fn) {
+  const previous = roleBox.current;
+  roleBox.current = role;
+  try {
+    return await fn();
+  } finally {
+    roleBox.current = previous;
+  }
+}
+const decide = (api, id, body) => asRole("reviewer", () => api.decideAppeal(id, body));
 
 // Imports group A, runs a batch and returns the finished job.
 async function evaluate(api, conversations, checklist = OFFICIAL, mode = "reuse") {
@@ -159,7 +191,10 @@ describe("datasets", () => {
     assert.notEqual(new Set([a.group_id, b.group_id, c.group_id, d.group_id]).size, 1, "each upload gets a group");
     assert.equal(new Set([a.group_id, b.group_id, c.group_id, d.group_id]).size, 4);
     assert.ok((await api.getConversation(`${a.group_id}:u-1`)).id.startsWith("upload-"));
-    await rejects(api.uploadConversations({ nothing: true }), "bad_request");
+    await rejects(api.uploadConversations({ nothing: true }), "no_records");
+    await rejects(api.uploadConversations([]), "no_records");
+    await rejects(api.uploadConversations([record, { conversation_id: "u-3" }]), "bad_record:1");
+    await rejects(api.uploadConversations("not json {"), "invalid_request");
   });
 
   test("a changed transcript on re-import counts as updated", async () => {
@@ -513,15 +548,39 @@ describe("appeals", () => {
   test("confirmed keeps the model answer; validation of decisions", async () => {
     const { api, ev } = await evaluated();
     const appeal = await api.fileAppeal({ evaluation_id: ev.id, criterion_id: "c01", comment: "Проверьте" });
-    await rejects(api.decideAppeal(appeal.id, { outcome: "changed", answer: "na", reason: "x" }), "invalid_answer");
-    await rejects(api.decideAppeal(appeal.id, { outcome: "changed", answer: { step: 5 }, reason: "x" }), "invalid_answer");
-    await rejects(api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "  " }), "bad_request");
-    await rejects(api.decideAppeal(appeal.id, { outcome: "maybe", reason: "x" }), "bad_request");
-    await rejects(api.decideAppeal("ap-9999", { outcome: "confirmed", reason: "x" }), "not_found");
-    const after = await api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "Оценка верна" });
+    // the answer is checked with the same codes as validateAnswer
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: "na", reason: "x" }), "na_not_allowed");
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: { step: 5 }, reason: "x" }), "bad_answer");
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: "maybe", reason: "x" }), "bad_answer");
+    await rejects(decide(api, appeal.id, { outcome: "confirmed", reason: "  " }), "reason_required");
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: "yes", reason: "" }), "reason_required");
+    await rejects(decide(api, appeal.id, { outcome: "maybe", reason: "x" }), "invalid_request");
+    await rejects(decide(api, "ap-9999", { outcome: "confirmed", reason: "x" }), "not_found");
+    const after = await decide(api, appeal.id, { outcome: "confirmed", reason: "Оценка верна" });
     assert.equal(after.final_total, ev.final_total);
     assert.equal((await api.getAppeal(appeal.id)).decision.outcome, "confirmed");
-    await rejects(api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "ещё раз" }), "appeal_already_decided");
+    await rejects(decide(api, appeal.id, { outcome: "confirmed", reason: "ещё раз" }), "appeal_already_decided");
+  });
+
+  test("scale answers: step_not_in_scale for a step outside the criterion's scale", async () => {
+    const { api, ev } = await evaluated();
+    const scale = (await api.getChecklistVersion("official-chat", 1)).criteria.find((c) => c.id === "c06");
+    assert.equal(scale.answer_type, "scale");
+    const appeal = await api.fileAppeal({ evaluation_id: ev.id, criterion_id: scale.id, comment: "Проверьте" });
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: { step: 999 }, reason: "x" }), "step_not_in_scale");
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: "yes", reason: "x" }), "bad_answer");
+    await rejects(decide(api, appeal.id, { outcome: "changed", answer: "na", reason: "x" }), "na_not_allowed");
+  });
+
+  test("role checks: only a controller files an appeal, only a reviewer decides it", async () => {
+    const { api, ev } = await evaluated();
+    const body = { evaluation_id: ev.id, criterion_id: "c05", comment: "Не согласен" };
+    await rejects(asRole("reviewer", () => api.fileAppeal(body)), "role_not_allowed");
+    assert.equal((await api.listAppeals({})).length, 0, "a refused appeal is not stored");
+    const appeal = await api.fileAppeal(body);
+    await rejects(api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "ok" }), "role_not_allowed");
+    assert.equal((await api.getAppeal(appeal.id)).status, "open", "a refused decision changes nothing");
+    assert.equal((await decide(api, appeal.id, { outcome: "confirmed", reason: "ok" })).id, ev.id);
   });
 
   test("one open appeal per criterion per evaluation; filing validates its input", async () => {
@@ -530,7 +589,7 @@ describe("appeals", () => {
     await api.fileAppeal(body);
     await rejects(api.fileAppeal(body), "appeal_already_open");
     await api.fileAppeal({ ...body, criterion_id: "c07" });
-    await rejects(api.fileAppeal({ ...body, comment: "" }), "bad_request");
+    await rejects(api.fileAppeal({ ...body, comment: "" }), "invalid_request");
     await rejects(api.fileAppeal({ ...body, criterion_id: "zz" }), "not_found");
     await rejects(api.fileAppeal({ ...body, evaluation_id: "ev-9999" }), "not_found");
     const open = await api.listAppeals({ status: "open" });
@@ -544,7 +603,7 @@ describe("appeals", () => {
     const { api, ev } = await evaluated();
     const body = { evaluation_id: ev.id, criterion_id: "c05", comment: "a" };
     const first = await api.fileAppeal(body);
-    await api.decideAppeal(first.id, { outcome: "confirmed", reason: "ok" });
+    await decide(api, first.id, { outcome: "confirmed", reason: "ok" });
     const second = await api.fileAppeal({ ...body, comment: "b" });
     assert.notEqual(second.id, first.id);
   });
@@ -709,7 +768,7 @@ describe("carried decisions", () => {
     await evaluate(api, ["DEV:d-1"]);
     const ev = await latestEvaluation(api, "DEV:d-1");
     const appeal = await api.fileAppeal({ evaluation_id: ev.id, criterion_id: "c05", comment: "x" });
-    await api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "ok" });
+    await decide(api, appeal.id, { outcome: "confirmed", reason: "ok" });
 
     await evaluate(api, ["DEV:d-1"]);
     assert.ok((await latestEvaluation(api, "DEV:d-1")).results.every((r) => r.reused), "unchanged transcript reuses");
@@ -767,7 +826,7 @@ describe("checklists", () => {
     const api = make();
     const err = await api.saveChecklistVersion("official-chat", { name: "Новое имя" }).catch((e) => e);
     assert.ok(err instanceof ApiError);
-    assert.equal(err.code, "locked");
+    assert.equal(err.code, "checklist_locked");
     assert.equal(err.status, 409);
     assertValid("error", { error: err.code, message: err.message });
 
@@ -817,12 +876,53 @@ describe("checklists", () => {
     assert.ok(blank.criteria.every((c) => c.guidance === null), "an empty guidance becomes null");
     assert.deepEqual(blank.criteria.map((c) => c.fingerprint), created.criteria.map((c) => c.fingerprint), "null and empty are the same criterion");
     assert.equal(created.guidance, "", "the checklist's own guidance stays a string");
+    assert.deepEqual(created.warnings, ["weights_sum_110"], "scored weights 50 + 60");
+    assert.equal((await api.getChecklistVersion(created.checklist_id, 1)).warnings, undefined, "warnings are not stored");
     await rejects(api.createChecklist({ name: "Пусто", sections: [], criteria: [] }), "invalid_checklist");
     await rejects(api.createChecklist({ sections: created.sections, criteria: created.criteria }), "invalid_checklist");
     await rejects(api.createChecklist({ name: "x", sections: created.sections,
       criteria: [{ ...created.criteria[0], section_id: "ghost" }] }), "invalid_checklist");
     await rejects(api.createChecklist({ name: "x", sections: created.sections,
       criteria: [{ ...created.criteria[1], scale_steps: [{ value: 1, label: "один" }] }] }), "invalid_checklist");
+  });
+});
+
+describe("checklist weight warnings", () => {
+  const section = { id: "s1", title: "Начало", order: 1 };
+  const yesNo = (weight, extra = {}) => ({ section_id: "s1", title: "Критерий", wording: "Да.", answer_type: "yes_no", weight, ...extra });
+
+  test("saves answer with weights_sum_<n> when the scored weights do not add up to 100", async () => {
+    const api = make();
+    const exact = await api.createChecklist({ name: "Ровно 100", sections: [section], criteria: [yesNo(40), yesNo(60)] });
+    assert.equal(exact.warnings, undefined);
+    assertValid("checklist-version", exact);
+
+    const over = await api.saveChecklistVersion(exact.checklist_id, { criteria: [yesNo(40), yesNo(60), yesNo(5)] });
+    assert.deepEqual(over.warnings, ["weights_sum_105"]);
+    assert.equal(over.version, 2, "a warning does not stop the save");
+    assertValid("checklist-version", over);
+
+    const under = await api.saveChecklistVersion(exact.checklist_id, { criteria: [yesNo(33.5), yesNo(60)] });
+    assert.deepEqual(under.warnings, ["weights_sum_93.5"]);
+
+    const none = await api.saveChecklistVersion(exact.checklist_id, { criteria: [yesNo(0)] });
+    assert.deepEqual(none.warnings, ["weights_sum_0"]);
+
+    const fixed = await api.saveChecklistVersion(exact.checklist_id, { criteria: [yesNo(0.1), yesNo(0.2), yesNo(99.7)] });
+    assert.equal(fixed.warnings, undefined, "float noise does not count");
+  });
+
+  test("gross-error criteria do not count toward the sum", async () => {
+    const api = make();
+    const made = await api.createChecklist({ name: "С грубой ошибкой", sections: [section],
+      criteria: [yesNo(100), yesNo(0, { kind: "gross_error", answer_type: "yes_no", weight: 30 })] });
+    assert.equal(made.warnings, undefined);
+    assert.equal(made.criteria[1].weight, 0);
+  });
+
+  test("a copy of the official checklist has no warnings", async () => {
+    const api = make();
+    assert.equal((await api.createChecklist({ based_on: OFFICIAL, name: "Копия" })).warnings, undefined);
   });
 });
 
@@ -929,7 +1029,7 @@ describe("isolation, faults and storage", () => {
     const job = await two.startEvaluations({ conversations: [P4], ...OFFICIAL });
     assert.equal(job.id, "job-0002");
     // decisions made in the second instance reach the first one's storage
-    await two.decideAppeal(appeal.id, { outcome: "confirmed", reason: "ok" });
+    await decide(two, appeal.id, { outcome: "confirmed", reason: "ok" });
     assert.equal((await make({ storage }).getAppeal(appeal.id)).status, "decided");
   });
 
@@ -1043,7 +1143,7 @@ describe("other endpoints", () => {
     const only = await api.getComparison({ from_checklist: "official-chat", from_version: "1", to_checklist: copy.checklist_id, to_version: String(v2.version), conversations: [P4] });
     assert.deepEqual(only.rows.map((r) => r.conversation), [P4]);
     await rejects(api.getComparison({ from_checklist: "official-chat", from_version: 1, to_checklist: "nope", to_version: 1 }), "not_found");
-    await rejects(api.getComparison({}), "bad_request");
+    await rejects(api.getComparison({}), "invalid_request");
   });
 
   test("accuracy compares with a second seeded grader and says the reference is not loaded", async () => {
@@ -1151,7 +1251,7 @@ describe("every mock response validates against its schema", () => {
     assertValid("appeal", appeal);
     (await api.listAppeals({})).forEach((a) => assertValid("appeal", a));
     assertValid("appeal", await api.getAppeal(appeal.id));
-    assertValid("evaluation", await api.decideAppeal(appeal.id, { outcome: "confirmed", reason: "ok" }));
+    assertValid("evaluation", await decide(api, appeal.id, { outcome: "confirmed", reason: "ok" }));
     assertValid("comparison", await api.getComparison({ from_checklist: "official-chat", from_version: 1, to_checklist: copy.checklist_id, to_version: 1 }));
     assertValid("accuracy", await api.getAccuracy());
     assertValid("analytics", await api.getAnalytics());

@@ -20,20 +20,34 @@ import { openStore } from "./persist.js";
 import { buildAccuracy, buildAnalytics, buildComparison, buildCsv } from "./reports.js";
 
 const ROLES = new Set(["controller", "reviewer"]);
+// The backend's agreed error codes and statuses; the mock rejects with exactly these.
 const STATUS = Object.freeze({
   not_found: 404,
-  locked: 409,
+  role_not_allowed: 403,
+  checklist_locked: 409,
   model_key_missing: 409,
+  organizer_url_missing: 409,
   appeal_already_open: 409,
   appeal_already_decided: 409,
-  bad_request: 400,
-  invalid_answer: 400,
+  invalid_request: 422,
   invalid_checklist: 422,
+  reason_required: 422,
+  na_not_allowed: 422,
+  step_not_in_scale: 422,
+  bad_answer: 422,
+  no_records: 422,
 });
 
 function fail(code, message) {
-  const status = STATUS[code] ?? (CLIENT_CODES.includes(code) ? null : 500);
+  // "bad_record:<index>" carries the index in the code, so it is matched by its prefix.
+  const status = STATUS[code] ?? (code.startsWith("bad_record:") ? 422 : CLIENT_CODES.includes(code) ? null : 500);
   return new ApiError(code, message, { status });
+}
+
+// The scored weights of a checklist body, summed; anything but 100 draws a warning (not an error).
+function weightWarnings(criteria) {
+  const sum = Number(criteria.filter((c) => c.kind === "scored").reduce((total, c) => total + c.weight, 0).toFixed(6));
+  return sum === 100 ? [] : [`weights_sum_${sum}`];
 }
 
 const text = (value) => (typeof value === "string" ? value.trim() : "");
@@ -172,7 +186,10 @@ export function createMockApi(options = {}) {
     try {
       return parseUpload(typeof payload === "string" ? payload : JSON.stringify(payload));
     } catch (error) {
-      if (error instanceof UploadError) throw fail("bad_request", `Unusable upload: ${error.code}`);
+      if (error instanceof UploadError) {
+        // no_records and bad_record:<i> keep their codes; unreadable JSON is a plain bad request.
+        throw fail(error.code === "not_json" ? "invalid_request" : error.code, `Unusable upload: ${error.code}`);
+      }
       throw error;
     }
   }
@@ -287,6 +304,12 @@ export function createMockApi(options = {}) {
     versions: row.versions.map((v) => ({ version: v.version, created_at: v.created_at, author_role: v.author_role })),
   });
 
+  // The response of a save may carry `warnings`; the stored version does not.
+  function withWarnings(version) {
+    const warnings = weightWarnings(version.criteria);
+    return warnings.length > 0 ? { ...version, warnings } : version;
+  }
+
   async function listChecklists() {
     return state.checklists.map(summaryOf);
   }
@@ -323,7 +346,7 @@ export function createMockApi(options = {}) {
     };
     state.checklists.push({ checklist_id: checklistId, versions: [version] });
     store.touch();
-    return version;
+    return withWarnings(version);
   }
 
   async function saveChecklistVersion(checklistId, body = {}) {
@@ -331,7 +354,7 @@ export function createMockApi(options = {}) {
     const row = findChecklist(checklistId);
     if (!row) throw fail("not_found", `No checklist ${checklistId}`);
     const previous = latestVersion(row);
-    if (previous.locked) throw fail("locked", `Checklist ${checklistId} is locked; save a copy with based_on instead`);
+    if (previous.locked) throw fail("checklist_locked", `Checklist ${checklistId} is locked; save a copy with based_on instead`);
     const completed = await bodyOrReject(body, previous);
     const version = {
       id: store.nextId("chv"),
@@ -345,7 +368,7 @@ export function createMockApi(options = {}) {
     };
     row.versions.push(version);
     store.touch();
-    return version;
+    return withWarnings(version);
   }
 
   // ---- evaluations and jobs ---------------------------------------------------------------
@@ -435,9 +458,9 @@ export function createMockApi(options = {}) {
 
   async function startEvaluations({ conversations, checklist_id, version, mode = "reuse", dry_run = false } = {}) {
     if (!Array.isArray(conversations) || conversations.length === 0) {
-      throw fail("bad_request", "conversations must be a non-empty array");
+      throw fail("invalid_request", "conversations must be a non-empty array");
     }
-    if (mode !== "reuse" && mode !== "full") throw fail("bad_request", 'mode must be "reuse" or "full"');
+    if (mode !== "reuse" && mode !== "full") throw fail("invalid_request", 'mode must be "reuse" or "full"');
     const checklist = findVersion(checklist_id, version);
     if (!checklist) throw fail("not_found", `No checklist version ${checklist_id} v${version}`);
 
@@ -512,12 +535,13 @@ export function createMockApi(options = {}) {
 
   async function fileAppeal({ evaluation_id, criterion_id, comment } = {}) {
     const appealRole = currentRole();
+    if (appealRole !== "controller") throw fail("role_not_allowed", "Only a controller can file an appeal");
     const ev = findEvaluation(evaluation_id);
     if (!ev || ev.status !== "done") throw fail("not_found", `No finished evaluation ${evaluation_id}`);
     if (!ev.results.some((r) => r.criterion_id === criterion_id)) {
       throw fail("not_found", `Evaluation ${ev.id} has no criterion ${criterion_id}`);
     }
-    if (text(comment) === "") throw fail("bad_request", "A comment is required");
+    if (text(comment) === "") throw fail("invalid_request", "A comment is required");
     if (state.appeals.some((a) => a.evaluation_id === ev.id && a.criterion_id === criterion_id && a.status === "open")) {
       throw fail("appeal_already_open", `Criterion ${criterion_id} already has an open appeal on ${ev.id}`);
     }
@@ -553,10 +577,11 @@ export function createMockApi(options = {}) {
 
   async function decideAppeal(id, { outcome, answer, reason } = {}) {
     const deciderRole = currentRole();
+    if (deciderRole !== "reviewer") throw fail("role_not_allowed", "Only a reviewer can decide an appeal");
     const appeal = await getAppeal(id);
     if (appeal.status !== "open") throw fail("appeal_already_decided", `Appeal ${id} is already decided`);
-    if (outcome !== "confirmed" && outcome !== "changed") throw fail("bad_request", 'outcome must be "confirmed" or "changed"');
-    if (text(reason) === "") throw fail("bad_request", "A reason is required");
+    if (outcome !== "confirmed" && outcome !== "changed") throw fail("invalid_request", 'outcome must be "confirmed" or "changed"');
+    if (text(reason) === "") throw fail("reason_required", "A reason is required");
 
     const ev = findEvaluation(appeal.evaluation_id);
     const version = findVersion(ev.checklist_id, ev.version);
@@ -566,7 +591,7 @@ export function createMockApi(options = {}) {
     let decided = structuredClone(result.answer); // "confirmed" keeps the model's answer
     if (outcome === "changed") {
       const problem = validateAnswer(criterion, answer);
-      if (problem) throw fail("invalid_answer", `The answer does not fit criterion ${criterion.id}: ${problem}`);
+      if (problem) throw fail(problem, `The answer does not fit criterion ${criterion.id}: ${problem}`);
       decided = structuredClone(answer);
     }
     appeal.status = "decided";
@@ -592,7 +617,7 @@ export function createMockApi(options = {}) {
   async function getComparison(params = {}) {
     const { from_checklist, from_version, to_checklist, to_version, group_id, conversations } = params ?? {};
     if (!from_checklist || !to_checklist || from_version === undefined || to_version === undefined) {
-      throw fail("bad_request", "from_checklist, from_version, to_checklist and to_version are required");
+      throw fail("invalid_request", "from_checklist, from_version, to_checklist and to_version are required");
     }
     const from = findVersion(from_checklist, from_version);
     const to = findVersion(to_checklist, to_version);
