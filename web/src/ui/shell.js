@@ -124,6 +124,13 @@ function themeToggle(store, track) {
   return button;
 }
 
+// The mock Dynamics 365 form (dynamics-mock.html, next to index.html) that shows this UI embedded.
+// Only on our own page: inside a host the link would open a form within the form.
+function dynamicsLink() {
+  const label = t("dynamics.open");
+  return h("a", { class: "cqa-icon-link", attrs: { href: "dynamics-mock.html", title: label, "aria-label": label }, data: { test: "dynamics-link" } }, icon("frame", { size: 16 }));
+}
+
 function datasetBadge(store, track) {
   const value = h("b", { class: "cqa-badge-value", verbatim:true });
   const badge = h(
@@ -149,7 +156,7 @@ function buildHeader(store, compact, track) {
     on: { change: () => setLanguage(language.value) },
   }, [["kk", "Қазақша (KAZ)", "KAZ"], ["ru", "Русский (RU)", "RU"], ["en", "English (EN)", "EN"]].map(([value, label, short]) => h("option", { verbatim: true, attrs: { value }, data: { short }, text: label })));
   language.value = currentLanguage();
-  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track));
+  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track), store.get().mode === "embedded" ? null : dynamicsLink());
   if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
 
   const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));

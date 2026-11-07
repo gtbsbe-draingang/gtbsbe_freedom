@@ -25,6 +25,7 @@ export default {
   "role.controller": "Контролёр",
   "role.reviewer": "Проверяющий",
   "theme.toggle": "Тёмная тема",
+  "dynamics.open": "Открыть в форме Dynamics 365",
   "dataset.label": "Набор",
   "dataset.title": "Текущий набор данных",
   "workspace.queue": "Очередь",
