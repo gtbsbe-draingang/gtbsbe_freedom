@@ -1,6 +1,7 @@
-// The batch bar's guards (review of #64): one click starts one job even while the start request
+// The batch bar's guards (reviews of #64): one click starts one job even while the start request
 // is pending (also for «Повторить неудачные»); a failed progress poll resumes the same job instead
-// of starting another; and the open scorecard follows the checklist picked in the batch bar.
+// of starting another; the open scorecard follows the checklist picked in the batch bar; and a
+// batch keeps its lock when the workspace is left and opened again while it runs.
 // The mock API is wrapped in the page to delay, count or fail calls; no dialogue text is printed.
 import assert from "node:assert/strict";
 
@@ -128,4 +129,34 @@ export async function run(page) {
   await page.eval(`window.__retryButton.click()`); // the old button, clicked again before the repaint
   await until(page, `/^Готово: оценено 2 из 2/.test(document.querySelector(${quote(sel("batch-progress"))})?.textContent ?? "")`, "the retry to finish");
   assert.equal(await page.eval(`window.__retries`), 1, "exactly one retry was requested");
+
+  // ---- leaving the workspace keeps the running batch and its lock (P2) ----
+  // A synthetic job that stays at 1 of 2 until the test releases it.
+  await page.eval(`(() => {
+    const api = window.__cqaTest.api;
+    window.__starts = 0; window.__release = false;
+    const held = { id: "job-held", status: "running", mode: "reuse", total: 2, done: 1, failed: 0, items: [] };
+    api.startEvaluations = (args) => (args && args.dry_run ? window.__realStart(args) : (window.__starts += 1, Promise.resolve(held)));
+    api.getJob = (id) => Promise.resolve(window.__release ? { ...held, id, status: "done", done: 2 } : { ...held, id });
+  })()`);
+  await estimateReady(page);
+  await page.click(sel("batch-run"));
+  await until(page, `/1 из 2/.test(document.querySelector(${quote(sel("batch-progress"))})?.textContent ?? "")`, "the held batch at 1 of 2");
+  const refreshHeld = await page.eval(`window.__cqaTest.store.get().queueRefresh ?? 0`);
+  await page.eval(`location.hash = "#/analytics"`);
+  await until(page, `document.querySelector(${quote(sel("queue"))}) === null`, "the workspace to be gone");
+  await page.eval(`location.hash = "#/"`);
+  await page.waitFor(sel("batch-bar"), 5000);
+  await until(page, `/1 из 2/.test(document.querySelector(${quote(sel("batch-progress"))})?.textContent ?? "")`, "the rebuilt bar to show the same job");
+  await page.sleep(400); // the rebuilt bar's estimate has had time to come back
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("batch-run"))}).disabled`), true, "the rebuilt bar cannot start another batch");
+  assert.equal(await page.eval(`document.querySelector(${quote(sel("batch-checklist"))}).disabled`), true, "nor change its checklist");
+  await page.eval(`(() => { const b = document.querySelector(${quote(sel("batch-run"))}); b.disabled = false; b.click(); })()`); // forced: the handler must refuse too
+  assert.equal(await page.eval(`window.__starts`), 1, "no second evaluation was started");
+  await page.eval(`window.__release = true`);
+  await batchDone(page);
+  assert.equal(await page.eval(`window.__starts`), 1, "still one evaluation once it ended");
+  assert.ok((await page.eval(`window.__cqaTest.store.get().queueRefresh ?? 0`)) > refreshHeld, "the job that outlived its bar refreshed the queue");
+  await showQueue(page);
+  await estimateReady(page); // free again once the batch is over
 }

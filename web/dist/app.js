@@ -3896,6 +3896,10 @@
     }
     return marks;
   }
+  function shownKey(conversation) {
+    const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+    return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
+  }
   function openId2(store, args) {
     if (typeof args?.id === "string" && args.id !== "") return args.id;
     const { route: route2, conversationId } = store.get();
@@ -3931,6 +3935,8 @@
     let loaded = false;
     let marked = [];
     let pending2 = { highlight: null, focus: null };
+    let lastHighlight = null;
+    let shown = null;
     const flashTimers = /* @__PURE__ */ new Map();
     function clearMarks() {
       for (const i of marked) {
@@ -3943,7 +3949,8 @@
     }
     function applyHighlight(criterionId, evidence, range, label) {
       clearMarks();
-      if (criterionId === null || criterionId === void 0) return;
+      lastHighlight = criterionId === null || criterionId === void 0 ? null : [criterionId, evidence, range, label];
+      if (lastHighlight === null) return;
       const name = typeof label === "string" && label.trim() !== "" ? label : String(criterionId);
       const plan = highlightPlan(rows.length, evidence, range);
       plan.forEach((mark, i) => {
@@ -4001,6 +4008,7 @@
       rows = [];
       marked = [];
       loaded = true;
+      shown = shownKey(conversation);
       if (transcript.length === 0) {
         scroller.append(stateBox2("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
       } else {
@@ -4040,15 +4048,36 @@
         showError(error);
       }
     }
+    async function refresh() {
+      if (destroyed || id === null) return;
+      if (!loaded) {
+        load2();
+        return;
+      }
+      const mine = ++run;
+      try {
+        const conversation = await api.getConversation(id);
+        if (destroyed || mine !== run || shownKey(conversation) === shown) return;
+        const top = scroller.scrollTop;
+        if (pending2.highlight === null && lastHighlight !== null) pending2.highlight = lastHighlight;
+        show(conversation);
+        scroller.scrollTop = top;
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        toastError(store, error, { retry: refresh });
+      }
+    }
     function destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopRefresh();
       flashTimers.forEach((timer) => clearTimeout(timer));
       flashTimers.clear();
       if (store.get().transcript === handle) store.set({ transcript: null });
       const hook2 = window.__cqaTest;
       if (hook2?.store === store && hook2.transcript?.focusMessage === focusMessage) hook2.transcript = null;
     }
+    const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
     if (hook?.store === store) hook.transcript = { focusMessage, highlight };
@@ -4642,9 +4671,85 @@
     return { value: { ...source, sections, criteria }, errors, warnings };
   }
 
-  // src/ui/loader.js
+  // src/ui/job-runner.js
   var POLL_MS3 = 500;
+  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  async function followJob(api, first, onTick, { pollMs = POLL_MS3 } = {}) {
+    let job = first;
+    onTick(job, !jobSettled(job));
+    while (!jobSettled(job)) {
+      await sleep2(pollMs);
+      job = await api.getJob(job.id);
+      onTick(job, !jobSettled(job));
+    }
+    return job;
+  }
+  var snapshot = (job, running) => ({ id: job.id, done: job.done ?? 0, total: job.total ?? 0, failed: job.failed ?? 0, running });
+  function jobSlot(store, api, key, { pollMs = POLL_MS3 } = {}) {
+    const state = () => store.get().jobs?.[key] ?? null;
+    const put = (patch) => store.set((current2) => {
+      const jobs = { ...current2.jobs ?? {} };
+      if (patch === null) delete jobs[key];
+      else jobs[key] = { lock: null, job: null, meta: null, ...jobs[key], ...patch };
+      return { jobs };
+    });
+    const busy = () => (state()?.lock ?? null) !== null;
+    async function follow(first) {
+      put({ lock: "watching", job: snapshot(first, !jobSettled(first)) });
+      try {
+        const job = await followJob(api, first, (tick, running) => put({ job: snapshot(tick, running) }), { pollMs });
+        put({ lock: null, job: snapshot(job, false) });
+        store.set((current2) => ({ queueRefresh: (current2.queueRefresh ?? 0) + 1 }));
+        return job;
+      } catch (error) {
+        put({ lock: "interrupted" });
+        toastError(store, error, { retry: resume });
+        return null;
+      }
+    }
+    async function resume() {
+      const slot = state();
+      const id = slot?.job?.id;
+      if (!id || slot.lock !== "interrupted") return null;
+      put({ lock: "resuming" });
+      let job;
+      try {
+        job = await api.getJob(id);
+      } catch (error) {
+        const gone = error?.code === "not_found";
+        put(gone ? { lock: null, job: null } : { lock: "interrupted" });
+        toastError(store, error, { retry: gone ? void 0 : resume });
+        return null;
+      }
+      return follow(job);
+    }
+    async function start(request, { again, meta } = {}) {
+      if (busy()) return null;
+      put(meta === void 0 ? { lock: "starting" } : { lock: "starting", meta });
+      let first;
+      try {
+        first = await request();
+      } catch (error) {
+        put({ lock: null });
+        toastError(store, error, { retry: again });
+        return null;
+      }
+      return follow(first);
+    }
+    function retry() {
+      const id = state()?.job?.id;
+      if (busy() || !id) return Promise.resolve(null);
+      return start(() => api.retryJob(id), { again: retry });
+    }
+    function reset() {
+      if (!busy() && state() !== null) put(null);
+    }
+    return { state, busy, start, resume, retry, reset, watch: (fn) => watch(store, (current2) => current2.jobs?.[key] ?? null, fn) };
+  }
+
+  // src/ui/loader.js
   var ESTIMATE_DELAY_MS = 250;
+  var BATCH_SLOT = "batch";
   function uploadErrorText(code) {
     const match = /^bad_record:(\d+)$/.exec(String(code ?? ""));
     if (match) return t("loader.error.bad_record", { n: Number(match[1]) + 1 });
@@ -4654,19 +4759,7 @@
   function estimateText(dry) {
     return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
   }
-  async function followJob(api, first, onTick) {
-    let job = first;
-    onTick(job, !jobSettled(job));
-    while (!jobSettled(job)) {
-      await sleep2(POLL_MS3);
-      job = await api.getJob(job.id);
-      onTick(job, !jobSettled(job));
-    }
-    return job;
-  }
   var summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
-  var bump = (store) => store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-  var sleep2 = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   function readText(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -4812,12 +4905,10 @@
       // [{checklist_id, version, label}]
       estimate: null,
       // the dry-run answer for the current selection and checklist
-      estimating: false,
-      job: null,
-      // null | {id, done, total, failed}: the last job of this bar
-      lock: null
-      // null | "starting" | "watching" | "interrupted" | "resuming" (see runBatch)
+      estimating: false
     };
+    const slot = jobSlot(store, api, BATCH_SLOT);
+    const busy = () => slot.busy();
     let destroyed = false;
     let estimateTimer = null;
     let estimateRun = 0;
@@ -4880,20 +4971,20 @@
       hint.hidden = !keyMissing;
       runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
       clear(progress);
-      const job = view.job;
-      if (view.lock === "starting") progress.append(t("batch.starting"));
-      else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+      const { lock = null, job = null } = slot.state() ?? {};
+      if (lock === "starting") progress.append(t("batch.starting"));
+      else if (job && (lock === "interrupted" || lock === "resuming")) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
-          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => resume() } })
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } })
         );
       } else if (job) {
-        const running = view.lock === "watching";
+        const running = lock === "watching";
         progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
         if (job.failed > 0) {
           progress.append(
             h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
-            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } })
+            running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } })
           );
         }
       }
@@ -4947,77 +5038,23 @@
         paint();
       }, ESTIMATE_DELAY_MS);
     }
-    const busy = () => view.lock !== null;
-    const snapshot = (job) => ({ id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0 });
-    async function watchJob(first) {
-      view.lock = "watching";
-      try {
-        const job = await followJob(api, first, (tick) => {
-          view.job = snapshot(tick);
-          paint();
-        });
-        view.job = snapshot(job);
-        view.lock = null;
-        paint();
-        bump(store);
-        scheduleEstimate();
-      } catch (error) {
-        view.lock = "interrupted";
-        paint();
-        toastError(store, error, { retry: resume });
-      }
-    }
-    async function resume() {
-      const id = view.job?.id;
-      if (!id || view.lock !== "interrupted") return;
-      view.lock = "resuming";
-      paint();
-      let job;
-      try {
-        job = await api.getJob(id);
-      } catch (error) {
-        const gone = error?.code === "not_found";
-        view.lock = gone ? null : "interrupted";
-        if (gone) view.job = null;
-        paint();
-        toastError(store, error, { retry: gone ? void 0 : resume });
-        return;
-      }
-      await watchJob(job);
-    }
-    async function start(request, again) {
-      if (busy()) return;
-      view.lock = "starting";
-      paint();
-      let first;
-      try {
-        first = await request();
-      } catch (error) {
-        view.lock = null;
-        paint();
-        toastError(store, error, { retry: again });
-        return;
-      }
-      await watchJob(first);
-    }
     function runBatch() {
       const sel = current2();
       const picked = [...selection()];
       if (busy() || !sel || picked.length === 0) return void 0;
-      return start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), runBatch);
-    }
-    function retry() {
-      const id = view.job?.id;
-      if (busy() || !id) return void 0;
-      return start(() => api.retryJob(id), retry);
+      return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
     }
     stops.push(
       watch(store, (state) => state.selection, (next) => {
-        if (!busy()) view.job = null;
+        slot.reset();
         if ((next?.size ?? 0) > 0) boot();
         scheduleEstimate();
       }),
-      watch(store, (state) => state.checklistSel, () => scheduleEstimate())
+      watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+      slot.watch((next, previous) => {
+        if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
+        else paint();
+      })
     );
     if (selection().size > 0) boot();
     paint();
@@ -5808,7 +5845,12 @@
         api,
         onImported: (summary2) => {
           const group = summary2?.group_id;
-          store.set((state) => ({ ...group ? { groupId: group, queueGroup: group } : {}, queueRefresh: (state.queueRefresh ?? 0) + 1 }));
+          store.set((state) => ({
+            ...group ? { groupId: group, queueGroup: group } : {},
+            queueRefresh: (state.queueRefresh ?? 0) + 1,
+            importRefresh: (state.importRefresh ?? 0) + 1
+            // the open dialogue may have new lines
+          }));
         }
       });
     }

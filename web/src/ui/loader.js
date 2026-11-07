@@ -10,16 +10,19 @@
 //     Shown while dialogues are selected in the queue (store `selection`) or a batch runs: the
 //     checklist (store `checklistSel`, shared with the scorecard), the dry-run estimate
 //     «N диалогов · M вызовов модели · K из кэша», «Оценить выбранные», then the job's progress
-//     with «Повторить неудачные». A finished batch bumps `queueRefresh`.
+//     with «Повторить неудачные». The job is in the "batch" slot of job-runner.js (store `jobs`),
+//     so a bar rebuilt after leaving the workspace shows the same job and cannot start another.
+//     A finished batch bumps `queueRefresh`.
 import { parseUpload, UploadError } from "../domain/normalize.js";
 import { t, tp } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
-import { jobSettled, pickSelection } from "./scorecard.js";
+import { jobSlot } from "./job-runner.js";
+import { pickSelection } from "./scorecard.js";
 import { errorText, toastError } from "./toast.js";
 
-export const POLL_MS = 500;
 export const ESTIMATE_DELAY_MS = 250;
+export const BATCH_SLOT = "batch";
 
 // ---- pure helpers -----------------------------------------------------------------------------
 
@@ -36,26 +39,7 @@ export function estimateText(dry) {
   return t("batch.estimate", { dialogs: tp("batch.dialogs", dry.total), calls: tp("batch.calls", dry.model_calls), cached: dry.reused });
 }
 
-/**
- * Polls a job until it is over, calling onTick(job, running) after every answer (and once at the
- * start). It does not stop when the caller's view is gone: results must still refresh. A failed
- * poll throws; the caller keeps the job id and can follow it again.
- * @returns {Promise<object>} the settled job
- */
-export async function followJob(api, first, onTick) {
-  let job = first;
-  onTick(job, !jobSettled(job));
-  while (!jobSettled(job)) {
-    await sleep(POLL_MS);
-    job = await api.getJob(job.id);
-    onTick(job, !jobSettled(job));
-  }
-  return job;
-}
-
 const summaryText = (summary) => t("loader.summary", { total: summary.total, imported: summary.imported, updated: summary.updated, unchanged: summary.unchanged });
-const bump = (store) => store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function readText(file) {
   return new Promise((resolve, reject) => {
@@ -218,9 +202,9 @@ export function createBatchBar(store, api) {
     options: [], // [{checklist_id, version, label}]
     estimate: null, // the dry-run answer for the current selection and checklist
     estimating: false,
-    job: null, // null | {id, done, total, failed}: the last job of this bar
-    lock: null, // null | "starting" | "watching" | "interrupted" | "resuming" (see runBatch)
   };
+  const slot = jobSlot(store, api, BATCH_SLOT); // the job and its lock: they outlive this bar
+  const busy = () => slot.busy();
   let destroyed = false;
   let estimateTimer = null;
   let estimateRun = 0;
@@ -289,20 +273,20 @@ export function createBatchBar(store, api) {
     runButton.disabled = active || picked.size === 0 || !view.estimate || view.estimating || keyMissing || sel === null;
 
     clear(progress);
-    const job = view.job;
-    if (view.lock === "starting") progress.append(t("batch.starting"));
-    else if (job && (view.lock === "interrupted" || view.lock === "resuming")) {
+    const { lock = null, job = null } = slot.state() ?? {};
+    if (lock === "starting") progress.append(t("batch.starting"));
+    else if (job && (lock === "interrupted" || lock === "resuming")) {
       progress.append(
         h("span", { class: "cqa-sc-failed", text: t("batch.interrupted", { done: job.done, total: job.total }) }),
-        h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: view.lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => resume() } }),
+        h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled: lock === "resuming" }, text: t("batch.resume"), data: { test: "batch-resume" }, on: { click: () => slot.resume() } }),
       );
     } else if (job) {
-      const running = view.lock === "watching";
+      const running = lock === "watching";
       progress.append(t(running ? "batch.progress" : "batch.done", { done: job.done, total: job.total }));
       if (job.failed > 0) {
         progress.append(
           h("span", { class: "cqa-sc-failed", text: t("batch.failed", { n: job.failed }) }),
-          running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => retry() } }),
+          running ? "" : h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("batch.retry"), data: { test: "batch-retry" }, on: { click: () => slot.retry() } }),
         );
       }
     }
@@ -360,92 +344,27 @@ export function createBatchBar(store, api) {
     }, ESTIMATE_DELAY_MS);
   }
 
-  // ---- running: one job at a time ----
-  // view.lock is taken synchronously, before the first await, and released on one path each:
-  //   "starting"     the start (or retry) request is pending: no job id yet
-  //   "watching"     polling the job
-  //   "interrupted"  a poll failed: the job may still run on the server, so nothing new may start;
-  //                  recovery polls the same job id again (resume), it never starts another job
-  //   "resuming"     the recovery poll is pending
-  const busy = () => view.lock !== null;
-  const snapshot = (job) => ({ id: job.id, done: job.done, total: job.total, failed: job.failed ?? 0 });
-
-  // Polls the job to the end. It keeps going if the queue is closed: the totals must still refresh.
-  async function watchJob(first) {
-    view.lock = "watching";
-    try {
-      const job = await followJob(api, first, (tick) => {
-        view.job = snapshot(tick);
-        paint();
-      });
-      view.job = snapshot(job);
-      view.lock = null;
-      paint();
-      bump(store);
-      scheduleEstimate(); // what is cached now
-    } catch (error) {
-      view.lock = "interrupted";
-      paint();
-      toastError(store, error, { retry: resume });
-    }
-  }
-
-  async function resume() {
-    const id = view.job?.id;
-    if (!id || view.lock !== "interrupted") return;
-    view.lock = "resuming";
-    paint();
-    let job;
-    try {
-      job = await api.getJob(id);
-    } catch (error) {
-      const gone = error?.code === "not_found"; // the server forgot the job: nothing left to watch
-      view.lock = gone ? null : "interrupted";
-      if (gone) view.job = null;
-      paint();
-      toastError(store, error, { retry: gone ? undefined : resume });
-      return;
-    }
-    await watchJob(job);
-  }
-
-  // A failure before a job id exists frees the bar; the toast's retry repeats the whole request.
-  async function start(request, again) {
-    if (busy()) return;
-    view.lock = "starting";
-    paint();
-    let first;
-    try {
-      first = await request();
-    } catch (error) {
-      view.lock = null;
-      paint();
-      toastError(store, error, { retry: again });
-      return;
-    }
-    await watchJob(first);
-  }
+  // ---- running: one job at a time (job-runner.js holds the lock and polls) ----
 
   function runBatch() {
     const sel = current();
     const picked = [...selection()];
     if (busy() || !sel || picked.length === 0) return undefined;
-    return start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), runBatch);
-  }
-
-  function retry() {
-    const id = view.job?.id;
-    if (busy() || !id) return undefined;
-    return start(() => api.retryJob(id), retry);
+    return slot.start(() => api.startEvaluations({ conversations: picked, checklist_id: sel.checklist_id, version: sel.version, mode: "reuse" }), { again: runBatch });
   }
 
   stops.push(
     watch(store, (state) => state.selection, (next) => {
-      if (!busy()) view.job = null; // a new selection starts a new batch
+      slot.reset(); // a new selection starts a new batch (a running one is kept)
       if ((next?.size ?? 0) > 0) boot();
       scheduleEstimate();
     }),
     watch(store, (state) => state.checklistSel, () => scheduleEstimate()),
+    slot.watch((next, previous) => {
+      // A batch that just ended changed what is cached: estimate again.
+      if (previous?.lock === "watching" && (next?.lock ?? null) === null) scheduleEstimate();
+      else paint();
+    }),
   );
   if (selection().size > 0) boot();
   paint();

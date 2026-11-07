@@ -7,7 +7,8 @@
 //     version: the saved checklist version {checklist_id, version, name, based_on}
 import { t } from "../i18n/ru.js";
 import { clear, h } from "./dom.js";
-import { estimateText, followJob } from "./loader.js";
+import { followJob } from "./job-runner.js";
+import { estimateText } from "./loader.js";
 import { href } from "./router.js";
 import { errorText, toastError } from "./toast.js";
 
