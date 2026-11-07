@@ -19,6 +19,7 @@ import { t, grossKindsText } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
+import { dropdown } from "./dropdown.js";
 import { href } from "./router.js";
 import { toastError } from "./toast.js";
 import { renderVoiceMeasurements } from "./voice-measurements.js";
@@ -252,7 +253,7 @@ export function createScorecard(store, api, args = {}) {
   const bar = h(
     "div",
     { class: "cqa-sc-bar" },
-    h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
+    h("div", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), dropdown(select)),
     h("div", { class: "cqa-sc-run" }, runButton, fullButton),
     hint,
     status,

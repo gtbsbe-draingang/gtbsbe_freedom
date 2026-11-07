@@ -91,8 +91,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   margin-left: auto;
   color: var(--text-2);
+}
+
+/* when the header row is full, only the dataset badge gives way: its id ends in "…" (the full
+   id is its title) and the language, role and theme controls keep their size */
+.cqa .cqa-right > * {
+  flex: none;
+}
+
+.cqa .cqa-right > .cqa-badge {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .cqa .cqa-badge {
@@ -107,7 +119,10 @@
 }
 
 .cqa .cqa-badge-value {
+  min-width: 0;
   margin-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 700;
   color: var(--text);
 }
@@ -130,7 +145,8 @@
   white-space: nowrap;
 }
 
-.cqa .cqa-role-avatar {
+.cqa .cqa-role-avatar,
+.cqa .cqa-dd-lead {
   display: grid;
   place-items: center;
   width: 26px;
@@ -178,12 +194,95 @@
   color: var(--nav-on);
 }
 
-.cqa .cqa-menu-item[aria-checked="true"] {
+.cqa .cqa-menu-item[aria-checked="true"],
+.cqa .cqa-menu-item[aria-selected="true"] {
   font-weight: 600;
 }
 
-.cqa .cqa-menu-item[aria-checked="true"] .cqa-icon {
+.cqa .cqa-menu-item[aria-checked="true"] .cqa-icon,
+.cqa .cqa-menu-item[aria-selected="true"] .cqa-icon {
   visibility: visible;
+}
+
+.cqa .cqa-menu-item:disabled {
+  color: var(--text-2);
+  cursor: default;
+}
+
+/* dropdown over a native select (ui/dropdown.js): the role switch's button and menu */
+.cqa .cqa-dd {
+  position: relative;
+  min-width: 0;
+}
+
+.cqa .cqa-dd-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cqa .cqa-dd-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.cqa .cqa-dd-btn > .cqa-icon {
+  flex: none;
+  color: var(--text-2);
+}
+
+.cqa .cqa-dd-lead {
+  flex: none;
+}
+
+.cqa .cqa-dd-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cqa .cqa-dd-short {
+  display: none;
+}
+
+.cqa .cqa-dd-list {
+  max-height: min(320px, 60vh);
+  overflow-y: auto;
+}
+
+.cqa .cqa-dd--pill .cqa-dd-btn {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+}
+
+.cqa .cqa-dd--lead .cqa-dd-btn {
+  padding-left: 6px;
+}
+
+.cqa .cqa-dd--field .cqa-dd-btn {
+  padding: 9px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+}
+
+/* under a form field the list spans the field and long names wrap instead of widening it */
+.cqa .cqa-dd--field .cqa-dd-list {
+  left: 0;
+}
+
+.cqa .cqa-dd--field .cqa-menu-item {
+  white-space: normal;
 }
 
 /* theme toggle: sun and moon in one pill */
@@ -434,6 +533,15 @@
     padding: 8px 12px 0;
   }
 
+  /* the language pill shows its code only, so the header row still fits at 600 px */
+  .cqa .cqa-dd--short .cqa-dd-value {
+    display: none;
+  }
+
+  .cqa .cqa-dd--short .cqa-dd-short {
+    display: inline;
+  }
+
   .cqa .cqa-logo-word,
   .cqa .cqa-badge-label {
     display: none;
@@ -542,4 +650,3 @@
   cursor: pointer;
 }
 
-.cqa .cqa-language { max-width: 150px; border: 1px solid var(--line-2); border-radius: var(--r-ctl); background: var(--surface); color: var(--text); padding: 6px; font: inherit; font-size: 12px; }
