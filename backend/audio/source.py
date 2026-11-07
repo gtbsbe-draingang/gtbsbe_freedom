@@ -8,6 +8,7 @@ every time and never stored or logged. Error messages name the host at most.
 from __future__ import annotations
 
 import html
+import logging
 import re
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -16,6 +17,17 @@ import httpx
 
 _SOURCE = re.compile(r"<source\b[^>]*\bsrc\s*=\s*([\"'])(.*?)\1", re.IGNORECASE | re.DOTALL)
 TIMEOUT = httpx.Timeout(60.0, connect=15.0)
+
+
+class _RedactRequestURLs(logging.Filter):
+    def filter(self, record):
+        record.msg = re.sub(r"https?://[^\s\"']+", "<redacted-url>", record.getMessage())
+        record.args = ()
+        return True
+
+
+# httpx logs request URLs at INFO, including signed queries. Sanitize before handlers.
+logging.getLogger("httpx").addFilter(_RedactRequestURLs())
 
 
 class AudioSourceError(Exception):
@@ -78,7 +90,8 @@ async def download_mp3(audio_url: str, dest: Path, client: httpx.AsyncClient | N
                         f.write(chunk)
         except httpx.HTTPError as e:
             raise AudioSourceError(f"recording download from {host_of(mp3_url)} failed: {type(e).__name__}") from None
-        head = tmp.read_bytes()[:3]
+        with tmp.open("rb") as stream:
+            head = stream.read(3)
         if not (head == b"ID3" or head[:1] == b"\xff"):
             raise AudioSourceError("downloaded file is not an MP3")
         tmp.replace(dest)

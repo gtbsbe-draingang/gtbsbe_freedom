@@ -44,9 +44,11 @@ def _has(text: str, words) -> bool:
 
 
 def parse_lines(transcript: list[dict]) -> list[Line]:
+    if not transcript:
+        return []
     times = [datetime.fromisoformat(m["timestamp"]).timestamp() for m in transcript]
     t0 = times[0]
-    return [Line(i, m["speaker"], m["text"], times[i] - t0) for i, m in enumerate(transcript)]
+    return [Line(i, m["speaker"], m["text"], times[i] - t0) for i, m in enumerate(transcript) if not m.get("duplicate")]
 
 
 def recording_clock(lines: list[Line]):
@@ -61,13 +63,14 @@ def recording_clock(lines: list[Line]):
         if ln.speaker != "system":
             continue
         if _has(ln.text, PAUSE_WORDS):
-            opened = ln.t
+            if opened is None:
+                opened = ln.t
         elif _has(ln.text, RESUME_WORDS) and opened is not None:
             pauses.append((opened, ln.t))
             opened = None
 
     def to_rec(t: float) -> float | None:
-        if t < start - 0.5:
+        if t < start or (opened is not None and t >= opened):
             return None
         y = t - start
         for a, b in pauses:
@@ -99,6 +102,8 @@ def best_shift(ends: list[tuple[float, float]], speech: np.ndarray) -> tuple[flo
     lo, hi, step = SEARCH
     for c in np.arange(lo, hi + step / 2, step):
         k = int(round(c / HOP))
+        if abs(k) >= len(base):
+            continue
         tr = np.zeros_like(base)
         if k >= 0:
             tr[k:] = base[: len(base) - k]
