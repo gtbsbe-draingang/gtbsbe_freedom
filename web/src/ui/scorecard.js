@@ -20,6 +20,7 @@ import { openAppealDrawer } from "./appeal-drawer.js";
 import { clear, h } from "./dom.js";
 import { href } from "./router.js";
 import { toastError } from "./toast.js";
+import { renderVoiceMeasurements } from "./voice-measurements.js";
 
 export const POLL_MS = 500;
 export const JOB_TIMEOUT_MS = 15 * 60 * 1000;
@@ -732,6 +733,12 @@ export function createScorecard(store, api, args = {}) {
       result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
       shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
       evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
+      renderVoiceMeasurements(view.conversation, result, (measurement) => {
+        store.set({ pane: "transcript" });
+        const transcript = store.get().transcript;
+        transcript?.focusMessage(measurement.message_index);
+        transcript?.seekSeconds?.(measurement.from_seconds);
+      }),
       range && Number.isInteger(range.from) && Number.isInteger(range.to)
         ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } })
         : null,

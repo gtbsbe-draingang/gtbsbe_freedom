@@ -24,17 +24,17 @@
   var ROLES = /* @__PURE__ */ new Set(["controller", "reviewer"]);
   var HAS_SCHEME = /^[a-z][a-z0-9+.-]*:/i;
   var HTTP_URL = /^https?:\/\//i;
-  function seg(value, name = "path segment") {
-    if (value === void 0 || value === null || value === "") {
+  function seg(value2, name = "path segment") {
+    if (value2 === void 0 || value2 === null || value2 === "") {
       throw new TypeError(`API call is missing ${name}`);
     }
-    return encodeURIComponent(String(value));
+    return encodeURIComponent(String(value2));
   }
   function query(params, keys) {
     const search = new URLSearchParams();
     for (const key of keys) {
-      const value = params?.[key];
-      const values = Array.isArray(value) ? value : [value];
+      const value2 = params?.[key];
+      const values = Array.isArray(value2) ? value2 : [value2];
       for (const v of values) {
         if (v === void 0 || v === null || v === "") continue;
         search.append(key, String(v));
@@ -52,9 +52,9 @@
     const base = apiBase.trim().replace(/\/+$/, "");
     const isAbsolute = HAS_SCHEME.test(base);
     const currentRole = () => {
-      const value = role();
-      if (!ROLES.has(value)) throw new TypeError(`createHttpApi: role() returned ${JSON.stringify(value)}`);
-      return value;
+      const value2 = role();
+      if (!ROLES.has(value2)) throw new TypeError(`createHttpApi: role() returned ${JSON.stringify(value2)}`);
+      return value2;
     };
     async function request(method, path, body) {
       const controller = new AbortController();
@@ -149,15 +149,15 @@
   }
 
   // src/domain/fingerprint.js
-  function canonicalJson(value) {
-    if (Array.isArray(value)) {
-      return "[" + value.map((item) => canonicalJson(item === void 0 ? null : item)).join(",") + "]";
+  function canonicalJson(value2) {
+    if (Array.isArray(value2)) {
+      return "[" + value2.map((item) => canonicalJson(item === void 0 ? null : item)).join(",") + "]";
     }
-    if (value !== null && typeof value === "object") {
-      const keys = Object.keys(value).filter((key) => value[key] !== void 0).sort();
-      return "{" + keys.map((key) => JSON.stringify(key) + ":" + canonicalJson(value[key])).join(",") + "}";
+    if (value2 !== null && typeof value2 === "object") {
+      const keys = Object.keys(value2).filter((key) => value2[key] !== void 0).sort();
+      return "{" + keys.map((key) => JSON.stringify(key) + ":" + canonicalJson(value2[key])).join(",") + "}";
     }
-    return JSON.stringify(value);
+    return JSON.stringify(value2);
   }
   var toHex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
   var PRIMES = [];
@@ -226,7 +226,7 @@
     }
     return sha256HexPure(str);
   }
-  var orNull = (value) => value === void 0 ? null : value;
+  var orNull = (value2) => value2 === void 0 ? null : value2;
   function fingerprint(criterion) {
     return sha256Hex(canonicalJson(fingerprintSubset(criterion)));
   }
@@ -373,7 +373,7 @@
       ending
     };
   }
-  var asText = (value) => typeof value === "string" ? value : value == null ? "" : String(value);
+  var asText = (value2) => typeof value2 === "string" ? value2 : value2 == null ? "" : String(value2);
   function cleanLine(raw) {
     if (raw !== null && typeof raw === "object" && !Array.isArray(raw)) {
       return { ...raw, timestamp: asText(raw.timestamp), speaker: asText(raw.speaker), text: asText(raw.text) };
@@ -413,8 +413,8 @@
       this.code = code;
     }
   };
-  var isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
-  var nonEmptyString = (value) => typeof value === "string" && value.trim() !== "";
+  var isObject = (value2) => value2 !== null && typeof value2 === "object" && !Array.isArray(value2);
+  var nonEmptyString = (value2) => typeof value2 === "string" && value2.trim() !== "";
   var RECORD_KEYS = ["conversation_id", "channel", "language", "transcript"];
   function locate(data) {
     if (Array.isArray(data)) return { list: data, groupHint: null };
@@ -1588,14 +1588,14 @@
   var SEPARATOR = ";";
   var EOL = "\r\n";
   var NEEDS_QUOTES = /[;"\r\n]/;
-  function csvField(value) {
-    if (value === null || value === void 0) return "";
-    const text3 = String(value);
+  function csvField(value2) {
+    if (value2 === null || value2 === void 0) return "";
+    const text3 = String(value2);
     return NEEDS_QUOTES.test(text3) ? `"${text3.replaceAll('"', '""')}"` : text3;
   }
   function toCsv(rows, columns) {
     const cols = columns.map((c) => typeof c === "string" ? { key: c, header: c } : c);
-    const lines = [cols.map((c) => csvField(c.header ?? c.key))];
+    const lines = [cols.map((c) => csvField(c.title ?? c.header ?? c.key))];
     for (const row of rows) {
       lines.push(cols.map((c) => csvField(typeof c.value === "function" ? c.value(row) : row?.[c.key])));
     }
@@ -1794,7 +1794,7 @@
     const sum = Number(criteria.filter((c) => c.kind === "scored").reduce((total, c) => total + c.weight, 0).toFixed(6));
     return sum === 100 ? [] : [`weights_sum_${sum}`];
   }
-  var text = (value) => typeof value === "string" ? value.trim() : "";
+  var text = (value2) => typeof value2 === "string" ? value2.trim() : "";
   function createMockApi(options = {}) {
     const {
       devDataUrl = null,
@@ -1815,9 +1815,9 @@
     const store = openStore({ storage });
     const { state, volatile } = store;
     const currentRole = () => {
-      const value = role();
-      if (!ROLES2.has(value)) throw new TypeError(`createMockApi: role() returned ${JSON.stringify(value)}`);
-      return value;
+      const value2 = role();
+      if (!ROLES2.has(value2)) throw new TypeError(`createMockApi: role() returned ${JSON.stringify(value2)}`);
+      return value2;
     };
     const lookupConversation = (id) => volatile[id] ?? state.conversations[id];
     function allConversations() {
@@ -2362,17 +2362,17 @@
   var APIS = ["http", "mock"];
   var METHOD = /^[A-Za-z][A-Za-z0-9_]*$/;
   var CODE = /^[a-z][a-z0-9_]*$/;
-  var oneOf = (allowed, candidates) => candidates.find((value) => allowed.includes(value));
+  var oneOf = (allowed, candidates) => candidates.find((value2) => allowed.includes(value2));
   var firstText = (candidates) => {
-    for (const value of candidates) {
-      if (typeof value === "string" && value.trim() !== "") return value.trim();
+    for (const value2 of candidates) {
+      if (typeof value2 === "string" && value2.trim() !== "") return value2.trim();
     }
     return void 0;
   };
   function parseMockFault(values) {
     const faults = {};
-    for (const value of values ?? []) {
-      for (const pair of String(value).split(",")) {
+    for (const value2 of values ?? []) {
+      for (const pair of String(value2).split(",")) {
         const colon = pair.indexOf(":");
         if (colon < 0) continue;
         const method = pair.slice(0, colon).trim();
@@ -2424,8 +2424,8 @@
   function extractConversationId(formContext, config) {
     const field = firstText([config?.dynamicsConversationField]) ?? "cqa_conversationid";
     try {
-      const value = formContext?.getAttribute?.(field)?.getValue?.();
-      return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+      const value2 = formContext?.getAttribute?.(field)?.getValue?.();
+      return typeof value2 === "string" && value2.trim() !== "" ? value2.trim() : null;
     } catch {
       return null;
     }
@@ -2922,10 +2922,10 @@
     }
   }
   function setAttrs(el, attrs) {
-    for (const [name, value] of Object.entries(attrs)) {
-      if (value === null || value === void 0 || value === false) continue;
+    for (const [name, value2] of Object.entries(attrs)) {
+      if (value2 === null || value2 === void 0 || value2 === false) continue;
       if (name === "style" || /^on/i.test(name)) throw new TypeError(`dom: attribute "${name}" is not allowed`);
-      el.setAttribute(name, value === true ? "" : String(value));
+      el.setAttribute(name, value2 === true ? "" : String(value2));
     }
   }
   var kebab = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
@@ -2943,17 +2943,17 @@
       if (text3 !== void 0 && text3 !== null) el.textContent = String(text3);
       if (attrs) setAttrs(el, attrs);
       if (data) {
-        for (const [key, value] of Object.entries(data)) {
-          if (value !== null && value !== void 0 && value !== false) el.setAttribute(`data-${kebab(key)}`, String(value));
+        for (const [key, value2] of Object.entries(data)) {
+          if (value2 !== null && value2 !== void 0 && value2 !== false) el.setAttribute(`data-${kebab(key)}`, String(value2));
         }
       }
       if (on) {
         for (const [event, handler] of Object.entries(on)) el.addEventListener(event, handler);
       }
       if (style) {
-        for (const [property, value] of Object.entries(style)) {
-          if (property.startsWith("--")) el.style.setProperty(property, String(value));
-          else el.style[property] = value;
+        for (const [property, value2] of Object.entries(style)) {
+          if (property.startsWith("--")) el.style.setProperty(property, String(value2));
+          else el.style[property] = value2;
         }
       }
     }
@@ -3021,8 +3021,8 @@
       const query2 = new URLSearchParams(search);
       const params = {};
       for (const key of COMPARE_KEYS) {
-        const value = query2.get(key);
-        if (value) params[key] = value;
+        const value2 = query2.get(key);
+        if (value2) params[key] = value2;
       }
       return route("compare", params);
     }
@@ -3030,9 +3030,9 @@
     return notFound;
   }
   var encoded = (params, key) => {
-    const value = params?.[key];
-    if (value === void 0 || value === null || value === "") throw new TypeError(`href: missing ${key}`);
-    return encodeURIComponent(String(value));
+    const value2 = params?.[key];
+    if (value2 === void 0 || value2 === null || value2 === "") throw new TypeError(`href: missing ${key}`);
+    return encodeURIComponent(String(value2));
   };
   function href(name, params = {}) {
     switch (name) {
@@ -3051,8 +3051,8 @@
       case "compare": {
         const query2 = new URLSearchParams();
         for (const key of COMPARE_KEYS) {
-          const value = params?.[key];
-          if (value !== void 0 && value !== null && value !== "") query2.set(key, String(value));
+          const value2 = params?.[key];
+          if (value2 !== void 0 && value2 !== null && value2 !== "") query2.set(key, String(value2));
         }
         const text3 = query2.toString();
         return text3 ? `#/compare?${text3}` : "#/compare";
@@ -3290,13 +3290,50 @@
     return { el, close };
   }
 
+  // src/ui/voice-measurements.js
+  function measurementsFor(conversation, result) {
+    if (conversation?.channel !== "voice call") return [];
+    const evidence = new Set((result?.evidence ?? []).map((e) => e.message_index));
+    return (conversation.voice_measurements ?? []).filter((m) => Number.isInteger(m.message_index) && m.message_index >= 0 && m.message_index < conversation.transcript.length && (evidence.has(m.message_index) || Number.isInteger(result?.checked_range?.from) && m.message_index >= result.checked_range.from && m.message_index <= result.checked_range.to));
+  }
+  var value = (n) => typeof n === "number" && Number.isFinite(n) ? String(n) : "\u2014";
+  function renderVoiceMeasurements(conversation, result, seek) {
+    const rows = measurementsFor(conversation, result);
+    if (!rows.length) return null;
+    const body = rows.map((m) => h(
+      "tr",
+      {},
+      h("td", {}, h("button", {
+        class: "cqa-link",
+        attrs: { type: "button" },
+        data: { test: "voice-seek" },
+        text: `${formatOffset(m.from_seconds)}\u2013${formatOffset(m.to_seconds)}`,
+        on: { click: () => seek(m) }
+      })),
+      [m.pitch_range, m.rate_wpm, m.pauses, m.overlap].map((n) => h("td", { class: "num", text: value(n) }))
+    ));
+    const table2 = h(
+      "table",
+      { class: "cqa-voice-table" },
+      h("caption", { text: "\u041F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u0432\u044F\u0437\u0430\u043D\u043D\u044B\u0445 \u0441 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0435\u043C" }),
+      h("thead", {}, h("tr", {}, ["\u0424\u0440\u0430\u0433\u043C\u0435\u043D\u0442", "\u0414\u0438\u0430\u043F\u0430\u0437\u043E\u043D \u0442\u043E\u043D\u0430, \u043F\u043E\u043B\u0443\u0442\u043E\u043D\u043E\u0432", "\u0422\u0435\u043C\u043F, \u0441\u043B\u043E\u0432/\u043C\u0438\u043D", "\u041F\u0430\u0443\u0437\u044B, \u0441", "\u041F\u0435\u0440\u0435\u0431\u0438\u0432\u0430\u043D\u0438\u044F, \u0441"].map((text3) => h("th", { attrs: { scope: "col" }, text: text3 })))),
+      h("tbody", {}, body)
+    );
+    return h(
+      "div",
+      { class: "cqa-voice", data: { test: "voice-measurements" } },
+      h("p", { text: "\u0418\u0437\u043C\u0435\u0440\u0435\u043D\u043D\u044B\u0435 \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 + \u043E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438" }),
+      h("div", { class: "cqa-table-scroll" }, table2)
+    );
+  }
+
   // src/ui/scorecard.js
   var POLL_MS = 500;
   var JOB_TIMEOUT_MS = 15 * 60 * 1e3;
   var FIRST_REACTION_LIMIT_S = 180;
   var ACTIVE = /* @__PURE__ */ new Set(["queued", "running", "pending", "started"]);
   var EVIDENCE_QUOTE_MAX = 160;
-  var money = (value) => fmt2(rat(value));
+  var money = (value2) => fmt2(rat(value2));
   var isStep2 = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
   function answerTag(criterion, answer) {
     const gross = criterion?.kind === "gross_error";
@@ -3304,7 +3341,7 @@
     if (answer === "yes") return { kind: gross ? "bad" : "ok", text: t("scorecard.answer.yes") };
     if (answer === "no") return { kind: gross ? "ok" : "bad", text: t("scorecard.answer.no") };
     if (isStep2(answer)) {
-      const values = (criterion?.scale_steps ?? []).map((step) => step.value).filter((value) => typeof value === "number");
+      const values = (criterion?.scale_steps ?? []).map((step) => step.value).filter((value2) => typeof value2 === "number");
       const top = values.length > 0 ? Math.max(...values) : null;
       const low = values.length > 0 ? Math.min(...values) : null;
       const kind = top === null ? "mid" : answer.step >= top ? "ok" : answer.step <= low ? "bad" : "mid";
@@ -3354,10 +3391,10 @@
     const row = checklists.find((r) => r.checklist_id === fallback?.checklist_id) ?? checklists[0];
     return row ? { checklist_id: row.checklist_id, version: latestOf(row) } : null;
   }
-  function labelled(prefix, value) {
-    const key = `${prefix}.${value}`;
+  function labelled(prefix, value2) {
+    const key = `${prefix}.${value2}`;
     const text3 = t(key);
-    return text3 === key ? String(value) : text3;
+    return text3 === key ? String(value2) : text3;
   }
   var clip = (text3, max) => {
     const line = String(text3 ?? "").trim().replace(/\s+/g, " ");
@@ -3448,7 +3485,7 @@
     const status = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "job-progress" } });
     const hint = h("p", { class: "cqa-sc-hint", text: t("scorecard.keyMissing"), data: { test: "key-hint" } });
     hint.hidden = true;
-    const bar = h(
+    const bar2 = h(
       "div",
       { class: "cqa-sc-bar" },
       h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
@@ -3457,7 +3494,7 @@
       status
     );
     const body = h("div", { class: "cqa-sc-body" });
-    const el = h("div", { class: "cqa-sc", attrs: { role: "region", "aria-label": t("scorecard.label") }, data: { test: "scorecard" } }, bar, body);
+    const el = h("div", { class: "cqa-sc", attrs: { role: "region", "aria-label": t("scorecard.label") }, data: { test: "scorecard" } }, bar2, body);
     function fillSelect() {
       clear(select);
       view.options = view.checklists.flatMap(
@@ -3652,7 +3689,7 @@
       if (own.length === 0 && earlierOpen.length === 0 && notCarried.length === 0 && carried.length === 0) return null;
       const criterionOf = (id2) => version2.criteria.find((c) => c.id === id2) ?? { id: id2, title: id2 };
       const resultOf = (id2) => evaluation.results.find((r) => r.criterion_id === id2) ?? null;
-      const totalText2 = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : money(value);
+      const totalText2 = (value2) => value2 === null || value2 === void 0 ? t("scorecard.totalNone") : money(value2);
       const items = [];
       const item = (kind, what, note, appealId) => items.push(
         h(
@@ -3776,7 +3813,7 @@
       const info = conversation?.info ?? null;
       const facts = conversation?.facts ?? null;
       const rows = [];
-      const row = (key, test, ...value) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value)));
+      const row = (key, test, ...value2) => rows.push(h("div", { class: "cqa-sc-info-row", data: { test } }, h("dt", { text: t(`scorecard.info.${key}`) }), h("dd", {}, ...value2)));
       if (info?.topic) row("topic", "info-topic", info.topic);
       const mood = [info?.mood_start, info?.mood_end].filter(Boolean);
       if (mood.length > 0) row("mood", "info-mood", mood.join(" \u2192 "));
@@ -3880,6 +3917,12 @@
         result.explanation ? h("p", { class: "cqa-sc-why", text: result.explanation, data: { test: "why" } }) : null,
         shown === "na" && result.na_reason ? h("p", { class: "cqa-sc-na", text: result.na_reason, data: { test: "na-reason" } }) : null,
         evidence.length > 0 ? h("ul", { class: "cqa-sc-evs" }, evidence) : null,
+        renderVoiceMeasurements(view.conversation, result, (measurement) => {
+          store.set({ pane: "transcript" });
+          const transcript = store.get().transcript;
+          transcript?.focusMessage(measurement.message_index);
+          transcript?.seekSeconds?.(measurement.from_seconds);
+        }),
         range && Number.isInteger(range.from) && Number.isInteger(range.to) ? h("p", { class: ["cqa-sc-range", "num"], text: t("scorecard.checkedRange", { from: Math.min(range.from, range.to) + 1, to: Math.max(range.from, range.to) + 1 }), data: { test: "checked-range" } }) : null,
         result.coaching ? h("div", { class: "cqa-sc-coach", data: { test: "coaching" } }, h("b", { class: "cqa-sc-coach-label", text: t("scorecard.coaching") }), h("p", { class: "cqa-sc-coach-text", text: result.coaching })) : null,
         controller ? h(
@@ -4206,7 +4249,7 @@
     const runButton = h("button", { class: ["cqa-sc-btn", "cqa-sc-btn--cta"], attrs: { type: "button" }, text: t("batch.run"), data: { test: "batch-run" }, on: { click: () => runBatch() } });
     const hint = h("p", { class: "cqa-sc-hint", text: t("batch.keyMissing"), data: { test: "batch-key-hint" } });
     const progress = h("div", { class: "cqa-sc-status", attrs: { role: "status", "aria-live": "polite" }, data: { test: "batch-progress" } });
-    const bar = h(
+    const bar2 = h(
       "section",
       { class: "cqa-batch", attrs: { "aria-label": t("batch.label") }, data: { test: "batch-bar" } },
       h(
@@ -4233,7 +4276,7 @@
         host.replaceChildren();
         return;
       }
-      if (!bar.isConnected) host.replaceChildren(bar);
+      if (!bar2.isConnected) host.replaceChildren(bar2);
       count.textContent = t("batch.selected", { n: picked.size });
       const sel = current2();
       const at = view.options.findIndex((o) => o.checklist_id === sel?.checklist_id && o.version === sel?.version);
@@ -4344,11 +4387,11 @@
   }
 
   // src/ui/player.js
-  var isTime = (value) => typeof value === "number" && Number.isFinite(value);
+  var isTime = (value2) => typeof value2 === "number" && Number.isFinite(value2);
   function startTimes(conversation) {
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const given = Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [];
-    if (given.length === 0) return offsets(transcript).map((value) => isTime(value) ? value : null);
+    if (given.length === 0) return offsets(transcript).map((value2) => isTime(value2) ? value2 : null);
     const starts = transcript.map(() => null);
     for (const entry of given) {
       const index = entry?.message_index;
@@ -4410,9 +4453,11 @@
     return {
       el,
       seek(index) {
-        const start = starts[index];
-        if (destroyed || !isTime(start)) return false;
-        audio.currentTime = start;
+        return this.seekSeconds(starts[index]);
+      },
+      seekSeconds(seconds) {
+        if (destroyed || !isTime(seconds) || seconds < 0) return false;
+        audio.currentTime = seconds;
         mark();
         return true;
       },
@@ -4430,7 +4475,7 @@
     const name = typeof speaker === "string" ? speaker.trim().toLowerCase() : "";
     return KNOWN.has(name) ? name : "other";
   }
-  var validIndex = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
+  var validIndex = (value2, count) => Number.isInteger(value2) && value2 >= 0 && value2 < count;
   function highlightPlan(count, evidence, range) {
     const marks = Array.from({ length: count }, () => ({ supports: false, expected: false, checked: false }));
     for (const item of Array.isArray(evidence) ? evidence : []) {
@@ -4498,6 +4543,9 @@
     let pending2 = { highlight: null, focus: null };
     let lastHighlight = null;
     let shown = null;
+    let translationRun = 0;
+    let translationOn = false;
+    let translationCache = null;
     let player = null;
     let playingAt = null;
     const flashTimers = /* @__PURE__ */ new Map();
@@ -4574,14 +4622,58 @@
       const below = row.offsetTop + row.offsetHeight > scroller.scrollTop + scroller.clientHeight;
       if (follow && (above || below)) centre(playingAt);
     }
-    const handle = { el, highlight, focusMessage, destroy };
+    function seekSeconds(seconds) {
+      return player?.seekSeconds?.(seconds) ?? false;
+    }
+    const handle = { el, highlight, focusMessage, seekSeconds, destroy };
     function show(conversation) {
       const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
       const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
+      const translationEpoch = ++translationRun;
+      translationOn = false;
+      translationCache = null;
+      const translate = h("button", {
+        class: "cqa-sc-btn",
+        text: "\u041F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u0438\u0439",
+        attrs: { type: "button", "aria-pressed": "false" },
+        data: { test: "translate-toggle" },
+        on: { click: async () => {
+          if (destroyed || translationEpoch !== translationRun) return;
+          translationOn = !translationOn;
+          translate.setAttribute("aria-pressed", String(translationOn));
+          translate.textContent = translationOn ? "\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434" : "\u041F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u0438\u0439";
+          if (!translationOn) {
+            rows.forEach(({ el: el2 }) => el2.querySelector(".msg-translation")?.remove());
+            return;
+          }
+          translate.disabled = true;
+          translate.textContent = "\u041F\u0435\u0440\u0435\u0432\u043E\u0434\u0438\u043C\u2026";
+          try {
+            const data = translationCache ?? await api.getTranslation(id, "ru");
+            if (destroyed || translationEpoch !== translationRun) return;
+            translationCache = data;
+            for (const message of data.messages ?? []) {
+              const row = rows[message.message_index];
+              if (!row || typeof message.text !== "string") continue;
+              row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, text: message.text }));
+            }
+            translate.textContent = "\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434";
+          } catch (error) {
+            if (destroyed || translationEpoch !== translationRun) return;
+            translationOn = false;
+            translate.setAttribute("aria-pressed", "false");
+            translate.textContent = "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0432\u043E\u0434";
+            toastError(store, error);
+          } finally {
+            if (!destroyed && translationEpoch === translationRun) translate.disabled = false;
+          }
+        } }
+      });
       clear(head).append(
         h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
         h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" \xB7 "), data: { test: "transcript-meta" } })
       );
+      if (["KZ", "EN"].includes(conversation?.language?.toUpperCase())) head.append(translate);
       clear(scroller);
       rows = [];
       marked = [];
@@ -4674,7 +4766,7 @@
     const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
-    if (hook?.store === store) hook.transcript = { focusMessage, highlight };
+    if (hook?.store === store) hook.transcript = { focusMessage, highlight, seekSeconds };
     if (id === null) scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
     else load2();
     return handle;
@@ -4683,7 +4775,7 @@
   // src/ui/review-panel.js
   var POLL_MS3 = 2e3;
   var CONTEXT_LINES = 2;
-  var validIndex2 = (value, count) => Number.isInteger(value) && value >= 0 && value < count;
+  var validIndex2 = (value2, count) => Number.isInteger(value2) && value2 >= 0 && value2 < count;
   function fragmentIndexes(result, count) {
     const picked = /* @__PURE__ */ new Set();
     const evidence = Array.isArray(result?.evidence) ? result.evidence : [];
@@ -4708,13 +4800,13 @@
     return candidates.filter((answer) => validateAnswer(criterion, answer) === null);
   }
   var answerValue = (answer) => typeof answer === "string" ? answer : `step:${answer.step}`;
-  function parseAnswerValue(value) {
-    if (value === "yes" || value === "no" || value === "na") return value;
-    const match = /^step:(-?\d+(?:\.\d+)?)$/.exec(String(value ?? ""));
+  function parseAnswerValue(value2) {
+    if (value2 === "yes" || value2 === "no" || value2 === "na") return value2;
+    const match = /^step:(-?\d+(?:\.\d+)?)$/.exec(String(value2 ?? ""));
     return match ? { step: Number(match[1]) } : null;
   }
   var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-  var totalText = (value) => value === null || value === void 0 ? t("scorecard.totalNone") : fmt2(rat(value));
+  var totalText = (value2) => value2 === null || value2 === void 0 ? t("scorecard.totalNone") : fmt2(rat(value2));
   var tag2 = (kind, text3, props = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text3, data: props.data });
   function stepLabel(criterion, answer) {
     const text3 = answerTag(criterion, answer).text;
@@ -5085,7 +5177,7 @@
     function row(appeal) {
       const { group, conversation } = splitConversation(appeal.conversation);
       const open = appeal.status === "open";
-      const link = h(
+      const link2 = h(
         "a",
         { class: "cqa-aps-link", attrs: { href: href("appeal", { id: appeal.id }), "aria-current": appeal.id === openId3 ? "true" : null } },
         h("span", { class: "cqa-aps-row1" }, h("b", { class: "cqa-q-id", text: conversation }), h("span", { class: ["cqa-tag", open ? "cqa-tag--mid" : "cqa-tag--ok"], text: t(open ? "appeals.status.open" : "appeals.status.decided") })),
@@ -5093,7 +5185,7 @@
         h("span", { class: "cqa-aps-comment", text: clip2(appeal.comment) }),
         group ? h("span", { class: "cqa-q-meta" }, h("span", { class: ["cqa-tag", "cqa-tag--out"], text: group })) : null
       );
-      return h("li", { class: ["cqa-aps-item", appeal.id === openId3 && "is-current"], data: { test: "appeal-row", id: appeal.id, status: appeal.status } }, link);
+      return h("li", { class: ["cqa-aps-item", appeal.id === openId3 && "is-current"], data: { test: "appeal-row", id: appeal.id, status: appeal.status } }, link2);
     }
     function paint() {
       if (destroyed) return;
@@ -5212,11 +5304,11 @@
   }
 
   // src/domain/checklist-validate.js
-  var text2 = (value) => typeof value === "string" ? value.trim() : "";
-  function parseNumber(value) {
-    if (typeof value === "number") return value;
-    if (typeof value !== "string") return Number.NaN;
-    const cleaned = value.trim().replace(",", ".");
+  var text2 = (value2) => typeof value2 === "string" ? value2.trim() : "";
+  function parseNumber(value2) {
+    if (typeof value2 === "number") return value2;
+    if (typeof value2 !== "string") return Number.NaN;
+    const cleaned = value2.trim().replace(",", ".");
     return /^-?\d+(\.\d+)?$/.test(cleaned) ? Number(cleaned) : Number.NaN;
   }
   var sumOf = (weights) => Math.round(weights.reduce((acc, w) => acc + w, 0) * 1e6) / 1e6;
@@ -5340,8 +5432,8 @@
         const from = compareFrom(version2);
         if (!job.running && from) {
           const group = view.target === "control" ? view.targets.control.group : view.target === "dev" ? DEV : null;
-          const link = href("compare", { from_checklist: from.checklist_id, from_version: from.version, to_checklist: version2.checklist_id, to_version: version2.version, group_id: group });
-          progress.append(h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta", "cqa-ap-compare"], attrs: { href: link }, text: t("apply.compare"), data: { test: "apply-compare" }, on: { click: () => close() } }));
+          const link2 = href("compare", { from_checklist: from.checklist_id, from_version: from.version, to_checklist: version2.checklist_id, to_version: version2.version, group_id: group });
+          progress.append(h("a", { class: ["cqa-sc-btn", "cqa-sc-btn--cta", "cqa-ap-compare"], attrs: { href: link2 }, text: t("apply.compare"), data: { test: "apply-compare" }, on: { click: () => close() } }));
         }
       }
     }
@@ -5597,23 +5689,23 @@
       e.hidden = true;
       return e;
     }
-    function input(value, test, onInput, attrs = {}) {
+    function input(value2, test, onInput, attrs = {}) {
       const control = h("input", { class: "cqa-sc-select", attrs: { type: "text", autocomplete: "off", ...attrs }, data: { test }, on: { input: () => onInput(control.value) } });
-      control.value = value === null || value === void 0 ? "" : String(value);
+      control.value = value2 === null || value2 === void 0 ? "" : String(value2);
       return control;
     }
-    function textarea(value, test, onInput, rows = 2) {
+    function textarea(value2, test, onInput, rows = 2) {
       const control = h("textarea", { class: "cqa-ap-text", attrs: { rows: String(rows) }, data: { test }, on: { input: () => onInput(control.value) } });
-      control.value = value ?? "";
+      control.value = value2 ?? "";
       return control;
     }
-    function select(value, test, options, onChange, label) {
+    function select(value2, test, options, onChange, label) {
       const control = h(
         "select",
         { class: "cqa-sc-select", attrs: { "aria-label": label }, data: { test }, on: { change: () => onChange(control.value) } },
         options.map(([v, text3]) => h("option", { attrs: { value: v }, text: text3 }))
       );
-      control.value = value;
+      control.value = value2;
       return control;
     }
     function cardOf(c) {
@@ -5623,8 +5715,8 @@
         errs.set(name, e);
         return e;
       };
-      const live = (name) => (value) => {
-        c[name] = value;
+      const live = (name) => (value2) => {
+        c[name] = value2;
         refresh();
       };
       const gross = c.kind === "gross_error";
@@ -5825,18 +5917,18 @@
       refs.save.disabled = view.saving || errors.length > 0;
     }
     async function save() {
-      const { value, errors } = validateChecklist(view.draft);
+      const { value: value2, errors } = validateChecklist(view.draft);
       if (errors.length > 0 || view.saving) return;
       view.saving = true;
       refresh();
       const body = {
-        name: String(value.name).trim(),
-        description: value.description ?? null,
-        channel: value.channel ?? "any",
-        guidance: typeof value.guidance === "string" ? value.guidance : "",
-        rounding: Number.isInteger(value.rounding) ? value.rounding : 2,
-        sections: value.sections.map((s) => ({ id: s.id, title: s.title, order: s.order })),
-        criteria: value.criteria.map(({ _key, fingerprint: fingerprint2, ...rest }, i) => ({ ...rest, order: i + 1 }))
+        name: String(value2.name).trim(),
+        description: value2.description ?? null,
+        channel: value2.channel ?? "any",
+        guidance: typeof value2.guidance === "string" ? value2.guidance : "",
+        rounding: Number.isInteger(value2.rounding) ? value2.rounding : 2,
+        sections: value2.sections.map((s) => ({ id: s.id, title: s.title, order: s.order })),
+        criteria: value2.criteria.map(({ _key, fingerprint: fingerprint2, ...rest }, i) => ({ ...rest, order: i + 1 }))
       };
       try {
         const saved = isNew() ? await api.createChecklist(body) : view.source.locked ? await api.createChecklist({ ...body, based_on: { checklist_id: view.source.checklist_id, version: view.source.version } }) : await api.saveChecklistVersion(view.source.checklist_id, body);
@@ -5876,10 +5968,10 @@
   // src/ui/compare-page.js
   var DEFAULT_SORT = { key: "delta", dir: "asc" };
   var COLUMNS = ["id", "group", "old", "new", "delta"];
-  var money2 = (value) => typeof value === "number" && Number.isFinite(value) ? fmt2(rat(value)) : "\u2014";
-  function signedText(value) {
-    if (typeof value !== "number" || !Number.isFinite(value)) return "\u2014";
-    const text3 = fmt2(rat(value));
+  var money2 = (value2) => typeof value2 === "number" && Number.isFinite(value2) ? fmt2(rat(value2)) : "\u2014";
+  function signedText(value2) {
+    if (typeof value2 !== "number" || !Number.isFinite(value2)) return "\u2014";
+    const text3 = fmt2(rat(value2));
     if (text3 === "0.00") return text3;
     return text3.startsWith("-") ? `\u2212${text3.slice(1)}` : `+${text3}`;
   }
@@ -5898,14 +5990,14 @@
     new: (row) => row.new_total,
     delta: (row) => row.delta
   };
-  var isNumber = (value) => typeof value === "number" && Number.isFinite(value);
+  var isNumber = (value2) => typeof value2 === "number" && Number.isFinite(value2);
   function sortRows(rows, { key, dir }) {
-    const value = VALUE[key] ?? VALUE.delta;
+    const value2 = VALUE[key] ?? VALUE.delta;
     const sign = dir === "desc" ? -1 : 1;
     const byId = (a, b) => VALUE.id(a).localeCompare(VALUE.id(b), "ru", { numeric: true });
     return [...rows].sort((a, b) => {
-      const x = value(a);
-      const y = value(b);
+      const x = value2(a);
+      const y = value2(b);
       if (key === "id" || key === "group") return sign * String(x).localeCompare(String(y), "ru", { numeric: true }) || byId(a, b);
       if (!isNumber(x) || !isNumber(y)) return (isNumber(x) ? 0 : 1) - (isNumber(y) ? 0 : 1) || byId(a, b);
       return sign * (x - y) || byId(a, b);
@@ -5968,7 +6060,7 @@
     const toName = h("span", { class: "cqa-cmp-side-name", data: { test: "compare-to" } });
     const summary = h("p", { class: "cqa-cmp-summary", attrs: { "aria-live": "polite" }, data: { test: "compare-summary" } });
     const state = h("div", { class: "cqa-cmp-state" });
-    const table = h("div", { class: "cqa-cmp-table-wrap" });
+    const table2 = h("div", { class: "cqa-cmp-table-wrap" });
     const card = h("div", { class: "cqa-cmp-card-host" });
     const field = (label, control) => h("label", { class: "cqa-rv-field" }, h("span", { class: "cqa-rv-label", text: label }), control);
     const el = h(
@@ -5980,7 +6072,7 @@
       h("p", { class: "cqa-cmp-sides" }, fromName, h("span", { class: "cqa-cmp-arrow", attrs: { "aria-hidden": "true" }, text: "\u2192" }), toName),
       summary,
       state,
-      h("div", { class: "cqa-cmp-grid" }, table, card)
+      h("div", { class: "cqa-cmp-grid" }, table2, card)
     );
     function go() {
       const from = view.options?.[Number(fromSelect.value)];
@@ -6099,7 +6191,7 @@
       if (destroyed) return;
       paintHead();
       clear(state);
-      clear(table);
+      clear(table2);
       summary.textContent = "";
       if (view.phase === "pick") state.append(stateBox3("compare-pick", t("compare.pickTitle"), t("compare.pickNote")));
       else if (view.phase === "loading") state.append(stateBox3("compare-loading", t("compare.loading")));
@@ -6109,7 +6201,7 @@
         state.append(stateBox3("compare-empty", t("compare.empty"), t("compare.emptyNote")));
       } else {
         summary.textContent = summaryText2(view.data.summary);
-        table.append(buildTable());
+        table2.append(buildTable());
       }
       paintCard();
     }
@@ -6165,9 +6257,9 @@
     }
     function sortBy(key) {
       view.sort = view.sort.key === key ? { key, dir: view.sort.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" };
-      clear(table).append(buildTable());
+      clear(table2).append(buildTable());
     }
-    function cell(test, criterion, result, present) {
+    function cell2(test, criterion, result, present) {
       if (!present) return h("div", { class: ["cqa-cmp-cell", "is-absent"], data: { test } }, h("span", { class: "cqa-cmp-absent", text: t("compare.side.absent") }));
       if (!result) return h("div", { class: "cqa-cmp-cell", data: { test } }, h("span", { class: "cqa-cmp-absent", text: t("compare.side.noResult") }));
       const tag4 = answerTag(criterion, result.final_answer ?? result.answer);
@@ -6222,8 +6314,8 @@
                     r.side === "new" ? h("span", { class: ["cqa-tag", "cqa-tag--out"], text: t("compare.side.onlyNew") }) : null,
                     r.reworded ? h("span", { class: "cqa-cmp-reworded", text: t("compare.side.reworded", { title: r.oldCriterion.title ?? r.id }) }) : null
                   ),
-                  cell("compare-old", r.oldCriterion, r.oldResult, r.side !== "new"),
-                  cell("compare-new", r.newCriterion, r.newResult, r.side !== "old")
+                  cell2("compare-old", r.oldCriterion, r.oldResult, r.side !== "new"),
+                  cell2("compare-new", r.newCriterion, r.newResult, r.side !== "old")
                 );
               })
             )
@@ -6231,7 +6323,7 @@
         }
       }
       card.append(h("section", { class: "cqa-cmp-card", attrs: { "aria-label": t("compare.side.label") }, data: { test: "compare-side" } }, parts));
-      for (const tr of table.querySelectorAll("tr[data-id]")) {
+      for (const tr of table2.querySelectorAll("tr[data-id]")) {
         const open = tr.getAttribute("data-id") === view.open;
         tr.classList.toggle("is-open", open);
         tr.querySelector("button")?.setAttribute("aria-expanded", String(open));
@@ -6250,6 +6342,121 @@
         destroyed = true;
       }
     };
+  }
+
+  // src/ui/reports-page.js
+  var numeric = (value2) => typeof value2 === "number" && Number.isFinite(value2);
+  var percentText = (value2) => numeric(value2) ? `${(value2 * 100).toLocaleString("ru-RU", { maximumFractionDigits: 2 })} %` : "\u2014";
+  var averageText = (value2) => numeric(value2) ? value2.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "\u2014";
+  function reportAnswer(value2) {
+    if (value2 === "yes") return "\u0414\u0430";
+    if (value2 === "no") return "\u041D\u0435\u0442";
+    if (value2 === "na") return "N/A";
+    if (numeric(value2?.step)) return `\u0448\u0430\u0433 ${value2.step}`;
+    return typeof value2 === "string" ? value2 : "\u2014";
+  }
+  var channelText = (value2) => ({ "agent chat": "\u0427\u0430\u0442", "voice call": "\u0417\u0432\u043E\u043D\u043E\u043A" })[value2] ?? value2;
+  var cell = (text3) => h("td", { text: text3 });
+  var link = (id, label) => h("a", { class: "cqa-link", attrs: { href: href("workspace", { id }) }, text: label ?? id });
+  function bar(value2) {
+    const el = h(
+      "div",
+      { class: "cqa-report-bar" },
+      h("span", { text: percentText(value2) }),
+      numeric(value2) ? h(
+        "span",
+        { class: "cqa-report-track", attrs: { "aria-hidden": "true" } },
+        h("span", { class: "cqa-report-fill", style: { width: `${Math.min(1, Math.max(0, value2)) * 100}%` } })
+      ) : null
+    );
+    return h("td", {}, el);
+  }
+  function table(title, headings, rows, test) {
+    return h(
+      "section",
+      { class: "cqa-report-section" },
+      h("h2", { text: title }),
+      rows.length ? h("div", { class: "cqa-table-scroll" }, h(
+        "table",
+        { class: "cqa-report-table" },
+        h("caption", { class: "cqa-report-caption", text: title }),
+        h("thead", {}, h("tr", {}, headings.map((text3) => h("th", { attrs: { scope: "col" }, text: text3 })))),
+        h("tbody", {}, rows.map((cells) => h("tr", { data: { test } }, cells)))
+      )) : h("p", { class: "cqa-report-muted", text: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445" })
+    );
+  }
+  function createReportsPage(store, api, route2 = store.get().route) {
+    const accuracy = route2.name === "accuracy";
+    const body = h("div", { attrs: { "aria-live": "polite" } });
+    const refresh = h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C", data: { test: "reports-refresh" }, on: { click: () => load2() } });
+    const el = h(
+      "div",
+      { class: "cqa-reports", data: { test: accuracy ? "accuracy-page" : "analytics-page" } },
+      h("div", { class: "cqa-report-head" }, h("h1", { text: accuracy ? "\u0422\u043E\u0447\u043D\u043E\u0441\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0438" : "\u041E\u0442\u0447\u0451\u0442\u044B: \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }), refresh),
+      h("p", { class: "cqa-report-muted", text: accuracy ? "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438. \u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u0430 \u0443\u043A\u0430\u0437\u0430\u043D \u043D\u0438\u0436\u0435." : "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043C; \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u044E\u0442\u0441\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C." }),
+      body
+    );
+    let destroyed = false;
+    let run = 0;
+    function accuracyReport(data) {
+      body.append(
+        h("p", { class: "cqa-report-reference", text: data.reference_note || "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D", data: { test: "accuracy-reference" } }),
+        h("p", { text: `\u041C\u043E\u0434\u0435\u043B\u044C: ${data.model ?? "\u2014"}` }),
+        h("div", { class: "cqa-report-brand", data: { test: "accuracy-overall" }, text: `${percentText(data.overall?.agreement)} \xB7 n = ${data.overall?.n ?? 0}` }),
+        h("p", { data: { test: "accuracy-counts" }, text: `\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438: ${data.missing ?? 0} \xB7 \u0441\u043F\u043E\u0440\u043D\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B: ${data.disputed_excluded ?? 0}` })
+      );
+      if (!data.overall?.n) body.append(h("p", { text: "\u041D\u0435\u0442 \u0441\u043E\u043F\u043E\u0441\u0442\u0430\u0432\u0438\u043C\u044B\u0445 \u043E\u0446\u0435\u043D\u043E\u043A", data: { test: "reports-empty" } }));
+      for (const [key, label, field] of [["by_criterion", "\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C", "title"], ["by_language", "\u041F\u043E \u044F\u0437\u044B\u043A\u0430\u043C", "language"], ["by_channel", "\u041F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C", "channel"]]) {
+        body.append(table(label, ["\u0413\u0440\u0443\u043F\u043F\u0430", "\u0421\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435", "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field]), bar(r.agreement), cell(r.n)]), `accuracy-${key.slice(3)}`));
+      }
+      body.append(table("\u0420\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F", ["\u0414\u0438\u0430\u043B\u043E\u0433", "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439", "\u042D\u0442\u0430\u043B\u043E\u043D", "\u041E\u0446\u0435\u043D\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438"], (data.disagreements ?? []).map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(r.criterion_id), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]), "disagreement"));
+    }
+    function analyticsReport(data) {
+      const criteria = data.by_criterion ?? [];
+      if (!criteria.length) body.append(h("p", { text: "\u041D\u0435\u0442 \u043E\u0446\u0435\u043D\u0451\u043D\u043D\u044B\u0445 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432. \u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u043E\u0446\u0435\u043D\u043A\u0443 \u0432 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438.", data: { test: "reports-empty" } }));
+      body.append(table("\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C", ["\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439", "\u041E\u0448\u0438\u0431\u043A\u0438", "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id), bar(r.fail_rate), bar(r.na_rate), cell(r.n)]), "analytics-criterion"));
+      for (const [key, label, field] of [["by_language", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u044F\u0437\u044B\u043A\u0430\u043C", "language"], ["by_channel", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433 \u043F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C", "channel"]]) {
+        body.append(table(label, ["\u0413\u0440\u0443\u043F\u043F\u0430", "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0438\u0442\u043E\u0433", "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field]), cell(averageText(r.avg_total)), cell(r.n)]), `analytics-${field}`));
+      }
+      const gross = data.gross_errors ?? {};
+      body.append(
+        h("h2", { text: `\u0413\u0440\u0443\u0431\u044B\u0435 \u043E\u0448\u0438\u0431\u043A\u0438: ${gross.count ?? 0}`, data: { test: "analytics-gross" } }),
+        table("\u0412\u0438\u0434\u044B \u0433\u0440\u0443\u0431\u044B\u0445 \u043E\u0448\u0438\u0431\u043E\u043A", ["\u0412\u0438\u0434", "\u041A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E"], (gross.by_kind ?? []).map((r) => [cell(r.kind), cell(r.count)])),
+        h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id))))
+      );
+    }
+    async function load2() {
+      const mine = ++run;
+      refresh.disabled = true;
+      body.removeAttribute("data-test");
+      clear(body).append(h("p", { text: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043E\u0442\u0447\u0451\u0442\u0430\u2026", data: { test: "reports-loading" } }));
+      try {
+        const data = await (accuracy ? api.getAccuracy() : api.getAnalytics());
+        if (destroyed || mine !== run) return;
+        clear(body);
+        body.setAttribute("data-test", "reports-ready");
+        if (accuracy) accuracyReport(data);
+        else analyticsReport(data);
+      } catch (error) {
+        if (destroyed || mine !== run) return;
+        body.removeAttribute("data-test");
+        clear(body).append(h(
+          "div",
+          { attrs: { role: "alert" }, data: { test: "reports-error" } },
+          h("p", { text: `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442. ${errorText(error)}` }),
+          h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C", data: { test: "reports-retry" }, on: { click: () => load2() } })
+        ));
+      } finally {
+        if (!destroyed && mine === run) refresh.disabled = false;
+      }
+    }
+    const stop = watch(store, (s) => s.queueRefresh, () => load2());
+    load2();
+    return { el, destroy() {
+      destroyed = true;
+      run++;
+      stop();
+    } };
   }
 
   // src/ui/queue.js
@@ -6352,7 +6559,7 @@
     const exportLink = h("a", {
       class: "cqa-q-export",
       attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
-      data: { test: "queue-export" },
+      data: { test: "export-csv" },
       on: {
         click: (event) => {
           try {
@@ -6374,7 +6581,7 @@
       { class: "cqa-q-controls" },
       pillBar,
       h("div", { class: "cqa-q-sub" }, groupSelect, language),
-      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink)
+      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), h("span", { data: { test: "queue-export" } }, exportLink))
     );
     const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
     const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);
@@ -6480,7 +6687,7 @@
         data: { test: "queue-select" },
         on: { change: () => togglePick(item.id, check.checked) }
       });
-      const link = h(
+      const link2 = h(
         "a",
         { class: "cqa-q-link", attrs: { href: href("workspace", { id: item.id }) }, on: { click: closeDrawer } },
         h("b", { class: "cqa-q-id", text: item.conversation_id }),
@@ -6508,9 +6715,9 @@
           }
         },
         h("label", { class: "cqa-q-pick" }, check),
-        link
+        link2
       );
-      const row = { el: li, topic, check, link, item };
+      const row = { el: li, topic, check, link: link2, item };
       paintTopic(row);
       paintCurrent(row);
       check.checked = Boolean(store.get().selection?.has(item.id));
@@ -6865,16 +7072,16 @@
     return button;
   }
   function datasetBadge(store, track) {
-    const value = h("b", { class: "cqa-badge-value" });
+    const value2 = h("b", { class: "cqa-badge-value" });
     const badge = h(
       "span",
       { class: "cqa-badge", attrs: { title: t("dataset.title") }, data: { test: "dataset-badge" } },
       h("span", { class: "cqa-badge-label", text: t("dataset.label") }),
       " ",
-      value
+      value2
     );
     const paint = (groupId) => {
-      value.textContent = groupId ?? "";
+      value2.textContent = groupId ?? "";
     };
     paint(store.get().groupId);
     track(watch(store, (state) => state.groupId, paint));
@@ -6954,7 +7161,7 @@
     const tabs = ["transcript", "scorecard"].map(
       (pane) => h("button", { class: "cqa-tab", attrs: { type: "button", role: "tab", "aria-selected": "false" }, data: { test: `tab-${pane}` }, text: t(`workspace.tab.${pane}`), on: { click: () => store.set({ pane }) } })
     );
-    const bar = h("div", { class: "cqa-ws-bar" }, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
+    const bar2 = h("div", { class: "cqa-ws-bar" }, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
     const scrim = compact ? null : h("button", { class: "cqa-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("workspace.queueClose") }, data: { test: "queue-scrim" }, on: { click: () => store.set({ queueOpen: false }) } });
     const el = h(
       "div",
@@ -6970,7 +7177,7 @@
           }
         }
       },
-      bar,
+      bar2,
       scrim,
       h("div", { class: "cqa-ws-grid" }, queueHost, transcriptHost, scorecardHost)
     );
@@ -7060,8 +7267,8 @@
   var DEFAULT_GROUP = "DEV";
   function readStoredTheme() {
     try {
-      const value = window.localStorage.getItem(THEME_KEY);
-      return value === "light" || value === "dark" ? value : null;
+      const value2 = window.localStorage.getItem(THEME_KEY);
+      return value2 === "light" || value2 === "dark" ? value2 : null;
     } catch {
       return null;
     }
@@ -7129,6 +7336,8 @@
         checklist: createChecklistEditor,
         editor: createChecklistEditor,
         compare: createComparePage,
+        accuracy: createReportsPage,
+        analytics: createReportsPage,
         ...options.views
       }
     });

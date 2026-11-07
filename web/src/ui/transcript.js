@@ -143,6 +143,9 @@ export function renderTranscript(store, api, args = {}) {
   let pending = { highlight: null, focus: null };
   let lastHighlight = null; // the arguments of the marks on screen, applied again after a redraw
   let shown = null; // shownKey() of the dialogue on screen
+  let translationRun = 0;
+  let translationOn = false;
+  let translationCache = null;
   let player = null; // the call player, for a call
   let playingAt = null; // the index of the line marked .is-playing
   const flashTimers = new Map(); // index -> timer id
@@ -232,17 +235,59 @@ export function renderTranscript(store, api, args = {}) {
     if (follow && (above || below)) centre(playingAt);
   }
 
-  const handle = { el, highlight, focusMessage, destroy };
+  function seekSeconds(seconds) {
+    return player?.seekSeconds?.(seconds) ?? false;
+  }
+  const handle = { el, highlight, focusMessage, seekSeconds, destroy };
 
   // ---- loading --------------------------------------------------------------------------------
 
   function show(conversation) {
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
+    const translationEpoch = ++translationRun;
+    translationOn = false;
+    translationCache = null;
+    const translate = h("button", {
+      class: "cqa-sc-btn", text: "Перевести на русский",
+      attrs: { type: "button", "aria-pressed": "false" }, data: { test: "translate-toggle" },
+      on: { click: async () => {
+        if (destroyed || translationEpoch !== translationRun) return;
+        translationOn = !translationOn;
+        translate.setAttribute("aria-pressed", String(translationOn));
+        translate.textContent = translationOn ? "Скрыть перевод" : "Перевести на русский";
+        if (!translationOn) {
+          rows.forEach(({ el }) => el.querySelector(".msg-translation")?.remove());
+          return;
+        }
+        translate.disabled = true;
+        translate.textContent = "Переводим…";
+        try {
+          const data = translationCache ?? await api.getTranslation(id, "ru");
+          if (destroyed || translationEpoch !== translationRun) return;
+          translationCache = data;
+          for (const message of data.messages ?? []) {
+            const row = rows[message.message_index];
+            if (!row || typeof message.text !== "string") continue;
+            row.el.append(h("p", { class: "msg-translation", attrs: { lang: "ru" }, text: message.text }));
+          }
+          translate.textContent = "Скрыть перевод";
+        } catch (error) {
+          if (destroyed || translationEpoch !== translationRun) return;
+          translationOn = false;
+          translate.setAttribute("aria-pressed", "false");
+          translate.textContent = "Повторить перевод";
+          toastError(store, error);
+        } finally {
+          if (!destroyed && translationEpoch === translationRun) translate.disabled = false;
+        }
+      } },
+    });
     clear(head).append(
       h("b", { class: "cqa-tr-title", text: conversation?.conversation_id ?? id ?? "", data: { test: "transcript-title" } }),
       h("span", { class: "cqa-tr-meta", text: [channel, conversation?.language, t("transcript.lines", { n: transcript.length })].filter(Boolean).join(" · "), data: { test: "transcript-meta" } }),
     );
+    if (["KZ", "EN"].includes(conversation?.language?.toUpperCase())) head.append(translate);
     clear(scroller);
     rows = [];
     marked = [];
@@ -346,7 +391,7 @@ export function renderTranscript(store, api, args = {}) {
   const stopRefresh = watch(store, (state) => state.importRefresh, () => refresh());
   store.set({ transcript: handle });
   const hook = window.__cqaTest;
-  if (hook?.store === store) hook.transcript = { focusMessage, highlight };
+  if (hook?.store === store) hook.transcript = { focusMessage, highlight, seekSeconds };
 
   if (id === null) scroller.append(stateBox("transcript-empty", t("workspace.pick")));
   else load();
