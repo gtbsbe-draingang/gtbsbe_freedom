@@ -22,11 +22,17 @@
 // An import (store `importRefresh`, bumped by the loader) may have updated this dialogue: it is
 // fetched again and redrawn only when what the pane shows changed, keeping the scroll position and
 // the marks, so the evidence the scorecard reloads points at the lines on screen.
+//
+// A call gets the player (player.js) on top. With a recording, each line's time is its start in the
+// recording and a button that seeks there; focusMessage (an evidence link) seeks too; the line being
+// played carries .is-playing and is kept in view while it plays.
 import { canonicalJson } from "../domain/fingerprint.js";
 import { formatOffset, offsets } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
+import { openImport } from "./loader.js";
+import { renderPlayer, startTimes } from "./player.js";
 import { errorText, toastError } from "./toast.js";
 
 export const FLASH_MS = 1200;
@@ -67,7 +73,15 @@ export function highlightPlan(count, evidence, range) {
 /** What the pane draws of a conversation, as one string: equal strings draw the same pane. */
 export function shownKey(conversation) {
   const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
-  return canonicalJson({ conversation_id: conversation?.conversation_id ?? null, channel: conversation?.channel ?? null, language: conversation?.language ?? null, transcript });
+  return canonicalJson({
+    conversation_id: conversation?.conversation_id ?? null,
+    channel: conversation?.channel ?? null,
+    language: conversation?.language ?? null,
+    transcript,
+    audio: conversation?.audio ?? null, // an import can make the recording playable
+    audio_unavailable_reason: conversation?.audio_unavailable_reason ?? null,
+    audio_offsets: Array.isArray(conversation?.audio_offsets) ? conversation.audio_offsets : [],
+  });
 }
 
 // The id of the open conversation: the pane's argument, else the workspace route, else the
@@ -82,10 +96,18 @@ function stateBox(test, title, note, extra) {
   return h("div", { class: "cqa-empty", attrs: { role: "status" }, data: { test } }, h("b", { class: "cqa-empty-title", text: title }), note ? h("p", { class: "cqa-empty-note", text: note }) : null, extra);
 }
 
-function buildMessage(message, index, offset) {
+// `seek`: a call with a recording, where the time is the line's start in the recording and seeks.
+function buildMessage(message, index, offset, seek) {
   const kind = speakerKind(message?.speaker);
   const raw = typeof message?.timestamp === "string" ? message.timestamp.trim() : "";
   const clock = formatOffset(offset) || raw;
+  const timeAttrs = raw === "" ? {} : { title: raw };
+  const time =
+    clock === ""
+      ? null
+      : seek
+        ? h("button", { class: ["cqa-msg-time", "cqa-msg-seek"], attrs: { type: "button", title: t("player.seek", { time: clock }) }, text: clock, data: { test: "msg-time" }, on: { click: () => seek(index) } })
+        : h("span", { class: "cqa-msg-time", text: clock, attrs: timeAttrs, data: { test: "msg-time" } });
 
   const flag = h("b", { class: "cqa-msg-flag", data: { test: "msg-flag" } });
   const who = h(
@@ -93,7 +115,7 @@ function buildMessage(message, index, offset) {
     { class: "cqa-msg-who" },
     flag,
     kind === "system" ? null : h("span", { class: "cqa-msg-speaker", text: t(`transcript.speaker.${kind}`), attrs: kind === "other" && message?.speaker ? { title: String(message.speaker) } : {}, data: { test: "msg-speaker" } }),
-    clock === "" ? null : h("span", { class: "cqa-msg-time", text: clock, attrs: raw === "" ? {} : { title: raw }, data: { test: "msg-time" } }),
+    time,
     message?.duplicate ? h("span", { class: "cqa-msg-dup", text: t("transcript.duplicate"), attrs: { title: t("transcript.duplicateTitle") } }) : null,
   );
   const text = h("p", { class: "cqa-msg-text", text: typeof message?.text === "string" ? message.text : "" });
@@ -111,7 +133,8 @@ export function renderTranscript(store, api, args = {}) {
   const id = openId(store, args);
   const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
   const head = h("div", { class: "cqa-tr-head" });
-  const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, scroller);
+  const playerHost = h("div", { class: "cqa-tr-player" });
+  const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, playerHost, scroller);
 
   let destroyed = false;
   let rows = []; // [{el, flag}] per message, empty until loaded
@@ -120,6 +143,8 @@ export function renderTranscript(store, api, args = {}) {
   let pending = { highlight: null, focus: null };
   let lastHighlight = null; // the arguments of the marks on screen, applied again after a redraw
   let shown = null; // shownKey() of the dialogue on screen
+  let player = null; // the call player, for a call
+  let playingAt = null; // the index of the line marked .is-playing
   const flashTimers = new Map(); // index -> timer id
 
   // ---- highlight and focus --------------------------------------------------------------------
@@ -173,6 +198,14 @@ export function renderTranscript(store, api, args = {}) {
     );
   }
 
+  // Scroll the pane's own scroller to put the message in the middle. scrollIntoView would also
+  // move the page, and with it the scorecard next to the transcript.
+  function centre(index) {
+    const row = rows[index].el;
+    const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
+    scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+  }
+
   function focusMessage(index) {
     if (destroyed) return false;
     if (!loaded) {
@@ -180,13 +213,23 @@ export function renderTranscript(store, api, args = {}) {
       return Number.isInteger(index) && index >= 0;
     }
     if (!validIndex(index, rows.length)) return false;
-    const row = rows[index].el;
-    // Scroll the pane's own scroller to put the message in the middle. scrollIntoView would also
-    // move the page, and with it the scorecard next to the transcript.
-    const top = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
-    scroller.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+    centre(index);
     flash(index);
+    player?.seek(index); // a call: the recording follows the jump
     return true;
+  }
+
+  // The line being played (from the player). While it plays, a line that left the view is centred.
+  function markPlaying(index, { follow = false } = {}) {
+    if (destroyed || !loaded) return;
+    if (playingAt !== null) rows[playingAt]?.el.classList.remove("is-playing");
+    playingAt = validIndex(index, rows.length) ? index : null;
+    if (playingAt === null) return;
+    const row = rows[playingAt].el;
+    row.classList.add("is-playing");
+    const above = row.offsetTop < scroller.scrollTop;
+    const below = row.offsetTop + row.offsetHeight > scroller.scrollTop + scroller.clientHeight;
+    if (follow && (above || below)) centre(playingAt);
   }
 
   const handle = { el, highlight, focusMessage, destroy };
@@ -203,13 +246,25 @@ export function renderTranscript(store, api, args = {}) {
     clear(scroller);
     rows = [];
     marked = [];
+    playingAt = null;
     loaded = true;
     shown = shownKey(conversation);
+    player?.destroy();
+    player = renderPlayer(conversation, api, {
+      markPlaying,
+      openImport: () => openImport(store, api, el.closest(".cqa") ?? el, { group: conversation?.group_id }),
+    });
+    clear(playerHost);
+    if (player) playerHost.append(player.el);
     if (transcript.length === 0) {
       scroller.append(stateBox("transcript-empty", t("transcript.empty"), t("transcript.emptyNote")));
     } else {
-      const at = offsets(transcript);
-      rows = transcript.map((message, i) => buildMessage(message, i, at[i]));
+      // With a recording, a line's time is where it starts in the recording, and it seeks there.
+      const audible = Boolean(api.audioUrl?.(conversation)) && conversation?.channel === "voice call";
+      const starts = audible ? startTimes(conversation) : null;
+      const at = audible ? starts : offsets(transcript);
+      const seek = (index) => player?.seek(index);
+      rows = transcript.map((message, i) => buildMessage(message, i, at[i], audible && starts[i] !== null ? seek : null));
       scroller.append(h("ol", { class: "cqa-tr-msgs", data: { test: "transcript-msgs" } }, rows.map((row) => row.el)));
     }
     const { highlight: waiting, focus } = pending;
@@ -219,6 +274,9 @@ export function renderTranscript(store, api, args = {}) {
   }
 
   function showError(error) {
+    player?.destroy();
+    player = null;
+    clear(playerHost);
     clear(head);
     clear(scroller).append(
       stateBox(
@@ -275,6 +333,7 @@ export function renderTranscript(store, api, args = {}) {
     if (destroyed) return;
     destroyed = true;
     stopRefresh();
+    player?.destroy();
     flashTimers.forEach((timer) => clearTimeout(timer));
     flashTimers.clear();
     if (store.get().transcript === handle) store.set({ transcript: null });
