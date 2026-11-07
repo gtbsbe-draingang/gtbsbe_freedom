@@ -109,6 +109,36 @@ goes into those folders.
   exactly 10 records). A dialogue that failed stays in the file as `status: "error"`. Commit
   only `results/prod/results.json` and push.
 
+### Fallback: the control hour in one command
+
+The UI stays the primary path (it is what the jury sees). If clicking through is too slow or the
+UI misbehaves, one command drives the **running** server over HTTP, so it shares the server's
+database with the UI and everything it does shows up there:
+
+```sh
+cd backend
+uv run cqa-serve        # if it is not running yet (another terminal)
+uv run python -m quality.control_run --group <control group_id> --out ../results/prod/results.json --expect 10
+```
+
+It checks the server (`/config`), imports the group through the server (`GET /datasets/{group}`),
+dry-runs and starts the official checklist job (`official-chat` v1, reuse mode, role
+`controller`), polls it, retries failed dialogues once (`--retries`), then builds and validates the
+file with `quality.results_export` reading the server's API (never a guessed SQLite path) and
+prints the git commands to commit it. It never runs git itself.
+
+- Exit 0: valid, every record ok. Exit 1: written, but with problems, `status: "error"` records
+  or a timeout (`--timeout-minutes`, default 40); fix and re-export with `--export-only` (no model
+  calls), or commit it as it is when time is up. Exit 2: nothing written (no server, the import or
+  the job could not start, no conversations in the group).
+- Organisers' API down but they hand out a JSON file: `--from-json <file>` uploads it into
+  `--group` through `POST /conversations` (the full response, `{records}` or a bare list).
+- Group already imported or evaluated in the UI: `--skip-import`, or `--export-only` to only write
+  the file.
+- Rehearsal with ten DEV chats as a fake group (needs the model key; about 80 model calls):
+  `--group REHEARSAL --from-json ../data/dev.json --limit 10 --expect 10 --out /tmp/rehearsal.json`.
+  Never commit a rehearsal file.
+
 ## Rehearsal record
 
 Status: **not performed**. A code/test pass does not complete the rehearsal.
