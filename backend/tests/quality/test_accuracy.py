@@ -1,7 +1,9 @@
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from app.models import Conversation, CriterionResult, Evaluation, StepAnswer
 from quality.accuracy import accuracy_report, answers_match
@@ -100,3 +102,62 @@ def test_router_missing_reference_and_valid_shape(tmp_path, monkeypatch, client)
     assert client.get('/api/reports/accuracy?group_id=CONTROL').status_code == 409
     monkeypatch.setattr(route, 'get_store', lambda: SimpleNamespace(get_checklist_version=lambda *a: None))
     assert client.get('/api/reports/accuracy').json()['error'] == 'not_found'
+
+
+def accuracy_validator():
+    path = Path(__file__).resolve().parents[3] / 'contract/schemas/accuracy.schema.json'
+    return Draft202012Validator(json.loads(path.read_text(encoding='utf-8')))
+
+
+def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
+    from app import store
+    import quality.router as route
+
+    reference, evaluations, kwargs = fixture_data()
+    path = tmp_path / 'reference.json'
+    path.write_text(reference.model_dump_json(), encoding='utf-8')
+    monkeypatch.setattr(route, 'REFERENCE_PATH', path)
+    for conv in kwargs['conversations'].values():
+        store.upsert_conversation(conv, None)
+
+    empty = client.get('/api/reports/accuracy')
+    assert empty.status_code == 200
+    accuracy_validator().validate(empty.json())
+    assert empty.json()['overall'] == {'agreement': None, 'n': 0}
+    assert empty.json()['missing'] == 4
+
+    # Real persisted runs: only a's latest completed model run is eligible.
+    for name, change in [
+        ('old', {'created_at': '2025-01-01T00:00:00Z'}),
+        ('mock', {'source': 'mock'}), ('failed', {'status': 'failed'}),
+        ('version', {'version': 2}), ('checklist', {'checklist_id': 'custom'}),
+        ('control', {'conversation': 'CONTROL:a'}),
+    ]:
+        data = evaluations[0].model_dump()
+        data.update(id=name, **change)
+        data['results'] = [r.model_copy(update={'answer': 'no'}).model_dump()
+                           for r in evaluations[0].results]
+        store.insert_evaluation(Evaluation.model_validate(data))
+    store.upsert_conversation(kwargs['conversations']['DEV:a'].model_copy(
+        update={'id': 'CONTROL:a', 'group_id': 'CONTROL'}), None)
+    evaluations[0].results.pop()
+    store.insert_evaluation(evaluations[0])
+    partial = client.get('/api/reports/accuracy')
+    assert partial.status_code == 200
+    data = partial.json()
+    accuracy_validator().validate(data)
+    assert data['overall'] == {'agreement': 1.0, 'n': 1}
+    assert data['missing'] == 3
+    assert next(r for r in data['by_criterion'] if r['criterion_id'] == 'c02')['agreement'] is None
+    assert 'control' not in {e.id for e in store.list_evaluations('official-chat', 1, group_id='DEV')}
+    assert store.list_evaluations('official-chat', 2**64) == []
+
+
+@pytest.mark.parametrize('field', ['overall', 'by_criterion', 'by_language', 'by_channel'])
+@pytest.mark.parametrize('agreement,n', [(0, 0), (None, 1)])
+def test_schema_rejects_missing_as_zero_or_observed_as_null(field, agreement, n):
+    r, e, kwargs = fixture_data()
+    payload = accuracy_report(r, e, **kwargs).model_dump()
+    cell = payload[field] if field == 'overall' else payload[field][0]
+    cell.update(agreement=agreement, n=n)
+    assert not accuracy_validator().is_valid(payload)

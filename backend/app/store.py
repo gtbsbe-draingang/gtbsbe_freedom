@@ -122,6 +122,17 @@ register_migration(
     """,
 )
 
+# Earlier D builds persisted heuristic alignment without an acceptance marker.
+# Clear those derived fields once on upgrade, before API reads or jobs can use them.
+register_migration(
+    "d_001_withhold_unvalidated_audio",
+    """
+    UPDATE conversations SET conversation_json = json_set(
+        conversation_json, '$.audio_offsets', json('[]'), '$.voice_measurements', json('[]')
+    ) WHERE channel = 'voice call';
+    """,
+)
+
 # Checklist version numbers are small positive integers. The bound keeps a huge number from
 # reaching SQLite, which raises OverflowError for an integer beyond 64 bits.
 MAX_CHECKLIST_VERSION = 2**31 - 1
@@ -503,6 +514,29 @@ def get_evaluation(evaluation_id: str) -> Evaluation | None:
         return _read_evaluation(conn, evaluation_id)
     finally:
         conn.close()
+
+
+def list_evaluations(
+    checklist_id: str, version: int, *, group_id: str | None = None
+) -> list[Evaluation]:
+    """Read runs for an exact version and optional group; consumers filter run eligibility."""
+    if not 1 <= version <= MAX_CHECKLIST_VERSION:
+        return []
+    query = (
+        "SELECT e.json FROM evaluations e "
+        "JOIN conversations c ON c.id = e.conversation "
+        "WHERE e.checklist_id = ? AND e.version = ?"
+    )
+    params: list[object] = [checklist_id, version]
+    if group_id is not None:
+        query += " AND c.group_id = ?"
+        params.append(group_id)
+    conn = connect()
+    try:
+        rows = conn.execute(query + " ORDER BY e.created_at, e.id", params).fetchall()
+    finally:
+        conn.close()
+    return [Evaluation.model_validate_json(row["json"]) for row in rows]
 
 
 def _set_evaluation_status(conn: sqlite3.Connection, evaluation_id: str | None, status: str) -> None:

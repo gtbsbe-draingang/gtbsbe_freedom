@@ -34,8 +34,49 @@ def test_shared_models_and_unknown_overlap(monkeypatch):
 
 
 async def test_processing_storage_failure_does_not_escape_or_leak(monkeypatch, caplog):
+    import app
     def fail(_):
         raise RuntimeError('https://private.example/?token=SECRET')
-    monkeypatch.setitem(sys.modules, 'app.store', SimpleNamespace(get_conversation=fail))
+    fake = SimpleNamespace(get_conversation=fail)
+    monkeypatch.setitem(sys.modules, 'app.store', fake)
+    monkeypatch.setattr(app, 'store', fake)
     await process_call('DEV:call')
     assert 'processing failed' in caplog.text and 'SECRET' not in caplog.text
+
+
+async def test_production_gate_clears_previous_results_without_fetching(client, monkeypatch):
+    from app import store
+    from app.models import Conversation
+    conv = Conversation(id='DEV:call', conversation_id='call', group_id='DEV',
+                        channel='voice call', language='RU', transcript=[],
+                        audio_offsets=[AudioOffset(message_index=0, seconds=20)])
+    store.upsert_conversation(conv, None)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Unvalidated processing must not fetch audio')
+    monkeypatch.setattr(store, 'get_audio_url', forbidden)
+    await process_call(conv.id)
+    data = client.get('/api/conversations/DEV:call').json()
+    assert data['audio_offsets'] == [] and data['voice_measurements'] == []
+
+
+def test_upgrade_removes_legacy_audio_evidence_before_serving(client):
+    from app import store
+    from app.db import connect, migrate
+    from app.models import Conversation
+    conv = Conversation(id='DEV:legacy', conversation_id='legacy', group_id='DEV',
+                        channel='voice call', language='RU', transcript=[],
+                        audio_offsets=[AudioOffset(message_index=0, seconds=20)],
+                        voice_measurements=[VoiceMeasurement(message_index=0, from_seconds=20,
+                            to_seconds=30, pitch_range=4, rate_wpm=120, pauses=1, overlap=None)])
+    store.upsert_conversation(conv, None)
+    conn = connect()
+    try:
+        conn.execute("DELETE FROM schema_migrations WHERE name = 'd_001_withhold_unvalidated_audio'")
+        conn.commit()
+    finally:
+        conn.close()
+    migrate()
+    migrate()  # repeat startup is safe
+    data = client.get('/api/conversations/DEV:legacy').json()
+    assert data['audio_offsets'] == [] and data['voice_measurements'] == []
+    assert store.get_conversation(conv.id).voice_measurements == []

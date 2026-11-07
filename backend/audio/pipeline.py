@@ -1,20 +1,15 @@
 """Shared-model audio integration; recordings exist only in memory during processing."""
-import asyncio
 import io
 import logging
 
-import httpx
 import numpy as np
 
 from app.models import AudioOffset, Message, VoiceMeasurement
 from audio.measure import measure_operator
 from audio.offsets import compute_spans
-from audio.resolve import open_audio
-from audio.source import TIMEOUT
 from audio.vad import speech_frames
 
 logger = logging.getLogger(__name__)
-MAX_BYTES = 128 * 1024 * 1024
 
 
 def analyse(transcript: list[Message], samples: np.ndarray, sr: int):
@@ -44,28 +39,19 @@ def decode(data: bytes):
 
 
 async def process_call(conversation: str) -> None:
-    """Never propagate processing/storage failures into the import job."""
+    """Withhold unvalidated alignment/measurements; keep manual playback available.
+
+    Re-enable production analysis only after the acceptance protocol in README.md.
+    Storage failures never escape into the import job.
+    """
     try:
         from app import store
         conv = store.get_conversation(conversation)
         if conv is None or conv.channel != "voice call":
             return
-        player = store.get_audio_url(conversation)
-        if not player:
-            return
-        async with asyncio.timeout(60):
-            async with httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True) as client:
-                response = await open_audio(player, client)
-                data = bytearray()
-                try:
-                    async for chunk in response.aiter_bytes():
-                        if len(data) + len(chunk) > MAX_BYTES:
-                            raise ValueError("Recording exceeds processing limit")
-                        data.extend(chunk)
-                finally:
-                    await response.aclose()
-            samples, sr = await asyncio.to_thread(decode, bytes(data))
-            offsets, measurements = await asyncio.to_thread(analyse, conv.transcript, samples, sr)
-            store.save_audio_results(conversation, offsets, measurements)
+        # Timing and speaker assignment have not passed independent acceptance.
+        # Keep candidate analysis offline; never publish it as evaluator evidence.
+        # Clear older results even when the current recording URL is missing.
+        store.save_audio_results(conversation, [], [])
     except Exception:
         logger.warning("Call audio processing failed; import can continue")

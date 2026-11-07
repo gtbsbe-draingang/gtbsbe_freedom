@@ -29,6 +29,12 @@ class AgreementCell(BaseModel):
     agreement: float | None = Field(default=None, ge=0, le=1)
     n: int = Field(ge=0)
 
+    @model_validator(mode="after")
+    def agreement_requires_observations(self):
+        if (self.agreement is None) != (self.n == 0):
+            raise ValueError("agreement must be null exactly when n is zero")
+        return self
+
 
 class AccuracyReport(BaseModel):
     reference_note: str
