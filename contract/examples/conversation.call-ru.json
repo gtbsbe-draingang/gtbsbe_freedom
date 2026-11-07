@@ -60,7 +60,7 @@
     "first_reaction_seconds": 6,
     "longest_wait_seconds": 8,
     "identity_verified_index": null,
-    "ending": "operator_ended_call"
+    "ending": "normal"
   },
   "info": {
     "topic": "Комиссия за сделки на зарубежном рынке",

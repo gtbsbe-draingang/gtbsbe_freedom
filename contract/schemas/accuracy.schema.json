@@ -146,6 +146,7 @@
           "conversation": {
             "type": "string",
             "minLength": 1,
+            "pattern": "^.+:.+$",
             "description": "The backend id, used for linking."
           },
           "conversation_id": {

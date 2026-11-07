@@ -96,7 +96,7 @@
     "first_reaction_seconds": 31,
     "longest_wait_seconds": 31,
     "identity_verified_index": 7,
-    "ending": "operator_goodbye"
+    "ending": "normal"
   },
   "info": {
     "topic": "Пополнение брокерского счёта и справка для налоговой",

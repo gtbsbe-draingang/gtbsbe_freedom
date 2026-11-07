@@ -100,10 +100,12 @@ describe("examples", () => {
     assert.equal(chat.channel, "agent chat");
     assert.equal(chat.audio, null);
     assert.equal(chat.audio_unavailable_reason, "none");
+    assert.equal(chat.facts.ending, "normal", "a goodbye without a close event is a normal ending");
     assert.equal(call.conversation_id, "p4-ru-001");
     assert.equal(call.channel, "voice call");
     assert.equal(call.audio, null);
     assert.equal(call.audio_unavailable_reason, "needs_import");
+    assert.equal(call.facts.ending, "normal");
     assert.ok(call.audio_offsets.length >= 3, "call has at least 3 audio_offsets");
     assert.ok(call.voice_measurements.length >= 2, "call has at least 2 voice_measurements");
     const speakers = new Set(chat.transcript.map((m) => m.speaker));
@@ -302,6 +304,45 @@ describe("schema rules", () => {
     withAudio.audio = "/conversations/example:p4-ru-001/audio";
     delete withAudio.audio_unavailable_reason;
     assert.ok(validate(withAudio), "audio path without a reason is fine");
+  });
+
+  test("facts.ending is one of the agreed values", () => {
+    const ajv = buildAjv();
+    const endings = ["operator_closed", "client_left", "connection_lost", "client_ended_call", "normal"];
+    for (const name of ["conversation", "queue-item"]) {
+      const validate = validator(ajv, name);
+      const base = example(name === "conversation" ? "conversation.chat-ru.json" : "queue-item.chat-ru.json");
+      for (const ending of endings) {
+        base.facts.ending = ending;
+        assert.ok(validate(base), `${name}: ${ending} is allowed: ${describeErrors(validate)}`);
+      }
+      for (const ending of ["operator_goodbye", "operator_ended_call", ""]) {
+        base.facts.ending = ending;
+        assert.equal(validate(base), false, `${name}: "${ending}" is rejected`);
+      }
+    }
+  });
+
+  test("conversation references need the {group_id}:{conversation_id} form", () => {
+    const ajv = buildAjv();
+    const cases = [
+      ["conversation", "conversation.chat-ru.json", (o) => { o.id = "p1-ru-001"; }],
+      ["queue-item", "queue-item.chat-ru.json", (o) => { o.id = "p1-ru-001"; }],
+      ["evaluation", "evaluation.chat-na-scale-carried.json", (o) => { o.conversation = "p1-ru-001"; }],
+      ["appeal", "appeal.pending.json", (o) => { o.conversation = "p4-ru-001"; }],
+      ["job", "job.one-failed.json", (o) => { o.items[0].conversation = "p1-ru-001"; }],
+      ["comparison", "comparison.json", (o) => { o.rows[0].conversation = "p1-ru-001"; }],
+      ["accuracy", "accuracy.json", (o) => { o.disagreements[0].conversation = "p1-ru-001"; }],
+      ["translation", "translation.json", (o) => { o.conversation = "p2-kz-004"; }],
+      ["analytics", "analytics.json", (o) => { o.gross_errors.conversations[0] = "p4-ru-001"; }],
+    ];
+    for (const [name, file, breakIt] of cases) {
+      const validate = validator(ajv, name);
+      const good = example(file);
+      assert.ok(validate(good), `${file}: baseline is valid`);
+      breakIt(good);
+      assert.equal(validate(good), false, `${name}: a bare conversation_id is rejected`);
+    }
   });
 
   test("a comparison delta may be null; accuracy agreement stays within 0..1", () => {

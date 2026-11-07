@@ -26,6 +26,7 @@
     "conversation": {
       "type": "string",
       "minLength": 1,
+      "pattern": "^.+:.+$",
       "description": "The conversation's id ({group_id}:{conversation_id})."
     },
     "checklist_id": {

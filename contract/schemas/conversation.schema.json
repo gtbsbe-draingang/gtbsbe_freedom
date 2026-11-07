@@ -23,6 +23,7 @@
     "id": {
       "type": "string",
       "minLength": 1,
+      "pattern": "^.+:.+$",
       "description": "{group_id}:{conversation_id}. Used in every path and in the field `conversation` of other objects."
     },
     "created_at": {
@@ -200,11 +201,15 @@
           "description": "Index in transcript where identity was verified, or null."
         },
         "ending": {
-          "type": [
-            "string",
-            "null"
+          "enum": [
+            "operator_closed",
+            "client_left",
+            "connection_lost",
+            "client_ended_call",
+            "normal",
+            null
           ],
-          "description": "How the dialogue ended, for example operator_goodbye."
+          "description": "How the dialogue ended; normal when no system line says otherwise."
         }
       }
     },
