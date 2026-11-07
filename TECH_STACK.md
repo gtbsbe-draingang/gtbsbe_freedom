@@ -12,7 +12,29 @@ Requirements this stack is built around:
 5. Stay within **140 GB aggregate VRAM**, targeting **at most 120 GB measured peak** and preserving about 20 GB headroom. Each GPU must also fit its own assigned workload.
 6. Keep audio-only STT as a secondary path because the brief supplies transcripts. Prove accuracy, latency and memory use with measurements (section 9).
 
-## TL;DR
+## Status on 7 November 2026: what the prototype actually runs
+
+The rest of this document is the **target architecture** for fully local inference. The
+prototype that ships for the defence does not use local models: it calls **Claude Haiku 5.5
+through the Claude API**. Results files say `mode: external_api`; never present the demo as local.
+
+| Layer | Planned below | Built and running |
+|---|---|---|
+| UI | Web Components, WaveSurfer call player | Plain JS bundled to one `app.js` and one `app.css`, strict CSP, Dynamics mock form (e2e passes); waveform call player linked to the transcript (#77, #86) |
+| Backend | FastAPI, Pydantic, httpx, SQLite | As planned |
+| Brain (judges criteria) | Qwen3.8-27B-FP8, local | **Claude Haiku 5.5 via the API** (per-criterion override, e.g. Sonnet 5.5); one call per criterion, JSON schema output, every quote checked against the transcript, one retry, then «проверить» |
+| Ear (audio questions) | Qolda-AVL-9B, local | Not built |
+| Emotion specialist | emotion2vec+ large plus a trained head | Training script only (`training/emotion/`); the first full Kaggle run stopped on missing Dusha podcast audio, a fixed run is in progress; not used by the app |
+| Measurements | Silero VAD, Parselmouth | Voiced speech detection (Praat pitch, 6 dB above the floor) plus Parselmouth pitch, rate and pauses; stored when alignment is on; overlap is null; the evaluator does not read them, so c09 is not scored |
+| Transcript to audio alignment | Per-call shift, checked against hand-labelled boundaries | Recording clock, separate delays for people and the bot, 15.4 chars/s, nearest voiced onset (#93): 86% of 168 lines within 2 s against an offline Whisper reference; listening check 28 of 30 within about 2 s; on by default |
+| STT fallback, diarization | Whisper-family ASR, pyannote | Not built (the brief supplies transcripts) |
+| Scoring | Plain Python | As planned: exact fractions, N/A redistribution, half-up rounding, gross error as a separate flag |
+| Admin checklists | Versions, fingerprints, reuse | As planned: immutable versions, fingerprint reuse, weight-only change makes zero model calls, dry run, comparison |
+| Hardware | 140 GB local VRAM | Not needed: hosted API |
+| Cost (section 10) | Local compute only | About **$0.0041 per dialogue**: $0.2685 for the 65 DEV dialogues, 613 calls |
+| Testing (section 9) | Human gold labels, ablations, latency | 520 draft reference labels, #25 readings approved; agreement 80.66% on the 517 undisputed ones; 21 of 25 planted violations caught (`data/reference/`); no human-reviewed gold set, ablations or capacity tests yet |
+
+## TL;DR (target architecture)
 
 | Layer | Choice |
 |---|---|

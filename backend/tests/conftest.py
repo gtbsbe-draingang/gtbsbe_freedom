@@ -36,6 +36,9 @@ def isolated_settings(monkeypatch: pytest.MonkeyPatch, tmp_path) -> Iterator[Non
             monkeypatch.delenv(key)
     monkeypatch.setitem(Settings.model_config, "env_file", None)
     monkeypatch.setenv("DB_PATH", str(tmp_path / "cqa-test.db"))
+    # Call alignment is on by default (#28) and would fetch recordings on import; a test that
+    # needs it sets CQA_AUDIO_ALIGNMENT=on itself.
+    monkeypatch.setenv("CQA_AUDIO_ALIGNMENT", "off")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()

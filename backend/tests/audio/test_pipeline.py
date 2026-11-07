@@ -46,6 +46,7 @@ async def test_processing_storage_failure_does_not_escape_or_leak(monkeypatch, c
 
 
 async def test_production_gate_clears_previous_results_without_fetching(client, monkeypatch):
+    monkeypatch.setenv('CQA_AUDIO_ALIGNMENT', 'off')
     from app import store
     from app.models import Conversation
     conv = Conversation(id='DEV:call', conversation_id='call', group_id='DEV',
@@ -83,11 +84,11 @@ def test_upgrade_removes_legacy_audio_evidence_before_serving(client):
     assert store.get_conversation(conv.id).voice_measurements == []
 
 
-def test_alignment_is_off_unless_switched_on(monkeypatch):
+def test_alignment_is_on_unless_switched_off(monkeypatch):
     monkeypatch.delenv("CQA_AUDIO_ALIGNMENT", raising=False)
+    assert pipeline_mod.alignment_enabled()  # passed the listening check (28 of 30)
+    monkeypatch.setenv("CQA_AUDIO_ALIGNMENT", " OFF ")
     assert not pipeline_mod.alignment_enabled()
-    monkeypatch.setenv("CQA_AUDIO_ALIGNMENT", " ON ")
-    assert pipeline_mod.alignment_enabled()
 
 
 async def test_switched_on_the_import_stores_offsets(client, monkeypatch):

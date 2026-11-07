@@ -16,9 +16,11 @@ MAX_BYTES = 128 * 1024 * 1024
 
 
 def alignment_enabled() -> bool:
-    """Offsets and measurements are published only when CQA_AUDIO_ALIGNMENT=on (#28). Turn it on
-    after the listening check in tests/manual/alignment_check.py has passed."""
-    return os.environ.get("CQA_AUDIO_ALIGNMENT", "").strip().lower() == "on"
+    """Offsets and measurements are published unless CQA_AUDIO_ALIGNMENT=off (#28).
+
+    The #93 method passed the listening check (tests/manual/alignment_check.py): 28 of 30
+    sampled lines start within about 2 s of where playback starts."""
+    return os.environ.get("CQA_AUDIO_ALIGNMENT", "").strip().lower() != "off"
 
 
 def analyse(transcript: list[Message], samples: np.ndarray, sr: int):
@@ -69,11 +71,9 @@ async def _download(player: str) -> bytes:
 async def process_call(conversation: str) -> None:
     """Store a call's line offsets and voice measurements, or clear them while alignment is off.
 
-    By default nothing is published: the timing has not passed the independent listening check
-    (#28), and stored results from older builds are cleared. With CQA_AUDIO_ALIGNMENT=on the
-    recording is fetched into memory, aligned from its speech activity (`audio.offsets`) and the
-    results are stored. Failures never escape into the
-    import job.
+    By default the recording is fetched into memory, aligned from its speech activity
+    (`audio.offsets`) and the results are stored. With CQA_AUDIO_ALIGNMENT=off nothing is
+    published and stored results are cleared. Failures never escape into the import job.
     """
     try:
         from app import store

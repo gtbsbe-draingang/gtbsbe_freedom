@@ -109,7 +109,7 @@ def accuracy_validator():
     return Draft202012Validator(json.loads(path.read_text(encoding='utf-8')))
 
 
-def test_shipped_references_default_to_v2_and_exclude_unapproved_labels(client):
+def test_shipped_references_default_to_v2_and_exclude_disputed_labels(client):
     from app import store
 
     _, evaluations, kwargs = fixture_data()
@@ -120,8 +120,8 @@ def test_shipped_references_default_to_v2_and_exclude_unapproved_labels(client):
     data = response.json()
     accuracy_validator().validate(data)
     assert data['overall'] == {'agreement': None, 'n': 0}
-    assert data['disputed_excluded'] == 41
-    assert data['missing'] == 479
+    assert data['disputed_excluded'] == 3  # #25 settled; three labels stay ambiguous
+    assert data['missing'] == 517
     assert client.get('/api/reports/accuracy?version=1').status_code == 409
 
 
