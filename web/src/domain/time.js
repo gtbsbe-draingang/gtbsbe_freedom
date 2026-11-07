@@ -84,3 +84,48 @@ export function formatOffset(sec) {
   const body = h > 0 ? `${h}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
   return negative ? `-${body}` : body;
 }
+
+// System events that start, pause and resume a call's recording (RU, KZ, EN), as in
+// backend/audio/offsets.py.
+const REC_START = ["запущены", "басталды", "recording started", "transcription started"];
+const REC_PAUSE = ["приостановлены", "тоқтатылды", "paused"];
+const REC_RESUME = ["возобновлены", "жалғастырылды", "қайта басталды", "resumed"];
+const says = (message, words) => {
+  const text = typeof message?.text === "string" ? message.text.toLowerCase() : "";
+  return message?.speaker === "system" && words.some((w) => text.includes(w));
+};
+
+/**
+ * Each line's position in the call recording, in seconds, from the transcript alone: the recording
+ * begins at the "recording started" event and skips each paused-to-resumed stretch. Null for a
+ * line said before the recording, while it was paused, or after an unresumed pause, and for a
+ * line that `offsets` cannot place. Still an estimate: a call timestamp marks the end of a line,
+ * and each call keeps a few seconds of constant shift that only the audio alignment finds (#28).
+ * @param {{timestamp?: unknown, speaker?: string, text?: string}[]} transcript
+ * @returns {(number | null)[]}
+ */
+export function recordingOffsets(transcript) {
+  const lines = Array.isArray(transcript) ? transcript : [];
+  const at = offsets(lines);
+  const startIndex = lines.findIndex((m, i) => at[i] !== null && says(m, REC_START));
+  const start = startIndex === -1 ? 0 : at[startIndex];
+  const pauses = [];
+  let opened = null;
+  lines.forEach((m, i) => {
+    if (at[i] === null) return;
+    if (opened === null && says(m, REC_PAUSE)) opened = at[i];
+    else if (opened !== null && says(m, REC_RESUME)) {
+      pauses.push([opened, at[i]]);
+      opened = null;
+    }
+  });
+  return at.map((t) => {
+    if (t === null || t < start || (opened !== null && t >= opened)) return null;
+    let y = t - start;
+    for (const [a, b] of pauses) {
+      if (t >= b) y -= b - a;
+      else if (t > a) return null; // said while the recording was paused
+    }
+    return Math.max(0, y);
+  });
+}
