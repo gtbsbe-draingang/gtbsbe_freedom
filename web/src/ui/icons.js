@@ -11,6 +11,10 @@ const SHAPES = {
     ["circle", { cx: 12, cy: 8, r: 4 }],
     ["path", { d: "M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" }],
   ],
+  search: [
+    ["circle", { cx: 11, cy: 11, r: 7 }],
+    ["path", { d: "m16.5 16.5 4.5 4.5" }],
+  ],
   chevron: [["path", { d: "m6 9 6 6 6-6" }]],
   list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
   close: [["path", { d: "M6 6l12 12M18 6 6 18" }]],

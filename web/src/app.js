@@ -5,6 +5,7 @@ import { createApi } from "./api/index.js";
 import { groupOf, readContext } from "./context.js";
 import { createStore, isCompact, watch } from "./state/store.js";
 import { href, parseRoute, sameRoute } from "./ui/router.js";
+import { createQueue } from "./ui/queue.js";
 import { createShell } from "./ui/shell.js";
 
 const THEME_KEY = "cqa-theme";
@@ -55,6 +56,8 @@ export function mount(el, options = {}) {
     groupId: groupOf(ctx.conversationId) ?? DEFAULT_GROUP,
     route: isCompact({ mode: ctx.mode, conversationId: ctx.conversationId }) ? compactRoute(ctx.conversationId) : parseRoute(window.location.hash),
     toasts: [],
+    selection: new Set(), // ids ticked in the queue; always replaced, never mutated
+    queueRefresh: 0, // any change reloads the queue (after an import or an evaluation)
     queueOpen: false, // the queue drawer below 900 px
     pane: "transcript", // the visible pane below 700 px: "transcript" | "scorecard"
   });
@@ -89,7 +92,7 @@ export function mount(el, options = {}) {
 
   if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null }; // `transcript` is filled by the transcript pane
 
-  const shell = createShell(store, api, { panes: options.panes, views: options.views });
+  const shell = createShell(store, api, { panes: { queue: createQueue, ...options.panes }, views: options.views });
   el.replaceChildren(shell.el);
 
   let destroyed = false;

@@ -2654,8 +2654,8 @@
     }
   }
   var kebab = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
-  function h(tag, props, ...children) {
-    const el = document.createElement(tag);
+  function h(tag2, props, ...children) {
+    const el = document.createElement(tag2);
     if (props !== void 0 && props !== null) {
       if (typeof props !== "object" || props instanceof Node || Array.isArray(props)) {
         throw new TypeError("dom: h() props must be a plain object; pass children after it");
@@ -2685,8 +2685,8 @@
     append(el, children);
     return el;
   }
-  function svg(tag, attrs, ...children) {
-    const el = document.createElementNS(SVG_NS, tag);
+  function svg(tag2, attrs, ...children) {
+    const el = document.createElementNS(SVG_NS, tag2);
     if (attrs) setAttrs(el, attrs);
     append(el, children);
     return el;
@@ -2706,6 +2706,10 @@
     user: [
       ["circle", { cx: 12, cy: 8, r: 4 }],
       ["path", { d: "M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" }]
+    ],
+    search: [
+      ["circle", { cx: 11, cy: 11, r: 7 }],
+      ["path", { d: "m16.5 16.5 4.5 4.5" }]
     ],
     chevron: [["path", { d: "m6 9 6 6 6-6" }]],
     list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
@@ -2739,15 +2743,46 @@
         "aria-hidden": "true",
         focusable: "false"
       },
-      ...shapes.map(([tag, attrs]) => svg(tag, attrs))
+      ...shapes.map(([tag2, attrs]) => svg(tag2, attrs))
     );
   }
 
   // src/ui/toast.js
+  var MAX_TOASTS = 4;
+  var INFO_MS = 5e3;
+  var KINDS = ["error", "info"];
+  var nextId = 1;
+  function errorText(error) {
+    const full = typeof error?.code === "string" ? error.code : "";
+    const colon = full.indexOf(":");
+    const code = colon < 0 ? full : full.slice(0, colon);
+    const suffix = colon < 0 ? "" : full.slice(colon + 1);
+    if (code === "bad_record" && /^\d+$/.test(suffix)) return t("error.bad_record_at", { n: Number(suffix) + 1 });
+    const key = `error.${code}`;
+    const text2 = code ? t(key) : key;
+    return text2 === key ? t("error.generic") : text2;
+  }
   function dismissToast(store, id) {
     const toasts = store.get().toasts ?? [];
     if (!toasts.some((entry) => entry.id === id)) return;
     store.set({ toasts: toasts.filter((entry) => entry.id !== id) });
+  }
+  function toast(store, { kind = "info", text: text2, retry } = {}) {
+    if (!KINDS.includes(kind)) throw new TypeError(`toast: kind must be "error" or "info", got ${JSON.stringify(kind)}`);
+    if (typeof text2 !== "string" || text2 === "") throw new TypeError("toast: text is required");
+    const id = nextId++;
+    const entry = { id, kind, text: text2, retry: typeof retry === "function" ? retry : null };
+    const rest = (store.get().toasts ?? []).filter((old) => !(old.kind === kind && old.text === text2));
+    store.set({ toasts: [...rest, entry].slice(-MAX_TOASTS) });
+    if (kind === "info") {
+      const timer = setTimeout(() => dismissToast(store, id), INFO_MS);
+      timer.unref?.();
+    }
+    return id;
+  }
+  function toastError(store, error, { retry } = {}) {
+    const canRetry = typeof retry === "function" && (error?.retryable ?? true) === true;
+    return toast(store, { kind: "error", text: errorText(error), retry: canRetry ? retry : void 0 });
   }
   function renderToasts(store) {
     const box = h("div", { class: "cqa-toasts", attrs: { "aria-live": "polite" }, data: { test: "toasts" } });
@@ -2790,6 +2825,400 @@
     const unwatch = watch(store, (state) => state.toasts, draw);
     draw();
     return { el: box, destroy: unwatch };
+  }
+
+  // src/ui/queue.js
+  var IMPORT_ON_EMPTY = "DEV";
+  var TOPIC_MAX = 80;
+  var FETCH_SLOTS = 4;
+  var SERVER_SEARCH_MS = 300;
+  var SERVER_SEARCH_MIN = 2;
+  var FILTERS = ["all", "chats", "calls", "disputed", "new"];
+  var MATCHES = {
+    all: () => true,
+    chats: (item) => item.channel === "agent chat",
+    calls: (item) => item.channel === "voice call",
+    disputed: (item) => item.status === "disputed",
+    new: (item) => item.status === "new"
+  };
+  function clip(text2) {
+    const line = String(text2 ?? "").trim().replace(/\s+/g, " ");
+    return line.length > TOPIC_MAX ? `${line.slice(0, TOPIC_MAX - 1).trimEnd()}\u2026` : line;
+  }
+  function firstClientLine(conversation) {
+    const lines = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
+    const line = lines.find((m) => m?.speaker === "client" && typeof m.text === "string" && m.text.trim() !== "");
+    return line ? clip(line.text) : "";
+  }
+  var topicOf = (item) => typeof item.info?.topic === "string" ? item.info.topic.trim() : "";
+  function scoreText(final) {
+    const total = final?.total;
+    return typeof total === "number" && Number.isFinite(total) ? String(total).replace(".", ",") : "\u2014";
+  }
+  var tag = (kind, text2, extra = {}) => h("span", { class: ["cqa-tag", `cqa-tag--${kind}`], text: text2, ...extra });
+  function createQueue(store, api) {
+    const subs = [];
+    let destroyed = false;
+    const view = {
+      items: [],
+      phase: "loading",
+      // "loading" | "importing" | "ready" | "error"
+      error: null,
+      query: "",
+      filter: "all",
+      language: "",
+      remote: null,
+      // { q, ids: Set } from the server's text search
+      groups: false
+      // more than one group is loaded: rows then name theirs
+    };
+    const rows = /* @__PURE__ */ new Map();
+    const firstLines = /* @__PURE__ */ new Map();
+    const search = h("input", {
+      class: "cqa-q-search-input",
+      attrs: { type: "search", placeholder: t("queue.search"), "aria-label": t("queue.searchLabel"), autocomplete: "off", spellcheck: "false" },
+      data: { test: "queue-search" }
+    });
+    const searchBox = h("div", { class: "cqa-q-search" }, icon("search", { size: 16 }), search);
+    const pills = FILTERS.map((name) => {
+      const count = h("span", { class: ["cqa-q-count", "num"] });
+      const button = h(
+        "button",
+        { class: "cqa-q-pill", attrs: { type: "button", "aria-pressed": "false" }, data: { test: `queue-filter-${name}` }, on: { click: () => setFilter(name) } },
+        h("span", { text: t(`queue.filter.${name}`) }),
+        count
+      );
+      return { name, button, count };
+    });
+    const pillBar = h("div", { class: "cqa-q-pills", attrs: { role: "group", "aria-label": t("queue.filters") } }, pills.map((pill) => pill.button));
+    const language = h("select", {
+      class: "cqa-q-select",
+      attrs: { "aria-label": t("queue.language") },
+      data: { test: "queue-language" },
+      on: {
+        change: () => {
+          view.language = language.value;
+          paint();
+        }
+      }
+    });
+    const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
+    const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
+    const stateBox = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
+    const body = h("div", { class: "cqa-q-body" }, stateBox, list);
+    const controls = h("div", { class: "cqa-q-controls" }, searchBox, pillBar, h("div", { class: "cqa-q-sub" }, summary, language));
+    const el = h("div", { class: "cqa-q", data: { test: "queue" } }, controls, body);
+    const queryText = () => view.query.trim().toLowerCase();
+    function matchesQuery(item, q) {
+      if (q === "") return true;
+      if (view.remote && view.remote.q === q && view.remote.ids.has(item.id)) return true;
+      const haystack = [item.id, item.conversation_id, topicOf(item), firstLines.get(item.id) ?? ""];
+      return haystack.some((text2) => text2.toLowerCase().includes(q));
+    }
+    function setFilter(name) {
+      if (view.filter === name) return;
+      view.filter = name;
+      paint();
+    }
+    let searchTimer = null;
+    let searchRun = 0;
+    function scheduleServerSearch() {
+      clearTimeout(searchTimer);
+      searchRun += 1;
+      const q = queryText();
+      if (q.length < SERVER_SEARCH_MIN) {
+        view.remote = null;
+        return;
+      }
+      const run = searchRun;
+      searchTimer = setTimeout(async () => {
+        try {
+          const found = await api.listConversations({ q: view.query.trim() });
+          if (destroyed || run !== searchRun) return;
+          view.remote = { q, ids: new Set(found.map((item) => item.id)) };
+          paint();
+        } catch {
+        }
+      }, SERVER_SEARCH_MS);
+    }
+    search.addEventListener("input", () => {
+      view.query = search.value;
+      scheduleServerSearch();
+      paint();
+    });
+    const currentId = () => {
+      const route2 = store.get().route;
+      return route2?.name === "workspace" ? route2.params?.id ?? null : null;
+    };
+    function closeDrawer() {
+      if (store.get().queueOpen) store.set({ queueOpen: false });
+    }
+    function go(id) {
+      closeDrawer();
+      window.location.hash = href("workspace", { id });
+    }
+    function togglePick(id, on) {
+      const next = new Set(store.get().selection ?? []);
+      if (on) next.add(id);
+      else next.delete(id);
+      store.set({ selection: next });
+    }
+    function buildRow(item) {
+      const flags = item.final;
+      const tags = [];
+      if (flags?.open_appeals > 0) tags.push(tag("mid", flags.open_appeals > 1 ? t("queue.tag.appeals", { n: flags.open_appeals }) : t("queue.tag.appeal"), { data: { test: "queue-tag-appeal" } }));
+      if (flags?.gross_error) tags.push(tag("bad", t("queue.tag.grossError"), { data: { test: "queue-tag-gross" } }));
+      if (flags?.needs_review) tags.push(tag("out", t("queue.tag.needsReview"), { attrs: { title: t("queue.tag.needsReviewTitle") }, data: { test: "queue-tag-review" } }));
+      const scoreTitle = flags ? typeof flags.total === "number" ? null : t("queue.score.notCalculated") : t("queue.score.none");
+      const topic = h("span", { class: "cqa-q-topic", data: { test: "queue-topic" } });
+      const check = h("input", {
+        class: "cqa-q-check",
+        attrs: { type: "checkbox", "aria-label": t("queue.select", { id: item.conversation_id }) },
+        data: { test: "queue-select" },
+        on: { change: () => togglePick(item.id, check.checked) }
+      });
+      const link = h(
+        "a",
+        { class: "cqa-q-link", attrs: { href: href("workspace", { id: item.id }) }, on: { click: closeDrawer } },
+        h("b", { class: "cqa-q-id", text: item.conversation_id }),
+        h("span", { class: ["cqa-q-score", "num", flags && typeof flags.total === "number" ? "" : "is-none"], text: scoreText(flags), attrs: { title: scoreTitle }, data: { test: "queue-score" } }),
+        topic,
+        h(
+          "span",
+          { class: "cqa-q-meta" },
+          view.groups ? tag("out", item.group_id, { attrs: { title: t("queue.group", { group: item.group_id }) }, data: { test: "queue-group" } }) : null,
+          tag("out", item.language, { attrs: { title: t("queue.language.title") }, data: { test: "queue-language-tag" } }),
+          h("span", { class: "cqa-q-channel", text: t(item.channel === "voice call" ? "queue.channel.call" : "queue.channel.chat") }),
+          tags
+        )
+      );
+      const li = h(
+        "li",
+        {
+          class: "cqa-q-item",
+          data: { test: "queue-item", id: item.id, channel: item.channel, status: item.status },
+          on: {
+            click: (event) => {
+              if (event.target instanceof Element && event.target.closest("a, label, input")) return;
+              go(item.id);
+            }
+          }
+        },
+        h("label", { class: "cqa-q-pick" }, check),
+        link
+      );
+      const row = { el: li, topic, check, link, item };
+      paintTopic(row);
+      paintCurrent(row);
+      check.checked = Boolean(store.get().selection?.has(item.id));
+      if (topicOf(item) === "") watchForTopic(row);
+      return row;
+    }
+    function paintTopic(row) {
+      const topic = topicOf(row.item);
+      row.topic.textContent = topic !== "" ? topic : firstLines.get(row.item.id) ?? "";
+    }
+    function paintCurrent(row) {
+      const on = row.item.id === currentId();
+      row.el.classList.toggle("is-current", on);
+      if (on) row.link.setAttribute("aria-current", "true");
+      else row.link.removeAttribute("aria-current");
+    }
+    const visible = /* @__PURE__ */ new Set();
+    const waiting = [];
+    const inflight = /* @__PURE__ */ new Set();
+    let active = 0;
+    function pump() {
+      while (!destroyed && active < FETCH_SLOTS && waiting.length > 0) {
+        const id = waiting.shift();
+        if (!visible.has(id) || firstLines.has(id) || inflight.has(id)) continue;
+        active += 1;
+        inflight.add(id);
+        api.getConversation(id).then(
+          (conversation) => {
+            if (destroyed) return;
+            firstLines.set(id, firstClientLine(conversation));
+            const row = rows.get(id);
+            if (row) paintTopic(row);
+            if (view.query.trim() !== "") paint();
+          },
+          () => {
+          }
+        ).finally(() => {
+          active -= 1;
+          inflight.delete(id);
+          pump();
+        });
+      }
+    }
+    function want(id) {
+      if (firstLines.has(id) || inflight.has(id) || waiting.includes(id)) return;
+      waiting.push(id);
+      pump();
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.getAttribute("data-id");
+          if (!id) continue;
+          if (entry.isIntersecting) {
+            visible.add(id);
+            want(id);
+          } else {
+            visible.delete(id);
+          }
+        }
+      },
+      { rootMargin: "160px 0px" }
+    ) : null;
+    function watchForTopic(row) {
+      if (observer) {
+        observer.observe(row.el);
+      } else {
+        visible.add(row.item.id);
+        want(row.item.id);
+      }
+    }
+    function dropRows() {
+      for (const row of rows.values()) observer?.unobserve(row.el);
+      rows.clear();
+      visible.clear();
+      waiting.length = 0;
+    }
+    function paintState(kind) {
+      clear(stateBox);
+      stateBox.hidden = kind === null;
+      if (kind === null) return;
+      const notes = {
+        loading: [t("queue.loading")],
+        importing: [t("queue.importing", { group: IMPORT_ON_EMPTY })],
+        error: [t("queue.loadFailed"), errorText(view.error)],
+        empty: [t("queue.empty"), t("queue.emptyNote")],
+        nomatch: [t("queue.noMatch"), t("queue.noMatchNote")]
+      };
+      const [title, note] = notes[kind];
+      stateBox.append(
+        h(
+          "div",
+          { class: "cqa-empty", data: { test: `queue-${kind}` } },
+          h("b", { class: "cqa-empty-title", text: title }),
+          note ? h("p", { class: "cqa-empty-note", text: note }) : null,
+          kind === "error" ? h("button", { class: "cqa-q-retry", attrs: { type: "button" }, data: { test: "queue-retry" }, text: t("queue.retry"), on: { click: () => load2() } }) : null
+        )
+      );
+    }
+    function paintLanguages() {
+      const codes = [...new Set(view.items.map((item) => item.language).filter((code) => typeof code === "string" && code !== ""))].sort();
+      if (view.language !== "" && !codes.includes(view.language)) view.language = "";
+      language.replaceChildren(
+        h("option", { attrs: { value: "" }, text: t("queue.language.all") }),
+        ...codes.map((code) => h("option", { attrs: { value: code }, text: code }))
+      );
+      language.value = view.language;
+    }
+    function paint() {
+      if (destroyed) return;
+      const hasItems = view.items.length > 0;
+      controls.hidden = !hasItems;
+      list.hidden = !hasItems;
+      let shown = [];
+      if (hasItems) {
+        const q = queryText();
+        const base = view.items.filter((item) => (view.language === "" || item.language === view.language) && matchesQuery(item, q));
+        for (const pill of pills) {
+          pill.count.textContent = String(base.filter(MATCHES[pill.name]).length);
+          pill.button.setAttribute("aria-pressed", String(pill.name === view.filter));
+          pill.button.classList.toggle("is-on", pill.name === view.filter);
+        }
+        shown = base.filter(MATCHES[view.filter]);
+        list.replaceChildren(
+          ...shown.map((item) => {
+            let row = rows.get(item.id);
+            if (!row) {
+              row = buildRow(item);
+              rows.set(item.id, row);
+            }
+            return row.el;
+          })
+        );
+        summary.textContent = t("queue.shown", { shown: shown.length, total: view.items.length });
+      } else {
+        clear(list);
+        summary.textContent = "";
+      }
+      if (hasItems) paintState(shown.length === 0 ? "nomatch" : null);
+      else paintState(view.phase === "ready" ? "empty" : view.phase);
+    }
+    let loadRun = 0;
+    let imported = false;
+    async function load2() {
+      const run = ++loadRun;
+      const stale = () => destroyed || run !== loadRun;
+      if (view.items.length === 0) {
+        view.phase = "loading";
+        paint();
+      }
+      try {
+        let items = await api.listConversations();
+        if (stale()) return;
+        if (items.length === 0 && !imported) {
+          view.phase = "importing";
+          paint();
+          await api.importDataset(IMPORT_ON_EMPTY);
+          if (stale()) return;
+          imported = true;
+          items = await api.listConversations();
+          if (stale()) return;
+        }
+        dropRows();
+        firstLines.clear();
+        view.items = items;
+        view.groups = new Set(items.map((item) => item.group_id)).size > 1;
+        view.phase = "ready";
+        view.error = null;
+        view.remote = null;
+        paintLanguages();
+        pruneSelection();
+        if (queryText().length >= SERVER_SEARCH_MIN) scheduleServerSearch();
+        paint();
+      } catch (error) {
+        if (stale()) return;
+        if (view.items.length > 0) {
+          toastError(store, error, { retry: () => load2() });
+        } else {
+          view.phase = "error";
+          view.error = error;
+          paint();
+        }
+      }
+    }
+    function pruneSelection() {
+      const selection = store.get().selection;
+      if (!selection || selection.size === 0) return;
+      const known = new Set(view.items.map((item) => item.id));
+      const kept = [...selection].filter((id) => known.has(id));
+      if (kept.length !== selection.size) store.set({ selection: new Set(kept) });
+    }
+    subs.push(
+      watch(store, (state) => state.selection, (selection) => {
+        for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
+      })
+    );
+    subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));
+    subs.push(watch(store, (state) => state.queueRefresh, () => load2()));
+    paint();
+    load2();
+    return {
+      el,
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(searchTimer);
+        subs.forEach((off) => off());
+        observer?.disconnect();
+        rows.clear();
+      }
+    };
   }
 
   // src/ui/shell.js
@@ -3014,8 +3443,8 @@
     return {
       el,
       update(next) {
-        const nextId = next.params.id ?? null;
-        if (nextId !== id) fillConversation(nextId);
+        const nextId2 = next.params.id ?? null;
+        if (nextId2 !== id) fillConversation(nextId2);
       },
       destroy() {
         subs.forEach((off) => off());
@@ -3111,6 +3540,10 @@
       groupId: groupOf(ctx.conversationId) ?? DEFAULT_GROUP,
       route: isCompact({ mode: ctx.mode, conversationId: ctx.conversationId }) ? compactRoute(ctx.conversationId) : parseRoute(window.location.hash),
       toasts: [],
+      selection: /* @__PURE__ */ new Set(),
+      // ids ticked in the queue; always replaced, never mutated
+      queueRefresh: 0,
+      // any change reloads the queue (after an import or an evaluation)
       queueOpen: false,
       // the queue drawer below 900 px
       pane: "transcript"
@@ -3137,7 +3570,7 @@
     };
     window.addEventListener("hashchange", onHashChange);
     if (ctx.testHooks) window.__cqaTest = { api, store, transcript: null };
-    const shell = createShell(store, api, { panes: options.panes, views: options.views });
+    const shell = createShell(store, api, { panes: { queue: createQueue, ...options.panes }, views: options.views });
     el.replaceChildren(shell.el);
     let destroyed = false;
     return {
