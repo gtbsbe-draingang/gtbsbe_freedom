@@ -4440,6 +4440,10 @@
       ["path", { d: "m16.5 16.5 4.5 4.5" }]
     ],
     chevron: [["path", { d: "m6 9 6 6 6-6" }]],
+    globe: [
+      ["circle", { cx: 12, cy: 12, r: 9 }],
+      ["path", { d: "M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3Z" }]
+    ],
     list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
     close: [["path", { d: "M6 6l12 12M18 6 6 18" }]],
     check: [["path", { d: "m5 12.5 4.5 4.5L19 7.5" }]],
@@ -4646,6 +4650,133 @@
     host.append(el);
     comment.focus();
     return { el, close };
+  }
+
+  // src/ui/dropdown.js
+  var uid = 0;
+  function dropdown(select, { variant = "field", lead = null } = {}) {
+    const id = `cqa-dd-${++uid}`;
+    const test = select.getAttribute("data-test");
+    const label = h("span", { attrs: { id: `${id}-label` }, verbatim: true });
+    label.hidden = true;
+    const value2 = h("span", { class: "cqa-dd-value", attrs: { id: `${id}-value` }, verbatim: true });
+    const short = h("span", { class: "cqa-dd-short", attrs: { "aria-hidden": "true" }, verbatim: true });
+    const button = h(
+      "button",
+      {
+        class: "cqa-dd-btn",
+        attrs: { type: "button", "aria-haspopup": "listbox", "aria-expanded": "false", "aria-controls": `${id}-list`, "aria-labelledby": `${id}-label ${id}-value` },
+        data: { test: test && `${test}-button` }
+      },
+      lead ? h("span", { class: "cqa-dd-lead" }, icon(lead, { size: 14 })) : null,
+      value2,
+      short,
+      icon("chevron", { size: 14 })
+    );
+    const list = h("div", { class: ["cqa-menu", "cqa-dd-list"], attrs: { id: `${id}-list`, role: "listbox", "aria-labelledby": `${id}-label` }, data: { test: test && `${test}-list` }, verbatim: true });
+    list.hidden = true;
+    select.hidden = true;
+    select.tabIndex = -1;
+    select.setAttribute("aria-hidden", "true");
+    const el = h("div", { class: ["cqa-dd", `cqa-dd--${variant}`, lead && "cqa-dd--lead"] }, label, button, list, select);
+    let items = [];
+    const optionsKey = () => [...select.options].map((o) => `${o.value}\0${o.textContent}\0${o.disabled}`).join("");
+    let drawnKey = null;
+    function drawItems() {
+      drawnKey = optionsKey();
+      items = [...select.options].map((option, index) => {
+        const text3 = h("span", { class: "cqa-dd-text" });
+        text3.textContent = option.textContent;
+        const item = h(
+          "button",
+          { class: "cqa-menu-item", attrs: { type: "button", role: "option", tabindex: "-1", "aria-selected": "false" }, on: { click: () => choose(index) } },
+          text3,
+          icon("check", { size: 14 })
+        );
+        item.disabled = option.disabled;
+        return item;
+      });
+      list.replaceChildren(...items);
+    }
+    function paint() {
+      if (optionsKey() !== drawnKey) drawItems();
+      label.textContent = select.getAttribute("aria-label") ?? "";
+      const at = select.selectedIndex;
+      value2.textContent = at >= 0 ? select.options[at].textContent : "";
+      const brief = at >= 0 ? select.options[at].getAttribute("data-short") : null;
+      short.textContent = brief ?? "";
+      el.classList.toggle("cqa-dd--short", brief !== null);
+      items.forEach((item, i) => item.setAttribute("aria-selected", String(i === at)));
+      button.disabled = select.disabled;
+      if (select.disabled) close();
+    }
+    function choose(index) {
+      const changed = select.selectedIndex !== index;
+      select.selectedIndex = index;
+      close();
+      button.focus();
+      if (changed) select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    const onOutside = (event) => {
+      if (!el.contains(event.target)) close();
+    };
+    function open() {
+      if (select.disabled || items.length === 0) return;
+      list.hidden = false;
+      button.setAttribute("aria-expanded", "true");
+      document.addEventListener("pointerdown", onOutside);
+      const chosen = items[select.selectedIndex];
+      (chosen && !chosen.disabled ? chosen : items.find((item) => !item.disabled))?.focus();
+    }
+    function close() {
+      if (list.hidden) return;
+      list.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      document.removeEventListener("pointerdown", onOutside);
+    }
+    button.addEventListener("click", () => list.hidden ? open() : close());
+    button.addEventListener("keydown", (event) => {
+      if ((event.key === "ArrowDown" || event.key === "ArrowUp") && list.hidden) {
+        event.preventDefault();
+        open();
+      }
+    });
+    list.addEventListener("keydown", (event) => {
+      const enabled = items.filter((item) => !item.disabled);
+      const at = enabled.indexOf(document.activeElement);
+      const go = (i) => enabled[(i + enabled.length) % enabled.length]?.focus();
+      if (event.key === "ArrowDown") go(at + 1);
+      else if (event.key === "ArrowUp") go(at < 0 ? -1 : at - 1);
+      else if (event.key === "Home") go(0);
+      else if (event.key === "End") go(-1);
+      else return;
+      event.preventDefault();
+    });
+    el.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || list.hidden) return;
+      event.stopPropagation();
+      close();
+      button.focus();
+    });
+    list.addEventListener("mousedown", (event) => event.preventDefault());
+    el.addEventListener("focusout", (event) => {
+      if (!el.contains(event.relatedTarget)) close();
+    });
+    for (const name of ["value", "selectedIndex"]) {
+      const native = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, name);
+      Object.defineProperty(select, name, {
+        configurable: true,
+        get: () => native.get.call(select),
+        set: (next) => {
+          native.set.call(select, next);
+          paint();
+        }
+      });
+    }
+    select.addEventListener("change", paint);
+    new MutationObserver(paint).observe(select, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["disabled", "aria-label"] });
+    paint();
+    return el;
   }
 
   // src/ui/voice-measurements.js
@@ -4872,7 +5003,7 @@
     const bar2 = h(
       "div",
       { class: "cqa-sc-bar" },
-      h("label", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), select),
+      h("div", { class: "cqa-sc-pick" }, h("span", { class: "cqa-sc-pick-label", text: t("scorecard.checklist") }), dropdown(select)),
       h("div", { class: "cqa-sc-run" }, runButton, fullButton),
       hint,
       status
@@ -8854,9 +8985,9 @@
       attrs: { "aria-label": t("language.label") },
       data: { test: "ui-language" },
       on: { change: () => setLanguage(language2.value) }
-    }, [["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430 (KAZ)"], ["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (RU)"], ["en", "English (EN)"]].map(([value2, label]) => h("option", { verbatim: true, attrs: { value: value2 }, text: label })));
+    }, [["kk", "\u049A\u0430\u0437\u0430\u049B\u0448\u0430 (KAZ)", "KAZ"], ["ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (RU)", "RU"], ["en", "English (EN)", "EN"]].map(([value2, label, short]) => h("option", { verbatim: true, attrs: { value: value2 }, data: { short }, text: label })));
     language2.value = currentLanguage();
-    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language2, roleSwitch(store, track), themeToggle(store, track));
+    const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language2, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track));
     if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
     const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));
     const paint = (route2) => {

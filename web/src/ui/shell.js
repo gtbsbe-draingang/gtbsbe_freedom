@@ -11,6 +11,7 @@ import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 import { t, currentLanguage, setLanguage } from "../i18n/ru.js";
 import { isCompact, watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
+import { dropdown } from "./dropdown.js";
 import { icon } from "./icons.js";
 import { logoMark, logoWord } from "./logo.js";
 import { href, navFor } from "./router.js";
@@ -144,9 +145,9 @@ function buildHeader(store, compact, track) {
   const language = h("select", {
     class: "cqa-language", attrs: { "aria-label": t("language.label") }, data: { test: "ui-language" },
     on: { change: () => setLanguage(language.value) },
-  }, [["kk", "Қазақша (KAZ)"], ["ru", "Русский (RU)"], ["en", "English (EN)"]].map(([value,label]) => h("option", {verbatim:true, attrs:{value}, text:label})));
+  }, [["kk", "Қазақша (KAZ)", "KAZ"], ["ru", "Русский (RU)", "RU"], ["en", "English (EN)", "EN"]].map(([value, label, short]) => h("option", { verbatim: true, attrs: { value }, data: { short }, text: label })));
   language.value = currentLanguage();
-  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), language, roleSwitch(store, track), themeToggle(store, track));
+  const right = h("div", { class: "cqa-right" }, compact ? null : datasetBadge(store, track), dropdown(language, { variant: "pill", lead: "globe" }), roleSwitch(store, track), themeToggle(store, track));
   if (compact) return h("header", { class: ["cqa-top", "cqa-top--compact"] }, prod, right);
 
   const items = NAV.map((name) => h("a", { class: "cqa-nav-item", attrs: { href: href(name) }, data: { test: `nav-${name}` }, text: t(`nav.${name}`) }));
