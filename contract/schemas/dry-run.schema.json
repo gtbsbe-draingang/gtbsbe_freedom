@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cqa/dry-run",
+  "title": "Dry run",
+  "description": "POST /evaluations with dry_run: true starts nothing and returns this estimate.",
+  "type": "object",
+  "required": [
+    "total",
+    "model_calls",
+    "reused"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "model_calls": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reused": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

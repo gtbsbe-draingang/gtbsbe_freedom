@@ -1,0 +1,23 @@
+{
+  "name": "cqa-web",
+  "version": "0.1.0",
+  "description": "CQA front end: static files, embeddable in Microsoft Dynamics 365",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node tools/dev.mjs",
+    "serve": "node tools/serve.mjs",
+    "test": "node --test \"test/unit/**/*.test.mjs\"",
+    "e2e": "node test/e2e/run.mjs",
+    "check:dist": "node tools/check-dist.mjs",
+    "check": "npm test && npm run e2e && npm run check:dist"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "esbuild": "^0.28.2"
+  }
+}

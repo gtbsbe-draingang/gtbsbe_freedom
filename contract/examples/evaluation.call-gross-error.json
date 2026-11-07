@@ -1,0 +1,268 @@
+{
+  "id": "ev-0003",
+  "created_at": "2026-11-07T09:31:00Z",
+  "conversation": "example:p4-ru-001",
+  "checklist_id": "official-chat",
+  "version": 1,
+  "status": "done",
+  "source": "mock",
+  "model": "mock-grader",
+  "cost_usd": 0,
+  "results": [
+    {
+      "criterion_id": "c01",
+      "answer": "no",
+      "final_answer": "no",
+      "kinds": [],
+      "points": 0,
+      "effective_weight": 12.5,
+      "explanation": "Оператор ответил «Алло.», не поздоровался и не представился.",
+      "evidence": [
+        {
+          "message_index": 0,
+          "quote": "Алло.",
+          "role": "expected_here"
+        }
+      ],
+      "checked_range": {
+        "from": 0,
+        "to": 2
+      },
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": "Начните ответ с приветствия и имени: «Здравствуйте, меня зовут …, чем могу помочь?»",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c02",
+      "answer": "yes",
+      "final_answer": "yes",
+      "kinds": [],
+      "points": 18.75,
+      "effective_weight": 18.75,
+      "explanation": "Оператор уточнил, о каком рынке идёт речь, прежде чем отвечать.",
+      "evidence": [
+        {
+          "message_index": 2,
+          "quote": "вас интересуют сделки на внутреннем или на зарубежном рынке",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c03",
+      "answer": "na",
+      "final_answer": "na",
+      "kinds": [],
+      "points": null,
+      "effective_weight": null,
+      "explanation": "Клиент спросил об общих тарифах, защищённых действий не требовалось.",
+      "evidence": [
+        {
+          "message_index": 1,
+          "quote": "какая у вас комиссия за сделки с акциями",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": "Запрос не требовал идентификации: общий вопрос о тарифах.",
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c04",
+      "answer": {
+        "step": 5
+      },
+      "final_answer": {
+        "step": 5
+      },
+      "kinds": [],
+      "points": 6.25,
+      "effective_weight": 25,
+      "explanation": "Есть общая подсказка, что комиссия зависит от тарифа, но цифр нет и клиент так и не узнал, где посмотреть тарифы.",
+      "evidence": [
+        {
+          "message_index": 4,
+          "quote": "Точных цифр у меня сейчас нет.",
+          "role": "supports"
+        },
+        {
+          "message_index": 6,
+          "quote": "найдите сами",
+          "role": "expected_here"
+        }
+      ],
+      "checked_range": {
+        "from": 2,
+        "to": 8
+      },
+      "na_reason": null,
+      "confidence": "medium",
+      "needs_review": false,
+      "coaching": "Назовите ориентир по комиссии или подскажите раздел сайта с тарифами и предложите отправить ссылку.",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c05",
+      "answer": "no",
+      "final_answer": "no",
+      "kinds": [],
+      "points": 0,
+      "effective_weight": 18.75,
+      "explanation": "Оператор ответил грубо и не отреагировал на недовольство клиента.",
+      "evidence": [
+        {
+          "message_index": 6,
+          "quote": "Это глупый вопрос, найдите сами.",
+          "role": "supports"
+        },
+        {
+          "message_index": 7,
+          "quote": "Не надо так со мной разговаривать.",
+          "role": "supports"
+        }
+      ],
+      "checked_range": {
+        "from": 5,
+        "to": 8
+      },
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": "Отвечайте спокойно и извинитесь, если клиент почувствовал грубость: «Простите, давайте разберёмся».",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c06",
+      "answer": {
+        "step": 4
+      },
+      "final_answer": {
+        "step": 4
+      },
+      "kinds": [],
+      "points": 7.5,
+      "effective_weight": 18.75,
+      "explanation": "Клиенту пришлось переспрашивать: ответ о комиссии не содержал цифр, и клиент повторил вопрос о тарифах.",
+      "evidence": [
+        {
+          "message_index": 5,
+          "quote": "А где на сайте посмотреть тарифы?",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "medium",
+      "needs_review": false,
+      "coaching": "Сначала ответьте на заданный вопрос, затем уточняйте детали.",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c07",
+      "answer": "no",
+      "final_answer": "no",
+      "kinds": [],
+      "points": 0,
+      "effective_weight": 6.25,
+      "explanation": "Оператор попрощался, но не подвёл итог и не предложил дальнейшую помощь.",
+      "evidence": [
+        {
+          "message_index": 8,
+          "quote": "Всё, у меня другие звонки. До свидания.",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": "Перед прощанием подведите итог и предложите помощь по другим вопросам.",
+      "reused": false,
+      "carried_decision": null
+    },
+    {
+      "criterion_id": "c08",
+      "answer": "yes",
+      "final_answer": "yes",
+      "kinds": [
+        "insult"
+      ],
+      "points": 0,
+      "effective_weight": 0,
+      "explanation": "Оператор оскорбил клиента: назвал вопрос глупым и сказал, что клиент не понимает, о чём спрашивает.",
+      "evidence": [
+        {
+          "message_index": 6,
+          "quote": "Вы сами не понимаете, что спрашиваете. Это глупый вопрос",
+          "role": "supports"
+        }
+      ],
+      "checked_range": null,
+      "na_reason": null,
+      "confidence": "high",
+      "needs_review": false,
+      "coaching": null,
+      "reused": false,
+      "carried_decision": null
+    }
+  ],
+  "original_total": 32.5,
+  "final_total": 32.5,
+  "sections": [
+    {
+      "section_id": "start",
+      "points": 18.75,
+      "available": 31.25,
+      "percent": 60
+    },
+    {
+      "section_id": "safety",
+      "points": 6.25,
+      "available": 25,
+      "percent": 25
+    },
+    {
+      "section_id": "conduct",
+      "points": 7.5,
+      "available": 43.75,
+      "percent": 17.14
+    },
+    {
+      "section_id": "gross",
+      "points": null,
+      "available": null,
+      "percent": null
+    }
+  ],
+  "gross_error": {
+    "flag": true,
+    "kinds": [
+      "insult"
+    ],
+    "explanation": "Оператор оскорбил клиента: назвал вопрос глупым и сказал, что клиент не понимает, о чём спрашивает.",
+    "evidence": [
+      {
+        "message_index": 6,
+        "quote": "Вы сами не понимаете, что спрашиваете. Это глупый вопрос",
+        "role": "supports"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "models": [
+    "model-large",
+    "model-small"
+  ],
+  "prices": {
+    "model-large": {
+      "input_per_mtok_usd": 3,
+      "output_per_mtok_usd": 15
+    },
+    "model-small": {
+      "input_per_mtok_usd": 0.8,
+      "output_per_mtok_usd": 4
+    }
+  },
+  "model_key_configured": false,
+  "default_checklist": {
+    "checklist_id": "official-chat",
+    "version": 1
+  }
+}
