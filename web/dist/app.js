@@ -430,6 +430,7 @@
     "error.organizer_url_missing": "\u041D\u0435 \u0437\u0430\u0434\u0430\u043D \u0430\u0434\u0440\u0435\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445: \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043D\u0435\u043B\u044C\u0437\u044F.",
     "error.role_not_allowed": "\u042D\u0442\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E \u0434\u043B\u044F \u0432\u0430\u0448\u0435\u0439 \u0440\u043E\u043B\u0438.",
     "error.not_found": "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E: \u0437\u0430\u043F\u0438\u0441\u044C \u0443\u0434\u0430\u043B\u0435\u043D\u0430 \u0438\u043B\u0438 \u0441\u0441\u044B\u043B\u043A\u0430 \u0443\u0441\u0442\u0430\u0440\u0435\u043B\u0430.",
+    "error.reference_missing": "\u042D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u043D\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435. \u041E\u0442\u0447\u0451\u0442 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F, \u043A\u043E\u0433\u0434\u0430 \u0438\u0445 \u0434\u043E\u0431\u0430\u0432\u044F\u0442.",
     "error.organizer_error": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B. \u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0443 \u043F\u043E\u0437\u0436\u0435.",
     "error.no_records": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u043D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438.",
     "error.bad_record": "\u0412 \u0444\u0430\u0439\u043B\u0435 \u0435\u0441\u0442\u044C \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C.",
@@ -455,17 +456,24 @@
     "reports.accuracyNote": "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438. \u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u0430 \u0443\u043A\u0430\u0437\u0430\u043D \u043D\u0438\u0436\u0435.",
     "reports.analyticsNote": "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u043E\u0446\u0435\u043D\u043A\u0438 \u0441 \u0443\u0447\u0451\u0442\u043E\u043C \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E \u0430\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F\u043C; \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u0432\u0435\u0440\u0441\u0438\u044F \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u044E\u0442\u0441\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C.",
     "reports.referenceMissing": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432 \u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D",
-    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D",
+    "reports.referenceDraft": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0441 \u043F\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438 \u043A\u043E\u043C\u0430\u043D\u0434\u044B, \u0430 \u043D\u0435 \u0441 \u0440\u0430\u0437\u043C\u0435\u0442\u043A\u043E\u0439 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432. \u0421\u043F\u043E\u0440\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B; \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0435 \u0435\u0449\u0451 \u0442\u0440\u0435\u0431\u0443\u044E\u0442 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 \u043A\u043E\u043C\u0430\u043D\u0434\u043E\u0439.",
+    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0441\u043E \u0432\u0442\u043E\u0440\u044B\u043C \u0434\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u0449\u0438\u043A\u043E\u043C, \u0430 \u043D\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438",
     "reports.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
-    "reports.overall": "{agreement} \xB7 n = {n}",
-    "reports.counts": "\u043D\u0435\u0442 \u043E\u0446\u0435\u043D\u043A\u0438: {missing} \xB7 \u0441\u043F\u043E\u0440\u043D\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B: {disputed}",
+    "reports.checklist": "\u0427\u0435\u043A-\u043B\u0438\u0441\u0442: \xAB{name}\xBB v{version}",
+    "reports.overallLabel": "\u041E\u0431\u0449\u0435\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435",
+    "reports.overallN": "\u0441\u0440\u0430\u0432\u043D\u0435\u043D\u043E \u043E\u0442\u0432\u0435\u0442\u043E\u0432: {n}",
+    "reports.counts": "\u0431\u0435\u0437 \u043E\u0442\u0432\u0435\u0442\u0430 \u043C\u043E\u0434\u0435\u043B\u0438: {missing} \xB7 \u0441\u043F\u043E\u0440\u043D\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B: {disputed}",
     "reports.noComparable": "\u041D\u0435\u0442 \u0441\u043E\u043F\u043E\u0441\u0442\u0430\u0432\u0438\u043C\u044B\u0445 \u043E\u0446\u0435\u043D\u043E\u043A",
+    "reports.noComparableRun": "\u041D\u0435\u0442 \u043E\u0446\u0435\u043D\u043E\u043A \u043C\u043E\u0434\u0435\u043B\u0438 \u043F\u043E \u0432\u0435\u0440\u0441\u0438\u0438 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430, \u0434\u043B\u044F \u043A\u043E\u0442\u043E\u0440\u043E\u0439 \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u044B \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B. \u041E\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440 DEV \u043F\u043E \u044D\u0442\u043E\u0439 \u0432\u0435\u0440\u0441\u0438\u0438, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442.",
+    "reports.noComparableVersion": "\u041D\u0435\u0442 \u043E\u0446\u0435\u043D\u043E\u043A \u043C\u043E\u0434\u0435\u043B\u0438 \u043F\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0443 \xAB{name}\xBB v{version}, \u0434\u043B\u044F \u043A\u043E\u0442\u043E\u0440\u043E\u0433\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u044B \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B. \u041E\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u0430\u0431\u043E\u0440 DEV \u043F\u043E \u044D\u0442\u043E\u0439 \u0432\u0435\u0440\u0441\u0438\u0438, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u043E\u0442\u0447\u0451\u0442.",
     "reports.byCriterion": "\u041F\u043E \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u044F\u043C",
     "reports.byLanguage": "\u041F\u043E \u044F\u0437\u044B\u043A\u0430\u043C",
     "reports.byChannel": "\u041F\u043E \u043A\u0430\u043D\u0430\u043B\u0430\u043C",
-    "reports.group": "\u0413\u0440\u0443\u043F\u043F\u0430",
+    "reports.languageColumn": "\u042F\u0437\u044B\u043A",
+    "reports.channelColumn": "\u041A\u0430\u043D\u0430\u043B",
     "reports.agreement": "\u0421\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0435",
     "reports.disagreements": "\u0420\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+    "reports.allCriteria": "\u0412\u0441\u0435 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 ({n})",
     "reports.conversation": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "reports.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
     "reports.reference": "\u042D\u0442\u0430\u043B\u043E\u043D",
@@ -920,6 +928,7 @@
     "error.organizer_url_missing": "The data source address is not configured; the group cannot be imported.",
     "error.role_not_allowed": "This action is not available for your role.",
     "error.not_found": "Not found: the record was removed or the link is outdated.",
+    "error.reference_missing": "Reference answers are not installed on the server. The report appears once they are added.",
     "error.organizer_error": "The data source did not respond. Try again later.",
     "error.no_records": "The file contains no records.",
     "error.bad_record": "The file contains an invalid record.",
@@ -945,17 +954,24 @@
     "reports.accuracyNote": "Agreement with reference answers. The reference source is shown below.",
     "reports.analyticsNote": "Final scores including appeal decisions; the server determines the dataset and checklist version.",
     "reports.referenceMissing": "Reference answer source not specified",
-    "reports.referenceDemo": "Demo: no reference answers loaded",
+    "reports.referenceDraft": "Compared with the team's draft answers, not the organisers' labels. Disputed answers are excluded; the rest still need the team's review.",
+    "reports.referenceDemo": "Demo: compared with a second demo grader, not with reference answers",
     "reports.model": "Model: {model}",
-    "reports.overall": "{agreement} \xB7 n = {n}",
-    "reports.counts": "missing evaluations: {missing} \xB7 disputed excluded: {disputed}",
+    "reports.checklist": "Checklist: \u201C{name}\u201D v{version}",
+    "reports.overallLabel": "Overall agreement",
+    "reports.overallN": "answers compared: {n}",
+    "reports.counts": "no model answer: {missing} \xB7 disputed excluded: {disputed}",
     "reports.noComparable": "No comparable evaluations",
+    "reports.noComparableRun": "No model evaluations for the checklist version the reference answers were written for. Evaluate the DEV set with that version to fill this report.",
+    "reports.noComparableVersion": "No model evaluations with \u201C{name}\u201D v{version}, the checklist the reference answers were written for. Evaluate the DEV set with that version to fill this report.",
     "reports.byCriterion": "By criterion",
     "reports.byLanguage": "By language",
     "reports.byChannel": "By channel",
-    "reports.group": "Group",
+    "reports.languageColumn": "Language",
+    "reports.channelColumn": "Channel",
     "reports.agreement": "Agreement",
     "reports.disagreements": "Disagreements",
+    "reports.allCriteria": "All criteria ({n})",
     "reports.conversation": "Conversation",
     "reports.criterion": "Criterion",
     "reports.reference": "Reference",
@@ -1410,6 +1426,7 @@
     "error.organizer_url_missing": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u043A\u04E9\u0437\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u043C\u0435\u0433\u0435\u043D; \u0442\u043E\u043F\u0442\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0435\u043C\u0435\u0441.",
     "error.role_not_allowed": "\u0411\u04B1\u043B \u04D9\u0440\u0435\u043A\u0435\u0442 \u0441\u0456\u0437\u0434\u0456\u04A3 \u0440\u04E9\u043B\u0456\u04A3\u0456\u0437 \u04AF\u0448\u0456\u043D \u049B\u043E\u043B\u0436\u0435\u0442\u0456\u043C\u0441\u0456\u0437.",
     "error.not_found": "\u0422\u0430\u0431\u044B\u043B\u043C\u0430\u0434\u044B: \u0436\u0430\u0437\u0431\u0430 \u0436\u043E\u0439\u044B\u043B\u0493\u0430\u043D \u043D\u0435\u043C\u0435\u0441\u0435 \u0441\u0456\u043B\u0442\u0435\u043C\u0435 \u0435\u0441\u043A\u0456\u0440\u0433\u0435\u043D.",
+    "error.reference_missing": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0441\u0435\u0440\u0432\u0435\u0440\u0434\u0435 \u043E\u0440\u043D\u0430\u0442\u044B\u043B\u043C\u0430\u0493\u0430\u043D. \u041E\u043B\u0430\u0440 \u049B\u043E\u0441\u044B\u043B\u0493\u0430\u043D\u0434\u0430 \u0435\u0441\u0435\u043F \u043F\u0430\u0439\u0434\u0430 \u0431\u043E\u043B\u0430\u0434\u044B.",
     "error.organizer_error": "\u0414\u0435\u0440\u0435\u043A\u0442\u0435\u0440 \u043A\u04E9\u0437\u0456 \u0436\u0430\u0443\u0430\u043F \u0431\u0435\u0440\u043C\u0435\u0434\u0456. \u041A\u0435\u0439\u0456\u043D\u0456\u0440\u0435\u043A \u049B\u0430\u0439\u0442\u0430\u043B\u0430\u04A3\u044B\u0437.",
     "error.no_records": "\u0424\u0430\u0439\u043B\u0434\u0430 \u0436\u0430\u0437\u0431\u0430\u043B\u0430\u0440 \u0436\u043E\u049B.",
     "error.bad_record": "\u0424\u0430\u0439\u043B\u0434\u0430 \u0436\u0430\u0440\u0430\u043C\u0441\u044B\u0437 \u0436\u0430\u0437\u0431\u0430 \u0431\u0430\u0440.",
@@ -1435,17 +1452,24 @@
     "reports.accuracyNote": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u043C\u0435\u043D \u0441\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A. \u042D\u0442\u0430\u043B\u043E\u043D \u043A\u04E9\u0437\u0456 \u0442\u04E9\u043C\u0435\u043D\u0434\u0435 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u0433\u0435\u043D.",
     "reports.analyticsNote": "\u0410\u043F\u0435\u043B\u043B\u044F\u0446\u0438\u044F \u0448\u0435\u0448\u0456\u043C\u0434\u0435\u0440\u0456 \u0435\u0441\u043A\u0435\u0440\u0456\u043B\u0433\u0435\u043D \u049B\u043E\u0440\u044B\u0442\u044B\u043D\u0434\u044B \u0431\u0430\u0493\u0430\u043B\u0430\u0440; \u0436\u0438\u044B\u043D \u043C\u0435\u043D \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u043D\u04B1\u0441\u049B\u0430\u0441\u044B\u043D \u0441\u0435\u0440\u0432\u0435\u0440 \u0430\u043D\u044B\u049B\u0442\u0430\u0439\u0434\u044B.",
     "reports.referenceMissing": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u0434\u044B\u04A3 \u043A\u04E9\u0437\u0456 \u043A\u04E9\u0440\u0441\u0435\u0442\u0456\u043B\u043C\u0435\u0433\u0435\u043D",
-    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0436\u04AF\u043A\u0442\u0435\u043B\u043C\u0435\u0433\u0435\u043D",
+    "reports.referenceDraft": "\u041A\u043E\u043C\u0430\u043D\u0434\u0430\u043D\u044B\u04A3 \u0430\u043B\u0434\u044B\u043D \u0430\u043B\u0430 \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u044B\u043C\u0435\u043D \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443, \u04B1\u0439\u044B\u043C\u0434\u0430\u0441\u0442\u044B\u0440\u0443\u0448\u044B\u043B\u0430\u0440\u0434\u044B\u04A3 \u0431\u0435\u043B\u0433\u0456\u043B\u0435\u0443\u0456\u043C\u0435\u043D \u0435\u043C\u0435\u0441. \u0414\u0430\u0443\u043B\u044B \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0430\u043B\u044B\u043D\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u043B\u0434\u044B; \u049B\u0430\u043B\u0493\u0430\u043D\u0434\u0430\u0440\u044B\u043D \u043A\u043E\u043C\u0430\u043D\u0434\u0430 \u04D9\u043B\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0443\u0456 \u043A\u0435\u0440\u0435\u043A.",
+    "reports.referenceDemo": "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440\u043C\u0435\u043D \u0435\u043C\u0435\u0441, \u0435\u043A\u0456\u043D\u0448\u0456 \u0434\u0435\u043C\u043E-\u0431\u0430\u0493\u0430\u043B\u0430\u0443\u0448\u044B\u043C\u0435\u043D \u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443",
     "reports.model": "\u041C\u043E\u0434\u0435\u043B\u044C: {model}",
-    "reports.overall": "{agreement} \xB7 n = {n}",
-    "reports.counts": "\u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0431\u0430\u0493\u0430\u043D: {missing} \xB7 \u0434\u0430\u0443\u043B\u044B\u0441\u044B \u0430\u043B\u044B\u043D\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u043B\u0434\u044B: {disputed}",
+    "reports.checklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B: \xAB{name}\xBB v{version}",
+    "reports.overallLabel": "\u0416\u0430\u043B\u043F\u044B \u0441\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A",
+    "reports.overallN": "\u0441\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u044B\u043B\u0493\u0430\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440: {n}",
+    "reports.counts": "\u043C\u043E\u0434\u0435\u043B\u044C \u0436\u0430\u0443\u0430\u0431\u044B \u0436\u043E\u049B: {missing} \xB7 \u0434\u0430\u0443\u043B\u044B\u0441\u044B \u0430\u043B\u044B\u043D\u044B\u043F \u0442\u0430\u0441\u0442\u0430\u043B\u0434\u044B: {disputed}",
     "reports.noComparable": "\u0421\u0430\u043B\u044B\u0441\u0442\u044B\u0440\u0443\u0493\u0430 \u0431\u043E\u043B\u0430\u0442\u044B\u043D \u0431\u0430\u0493\u0430\u043B\u0430\u0440 \u0436\u043E\u049B",
+    "reports.noComparableRun": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0436\u0430\u0437\u044B\u043B\u0493\u0430\u043D \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u043D\u04B1\u0441\u049B\u0430\u0441\u044B \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u043C\u043E\u0434\u0435\u043B\u044C \u0431\u0430\u0493\u0430\u043B\u0430\u0440\u044B \u0436\u043E\u049B. \u0415\u0441\u0435\u043F\u0442\u0456 \u0442\u043E\u043B\u0442\u044B\u0440\u0443 \u04AF\u0448\u0456\u043D DEV \u0436\u0438\u044B\u043D\u044B\u043D \u043E\u0441\u044B \u043D\u04B1\u0441\u049B\u0430\u043C\u0435\u043D \u0431\u0430\u0493\u0430\u043B\u0430\u04A3\u044B\u0437.",
+    "reports.noComparableVersion": "\u042D\u0442\u0430\u043B\u043E\u043D \u0436\u0430\u0443\u0430\u043F\u0442\u0430\u0440 \u0436\u0430\u0437\u044B\u043B\u0493\u0430\u043D \xAB{name}\xBB v{version} \u0442\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u0493\u044B \u0431\u043E\u0439\u044B\u043D\u0448\u0430 \u043C\u043E\u0434\u0435\u043B\u044C \u0431\u0430\u0493\u0430\u043B\u0430\u0440\u044B \u0436\u043E\u049B. \u0415\u0441\u0435\u043F\u0442\u0456 \u0442\u043E\u043B\u0442\u044B\u0440\u0443 \u04AF\u0448\u0456\u043D DEV \u0436\u0438\u044B\u043D\u044B\u043D \u043E\u0441\u044B \u043D\u04B1\u0441\u049B\u0430\u043C\u0435\u043D \u0431\u0430\u0493\u0430\u043B\u0430\u04A3\u044B\u0437.",
     "reports.byCriterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
     "reports.byLanguage": "\u0422\u0456\u043B\u0434\u0435\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
     "reports.byChannel": "\u0410\u0440\u043D\u0430\u043B\u0430\u0440 \u0431\u043E\u0439\u044B\u043D\u0448\u0430",
-    "reports.group": "\u0422\u043E\u043F",
+    "reports.languageColumn": "\u0422\u0456\u043B",
+    "reports.channelColumn": "\u0410\u0440\u043D\u0430",
     "reports.agreement": "\u0421\u04D9\u0439\u043A\u0435\u0441\u0442\u0456\u043A",
     "reports.disagreements": "\u0410\u0439\u044B\u0440\u043C\u0430\u0448\u044B\u043B\u044B\u049B\u0442\u0430\u0440",
+    "reports.allCriteria": "\u0411\u0430\u0440\u043B\u044B\u049B \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u043B\u0435\u0440 ({n})",
     "reports.conversation": "\u0414\u0438\u0430\u043B\u043E\u0433",
     "reports.criterion": "\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0439",
     "reports.reference": "\u042D\u0442\u0430\u043B\u043E\u043D",
@@ -2285,7 +2309,7 @@
     const topRat = rat(top);
     return isZero(topRat) ? ZERO : div(rat(answer.step), topRat);
   }
-  var percentOf = (num, den) => round2(mul(div(num, den), HUNDRED));
+  var percentOf = (num2, den) => round2(mul(div(num2, den), HUNDRED));
   function score(version2, answers) {
     const entries = version2.criteria.map((criterion) => {
       const given = answers[criterion.id];
@@ -3349,7 +3373,7 @@
   }
 
   // src/api/mock/reports.js
-  var REFERENCE_NOTE = "\u0414\u0435\u043C\u043E: \u044D\u0442\u0430\u043B\u043E\u043D \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D";
+  var REFERENCE_NOTE = "\u0414\u0435\u043C\u043E: \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0441\u043E \u0432\u0442\u043E\u0440\u044B\u043C \u0434\u0435\u043C\u043E-\u043E\u0446\u0435\u043D\u0449\u0438\u043A\u043E\u043C, \u0430 \u043D\u0435 \u0441 \u044D\u0442\u0430\u043B\u043E\u043D\u043D\u044B\u043C\u0438 \u043E\u0442\u0432\u0435\u0442\u0430\u043C\u0438";
   var hundredths2 = (x) => Math.round(x * 100);
   var fromHundredths = (n) => n / 100;
   var round22 = (x) => fromHundredths(hundredths2(x));
@@ -3434,6 +3458,7 @@
     return {
       reference_note: REFERENCE_NOTE,
       model: MODEL,
+      checklist: { checklist_id: version2.checklist_id, version: version2.version, name: version2.name },
       overall: { agreement: agreement(hit, n), n },
       by_criterion: [...byCriterion.values()].filter((r) => r.n > 0).map(strip),
       by_language: [...byLanguage.values()].map(strip),
@@ -7996,8 +8021,37 @@
     if (numeric(value2?.step)) return t("scorecard.answer.step", { value: value2.step });
     return typeof value2 === "string" ? value2 : "\u2014";
   }
+  var KNOWN_NOTES = ["reports.referenceDraft", "reports.referenceDemo"];
+  function referenceNote(note) {
+    if (typeof note !== "string" || note.trim() === "") return { text: t("reports.referenceMissing"), verbatim: false };
+    const key = KNOWN_NOTES.find((k) => catalogs.ru[k] === note);
+    return key ? { text: t(key), verbatim: false } : { text: note, verbatim: true };
+  }
+  function modelText(model) {
+    const names = typeof model === "string" ? model.split(",").map((name) => name.trim()).filter(Boolean) : [];
+    return names.length ? names.join(", ") : "\u2014";
+  }
+  var measured = (ref) => ref?.checklist_id && numeric(ref.version) ? { name: ref.name || ref.checklist_id, version: ref.version } : null;
+  function accuracyEmptyText(data) {
+    if (!(data?.missing > 0)) return t("reports.noComparable");
+    const ref = measured(data.checklist);
+    return ref ? t("reports.noComparableVersion", ref) : t("reports.noComparableRun");
+  }
+  var criterionTitles = (data) => new Map((data.by_criterion ?? []).map((r) => [r.criterion_id, r.title || r.criterion_id]));
+  function disagreementFilters(data) {
+    const rows = data.disagreements ?? [];
+    const titles = criterionTitles(data);
+    const counts = /* @__PURE__ */ new Map();
+    for (const r of rows) counts.set(r.criterion_id, (counts.get(r.criterion_id) ?? 0) + 1);
+    const order = [.../* @__PURE__ */ new Set([...titles.keys(), ...counts.keys()])].filter((id) => counts.has(id));
+    return [
+      { value: "", label: t("reports.allCriteria", { n: rows.length }), verbatim: false },
+      ...order.map((id) => ({ value: id, label: `${titles.get(id) ?? id} (${counts.get(id)})`, verbatim: true }))
+    ];
+  }
   var channelText = (value2) => ({ "agent chat": t("reports.channel.chat"), "voice call": t("reports.channel.call") })[value2] ?? value2;
   var cell = (text3, verbatim = false) => h("td", { text: text3, verbatim });
+  var num = (value2) => h("td", { class: "cqa-report-num", text: value2 });
   var link = (id, label) => h("a", { class: "cqa-link", attrs: { href: href("workspace", { id }) }, verbatim: true, text: label ?? id });
   function bar(value2) {
     const el = h(
@@ -8040,29 +8094,71 @@
     let destroyed = false;
     let run = 0;
     function accuracyReport(data) {
-      body.append(
-        h("p", { class: "cqa-report-reference", verbatim: Boolean(data.reference_note) && data.reference_note !== catalogs.ru["reports.referenceDemo"], text: data.reference_note || t("reports.referenceMissing"), data: { test: "accuracy-reference" } }),
-        h("p", { text: t("reports.model", { model: data.model ?? "\u2014" }) }),
-        h("div", { class: "cqa-report-brand", data: { test: "accuracy-overall" }, text: t("reports.overall", { agreement: percentText(data.overall?.agreement), n: data.overall?.n ?? 0 }) }),
+      const note = referenceNote(data.reference_note);
+      const ref = measured(data.checklist);
+      const compared = data.overall?.n > 0;
+      body.append(...[
+        h("p", { class: "cqa-report-reference", verbatim: note.verbatim, text: note.text, data: { test: "accuracy-reference" } }),
+        h("p", { class: "cqa-report-meta", text: t("reports.model", { model: modelText(data.model) }), data: { test: "accuracy-model" } }),
+        ref ? h("p", { class: "cqa-report-meta", text: t("reports.checklist", ref), data: { test: "accuracy-checklist" } }) : null,
+        compared ? h(
+          "div",
+          { class: "cqa-report-brand", data: { test: "accuracy-overall" } },
+          h("span", { class: "cqa-report-brand-label", text: t("reports.overallLabel") }),
+          h("span", { class: "cqa-report-brand-value", text: percentText(data.overall.agreement) }),
+          h("span", { class: "cqa-report-brand-n", text: t("reports.overallN", { n: data.overall.n }) })
+        ) : null,
         h("p", { data: { test: "accuracy-counts" }, text: t("reports.counts", { missing: data.missing ?? 0, disputed: data.disputed_excluded ?? 0 }) })
-      );
-      if (!data.overall?.n) body.append(h("p", { text: t("reports.noComparable"), data: { test: "reports-empty" } }));
-      for (const [key, label, field] of [["by_criterion", t("reports.byCriterion"), "title"], ["by_language", t("reports.byLanguage"), "language"], ["by_channel", t("reports.byChannel"), "channel"]]) {
-        body.append(table(label, [t("reports.group"), t("reports.agreement"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), bar(r.agreement), cell(r.n)]), `accuracy-${key.slice(3)}`));
+      ].filter(Boolean));
+      if (!compared) {
+        body.append(h("p", { class: "cqa-report-empty", text: accuracyEmptyText(data), data: { test: "reports-empty" } }));
+        return;
       }
-      body.append(table(t("reports.disagreements"), [t("reports.conversation"), t("reports.criterion"), t("reports.reference"), t("reports.evaluated")], (data.disagreements ?? []).map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(r.criterion_id), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]), "disagreement"));
+      for (const [key, label, heading, field] of [["by_criterion", t("reports.byCriterion"), t("reports.criterion"), "title"], ["by_language", t("reports.byLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.byChannel"), t("reports.channelColumn"), "channel"]]) {
+        body.append(table(label, [heading, t("reports.agreement"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), bar(r.agreement), num(r.n)]), `accuracy-${key.slice(3)}`));
+      }
+      body.append(disagreementsSection(data));
+    }
+    function disagreementsSection(data) {
+      const rows = data.disagreements ?? [];
+      const titles = criterionTitles(data);
+      const section = table(
+        t("reports.disagreements"),
+        [t("reports.conversation"), t("reports.criterion"), t("reports.reference"), t("reports.evaluated")],
+        rows.map((r) => [h("td", {}, link(r.conversation, r.conversation_id)), cell(titles.get(r.criterion_id) ?? r.criterion_id, true), cell(reportAnswer(r.reference)), cell(reportAnswer(r.evaluated))]),
+        "disagreement"
+      );
+      if (!rows.length) return section;
+      const trs = [...section.querySelectorAll("tbody tr")];
+      rows.forEach((r, i) => {
+        trs[i].dataset.criterion = r.criterion_id;
+      });
+      const filter = h(
+        "select",
+        {
+          class: "cqa-report-select",
+          attrs: { "aria-label": t("reports.criterion") },
+          data: { test: "disagreement-filter" },
+          on: { change: () => {
+            for (const tr of trs) tr.hidden = filter.value !== "" && tr.dataset.criterion !== filter.value;
+          } }
+        },
+        disagreementFilters(data).map((o) => h("option", { attrs: { value: o.value }, text: o.label, verbatim: o.verbatim }))
+      );
+      section.querySelector("h2").after(filter);
+      return section;
     }
     function analyticsReport(data) {
       const criteria = data.by_criterion ?? [];
       if (!criteria.length) body.append(h("p", { text: t("reports.noEvaluations"), data: { test: "reports-empty" } }));
-      body.append(table(t("reports.byCriterion"), [t("reports.criterion"), t("reports.failures"), "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id, true), bar(r.fail_rate), bar(r.na_rate), cell(r.n)]), "analytics-criterion"));
-      for (const [key, label, field] of [["by_language", t("reports.avgLanguage"), "language"], ["by_channel", t("reports.avgChannel"), "channel"]]) {
-        body.append(table(label, [t("reports.group"), t("reports.average"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), cell(averageText(r.avg_total)), cell(r.n)]), `analytics-${field}`));
+      body.append(table(t("reports.byCriterion"), [t("reports.criterion"), t("reports.failures"), "N/A", "n"], criteria.map((r) => [cell(r.title || r.criterion_id, true), bar(r.fail_rate), bar(r.na_rate), num(r.n)]), "analytics-criterion"));
+      for (const [key, label, heading, field] of [["by_language", t("reports.avgLanguage"), t("reports.languageColumn"), "language"], ["by_channel", t("reports.avgChannel"), t("reports.channelColumn"), "channel"]]) {
+        body.append(table(label, [heading, t("reports.average"), "n"], (data[key] ?? []).map((r) => [cell(field === "channel" ? channelText(r[field]) : r[field], field !== "channel"), num(averageText(r.avg_total)), num(r.n)]), `analytics-${field}`));
       }
       const gross = data.gross_errors ?? {};
       body.append(
         h("h2", { text: t("reports.gross", { n: gross.count ?? 0 }), data: { test: "analytics-gross" } }),
-        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(r.kind), cell(r.count)])),
+        table(t("reports.grossKinds"), [t("reports.kind"), t("reports.count")], (gross.by_kind ?? []).map((r) => [cell(r.kind), num(r.count)])),
         h("ul", { class: "cqa-report-links" }, (gross.conversations ?? []).map((id) => h("li", {}, link(id))))
       );
     }
@@ -8081,6 +8177,10 @@
       } catch (error) {
         if (destroyed || mine !== run) return;
         body.removeAttribute("data-test");
+        if (accuracy && error?.code === "reference_missing") {
+          clear(body).append(h("p", { class: "cqa-report-empty", attrs: { role: "status" }, text: errorText(error), data: { test: "accuracy-no-reference" } }));
+          return;
+        }
         clear(body).append(h(
           "div",
           { attrs: { role: "alert" }, data: { test: "reports-error" } },

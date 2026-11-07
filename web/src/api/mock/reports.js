@@ -11,7 +11,8 @@ import { toCsv } from "../../domain/csv.js";
 import { answerLabel, gradeReference } from "./grader.js";
 import { MODEL } from "./fixtures.js";
 
-export const REFERENCE_NOTE = "Демо: эталон не загружен";
+// The mock has no reference answers: it compares with a second seeded grader and says so.
+export const REFERENCE_NOTE = "Демо: сравнение со вторым демо-оценщиком, а не с эталонными ответами";
 
 const hundredths = (x) => Math.round(x * 100);
 const fromHundredths = (n) => n / 100;
@@ -118,6 +119,7 @@ export function buildAccuracy(ctx) {
   return {
     reference_note: REFERENCE_NOTE,
     model: MODEL,
+    checklist: { checklist_id: version.checklist_id, version: version.version, name: version.name },
     overall: { agreement: agreement(hit, n), n },
     by_criterion: [...byCriterion.values()].filter((r) => r.n > 0).map(strip),
     by_language: [...byLanguage.values()].map(strip),

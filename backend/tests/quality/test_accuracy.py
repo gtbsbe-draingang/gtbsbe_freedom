@@ -74,6 +74,13 @@ def test_latest_run_and_model_names():
     assert report.model == 'local-base,local-challenger'
 
 
+def test_report_names_the_checklist_version_it_measures():
+    r, e, kwargs = fixture_data()
+    assert accuracy_report(r, e, **kwargs).checklist == dict(checklist_id='official-chat', version=1, name=None)
+    kwargs['checklist'].name = 'Чек-лист качества чатов'
+    assert accuracy_report(r, [], **kwargs).checklist['name'] == 'Чек-лист качества чатов'
+
+
 def test_duplicate_reference_rejected():
     r, _, _ = fixture_data()
     payload = r.model_dump()
@@ -95,8 +102,9 @@ def test_router_missing_reference_and_valid_shape(tmp_path, monkeypatch, client)
         find_evaluations=lambda *a, **kw: e))
     response = client.get('/api/reports/accuracy')
     assert response.status_code == 200
-    assert set(response.json()) == {'reference_note', 'model', 'overall', 'by_criterion', 'by_language',
+    assert set(response.json()) == {'reference_note', 'model', 'checklist', 'overall', 'by_criterion', 'by_language',
                                      'by_channel', 'missing', 'disputed_excluded', 'disagreements'}
+    assert response.json()['checklist'] == {'checklist_id': 'official-chat', 'version': 1, 'name': None}
     assert response.json()['overall'] == {'agreement': 1.0, 'n': 4}
     assert client.get('/api/reports/accuracy?version=2').json()['error'] == 'reference_mismatch'
     assert client.get('/api/reports/accuracy?group_id=CONTROL').status_code == 409
@@ -122,6 +130,7 @@ def test_shipped_references_default_to_v2_and_exclude_disputed_labels(client):
     assert data['overall'] == {'agreement': None, 'n': 0}
     assert data['disputed_excluded'] == 3  # #25 settled; three labels stay ambiguous
     assert data['missing'] == 517
+    assert (data['checklist']['checklist_id'], data['checklist']['version']) == ('official-chat', 2)  # the UI names it
     assert client.get('/api/reports/accuracy?version=1').status_code == 409
 
 

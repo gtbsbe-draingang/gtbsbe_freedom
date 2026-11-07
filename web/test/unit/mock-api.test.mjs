@@ -1146,18 +1146,21 @@ describe("other endpoints", () => {
     await rejects(api.getComparison({}), "invalid_request");
   });
 
-  test("accuracy compares with a second seeded grader and says the reference is not loaded", async () => {
+  test("accuracy compares with a second seeded grader, says so, and names the checklist version", async () => {
     const api = await setup();
     const empty = await api.getAccuracy();
     assertValid("accuracy", empty);
-    assert.equal(empty.reference_note, "Демо: эталон не загружен");
+    assert.equal(empty.reference_note, "Демо: сравнение со вторым демо-оценщиком, а не с эталонными ответами");
+    assert.equal(empty.checklist.checklist_id, "official-chat");
+    assert.equal(empty.checklist.version, 1);
+    assert.equal(typeof empty.checklist.name, "string");
     assert.equal(empty.overall.n, 0);
     assert.equal(empty.missing, 16, "two conversations, eight criteria each, none graded");
 
     await evaluate(api, [P1, P4]);
     const rep = await api.getAccuracy();
     assertValid("accuracy", rep);
-    assert.equal(rep.reference_note, "Демо: эталон не загружен");
+    assert.equal(rep.reference_note, "Демо: сравнение со вторым демо-оценщиком, а не с эталонными ответами");
     assert.equal(rep.model, "mock");
     assert.equal(rep.overall.n, 16);
     assert.equal(rep.missing, 0);

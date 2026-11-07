@@ -1,6 +1,11 @@
 {
   "reference_note": "Сверка с нашими эталонными ответами, а не с истиной организаторов.",
   "model": "example-model",
+  "checklist": {
+    "checklist_id": "official-chat",
+    "version": 2,
+    "name": "Чек-лист качества чатов"
+  },
   "overall": {
     "agreement": 0.84,
     "n": 50

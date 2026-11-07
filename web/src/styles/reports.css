@@ -3,10 +3,18 @@
 .cqa .cqa-report-head h1 { font-size: 26px; margin: 0; }
 .cqa .cqa-report-muted { color: var(--text-2); }
 .cqa .cqa-report-reference { padding: 16px; border-radius: var(--r-ctl); background: var(--mid-bg); color: var(--mid-ink); overflow-wrap: anywhere; }
-.cqa .cqa-report-brand { padding: 24px; border-radius: var(--r-card); background: var(--brand-panel); color: var(--mint); font-size: 32px; font-variant-numeric: tabular-nums; }
+.cqa .cqa-report-brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding: 20px 24px; border-radius: var(--r-card); background: var(--brand-panel); color: #FFFFFF; }
+.cqa .cqa-report-brand-label { flex-basis: 100%; color: rgba(255, 255, 255, 0.75); font-size: 13px; }
+.cqa .cqa-report-brand-value { color: var(--mint); font-size: 48px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.cqa .cqa-report-brand-n { color: rgba(255, 255, 255, 0.75); font-size: 15px; }
+.cqa .cqa-report-meta { margin: 8px 0; }
+.cqa .cqa-report-empty { padding: 16px; border: 1px dashed var(--line-2); border-radius: var(--r-ctl); color: var(--text-2); }
 .cqa .cqa-report-section { margin: 20px 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); }
 .cqa .cqa-report-section h2 { margin: 0 0 12px; font-size: 18px; }
-.cqa .cqa-report-table { width: 100%; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; }
+.cqa .cqa-report-table { width: 100%; border-collapse: collapse; text-align: left; }
+.cqa .cqa-report-num { font-variant-numeric: tabular-nums; }
+.cqa .cqa-report-select { max-width: 100%; margin: 0 0 8px; padding: 6px 12px; border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font-size: 13px; cursor: pointer; }
+.cqa.cqa--dark .cqa-report-select { color-scheme: dark; }
 .cqa .cqa-report-table th, .cqa .cqa-report-table td { padding: 10px 8px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .cqa .cqa-report-table th { color: var(--text-2); font-size: 12px; }
 .cqa .cqa-report-bar { min-width: 90px; }
@@ -15,6 +23,7 @@
 .cqa .cqa-report-links { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; padding: 0; }
 @media (max-width: 700px) {
   .cqa .cqa-reports { padding: 16px; }
+  .cqa .cqa-report-brand-value { font-size: 36px; }
   .cqa .cqa-report-section { padding: 10px; }
   .cqa .cqa-report-table th, .cqa .cqa-report-table td { padding: 8px 5px; font-size: 12px; }
 }
