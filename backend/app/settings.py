@@ -6,6 +6,11 @@ from pathlib import Path
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# The checklist version the app shows by default: what /config reports as `default_checklist` and
+# what the queue's `final` summarises.
+DEFAULT_CHECKLIST_ID = "official-chat"
+DEFAULT_CHECKLIST_VERSION = 1
+
 
 class Settings(BaseSettings):
     # env_ignore_empty: `ANTHROPIC_API_KEY=` (as copied from .env.example) means "not set", and an
