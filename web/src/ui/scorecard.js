@@ -37,6 +37,18 @@ const EVIDENCE_QUOTE_MAX = 160;
 const money = (value) => fmt2(rat(value));
 const isStep = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
 
+/** Elapsed run time as m:ss (0:07, 1:42, 12:05). */
+export function elapsedText(ms) {
+  const seconds = Math.max(0, Math.floor((Number.isFinite(ms) ? ms : 0) / 1000));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+// The sections that hold at least one scored criterion, in checklist order (the brand panel's rows).
+const scoredSections = (version) => {
+  const scored = new Set(version.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
+  return [...version.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id));
+};
+
 /** The tag of an answer: its kind (ok, mid, bad, na) and its text. A gross-error "yes" is bad. */
 export function answerTag(criterion, answer) {
   const gross = criterion?.kind === "gross_error";
@@ -179,6 +191,14 @@ export function createScorecard(store, api, args = {}) {
   };
   let destroyed = false;
   let pendingSel = null; // a shared checklist change that arrived during our own run
+  let runStarted = 0; // Date.now() when the current run began (the loading card's clock)
+  let clockTimer = null;
+  const stopClock = () => {
+    clearInterval(clockTimer);
+    clockTimer = null;
+  };
+  // A run is going from the click until its result is loaded; a failed job is over.
+  const isRunning = () => view.job !== null && view.job.phase !== "failed";
 
   // Shows the shared checklist reference `ref` here, unless it is already shown. A reference this
   // pane does not know (a checklist saved after it loaded) reloads the list first.
@@ -390,6 +410,8 @@ export function createScorecard(store, api, args = {}) {
     if (view.busy || destroyed) return;
     view.busy = true;
     view.job = { phase: "starting" };
+    runStarted = Date.now();
+    drawBody();
     paintBar();
     let jobId = null;
     try {
@@ -405,6 +427,7 @@ export function createScorecard(store, api, args = {}) {
       if (!destroyed) await loadSelection({ quiet: true });
     } catch (error) {
       view.job = null;
+      drawBody(); // the card shown before the run comes back
       const resume = jobId === null ? again : () => execute(() => api.getJob(jobId), again);
       toastError(store, error, { retry: destroyed ? undefined : resume });
     } finally {
@@ -427,9 +450,18 @@ export function createScorecard(store, api, args = {}) {
 
   // ---- drawing --------------------------------------------------------------------------------
 
+  // The cards below a re-run's loading card: still there, dimmed, busy for assistive tech.
+  function markStale(on) {
+    body.classList.toggle("is-stale", on);
+    if (on) body.setAttribute("aria-busy", "true");
+    else body.removeAttribute("aria-busy");
+  }
+
   function drawBody() {
     if (destroyed) return;
+    stopClock();
     clear(body);
+    markStale(false);
     if (view.phase === "loading") {
       body.append(stateBox("scorecard-loading", t("scorecard.loading")));
       return;
@@ -450,11 +482,44 @@ export function createScorecard(store, api, args = {}) {
       return;
     }
     const info = buildInfo(view.conversation);
+    const running = isRunning() && view.version ? buildRunning(view.version) : null;
     if (!view.evaluation) {
-      body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
+      body.append(running ?? stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
       return;
     }
-    body.append(...[buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+    if (running) markStale(true);
+    body.append(...[running ?? buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+  }
+
+  // The brand panel while the evaluator works: same frame as the result, a shimmer where the total
+  // goes, an elapsed clock (the job only counts dialogues, so a percentage would be invented), and
+  // one moving bar per section. The motion is decorative; the toolbar's status line announces.
+  function buildRunning(version) {
+    const clock = h("span", { class: ["cqa-sc-clock", "num"], text: elapsedText(Date.now() - runStarted), data: { test: "run-clock" } });
+    clockTimer = setInterval(() => {
+      clock.textContent = elapsedText(Date.now() - runStarted);
+    }, 1000);
+    const rows = scoredSections(version).map((section) =>
+      h(
+        "div",
+        { class: "cqa-sc-sec", data: { test: "running-section", section: section.id } },
+        h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
+        h("div", { class: ["cqa-sc-sec-bar", "cqa-sc-sec-bar--busy"] }, h("i")),
+      ),
+    );
+    return h(
+      "div",
+      { class: ["cqa-sc-hero", "cqa-sc-hero--running"], attrs: { "aria-busy": "true" }, data: { test: "hero-running" } },
+      h(
+        "div",
+        { class: "cqa-sc-hero-top" },
+        h("span", { class: "cqa-sc-hero-label" }, `${t("scorecard.totalLabel")} `, h("em", { text: `${version.name} v${version.version}` })),
+        h("span", { class: "cqa-sc-running" }, h("i", { class: "cqa-sc-pulse", attrs: { "aria-hidden": "true" } }), t("scorecard.evaluating")),
+      ),
+      h("div", { class: "cqa-sc-tot" }, h("span", { class: "cqa-sc-shimmer", attrs: { "aria-hidden": "true" } }), clock),
+      rows.length > 0 ? h("div", { class: "cqa-sc-secs" }, rows) : null,
+      h("p", { class: "cqa-sc-model", text: t("scorecard.evaluatingNote") }),
+    );
   }
 
   // The card history (R8): the original total, each appeal with its decision, the decisions carried
@@ -558,26 +623,22 @@ export function createScorecard(store, api, args = {}) {
     const gross = evaluation.gross_error;
     const grossText = gross?.flag ? (gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn")) : t("scorecard.grossOff");
 
-    const scored = new Set(version.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
-    const rows = [...version.sections]
-      .sort((a, b) => a.order - b.order)
-      .filter((section) => scored.has(section.id))
-      .map((section) => {
-        const row = evaluation.sections?.find((s) => s.section_id === section.id);
-        const has = row && row.points !== null && row.points !== undefined && row.available !== null && row.available !== undefined;
-        const percent = has && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
-        return h(
-          "div",
-          { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
-          h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
-          h("span", {
-            class: ["cqa-sc-sec-score", "num"],
-            text: has ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
-            data: { test: "section-score" },
-          }),
-          h("div", { class: "cqa-sc-sec-bar" }, h("i", { style: { width: `${percent}%` } })),
-        );
-      });
+    const rows = scoredSections(version).map((section) => {
+      const row = evaluation.sections?.find((s) => s.section_id === section.id);
+      const has = row && row.points !== null && row.points !== undefined && row.available !== null && row.available !== undefined;
+      const percent = has && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
+      return h(
+        "div",
+        { class: "cqa-sc-sec", data: { test: "section", section: section.id } },
+        h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
+        h("span", {
+          class: ["cqa-sc-sec-score", "num"],
+          text: has ? t("scorecard.sectionScore", { points: money(row.points), available: money(row.available), percent: money(row.percent ?? 0) }) : t("scorecard.sectionNone"),
+          data: { test: "section-score" },
+        }),
+        h("div", { class: "cqa-sc-sec-bar" }, h("i", { style: { width: `${percent}%` } })),
+      );
+    });
 
     const model = [evaluation.model ? t("scorecard.model", { model: evaluation.model }) : null, typeof evaluation.cost_usd === "number" ? t("scorecard.cost", { cost: evaluation.cost_usd.toFixed(evaluation.cost_usd < 1 ? 4 : 2) }) : null].filter(Boolean);
 
@@ -801,6 +862,7 @@ export function createScorecard(store, api, args = {}) {
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopClock();
       drawer?.close();
       unwatch.forEach((stop) => stop());
     },

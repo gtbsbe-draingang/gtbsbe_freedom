@@ -279,6 +279,8 @@
     "scorecard.jobFailed": "\u041E\u0446\u0435\u043D\u0438\u0442\u044C \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C",
     "scorecard.retry": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C",
     "scorecard.loading": "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u043E\u0446\u0435\u043D\u043A\u0443\u2026",
+    "scorecard.evaluating": "\u0438\u0434\u0451\u0442 \u043E\u0446\u0435\u043D\u043A\u0430\u2026",
+    "scorecard.evaluatingNote": "\u041C\u043E\u0434\u0435\u043B\u044C \u0447\u0438\u0442\u0430\u0435\u0442 \u0434\u0438\u0430\u043B\u043E\u0433 \u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442 \u043A\u0430\u0436\u0434\u044B\u0439 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u2026",
     "scorecard.loadFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u043E\u0446\u0435\u043D\u043A\u0443",
     "scorecard.noChecklist": "\u041D\u0435\u0442 \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0447\u0435\u043A-\u043B\u0438\u0441\u0442\u0430",
     "scorecard.noChecklistNote": "\u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B\u0435 \xAB\u0427\u0435\u043A-\u043B\u0438\u0441\u0442\u044B\xBB.",
@@ -767,6 +769,8 @@
     "scorecard.jobFailed": "Evaluation failed",
     "scorecard.retry": "Retry",
     "scorecard.loading": "Loading evaluation\u2026",
+    "scorecard.evaluating": "evaluating\u2026",
+    "scorecard.evaluatingNote": "The model is reading the dialogue and checking each criterion\u2026",
     "scorecard.loadFailed": "Could not load evaluation",
     "scorecard.noChecklist": "No checklists available",
     "scorecard.noChecklistNote": "Create a checklist in the Checklists section.",
@@ -1255,6 +1259,8 @@
     "scorecard.jobFailed": "\u0411\u0430\u0493\u0430\u043B\u0430\u0443 \u043E\u0440\u044B\u043D\u0434\u0430\u043B\u043C\u0430\u0434\u044B",
     "scorecard.retry": "\u049A\u0430\u0439\u0442\u0430\u043B\u0430\u0443",
     "scorecard.loading": "\u0411\u0430\u0493\u0430 \u0436\u04AF\u043A\u0442\u0435\u043B\u0443\u0434\u0435\u2026",
+    "scorecard.evaluating": "\u0431\u0430\u0493\u0430\u043B\u0430\u043D\u0443\u0434\u0430\u2026",
+    "scorecard.evaluatingNote": "\u041C\u043E\u0434\u0435\u043B\u044C \u0434\u0438\u0430\u043B\u043E\u0433\u0442\u044B \u043E\u049B\u044B\u043F, \u04D9\u0440 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0439\u0434\u0456 \u0442\u0435\u043A\u0441\u0435\u0440\u0456\u043F \u0436\u0430\u0442\u044B\u0440\u2026",
     "scorecard.loadFailed": "\u0411\u0430\u0493\u0430\u043D\u044B \u0436\u04AF\u043A\u0442\u0435\u0443 \u043C\u04AF\u043C\u043A\u0456\u043D \u0431\u043E\u043B\u043C\u0430\u0434\u044B",
     "scorecard.noChecklist": "\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B \u0436\u043E\u049B",
     "scorecard.noChecklistNote": "\xAB\u0422\u0435\u043A\u0441\u0435\u0440\u0443 \u043F\u0430\u0440\u0430\u049B\u0442\u0430\u0440\u044B\xBB \u0431\u04E9\u043B\u0456\u043C\u0456\u043D\u0434\u0435 \u043F\u0430\u0440\u0430\u049B \u0436\u0430\u0441\u0430\u04A3\u044B\u0437.",
@@ -4654,6 +4660,14 @@
   var EVIDENCE_QUOTE_MAX = 160;
   var money = (value2) => fmt2(rat(value2));
   var isStep2 = (answer) => answer !== null && typeof answer === "object" && Object.hasOwn(answer, "step");
+  function elapsedText(ms) {
+    const seconds = Math.max(0, Math.floor((Number.isFinite(ms) ? ms : 0) / 1e3));
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  }
+  var scoredSections = (version2) => {
+    const scored = new Set(version2.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
+    return [...version2.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id));
+  };
   function answerTag(criterion, answer) {
     const gross = criterion?.kind === "gross_error";
     if (answer === "na") return { kind: "na", text: t("scorecard.answer.na") };
@@ -4760,6 +4774,13 @@
     };
     let destroyed = false;
     let pendingSel = null;
+    let runStarted = 0;
+    let clockTimer = null;
+    const stopClock = () => {
+      clearInterval(clockTimer);
+      clockTimer = null;
+    };
+    const isRunning = () => view.job !== null && view.job.phase !== "failed";
     function followShared(ref) {
       pendingSel = null;
       if (destroyed || !ref || id === null) return;
@@ -4941,6 +4962,8 @@
       if (view.busy || destroyed) return;
       view.busy = true;
       view.job = { phase: "starting" };
+      runStarted = Date.now();
+      drawBody();
       paintBar();
       let jobId = null;
       try {
@@ -4956,6 +4979,7 @@
         if (!destroyed) await loadSelection({ quiet: true });
       } catch (error) {
         view.job = null;
+        drawBody();
         const resume = jobId === null ? again : () => execute(() => api.getJob(jobId), again);
         toastError(store, error, { retry: destroyed ? void 0 : resume });
       } finally {
@@ -4973,9 +4997,16 @@
     function retryFailed(jobId) {
       return execute(() => api.retryJob(jobId), () => retryFailed(jobId));
     }
+    function markStale(on) {
+      body.classList.toggle("is-stale", on);
+      if (on) body.setAttribute("aria-busy", "true");
+      else body.removeAttribute("aria-busy");
+    }
     function drawBody() {
       if (destroyed) return;
+      stopClock();
       clear(body);
+      markStale(false);
       if (view.phase === "loading") {
         body.append(stateBox("scorecard-loading", t("scorecard.loading")));
         return;
@@ -4996,11 +5027,40 @@
         return;
       }
       const info = buildInfo(view.conversation);
+      const running = isRunning() && view.version ? buildRunning(view.version) : null;
       if (!view.evaluation) {
-        body.append(stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
+        body.append(running ?? stateBox("scorecard-empty", t("scorecard.empty"), t("scorecard.emptyNote")), info);
         return;
       }
-      body.append(...[buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+      if (running) markStale(true);
+      body.append(...[running ?? buildHero(view.evaluation, view.version), buildHistory(view.evaluation, view.version), info, buildCards(view.evaluation, view.version)].filter(Boolean));
+    }
+    function buildRunning(version2) {
+      const clock = h("span", { class: ["cqa-sc-clock", "num"], text: elapsedText(Date.now() - runStarted), data: { test: "run-clock" } });
+      clockTimer = setInterval(() => {
+        clock.textContent = elapsedText(Date.now() - runStarted);
+      }, 1e3);
+      const rows = scoredSections(version2).map(
+        (section) => h(
+          "div",
+          { class: "cqa-sc-sec", data: { test: "running-section", section: section.id } },
+          h("span", { class: "cqa-sc-sec-name", verbatim: true, text: section.title }),
+          h("div", { class: ["cqa-sc-sec-bar", "cqa-sc-sec-bar--busy"] }, h("i"))
+        )
+      );
+      return h(
+        "div",
+        { class: ["cqa-sc-hero", "cqa-sc-hero--running"], attrs: { "aria-busy": "true" }, data: { test: "hero-running" } },
+        h(
+          "div",
+          { class: "cqa-sc-hero-top" },
+          h("span", { class: "cqa-sc-hero-label" }, `${t("scorecard.totalLabel")} `, h("em", { text: `${version2.name} v${version2.version}` })),
+          h("span", { class: "cqa-sc-running" }, h("i", { class: "cqa-sc-pulse", attrs: { "aria-hidden": "true" } }), t("scorecard.evaluating"))
+        ),
+        h("div", { class: "cqa-sc-tot" }, h("span", { class: "cqa-sc-shimmer", attrs: { "aria-hidden": "true" } }), clock),
+        rows.length > 0 ? h("div", { class: "cqa-sc-secs" }, rows) : null,
+        h("p", { class: "cqa-sc-model", text: t("scorecard.evaluatingNote") })
+      );
     }
     function buildHistory(evaluation, version2) {
       const { own, earlierOpen, notCarried } = cardAppeals(evaluation, view.appeals, view.evaluations);
@@ -5084,8 +5144,7 @@
       const changed = evaluation.original_total !== evaluation.final_total;
       const gross = evaluation.gross_error;
       const grossText = gross?.flag ? gross.kinds?.length > 0 ? t("scorecard.grossOnKinds", { kinds: gross.kinds.join(", ") }) : t("scorecard.grossOn") : t("scorecard.grossOff");
-      const scored = new Set(version2.criteria.filter((c) => c.kind !== "gross_error").map((c) => c.section_id));
-      const rows = [...version2.sections].sort((a, b) => a.order - b.order).filter((section) => scored.has(section.id)).map((section) => {
+      const rows = scoredSections(version2).map((section) => {
         const row = evaluation.sections?.find((s) => s.section_id === section.id);
         const has2 = row && row.points !== null && row.points !== void 0 && row.available !== null && row.available !== void 0;
         const percent = has2 && typeof row.percent === "number" ? Math.max(0, Math.min(100, row.percent)) : 0;
@@ -5283,6 +5342,7 @@
       destroy() {
         if (destroyed) return;
         destroyed = true;
+        stopClock();
         drawer?.close();
         unwatch.forEach((stop) => stop());
       }

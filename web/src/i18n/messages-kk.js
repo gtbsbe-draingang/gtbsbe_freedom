@@ -274,6 +274,8 @@ export default {
   "scorecard.jobFailed": "Бағалау орындалмады",
   "scorecard.retry": "Қайталау",
   "scorecard.loading": "Баға жүктелуде…",
+  "scorecard.evaluating": "бағалануда…",
+  "scorecard.evaluatingNote": "Модель диалогты оқып, әр критерийді тексеріп жатыр…",
   "scorecard.loadFailed": "Бағаны жүктеу мүмкін болмады",
   "scorecard.noChecklist": "Тексеру парақтары жоқ",
   "scorecard.noChecklistNote": "«Тексеру парақтары» бөлімінде парақ жасаңыз.",

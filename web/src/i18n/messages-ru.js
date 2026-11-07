@@ -274,6 +274,8 @@ export default {
   "scorecard.jobFailed": "Оценить не удалось",
   "scorecard.retry": "Повторить",
   "scorecard.loading": "Загружаю оценку…",
+  "scorecard.evaluating": "идёт оценка…",
+  "scorecard.evaluatingNote": "Модель читает диалог и проверяет каждый критерий…",
   "scorecard.loadFailed": "Не удалось загрузить оценку",
   "scorecard.noChecklist": "Нет ни одного чек-листа",
   "scorecard.noChecklistNote": "Создайте чек-лист в разделе «Чек-листы».",
