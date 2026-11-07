@@ -38,12 +38,10 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any, Literal
-
-from pydantic import TypeAdapter
+from typing import Literal
 
 from app import store
-from app.appeals import apply_decisions, carry_forward
+from app.appeals import apply_decisions, carried_decisions, carry_forward
 from app.errors import ApiError
 from app.evaluator_port import (
     EvaluatorPort,
@@ -55,7 +53,6 @@ from app.evaluator_port import (
     set_evaluator,
 )
 from app.models import (
-    Answer,
     ChecklistVersion,
     Conversation,
     Criterion,
@@ -90,7 +87,6 @@ Mode = Literal["reuse", "full"]
 
 RETRY_DELAY_SECONDS = 1.0  # pause before the one retry of a failed criterion call
 _MAX_ERROR_LENGTH = 200
-_ANSWER = TypeAdapter(Answer)
 
 
 # --- planning ------------------------------------------------------------------------------
@@ -655,19 +651,7 @@ def build_evaluation(
     points, sections and gross-error flag come from `appeals.apply_decisions`, the code path a
     reviewer's decision takes too: `original_total` from the model's answers, the rest from the
     final answers (a carried decision's answer, else the model's)."""
-    criteria = {c.id: c for c in version.criteria}
-    carried: dict[str, tuple[Any, list[str]]] = {}  # appeal id -> (answer, kinds)
-    markers: dict[str, dict] = {}  # criterion id -> carried_decision
-    for cid, carry in carries.items():
-        criterion = criteria.get(cid)
-        if criterion is None:
-            continue
-        answer = _ANSWER.validate_python(carry["answer"])
-        if validate_answer(criterion, answer) is not None:
-            continue  # the same fingerprint means the same scale, so this is only a safeguard
-        carried[carry["appeal_id"]] = (answer, list(carry.get("kinds") or []))
-        markers[cid] = {"appeal_id": carry["appeal_id"], "evaluation_id": carry["evaluation_id"]}
-
+    carried, markers = carried_decisions(version, carries)  # by appeal id; by criterion id
     results = [
         CriterionResult.model_validate(
             {

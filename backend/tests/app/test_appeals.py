@@ -675,3 +675,86 @@ def test_only_appeals_on_the_current_transcript_count(setup) -> None:
     item = queue_item(client)
     assert (item["status"], item["final"]["open_appeals"]) == ("evaluated", 0)  # the old one does not count
     assert item["final"]["total"] == 92.5
+
+
+# --- final review: a decision reaches later evaluations ------------------------------------
+
+
+def csv_row(client: TestClient, version: ChecklistVersion, conversation_id: str = "p1-ru-001") -> dict[str, str]:
+    r = client.get("/api/export.csv", params={"checklist_id": version.checklist_id, "version": version.version})
+    assert r.status_code == 200, r.text
+    lines = r.content.decode("utf-8-sig").splitlines()
+    header = lines[0].split(";")
+    rows = [dict(zip(header, line.split(";"), strict=True)) for line in lines[1:]]
+    return next(row for row in rows if row["conversation_id"] == conversation_id)
+
+
+def test_a_decision_reaches_a_later_evaluation_of_the_same_transcript(setup) -> None:
+    """An appeal filed on E1, a re-run that creates E2 before the decision: the decision reaches E2,
+    and so every reader of E2 (the queue, analytics, the CSV) shows it."""
+    client, official = setup
+    earlier = grade(client, official)  # before the appealed one: carry-forward only goes forward
+    first = grade(client, official)
+    appeal = file(client, first["id"])
+    second = grade(client, official)
+    assert result(second, "c04")["carried_decision"] is None  # an open appeal carries nothing
+    assert queue_item(client)["final"]["total"] == 84.17
+
+    decide(client, appeal["id"], answer={"step": 20})
+
+    after = client.get(f"/api/evaluations/{second['id']}").json()
+    validate("evaluation", after)
+    c04 = result(after, "c04")
+    assert c04["carried_decision"] == {"appeal_id": appeal["id"], "evaluation_id": first["id"]}
+    assert (c04["answer"], c04["final_answer"]) == ({"step": 15}, {"step": 20})
+    assert (c04["points"], c04["effective_weight"]) == (33.33, 33.33)
+    assert (after["original_total"], after["final_total"]) == (84.17, 92.5)
+    assert all(r["carried_decision"] is None for r in after["results"] if r["criterion_id"] != "c04")
+
+    assert queue_item(client)["final"]["total"] == 92.5
+    body = client.get(
+        "/api/analytics", params={"checklist_id": official.checklist_id, "version": official.version}
+    ).json()
+    assert body["by_language"] == [{"language": "RU", "avg_total": 92.5, "n": 1}]
+    row = csv_row(client, official)
+    assert (row["final_total"], row["original_total"], row["c04_answer"]) == ("92,50", "84,17", "20")
+
+    untouched = client.get(f"/api/evaluations/{earlier['id']}").json()
+    assert untouched["final_total"] == 84.17 and result(untouched, "c04")["carried_decision"] is None
+
+
+def test_a_later_evaluations_own_decision_outranks_a_newer_one_elsewhere(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    on_first = file(client, first["id"])
+    second = grade(client, official)
+    decide(client, file(client, second["id"])["id"], answer={"step": 5})  # E2's own decision
+
+    decide(client, on_first["id"], answer={"step": 20})  # decided later, on E1
+
+    after = client.get(f"/api/evaluations/{second['id']}").json()
+    assert result(after, "c04")["final_answer"] == {"step": 5}  # its own decision stands
+    assert after["final_total"] == 67.5
+    assert client.get(f"/api/evaluations/{first['id']}").json()["final_total"] == 92.5
+
+
+def test_a_decision_reaches_later_evaluations_of_any_checklist_with_the_same_criterion(setup) -> None:
+    client, official = setup
+    first = grade(client, official)
+    appeal = file(client, first["id"])
+    heavier = grade(client, save_copy(client, official, heavier_c01))  # weights only: same fingerprint
+
+    def reword_c04(copied: dict) -> None:
+        criterion(copied, "c04")["wording"] = "Оцените полноту ответа по шкале."
+
+    reworded = grade(client, save_copy(client, official, reword_c04))  # another fingerprint
+    reimport(edit_first_line)
+    other_text = grade(client, official)  # another transcript
+
+    decide(client, appeal["id"], answer={"step": 20})
+
+    after = client.get(f"/api/evaluations/{heavier['id']}").json()
+    assert result(after, "c04")["final_answer"] == {"step": 20}
+    assert (after["original_total"], after["final_total"]) == (86.43, 93.57)
+    for unchanged in (reworded, other_text):
+        assert client.get(f"/api/evaluations/{unchanged['id']}").json() == unchanged

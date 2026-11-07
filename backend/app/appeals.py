@@ -20,7 +20,11 @@ design sections 6 and 7).
   a decision compute the final values the same way.
 * **Carry-forward** (`carry_forward`): a later evaluation of the same transcript takes over the
   latest decided answer for each criterion whose fingerprint is unchanged (a weight-only change
-  keeps the fingerprint; a reworded or replaced criterion does not).
+  keeps the fingerprint; a reworded or replaced criterion does not). It is applied when an
+  evaluation is built, and again when a decision is made: every later `done` evaluation of the same
+  conversation and transcript (any checklist) whose criterion has the appealed fingerprint takes
+  the new decision and is recomputed in the decision's transaction, so an evaluation made while
+  the appeal was open shows it too. An evaluation's own decision still outranks a carried one.
 """
 
 import asyncio
@@ -33,6 +37,8 @@ from typing import Literal
 from app import store
 from app.errors import ApiError
 from app.evaluator_port import find_evaluator
+from pydantic import TypeAdapter
+
 from app.models import (
     Answer,
     Appeal,
@@ -50,6 +56,7 @@ from app.settings import get_settings
 
 __all__ = [
     "apply_decisions",
+    "carried_decisions",
     "carry_forward",
     "decide",
     "file_appeal",
@@ -64,6 +71,8 @@ logger = logging.getLogger(__name__)
 
 Final = tuple[Answer, list[str]]  # (answer, gross-error kinds), what score() takes per criterion
 Outcome = Literal["confirmed", "changed"]
+
+_ANSWER = TypeAdapter(Answer)
 
 
 def _now() -> datetime:
@@ -189,16 +198,19 @@ def apply_decisions(
 # --- carry-forward -------------------------------------------------------------------------
 
 
-def carry_forward(conversation: str, transcript_hash: str, version: ChecklistVersion) -> dict[str, dict]:
-    """Reviewer decisions to carry into a new evaluation of `conversation` with `version`, by
+def carry_forward(
+    conversation: str, transcript_hash: str, version: ChecklistVersion, *, conn=None
+) -> dict[str, dict]:
+    """Reviewer decisions to carry into an evaluation of `conversation` with `version`, by
     criterion id: `{"appeal_id", "evaluation_id", "answer", "kinds"}`.
 
     For each criterion, the most recent decided appeal (by `decided_at`) on an evaluation of this
     conversation whose criterion had the same fingerprint and whose graded transcript had this
-    hash. A confirmed decision carries the answer it confirmed. The evaluation being built has
-    no appeals of its own yet (appeals need a done evaluation), so every match is on an earlier
-    one. Blocking (one database query): call it off the event loop."""
-    latest = store.latest_decisions(conversation, transcript_hash, [c.fingerprint for c in version.criteria])
+    hash. A confirmed decision carries the answer it confirmed. An evaluation being built has no
+    appeals of its own yet (appeals need a done evaluation), so every match is on an earlier one.
+    Blocking (one database query, on `conn` when given): call it off the event loop."""
+    fingerprints = [c.fingerprint for c in version.criteria]
+    latest = store.latest_decisions(conversation, transcript_hash, fingerprints, conn=conn)
     carries: dict[str, dict] = {}
     for c in version.criteria:
         appeal = latest.get(c.fingerprint)
@@ -211,6 +223,63 @@ def carry_forward(conversation: str, transcript_hash: str, version: ChecklistVer
             "kinds": list(appeal.decision.kinds),
         }
     return carries
+
+
+def carried_decisions(version: ChecklistVersion, carries: dict[str, dict]) -> tuple[dict[str, Final], dict[str, dict]]:
+    """`carries` (from `carry_forward`) as what `apply_decisions` takes and what a result records:
+    the carried (answer, kinds) by appeal id, and each criterion's `carried_decision` marker
+    (`{"appeal_id", "evaluation_id"}`) by criterion id. A carry whose answer does not fit the
+    criterion is dropped (the same fingerprint means the same scale, so this is only a safeguard)."""
+    criteria = {c.id: c for c in version.criteria}
+    carried: dict[str, Final] = {}
+    markers: dict[str, dict] = {}
+    for cid, carry in carries.items():
+        criterion = criteria.get(cid)
+        if criterion is None:
+            continue
+        answer = _ANSWER.validate_python(carry["answer"])
+        if validate_answer(criterion, answer) is not None:
+            continue
+        carried[carry["appeal_id"]] = (answer, list(carry.get("kinds") or []))
+        markers[cid] = {"appeal_id": carry["appeal_id"], "evaluation_id": carry["evaluation_id"]}
+    return carried, markers
+
+
+def _carry_into_later(conn, appeal: Appeal, appealed: Evaluation) -> None:
+    """Carry a decision just made into the later `done` evaluations of the same conversation and
+    graded transcript, of any checklist: each criterion with the appealed fingerprint gets the
+    marker `carry_forward` picks now (the most recent decision: this one), and the evaluation is
+    recomputed from its stored decisions (`recompute`: its own decision still outranks it). Inside
+    the decision's transaction. An evaluation that cannot be recomputed is left as it was."""
+    match = store.appeal_match(conn, appeal.id)
+    if match is None:
+        return
+    fingerprint, graded_hash = match
+    versions: dict[tuple[str, int], ChecklistVersion | None] = {}
+    for later in store.later_done_evaluations(conn, appealed, graded_hash):
+        key = (later.checklist_id, later.version)
+        if key not in versions:
+            versions[key] = store.get_checklist_version(*key)
+        version = versions[key]
+        if version is None:
+            continue
+        concerned = {c.id for c in version.criteria if c.fingerprint == fingerprint}
+        _, markers = carried_decisions(version, carry_forward(appealed.conversation, graded_hash, version, conn=conn))
+        results = [
+            r.model_copy(update={"carried_decision": markers[r.criterion_id]})
+            if r.criterion_id in concerned and r.criterion_id in markers
+            else r
+            for r in later.results
+        ]
+        if results == later.results:
+            continue
+        try:
+            updated = recompute(later.model_copy(update={"results": results}), version, conn=conn)
+        except ScoringError as exc:
+            logger.warning("Decision %s not carried into evaluation %s: %s", appeal.id, later.id, exc.code)
+            continue
+        store.write_evaluation(conn, updated)
+        logger.info("Decision %s carried into evaluation %s", appeal.id, later.id)
 
 
 # --- filing --------------------------------------------------------------------------------
@@ -382,9 +451,9 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
     `confirmed` the stored answer is the model's original one (a sent answer is ignored). A
     recalculation that fails is 422 with the scoring code, and nothing is stored.
 
-    The decision, the recalculated evaluation and the conversation's status (`evaluated` once no
-    appeal on its current transcript is open) are written in one transaction. Blocking: call it off
-    the event loop."""
+    The decision, the recalculated evaluation, the later evaluations it carries into (see
+    `_carry_into_later`) and the conversation's status (`evaluated` once no appeal on its current
+    transcript is open) are written in one transaction. Blocking: call it off the event loop."""
     found = store.get_appeal(appeal_id)
     if found is None:
         raise _not_found(f"No appeal {appeal_id!r}.")
@@ -427,6 +496,7 @@ def decide(appeal_id: str, outcome: Outcome, answer: Answer | None, reason: str,
         except ScoringError as exc:
             raise ApiError(422, exc.code, "The evaluation cannot be recalculated with this answer.") from None
         store.write_evaluation(conn, updated)
+        _carry_into_later(conn, appeal, updated)
         store.settle_dispute(conn, updated.conversation)
     logger.info("Appeal %s decided by %s: %s", appeal_id, role, outcome)
     return updated

@@ -1068,26 +1068,52 @@ def decided_appeals(
 
 
 def latest_decisions(
-    conversation: str, transcript_hash: str, fingerprints: list[str]
+    conversation: str, transcript_hash: str, fingerprints: list[str], *, conn: sqlite3.Connection | None = None
 ) -> dict[str, Appeal]:
     """For each fingerprint, the most recently decided appeal (by `decided_at`) of this
-    conversation and transcript on a criterion with that fingerprint. One query."""
+    conversation and transcript on a criterion with that fingerprint. One query; on `conn` when
+    given (inside the caller's transaction)."""
     if not fingerprints:
         return {}
-    conn = connect()
-    try:
-        rows = conn.execute(
-            "SELECT json, fingerprint FROM appeals WHERE status = 'decided' AND conversation = ? "
-            "AND transcript_hash = ? AND fingerprint IN (SELECT value FROM json_each(?)) "
-            "ORDER BY decided_at DESC, rowid DESC",
-            (conversation, transcript_hash, json.dumps(list(dict.fromkeys(fingerprints)))),
-        ).fetchall()
-    finally:
-        conn.close()
+    if conn is None:
+        own_conn = connect()
+        try:
+            return latest_decisions(conversation, transcript_hash, fingerprints, conn=own_conn)
+        finally:
+            own_conn.close()
+    rows = conn.execute(
+        "SELECT json, fingerprint FROM appeals WHERE status = 'decided' AND conversation = ? "
+        "AND transcript_hash = ? AND fingerprint IN (SELECT value FROM json_each(?)) "
+        "ORDER BY decided_at DESC, rowid DESC",
+        (conversation, transcript_hash, json.dumps(list(dict.fromkeys(fingerprints)))),
+    ).fetchall()
     latest: dict[str, Appeal] = {}
     for row in rows:
         latest.setdefault(row["fingerprint"], _read_appeal_row(row))
     return latest
+
+
+def appeal_match(conn: sqlite3.Connection, appeal_id: str) -> tuple[str, str] | None:
+    """The `(fingerprint, transcript_hash)` carry-forward matches an appeal's decision on (inside
+    the caller's transaction), or None for an unknown appeal."""
+    row = conn.execute("SELECT fingerprint, transcript_hash FROM appeals WHERE id = ?", (appeal_id,)).fetchone()
+    return None if row is None else (row["fingerprint"], row["transcript_hash"])
+
+
+def later_done_evaluations(
+    conn: sqlite3.Connection, evaluation: Evaluation, transcript_hash: str
+) -> list[Evaluation]:
+    """The `done` evaluations of `evaluation`'s conversation that graded `transcript_hash` and are
+    newer than it, oldest first (inside the caller's transaction). "Newer" is the order every list
+    uses: `created_at`, the id breaking a tie."""
+    stamp = evaluation.created_at.isoformat()
+    rows = conn.execute(
+        "SELECT json FROM evaluations WHERE conversation = ? AND status = 'done' "
+        "AND json_extract(json, '$.transcript_hash') = ? "
+        "AND (created_at > ? OR (created_at = ? AND id > ?)) ORDER BY created_at, id",
+        (evaluation.conversation, transcript_hash, stamp, stamp, evaluation.id),
+    ).fetchall()
+    return [Evaluation.model_validate_json(row["json"]) for row in rows]
 
 
 def _open_appeals_on(conn: sqlite3.Connection, conversation: str) -> int:
