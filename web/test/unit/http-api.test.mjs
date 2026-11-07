@@ -63,14 +63,14 @@ const TABLE = [
     [{ name: "Copy", based_on: { checklist_id: "official-chat", version: 1 } }],
     "POST",
     "api/checklists",
-    { name: "Copy", based_on: { checklist_id: "official-chat", version: 1 }, role: "reviewer" },
+    { checklist: { name: "Copy", based_on: { checklist_id: "official-chat", version: 1 } }, role: "reviewer" },
   ],
   [
     "saveChecklistVersion",
     ["my-list", { name: "v2", criteria: [] }],
     "POST",
     "api/checklists/my-list/versions",
-    { name: "v2", criteria: [], role: "reviewer" },
+    { checklist: { name: "v2", criteria: [] }, role: "reviewer" },
   ],
   [
     "startEvaluations",

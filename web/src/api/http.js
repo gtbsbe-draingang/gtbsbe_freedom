@@ -139,8 +139,9 @@ export function createHttpApi({ apiBase, role, fetchImpl = globalThis.fetch, tim
     listChecklists: async () => get("checklists"),
     getChecklistVersion: async (checklistId, version) =>
       get(`checklists/${seg(checklistId, "checklist id")}/versions/${seg(version, "version")}`),
-    createChecklist: async (body) => post("checklists", body),
-    saveChecklistVersion: async (checklistId, body) => post(`checklists/${seg(checklistId, "checklist id")}/versions`, body),
+    createChecklist: async (checklist) => post("checklists", { checklist }),
+    saveChecklistVersion: async (checklistId, checklist) =>
+      post(`checklists/${seg(checklistId, "checklist id")}/versions`, { checklist }),
 
     startEvaluations: async ({ conversations, checklist_id, version, mode = "reuse", dry_run = false } = {}) =>
       post("evaluations", { conversations, checklist_id, version, mode, dry_run }),
