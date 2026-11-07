@@ -158,6 +158,45 @@ def test_load_checklist_file_fingerprints_the_validated_criterion(tmp_path: Path
     assert [c.fingerprint for c in loaded.criteria] == [criterion_fingerprint(c) for c in typed]
 
 
+def write_raw(path: Path, data: dict) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize(
+    ("change", "fragment"),
+    [
+        (lambda d: d["criteria"][0].update(weight="1e400"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight="1e100000"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight=1001), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][0].update(weight="12.1234567890123456789"), "criterion 'c01': weight"),
+        (lambda d: d["criteria"][1].update(id="c01"), "duplicate criterion id 'c01'"),
+        (lambda d: d["criteria"][0].update(section_id="nowhere"), "unknown section 'nowhere'"),
+        (lambda d: d.update(name="  "), "needs a name"),
+        (lambda d: d.update(criteria=[]), "at least one criterion"),
+    ],
+)
+def test_load_checklist_file_rejects_a_checklist_that_breaks_the_editing_rules(
+    tmp_path: Path, change, fragment: str
+) -> None:
+    # The same rules as the API's: a seed that would poison the database is a loud error.
+    data = checklist_dict()
+    change(data)
+    with pytest.raises(ValueError, match=re.escape(fragment)):
+        load_checklist_file(write_raw(tmp_path / "x.json", data))
+
+
+def test_a_seed_that_breaks_the_rules_is_an_error_and_stores_nothing(migrated: None, seed_files) -> None:
+    official, _ = seed_files
+    data = checklist_dict()
+    data["criteria"][0]["weight"] = "1e400"
+    write_raw(official, data)
+    with pytest.raises(ValueError, match="official-chat-v1.json"):
+        seed_into_db()
+    assert stored_rows() == []
+
+
 def test_load_checklist_file_keeps_locked_as_written(tmp_path: Path) -> None:
     unlocked = write_checklist(tmp_path / "u.json", locked=False)
     assert load_checklist_file(unlocked).locked is False

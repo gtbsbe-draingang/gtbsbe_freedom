@@ -75,7 +75,9 @@ def with_fingerprints(v: ChecklistVersion) -> ChecklistVersion:
 def load_checklist_file(path: Path) -> ChecklistVersion:
     """Read a checklist file: every criterion's fingerprint is computed (one in the file is
     replaced) and the id is `"{checklist_id}:{version}"`. `locked` is as the file says, False
-    when it says nothing. Invalid JSON or a file that is not a checklist raises ValueError."""
+    when it says nothing. Invalid JSON, a file that is not a checklist, or one that breaks the
+    editing rules of `validate_checklist` (the API's rules: a weight that cannot be stored would
+    make every later read of the checklists fail) raises ValueError."""
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError(f"{path.name}: expected a JSON object")
@@ -85,7 +87,11 @@ def load_checklist_file(path: Path) -> ChecklistVersion:
         for criterion in criteria:
             if isinstance(criterion, dict):
                 criterion["fingerprint"] = ""  # a placeholder: the real one needs the typed criterion
-    return with_fingerprints(ChecklistVersion.model_validate(data))
+    version = ChecklistVersion.model_validate(data)
+    errors = validate_checklist(version)
+    if errors:
+        raise ValueError(f"{path.name}: {'; '.join(errors)}")
+    return with_fingerprints(version)
 
 
 def load_seed(path: Path) -> ChecklistVersion:
@@ -125,15 +131,24 @@ def seed_into_db() -> None:
 # --- editing rules -------------------------------------------------------------------------
 
 
+MAX_WEIGHT = Decimal(1000)
+
+
 def validate_checklist(v: ChecklistVersion) -> list[str]:
     """Every reason this version cannot be saved, in the order found; empty when it is fine.
 
-    Duplicate criterion or section ids, a criterion in an unknown section, a scale without steps
-    or with duplicate step values or with a top step that is not above 0 (scoring divides by it),
-    a gross-error criterion with a weight other than 0, a negative weight. Weights that do not sum
-    to 100 are not an error (see `weight_warnings`). The caller raises
-    `ApiError(422, "invalid_checklist", "; ".join(errors))`."""
+    No name (blank after trimming) or no criterion; duplicate criterion or section ids; a criterion
+    in an unknown section; a scale without steps, with duplicate or negative step values or with a
+    top step that is not above 0 (scoring divides by it); a gross-error criterion with a weight
+    other than 0; a weight that is not a finite number from 0 to 1000 or that does not survive a
+    float round trip (the JSON carries weights as floats: an infinite one is stored as null and
+    then no read of the checklists works). Weights that do not sum to 100 are not an error (see
+    `weight_warnings`). The caller raises `ApiError(422, "invalid_checklist", "; ".join(errors))`."""
     errors: list[str] = []
+    if not v.name.strip():
+        errors.append("the checklist needs a name")
+    if not v.criteria:
+        errors.append("the checklist needs at least one criterion")
 
     section_ids: set[str] = set()
     for section in v.sections:
@@ -148,13 +163,27 @@ def validate_checklist(v: ChecklistVersion) -> list[str]:
         criterion_ids.add(c.id)
         if c.section_id not in section_ids:
             errors.append(f"criterion {c.id!r}: unknown section {c.section_id!r}")
-        if c.weight < 0:
-            errors.append(f"criterion {c.id!r}: weight must not be negative")
-        if c.kind == "gross_error" and c.weight != 0:
+        weight_error = _weight_error(c.weight)
+        if weight_error:
+            errors.append(f"criterion {c.id!r}: {weight_error}")
+        elif c.kind == "gross_error" and c.weight != 0:
             errors.append(f"criterion {c.id!r}: a gross_error criterion must have weight 0")
         if c.answer_type == "scale":
             errors.extend(_scale_errors(c))
     return errors
+
+
+def _weight_error(weight: Decimal) -> str | None:
+    # Finiteness first: ordering comparisons with a NaN raise instead of answering.
+    if not weight.is_finite():
+        return "weight must be a finite number"
+    if weight < 0:
+        return "weight must not be negative"
+    if weight > MAX_WEIGHT:
+        return f"weight must not be above {MAX_WEIGHT}"
+    if Decimal(str(float(weight))) != weight:  # float() of a value this small cannot overflow
+        return "weight must survive a float round trip (at most 15 significant digits)"
+    return None
 
 
 def _scale_errors(c: Criterion) -> list[str]:
@@ -166,6 +195,8 @@ def _scale_errors(c: Criterion) -> list[str]:
         if step.value in seen:
             errors.append(f"criterion {c.id!r}: duplicate scale step value {step.value}")
         seen.add(step.value)
+    if min(seen) < 0:
+        errors.append(f"criterion {c.id!r}: scale step values must not be negative")
     if max(seen) <= 0:
         errors.append(f"criterion {c.id!r}: the top scale step must be above 0")
     return errors

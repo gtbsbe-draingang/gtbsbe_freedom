@@ -8,6 +8,7 @@ until the seed exists.
 """
 
 import copy
+import json
 import re
 import threading
 from collections.abc import Callable
@@ -30,6 +31,7 @@ from app.models import ChecklistVersion
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SEED = REPO_ROOT / "checklists" / "official-chat-v1.json"
+MAX_VERSION = 2**31 - 1
 needs_seed = pytest.mark.skipif(not SEED.exists(), reason="stream A's official seed is not on this branch")
 
 MakeClient = Callable[..., TestClient]
@@ -110,6 +112,15 @@ def lock(checklist_id: str, version: int) -> None:
         conn.close()
 
 
+@pytest.fixture
+def official_base(client: TestClient) -> dict:
+    """official-chat v1, which the copies are based on (a `based_on` must exist): stream A's seed
+    when it is on this branch, else an inline stand-in saved locked. As the API serves it."""
+    if store.get_checklist_version("official-chat", 1) is None:
+        store.save_checklist_version(stored_version("official-chat", 1, locked=True))
+    return client.get("/api/checklists/official-chat/versions/1").json()
+
+
 def fingerprints(version: dict) -> dict[str, str]:
     return {c["id"]: c["fingerprint"] for c in version["criteria"]}
 
@@ -182,6 +193,17 @@ def test_get_unknown_version_is_404(client: TestClient, path: str) -> None:
     assert r.json()["error"] == "not_found"
 
 
+@pytest.mark.parametrize(
+    "number",
+    ["0", "-1", str(MAX_VERSION), str(MAX_VERSION + 1), "9223372036854775807", "9223372036854775808", "99999999999999999999"],
+)
+def test_a_version_number_out_of_range_is_404_not_a_server_error(client: TestClient, number: str) -> None:
+    cid = create_ok(client)["checklist_id"]
+    for path in (f"/api/checklists/{cid}/versions/{number}", f"/api/checklists/nope/versions/{number}"):
+        r = client.get(path)
+        assert (r.status_code, r.json()["error"]) == (404, "not_found"), path
+
+
 def test_get_version_that_does_not_exist_of_a_known_checklist_is_404(client: TestClient) -> None:
     cid = create_ok(client)["checklist_id"]
     r = client.get(f"/api/checklists/{cid}/versions/2")
@@ -235,7 +257,7 @@ def test_create_ignores_what_the_server_decides(client: TestClient) -> None:
     assert not body["created_at"].startswith("2020")
 
 
-def test_copy_with_based_on_and_replace_one_criterion(client: TestClient) -> None:
+def test_copy_with_based_on_and_replace_one_criterion(client: TestClient, official_base: dict) -> None:
     base = official_like()
     base_fingerprints = {c["id"]: criterion_fingerprint(c) for c in base["criteria"]}
     replaced = replace_criterion(base, "c06", id="c06b", wording="Новая формулировка критерия.")
@@ -265,7 +287,7 @@ def test_copy_with_based_on_and_replace_one_criterion(client: TestClient) -> Non
 
 
 @needs_seed
-def test_copy_of_the_real_official_with_c06_replaced(client: TestClient) -> None:
+def test_copy_of_the_real_official_with_c06_replaced(client: TestClient, official_base: dict) -> None:
     # The live test at the defence: read the locked official, replace one criterion, save a copy.
     official = client.get("/api/checklists/official-chat/versions/1").json()
     original = fingerprints(official)
@@ -285,13 +307,52 @@ def test_copy_of_the_real_official_with_c06_replaced(client: TestClient) -> None
     assert client.get("/api/checklists/official-chat/versions/1").json() == official  # untouched
 
 
-def test_create_keeps_based_on_when_given_and_validates_its_shape(client: TestClient) -> None:
+def test_create_keeps_based_on_when_given_and_validates_its_shape(
+    client: TestClient, official_base: dict
+) -> None:
     assert create_ok(client)["based_on"] is None
     assert create(client, {**official_like(), "based_on": None}).json()["based_on"] is None
-    bad_shapes = ({"checklist_id": "official-chat"}, {"version": 1}, "official-chat", {"checklist_id": "x", "version": "v1"})
+    assert create(client, {**official_like(), "based_on": OFFICIAL_ID}).json()["based_on"] == OFFICIAL_ID
+    bad_shapes = (
+        {"checklist_id": "official-chat"},
+        {"version": 1},
+        {"checklist_id": "official-chat", "version": 0},
+        "official-chat",
+        {"checklist_id": "x", "version": "v1"},
+    )
     for bad in bad_shapes:
         r = create(client, {**official_like(), "based_on": bad})
         assert (r.status_code, r.json()["error"]) == (422, "invalid_request"), bad
+
+
+@pytest.mark.parametrize(
+    "dangling",
+    [
+        {"checklist_id": "no-such-checklist", "version": 1},
+        {"checklist_id": "official-chat", "version": 99},
+        {"checklist_id": "official-chat", "version": 99999999999999999999},  # beyond SQLite's integers
+    ],
+)
+def test_based_on_must_reference_an_existing_version(
+    client: TestClient, official_base: dict, dangling: dict
+) -> None:
+    before = len(client.get("/api/checklists").json())
+    r = create(client, {**official_like(), "based_on": dangling})
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_checklist"), r.text
+    assert "based_on" in r.json()["message"] and dangling["checklist_id"] in r.json()["message"]
+    assert len(client.get("/api/checklists").json()) == before
+
+    cid = create_ok(client)["checklist_id"]
+    r = new_version(client, cid, {**official_like(), "based_on": dangling})
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_checklist"), r.text
+    assert client.get(f"/api/checklists/{cid}/versions/2").status_code == 404
+
+
+def test_based_on_may_reference_any_stored_version_not_only_the_latest(client: TestClient) -> None:
+    base = create_ok(client)["checklist_id"]
+    new_version(client, base, official_like())
+    old = {"checklist_id": base, "version": 1}
+    assert create(client, {**official_like(), "based_on": old}).json()["based_on"] == old
 
 
 def test_create_without_fingerprints_is_fine_and_with_garbage_ones_too(client: TestClient) -> None:
@@ -369,6 +430,15 @@ INVALID = {
     ),
     "gross_error_with_weight": (lambda c: c["criteria"][7].update(weight=5), "'c08'"),
     "negative_weight": (lambda c: c["criteria"][0].update(weight=-1), "'c01'"),
+    "negative_step_value": (
+        lambda c: c["criteria"][3].update(
+            scale_steps=[{"value": -5, "label": "a"}, {"value": 0, "label": "b"}, {"value": 10, "label": "c"}]
+        ),
+        "criterion 'c04': scale step values must not be negative",
+    ),
+    "empty_name": (lambda c: c.update(name=""), "needs a name"),
+    "blank_name": (lambda c: c.update(name="  \t\n "), "needs a name"),
+    "no_criteria": (lambda c: c.update(criteria=[]), "at least one criterion"),
     "duplicate_section_id": (
         lambda c: c["sections"].append({"id": "start", "title": "Ещё раз", "order": 9}),
         "duplicate section id 'start'",
@@ -412,6 +482,95 @@ def test_a_malformed_body_is_invalid_request(client: TestClient, bad: dict) -> N
     assert (r.status_code, r.json()["error"]) == (422, "invalid_request")
 
 
+# --- weights (they arrive as JSON numbers or as strings) -----------------------------------
+
+
+def with_weight(weight) -> dict:
+    checklist = official_like()
+    checklist["criteria"][0]["weight"] = weight  # c01, 10 in the official shape: the sum becomes 90 + weight
+    return checklist
+
+
+@pytest.mark.parametrize(
+    ("weight", "expected_weight", "warnings"),
+    [
+        ("12", 12, ["weights_sum_102"]),
+        ("12.0", 12, ["weights_sum_102"]),
+        ("12.5", 12.5, ["weights_sum_102.5"]),
+        ("0.1", 0.1, ["weights_sum_90.1"]),
+        (12, 12, ["weights_sum_102"]),
+        (12.5, 12.5, ["weights_sum_102.5"]),
+        ("10", 10, []),
+        ("10.00", 10, []),
+        ("1000", 1000, ["weights_sum_1090"]),
+        ("0", 0, ["weights_sum_90"]),
+    ],
+)
+def test_valid_weights_as_numbers_or_strings_keep_their_exact_warnings(
+    client: TestClient, weight, expected_weight, warnings: list[str]
+) -> None:
+    created = create(client, with_weight(weight))
+    assert created.status_code == 201, created.text
+    assert created.json()["warnings"] == warnings
+    assert created.json()["criteria"][0]["weight"] == expected_weight
+    assert isinstance(created.json()["criteria"][0]["weight"], int | float)
+
+    cid = create_ok(client)["checklist_id"]
+    appended = new_version(client, cid, with_weight(weight))
+    assert appended.status_code == 201, appended.text
+    assert appended.json()["warnings"] == warnings
+    assert client.get("/api/checklists").status_code == 200
+
+
+@pytest.mark.parametrize(
+    "weight",
+    ["1e400", "1e100000", "1000.01", "1001", "1e3000000", "-1", "-0.5", "1e-400", "12.1234567890123456789", "0.1000000000000000055511151231257827"],
+)
+def test_a_weight_that_cannot_be_stored_is_invalid_checklist_naming_the_criterion(
+    client: TestClient, weight: str
+) -> None:
+    cid = create_ok(client)["checklist_id"]
+    listed_before = client.get("/api/checklists").json()
+
+    r = create(client, with_weight(weight))
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_checklist"), r.text
+    assert "'c01'" in r.json()["message"] and "weight" in r.json()["message"]
+
+    r = new_version(client, cid, with_weight(weight))
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_checklist"), r.text
+    assert "'c01'" in r.json()["message"]
+
+    # Nothing was stored, and reading the checklists still works (it used to fail for good).
+    after = client.get("/api/checklists")
+    assert after.status_code == 200
+    assert after.json() == listed_before
+    assert client.get(f"/api/checklists/{cid}/versions/2").status_code == 404
+
+
+@pytest.mark.parametrize("weight", ["Infinity", "-Infinity", "NaN", "inf", "nan", "twelve", "", None])
+def test_a_weight_that_is_not_a_number_is_invalid_request(client: TestClient, weight) -> None:
+    r = create(client, with_weight(weight))
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_request"), r.text
+    assert client.get("/api/checklists").status_code == 200
+
+
+@pytest.mark.parametrize("literal", ["1e400", "-1e400", "NaN", "Infinity"])
+def test_a_json_number_literal_that_is_not_finite_is_rejected(client: TestClient, literal: str) -> None:
+    # Python's JSON parser reads 1e400 as an infinite float and accepts NaN / Infinity.
+    body = json.dumps({"role": "controller", "checklist": with_weight("__W__")}).replace('"__W__"', literal)
+    r = client.post("/api/checklists", content=body, headers={"Content-Type": "application/json"})
+    assert r.status_code == 422, r.text
+    assert client.get("/api/checklists").status_code == 200
+
+
+def test_the_weight_cap_applies_to_the_gross_error_weight_too(client: TestClient) -> None:
+    checklist = official_like()
+    checklist["criteria"][7]["weight"] = "1e400"
+    r = create(client, checklist)
+    assert (r.status_code, r.json()["error"]) == (422, "invalid_checklist")
+    assert "'c08'" in r.json()["message"]
+
+
 # --- validate_checklist / weight_warnings (unit) -------------------------------------------
 
 
@@ -434,6 +593,41 @@ def test_validate_checklist_returns_every_error_without_raising() -> None:
     errors = validate_checklist(version_of(mutate(break_three)))
     assert len(errors) == 3
     assert any("duplicate criterion id 'c01'" in e for e in errors)
+
+
+@pytest.mark.parametrize(
+    "weight",
+    [
+        Decimal("Infinity"), Decimal("-Infinity"), Decimal("NaN"), Decimal("sNaN"),
+        Decimal("1E+400"), Decimal("1E+100000"), Decimal("1000.01"), Decimal("-0.01"),
+        Decimal("1E-400"), Decimal("0.1234567890123456789"),
+    ],
+)  # fmt: skip
+def test_validate_checklist_rejects_a_weight_that_cannot_be_stored_without_raising(weight: Decimal) -> None:
+    # model_copy skips validation: this is the loader's and the API's last line of defence.
+    version = version_of(official_like())
+    criteria = [version.criteria[0].model_copy(update={"weight": weight}), *version.criteria[1:]]
+    errors = validate_checklist(version.model_copy(update={"criteria": criteria}))
+    assert len(errors) == 1 and "'c01'" in errors[0] and "weight" in errors[0]
+
+
+@pytest.mark.parametrize("weight", [Decimal("0"), Decimal("12"), Decimal("12.0"), Decimal("12.5"), Decimal("1000"), Decimal("0.1")])
+def test_validate_checklist_accepts_weights_that_survive_the_float_round_trip(weight: Decimal) -> None:
+    version = version_of(official_like())
+    criteria = [version.criteria[0].model_copy(update={"weight": weight}), *version.criteria[1:]]
+    assert validate_checklist(version.model_copy(update={"criteria": criteria})) == []
+
+
+def test_validate_checklist_needs_a_name_and_a_criterion_and_no_negative_step() -> None:
+    assert validate_checklist(version_of(mutate(lambda c: c.update(name="")))) == ["the checklist needs a name"]
+    assert validate_checklist(version_of(mutate(lambda c: c.update(name=" \t ")))) == ["the checklist needs a name"]
+    assert validate_checklist(version_of(mutate(lambda c: c.update(criteria=[])))) == [
+        "the checklist needs at least one criterion"
+    ]
+    negative = mutate(lambda c: c["criteria"][5].update(
+        scale_steps=[{"value": -1, "label": "a"}, {"value": 7, "label": "b"}]
+    ))  # fmt: skip
+    assert validate_checklist(version_of(negative)) == ["criterion 'c06': scale step values must not be negative"]
 
 
 @needs_seed
@@ -563,12 +757,37 @@ def test_new_version_takes_the_id_from_the_path_and_ignores_the_body(client: Tes
     assert client.get("/api/checklists/other/versions/99").status_code == 404
 
 
-def test_new_version_keeps_based_on_when_given(client: TestClient) -> None:
+def test_new_version_inherits_based_on_when_the_key_is_absent(client: TestClient, official_base: dict) -> None:
+    cid = create_ok(client, {**official_like(), "based_on": OFFICIAL_ID})["checklist_id"]
+    omitted = new_version(client, cid, official_like())  # no `based_on` key at all
+    assert omitted.status_code == 201 and omitted.json()["based_on"] == OFFICIAL_ID
+    assert client.get(f"/api/checklists/{cid}/versions/2").json()["based_on"] == OFFICIAL_ID
+    # ... and the next one inherits from the latest, so it keeps going.
+    assert new_version(client, cid, official_like()).json()["based_on"] == OFFICIAL_ID
+
+
+def test_new_version_with_a_based_on_replaces_the_inherited_one(client: TestClient, official_base: dict) -> None:
+    cid = create_ok(client, {**official_like(), "based_on": OFFICIAL_ID})["checklist_id"]
+    other = {"checklist_id": create_ok(client)["checklist_id"], "version": 1}
+    given = new_version(client, cid, {**official_like(), "based_on": other})
+    assert given.json()["based_on"] == other
+    assert new_version(client, cid, official_like()).json()["based_on"] == other  # inherits the new one
+
+
+def test_an_explicit_null_clears_based_on(client: TestClient, official_base: dict) -> None:
+    cid = create_ok(client, {**official_like(), "based_on": OFFICIAL_ID})["checklist_id"]
+    cleared = new_version(client, cid, {**official_like(), "based_on": None})
+    assert cleared.status_code == 201 and cleared.json()["based_on"] is None
+    assert client.get(f"/api/checklists/{cid}/versions/2").json()["based_on"] is None
+    # Cleared stays cleared: the next version inherits the null.
+    assert new_version(client, cid, official_like()).json()["based_on"] is None
+    # The earlier version still says what it was based on.
+    assert client.get(f"/api/checklists/{cid}/versions/1").json()["based_on"] == OFFICIAL_ID
+
+
+def test_a_new_version_of_a_checklist_without_based_on_has_none(client: TestClient) -> None:
     cid = create_ok(client)["checklist_id"]
-    given = new_version(client, cid, {**official_like(), "based_on": OFFICIAL_ID}).json()
-    assert given["based_on"] == OFFICIAL_ID
-    omitted = new_version(client, cid, official_like()).json()
-    assert omitted["based_on"] is None
+    assert new_version(client, cid, official_like()).json()["based_on"] is None
 
 
 def test_new_version_of_an_unknown_checklist_is_404(client: TestClient) -> None:
@@ -661,6 +880,28 @@ def test_latest_versions_one_per_checklist_oldest_first(migrated: None) -> None:
     assert latest[0] == store.get_checklist_version("b-list", 3)
     assert latest[0].locked is True and latest[1].locked is False
     assert store.latest_versions() == [store.get_checklist_version(c, v) for c, v in (("b-list", 3), ("a-list", 1))]
+
+
+@pytest.mark.parametrize("number", [0, -1, MAX_VERSION + 1, 2**63, 10**20])
+def test_get_checklist_version_out_of_range_is_none_not_an_overflow(migrated: None, number: int) -> None:
+    store.save_checklist_version(stored_version("x", 1))
+    assert store.get_checklist_version("x", number) is None
+
+
+def test_append_inherits_based_on_only_when_asked(migrated: None) -> None:
+    root = {"checklist_id": "root", "version": 1}
+    other = {"checklist_id": "other", "version": 2}
+    store.save_checklist_version(stored_version("x", 1, based_on=root))
+    plain = stored_version("ignored", 1)  # based_on None
+    assert store.append_checklist_version("x", plain).based_on is None
+    given = store.append_checklist_version("x", plain.model_copy(update={"based_on": other}))
+    assert given.based_on == other
+    store.save_checklist_version(stored_version("y", 1, based_on=root))
+    inherited = store.append_checklist_version("y", plain, inherit_based_on=True)
+    assert inherited.based_on == root
+    assert store.get_checklist_version("y", 2).based_on == root
+    # Inheriting takes the latest stored version's value, which may itself be None.
+    assert store.append_checklist_version("x", given, inherit_based_on=True).based_on == other
 
 
 def test_latest_versions_is_empty_without_checklists(migrated: None) -> None:
