@@ -2530,6 +2530,7 @@
     "queue.group.all": "\u0412\u0441\u0435 \u043D\u0430\u0431\u043E\u0440\u044B",
     "queue.selectAll": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u0435",
     "queue.load": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+    "queue.export": "\u0421\u043A\u0430\u0447\u0430\u0442\u044C Excel (CSV)",
     "queue.loadTitle": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u043E group_id \u0438\u043B\u0438 \u0444\u0430\u0439\u043B \u0441 \u0434\u0438\u0430\u043B\u043E\u0433\u0430\u043C\u0438",
     "loader.title": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432",
     "loader.close": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
@@ -3077,6 +3078,7 @@
     list: [["path", { d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" }]],
     close: [["path", { d: "M6 6l12 12M18 6 6 18" }]],
     check: [["path", { d: "m5 12.5 4.5 4.5L19 7.5" }]],
+    download: [["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" }]],
     alert: [
       ["path", { d: "M12 3.5 2.5 20h19L12 3.5Z" }],
       ["path", { d: "M12 10v4.5M12 17.5h.01" }]
@@ -6197,6 +6199,22 @@
       on: { click: () => openLoaderDrawer() }
     });
     const summary = h("p", { class: "cqa-q-summary", attrs: { "aria-live": "polite" }, data: { test: "queue-count" } });
+    const exportLink = h("a", {
+      class: "cqa-q-export",
+      attrs: { href: "#", download: "cqa-all.csv", title: t("queue.export"), "aria-label": t("queue.export") },
+      data: { test: "queue-export" },
+      on: {
+        click: (event) => {
+          try {
+            exportLink.href = api.exportCsvUrl(view.group);
+            exportLink.download = `cqa-${view.group ? view.group.replace(/[^A-Za-z0-9._-]/g, "_") : "all"}.csv`;
+          } catch (error) {
+            event.preventDefault();
+            toastError(store, error);
+          }
+        }
+      }
+    }, icon("download", { size: 16 }));
     const list = h("ul", { class: "cqa-q-list", attrs: { "aria-label": t("queue.list") }, data: { test: "queue-list" } });
     const stateBox3 = h("div", { class: "cqa-q-state", data: { test: "queue-state" } });
     const body = h("div", { class: "cqa-q-body" }, stateBox3, list);
@@ -6206,7 +6224,7 @@
       { class: "cqa-q-controls" },
       pillBar,
       h("div", { class: "cqa-q-sub" }, groupSelect, language),
-      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary))
+      h("div", { class: "cqa-q-sub" }, h("label", { class: "cqa-q-all" }, selectAll, summary), exportLink)
     );
     const top = h("div", { class: "cqa-q-top" }, searchBox, loadButton);
     const el = h("div", { class: "cqa-q", data: { test: "queue" } }, top, controls, body, batch.el);

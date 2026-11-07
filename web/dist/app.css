@@ -677,6 +677,23 @@
   justify-content: space-between;
   gap: 8px;
 }
+.cqa .cqa-q-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-2);
+}
+.cqa .cqa-q-export:hover,
+.cqa .cqa-q-export:focus-visible {
+  color: var(--text);
+  outline: 2px solid var(--line-2);
+  outline-offset: 2px;
+}
 .cqa .cqa-q-select {
   flex: none;
   max-width: 55%;
