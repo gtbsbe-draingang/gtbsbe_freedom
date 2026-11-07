@@ -213,6 +213,81 @@ def test_no_server_is_a_clear_failure(tmp_path, capsys):
     assert "ConnectError" in err and "uv run cqa-serve" in err
 
 
+def _stored_group() -> None:
+    """A fake group straight in the store: every kind of run `pick_runs` and `record` meet, with
+    speakers, two-sided evidence, checked ranges and appeal-changed final answers."""
+    from app.models import (CheckedRange, Conversation, CriterionResult, Evaluation, Evidence, Message,
+                            StepAnswer)
+
+    def conv(cid, group=GROUP):
+        speakers = ["system", "bot", "client", "operator", "client", "operator", "operator"]
+        lines = [Message(timestamp=f"00:0{i}", speaker=s, text=f"line {i}") for i, s in enumerate(speakers)]
+        return Conversation(id=f"{group}:{cid}", conversation_id=cid, group_id=group, channel="agent chat",
+                            language="RU", transcript=lines)
+
+    def ev(conversation, created, ev_id, *, source="model", status="done", appealed=False):
+        answers = {"c01": "yes", "c02": "na", "c03": "no", "c04": StepAnswer(step=15), "c05": "yes",
+                   "c06": StepAnswer(step=7), "c07": "na", "c08": "no"}
+        results = [CriterionResult(
+            criterion_id=k, answer=a, final_answer=("yes" if appealed and k == "c03" else a),
+            explanation=f" пояснение\n{k} ", confidence="high", points=None, effective_weight=None,
+            model="claude-haiku-5-5", reuse_key=f"key-{k}",
+            checked_range=CheckedRange(**{"from": 2, "to": 5}) if k in ("c02", "c07") else None,
+            evidence=[Evidence(message_index=5, quote="q", role="supports"),
+                      Evidence(message_index=3, quote="q", role="expected_here"),
+                      Evidence(message_index=99, quote="q", role="supports")])  # out of range: dropped
+            for k, a in answers.items()] if status == "done" else []
+        total = "80.00" if status == "done" else None
+        return Evaluation(id=ev_id, created_at=created, conversation=f"{GROUP}:{conversation}"
+                          if ":" not in conversation else conversation, checklist_id="official-chat", version=1,
+                          status=status, source=source, model="claude-haiku-5-5", results=results,
+                          original_total=total, final_total="90.00" if appealed else total,
+                          transcript_hash="h")
+
+    for cid in ("a", "b", "c", "d", "e"):
+        store.upsert_conversation(conv(cid), None)
+    store.upsert_conversation(conv("a", group="DEV"), None)
+    for e in (ev("a", "2026-11-07T10:00:00Z", "a-old"),
+              ev("a", "2026-11-07T11:00:00Z", "a-new", appealed=True),
+              ev("a", "2026-11-07T12:00:00Z", "a-mock", source="mock"),
+              ev("b", "2026-11-07T11:00:00Z", "b-1"), ev("b", "2026-11-07T11:00:00Z", "b-2"),  # same time: id order
+              ev("c", "2026-11-07T10:00:00Z", "c-failed", status="failed"),
+              ev("d", "2026-11-07T10:00:00Z", "d-mock", source="mock"),
+              ev("DEV:a", "2026-11-07T13:00:00Z", "dev-a")):
+        store.insert_evaluation(e)
+
+
+def test_the_http_export_equals_the_store_export(client):
+    _stored_group()
+    api = cr.Api(client, BASE)
+    for answers in ("original", "final"):
+        over_http = rx.build(cr.HttpStore(api), GROUP, "official-chat", 1, team="t", mode="external_api",
+                             answers=answers)
+        direct = rx.build(store, GROUP, "official-chat", 1, team="t", mode="external_api", answers=answers)
+        assert over_http == direct
+    assert [r["status"] for r in direct["results"]] == ["ok", "ok", "error", "error", "error"]
+    assert direct["results"][0]["score"]["final_score"] == 90.0  # the appeal-changed run, final answers
+
+    # find_evaluations: the store's signature and its newest-first order, with or without a conversation
+    newest_first = lambda found: [e.id for e in found]
+    in_group = [e for e in store.find_evaluations(checklist_id="official-chat") if e.conversation.startswith(GROUP)]
+    unlisted = cr.HttpStore(api)
+    assert newest_first(unlisted.find_evaluations(checklist_id="official-chat")) == \
+        newest_first(store.find_evaluations(checklist_id="official-chat"))  # before a listing: everything
+    listed = cr.HttpStore(api)
+    listed.list_conversations(group_id=GROUP)
+    assert newest_first(listed.find_evaluations(checklist_id="official-chat")) == newest_first(in_group)
+    assert newest_first(listed.find_evaluations(f"{GROUP}:b", "official-chat")) == ["b-2", "b-1"]
+
+    # what record() and its evidence helpers read survives the trip through the API
+    http_run = listed.find_evaluations(f"{GROUP}:a", "official-chat")[1]
+    stored_run = store.get_evaluation("a-new")
+    hidden = {"transcript_hash": True, "results": {"__all__": {"calls", "reuse_key"}}}
+    assert http_run.model_dump(exclude=hidden) == stored_run.model_dump(exclude=hidden)
+    assert http_run.results[1].checked_range.from_ == 2 and http_run.results[2].final_answer == "yes"
+    assert listed.get_conversation(f"{GROUP}:a").transcript == store.get_conversation(f"{GROUP}:a").transcript
+
+
 def test_records_are_read_from_every_organiser_shape(tmp_path):
     records = [{"conversation_id": str(i)} for i in range(4)]
     for body in (records, {"records": records}, {"isSuccess": True, "data": {"records": records}}):
