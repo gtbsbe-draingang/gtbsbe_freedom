@@ -90,7 +90,8 @@ def test_rehearsal_imports_evaluates_retries_and_writes_a_valid_file(make_client
     job = store.list_jobs()[0]
     assert (job.done, job.failed, [r.role for r in job.retries]) == (3, 0, ["controller"])
     for line in ("Imported: total 3, new 3", "24 model call(s), 0 reused",
-                 "1 failed", "Retry 1/1", "3 ok, 0 error(s)", "Valid: every record is ok.",
+                 "1 failed", "Retry 1/1", "3 ok, 0 error(s)", "Checking the written file",
+                 "Valid: every record is ok.",
                  "git add", "git push -u origin results/control-CTRL-TEST"):
         assert line in printed.out, line
     assert "sig=" not in printed.out + printed.err
@@ -138,6 +139,31 @@ def test_a_timeout_writes_the_file_with_unfinished_dialogues_as_errors(make_clie
     assert "did not finish within 1.0 min" in printed.err and "job timed out" in printed.out
     doc = json.loads(out.read_text(encoding="utf-8"))
     assert [r["status"] for r in doc["results"]] == ["error", "error"]
+
+
+def test_the_written_file_is_rechecked_against_the_servers_group(make_client, fake, organiser_file, tmp_path,
+                                                                   capsys, monkeypatch):
+    """validate() cannot see an evidence turn past the end of a transcript; the on-disk check of the
+    written file against the group as the server holds it does."""
+    client = make_client(**KEY)
+    ensure_official()
+    out = tmp_path / "results.json"
+    real_write = cr.write
+
+    def corrupt(doc: dict, path) -> None:
+        doc["results"][0]["criteria"][0]["evidence_turns"] = [999]
+        real_write(doc, path)
+
+    monkeypatch.setattr(cr, "write", corrupt)
+
+    code = run(client, "--from-json", str(organiser_file), "--limit", "2", "--expect", "2", "--out", str(out))
+
+    printed = capsys.readouterr()
+    assert code == cr.EXIT_PROBLEMS
+    assert "999" in printed.err and "p1-ru-001" in printed.err
+    lengths = rx.group_lengths(GROUP, store=cr.HttpGroup(cr.HttpStore(cr.Api(client, BASE))))
+    assert lengths == {c.conversation_id: len(store.get_conversation(c.id).transcript)
+                       for c in store.list_conversations(group_id=GROUP)}
 
 
 def test_export_only_reads_the_server_and_flags_a_wrong_count(make_client, fake, organiser_file, tmp_path, capsys):

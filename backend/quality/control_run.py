@@ -128,6 +128,18 @@ class HttpStore:
         return found
 
 
+class HttpGroup:
+    """The group with transcripts, as `results_export.check_file(..., store=)` reads it (the queue
+    rows of `GET /conversations` carry no transcript), so the file on disk is cross-checked against
+    exactly the conversations the server holds, not a guessed SQLite file."""
+
+    def __init__(self, store: HttpStore) -> None:
+        self.store = store
+
+    def list_conversations(self, *, group_id: str) -> list[Conversation]:
+        return [self.store.get_conversation(c.id) for c in self.store.list_conversations(group_id=group_id)]
+
+
 # --- the steps ---------------------------------------------------------------------------------
 
 
@@ -346,6 +358,11 @@ def main(argv: list[str] | None = None, *, client: httpx.Client | None = None,
         log("Exporting from the server...")
         doc, problems = export(api, args, job)
         write(doc, args.out)
+        # Re-read the file as written (strict JSON, no secrets, the appendix's rules) and cross-check
+        # its ids and evidence turns against the group on the server: what gets pushed is this file.
+        log("Checking the written file against the server's group...")
+        problems += [p for p in rx.check_file(args.out, args.expect, group=args.group,
+                                              store=HttpGroup(HttpStore(api))) if p not in problems]
     except RunFailed as exc:
         print(f"[{datetime.now():%H:%M:%S}] FAILED {redact_signed_urls(str(exc))}", file=sys.stderr, flush=True)
         return EXIT_NOT_WRITTEN
