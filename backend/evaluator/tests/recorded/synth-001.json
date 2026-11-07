@@ -1,0 +1,207 @@
+[
+ {
+  "payload": {
+   "answer": "yes",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "na",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [],
+   "checked_range": null,
+   "na_reason": "условие неприменимости",
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "yes",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "step",
+   "step": 20,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "yes",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "step",
+   "step": 7,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "yes",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [
+    {
+     "message_index": 1,
+     "quote": "где именно ищете",
+     "role": "supports"
+    }
+   ],
+   "checked_range": null,
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "answer": "no",
+   "step": null,
+   "kinds": [],
+   "explanation": "Критерий — Да. Оператор ответил. Основание — сообщение 1.",
+   "evidence": [],
+   "checked_range": {
+    "from_index": 0,
+    "to_index": 2
+   },
+   "na_reason": null,
+   "confidence": "high",
+   "coaching": null
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ },
+ {
+  "payload": {
+   "topic": "Тестовый вопрос",
+   "mood_start": "спокойный",
+   "mood_end": "довольный",
+   "outcome": "resolved"
+  },
+  "usage": [
+   2000,
+   0,
+   0,
+   600
+  ]
+ }
+]
