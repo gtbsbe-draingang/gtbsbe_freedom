@@ -81,7 +81,7 @@ On the disputed labels the model sides with the #25 proposals: c07 Yes on 32 of 
 
 ## Planted violations
 
-`backend/quality/planted.py` lists them (design section 4, plan Task 8); `tests/quality/test_planted.py` checks that every one matches this file. All 26 match.
+`backend/quality/planted.py` lists them (design section 4, plan Task 8); `tests/quality/test_planted.py` checks that every one matches this file. All 25 match.
 
 ## Totals with these answers
 
