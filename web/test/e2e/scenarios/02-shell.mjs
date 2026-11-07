@@ -96,9 +96,17 @@ export async function run(page) {
   assert.equal(await page.eval(`document.querySelector(${JSON.stringify(sel("role-menu"))}).hidden`), true);
   assert.equal(await page.eval("window.__cqaTest.store.get().role"), "reviewer");
 
-  // ---- layout by width ----
+  // ---- layout by width, with no dialogue open: the batch board has the scorecard's column ----
   await page.eval(`location.hash = "#/"`);
+  await page.waitFor(sel("batch-board"));
+  assert.equal(await visible(page, sel("transcript-pane")), true, "the board");
+  assert.equal(await visible(page, sel("scorecard-pane")), false, "no empty scorecard column");
+  assert.equal(await visible(page, sel("tab-transcript")), false, "no dialogue, no tabs");
+
+  // ---- layout by width, with a dialogue open ----
+  await page.eval(`location.hash = "#/c/DEV%3Ap1-ru-001"`);
   await page.waitFor(sel("queue-pane"));
+  await page.eval(`new Promise((resolve) => { const t = Date.now(); (function wait() { !document.querySelector(${JSON.stringify(sel("batch-board"))}) || Date.now() - t > 2000 ? resolve() : setTimeout(wait, 20); })(); })`);
   if (narrow) {
     assert.equal(await page.count(sel("queue-toggle")), 1);
     assert.equal(await visible(page, sel("queue-pane")), false, "the queue is a closed drawer");
