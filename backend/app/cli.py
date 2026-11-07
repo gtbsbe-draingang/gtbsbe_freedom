@@ -1,7 +1,7 @@
 """The two commands of `[project.scripts]`: `cqa-serve` (the one-command start) and `cqa-snapshot`.
 
     cd backend
-    uv run cqa-serve [--host 127.0.0.1] [--port 8000]
+    uv run cqa-serve [--host 127.0.0.1] [--port 8000] [--llm-api]
     uv run cqa-snapshot
 
 `cqa-serve` prepares the database (migrations, the seeded checklists) and, when it holds no
@@ -60,6 +60,12 @@ def parse_serve_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--host", default=DEFAULT_HOST, help=f"address to listen on (default {DEFAULT_HOST})")
     parser.add_argument("--port", type=_port, default=DEFAULT_PORT, help=f"port to listen on (default {DEFAULT_PORT})")
+    parser.add_argument(
+        "--llm-api",
+        action="store_true",
+        help="evaluate with the Claude API (claude-haiku-5-5, ANTHROPIC_API_KEY) instead of the local model "
+        "that ANTHROPIC_BASE_URL and DEFAULT_MODEL in .env point to",
+    )
     return parser.parse_args(argv)
 
 
@@ -146,6 +152,10 @@ def _restore_snapshot() -> None:
 def serve(argv: list[str] | None = None) -> None:
     """`cqa-serve`: prepare the database, load the snapshot into an empty one, run the app."""
     args = parse_serve_args(argv)
+    if args.llm_api:
+        # An environment variable wins over backend/.env, and the app reads settings in this process.
+        os.environ["LLM_API"] = "1"
+        get_settings.cache_clear()
     configure_logging()
     db_path = _anchor_db_path()
     _load_other_streams()
@@ -156,6 +166,8 @@ def serve(argv: list[str] | None = None) -> None:
     settings = get_settings()
     print(f"Database: {db_path}")
     print(f"CQA is running at {_address(args.host, args.port)}")
+    where = "Claude API" if not settings.anthropic_base_url else "local server"
+    print(f"Model: {settings.default_model} ({where})")
     if settings.model_key_configured:
         print("Model key: configured. New evaluations are enabled.")
     else:
