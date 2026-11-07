@@ -792,8 +792,13 @@
   margin: 2px 0 10px;
 }
 
+/* The total's colour follows the score: red at 0, through amber, to mint with a glow at 100
+   (--score 0..1 is set from JS). Browsers without color-mix keep the plain mint. */
 .cqa .cqa-sc-total {
+  --score: 1;
   color: var(--mint);
+  color: color-mix(in oklch shorter hue, var(--mint) calc(var(--score) * 100%), #FF5A5F);
+  text-shadow: 0 0 calc(8px + var(--score) * 20px) color-mix(in srgb, currentColor 55%, transparent);
   font-size: 54px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -801,6 +806,7 @@
 }
 
 .cqa .cqa-sc-total--none {
+  text-shadow: none;
   font-size: 24px;
   letter-spacing: 0;
 }
@@ -1076,15 +1082,74 @@
   text-transform: uppercase;
 }
 
+/* A criterion is a plate: a verdict stripe on the left, a short preview by default, the whole
+   text (explanation, quotes, coaching, range) once opened by a click or Enter. Hover lifts it. */
 .cqa .cqa-sc-crit {
-  padding: 10px 12px;
+  --crit-ink: var(--na-ink);
+  --crit-bg: var(--na-bg);
+  position: relative;
+  padding: 10px 12px 10px 16px;
   border: 1px solid var(--line);
   border-radius: var(--r-ctl);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.cqa .cqa-sc-crit::before {
+  position: absolute;
+  inset: 8px auto 8px 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--crit-ink);
+  content: "";
+}
+
+.cqa .cqa-sc-crit--ok { --crit-ink: var(--ok-ink); --crit-bg: var(--ok-bg); }
+.cqa .cqa-sc-crit--mid { --crit-ink: var(--mid-ink); --crit-bg: var(--mid-bg); }
+.cqa .cqa-sc-crit--bad { --crit-ink: var(--bad-ink); --crit-bg: var(--bad-bg); }
+
+/* chevron: down when closed, up when open */
+.cqa .cqa-sc-r1::after {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin: 0 2px 3px 2px;
+  border-right: 2px solid var(--text-3);
+  border-bottom: 2px solid var(--text-3);
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+  content: "";
+}
+
+.cqa .cqa-sc-crit.is-open .cqa-sc-r1::after {
+  margin-bottom: -3px;
+  transform: rotate(-135deg);
+}
+
+@media (hover: hover) {
+  .cqa .cqa-sc-crit:hover {
+    border-color: var(--crit-ink);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+}
+
+.cqa .cqa-sc-crit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .cqa .cqa-sc-crit.is-open {
-  border-color: var(--line-2);
-  background: var(--sel);
+  border-color: var(--crit-ink);
+  background: linear-gradient(90deg, var(--crit-bg), var(--surface) 70%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-sc-crit,
+  .cqa .cqa-sc-r1::after { transition: none; }
+  .cqa .cqa-sc-crit:hover { transform: none; }
 }
 
 .cqa .cqa-sc-r1 {
@@ -1120,9 +1185,26 @@
 }
 
 .cqa .cqa-sc-why {
-  margin: 8px 0 0;
+  display: -webkit-box;
+  margin: 6px 0 0;
+  overflow: hidden;
+  color: var(--text-2);
   font-size: 13px;
+  line-height: 1.45;
   overflow-wrap: anywhere;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cqa .cqa-sc-crit.is-open .cqa-sc-why {
+  display: block;
+  color: var(--text);
+}
+
+/* details wait until the plate is opened */
+.cqa .cqa-sc-crit:not(.is-open) .cqa-sc-range,
+.cqa .cqa-sc-crit:not(.is-open) .cqa-sc-coach {
+  display: none;
 }
 
 .cqa .cqa-sc-na,
@@ -1174,8 +1256,12 @@
   display: -webkit-box;
   overflow: hidden;
   overflow-wrap: anywhere;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+}
+
+.cqa .cqa-sc-crit.is-open .cqa-sc-ev-quote {
+  -webkit-line-clamp: 3;
 }
 
 .cqa .cqa-sc-coach {
@@ -1200,6 +1286,20 @@
   display: flex;
   gap: 8px;
   margin-top: 10px;
+}
+
+/* with a mouse, «Оспорить» shows on the plate under the pointer, the focused one and the open one */
+@media (hover: hover) {
+  .cqa .cqa-sc-crit .cqa-sc-acts {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .cqa .cqa-sc-crit:hover .cqa-sc-acts,
+  .cqa .cqa-sc-crit:focus-within .cqa-sc-acts,
+  .cqa .cqa-sc-crit.is-open .cqa-sc-acts {
+    opacity: 1;
+  }
 }
 
 /* ---- loading data and batch runs (queue) ---- */
