@@ -43,7 +43,7 @@
       "na_condition": null,
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c02",
@@ -58,7 +58,7 @@
       "na_condition": "N/A — данных для ответа хватало с самого начала.",
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c03",
@@ -73,7 +73,7 @@
       "na_condition": "N/A — запрос не требовал идентификации.",
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c04",
@@ -109,7 +109,7 @@
       "na_condition": "N/A — чат закончился до того, как клиент сформулировал запрос.",
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c05",
@@ -124,7 +124,7 @@
       "na_condition": null,
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c06",
@@ -156,7 +156,7 @@
       "na_condition": null,
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c07",
@@ -171,7 +171,7 @@
       "na_condition": "N/A — чат оборвался до возможности его завершить.",
       "kind": "scored",
       "kinds": [],
-      "guidance": ""
+      "guidance": null
     },
     {
       "id": "c08",
@@ -190,7 +190,7 @@
         "paid_service_outside_company",
         "confidential_disclosure"
       ],
-      "guidance": ""
+      "guidance": null
     }
   ]
 }

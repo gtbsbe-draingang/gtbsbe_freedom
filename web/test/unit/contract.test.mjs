@@ -359,26 +359,33 @@ describe("schema rules", () => {
     for (const language of languages) assert.match(language, /^(RU|KZ|EN)$/);
   });
 
-  test("checklist guidance is a string, empty when there is none", () => {
+  test("checklist guidance is a string (empty when none); criterion guidance is null when none", () => {
     const ajv = buildAjv();
     const version = validator(ajv, "checklist-version");
     const seed = validator(ajv, "checklist-seed");
     const custom = example("checklist-version.custom.json");
     assert.equal(custom.guidance, "");
-    assert.ok(custom.criteria.every((c) => c.guidance === ""));
+    assert.ok(custom.criteria.every((c) => c.guidance === null), "empty criterion guidance is null, not an empty string");
     assert.ok(version(custom), describeErrors(version));
 
     const nullTop = clone(custom);
     nullTop.guidance = null;
-    assert.equal(version(nullTop), false, "checklist guidance null is rejected");
-    const nullCriterion = clone(custom);
-    nullCriterion.criteria[0].guidance = null;
-    assert.equal(version(nullCriterion), false, "criterion guidance null is rejected");
+    assert.equal(version(nullTop), false, "checklist-level guidance null is rejected");
+    const withText = clone(custom);
+    withText.criteria[0].guidance = "Подсказка проверяющему.";
+    assert.ok(version(withText), "criterion guidance may be text");
 
     const official = readJson(seedFile);
     assert.ok(seed(official), describeErrors(seed));
     official.guidance = null;
-    assert.equal(seed(official), false, "the seed's guidance is a string too");
+    assert.equal(seed(official), false, "the seed's checklist-level guidance is a string too");
+  });
+
+  test("seed criteria have guidance === null and the checklist has the guidance text", () => {
+    const seed = readJson(seedFile);
+    assert.equal(typeof seed.guidance, "string");
+    assert.ok(seed.guidance.length > 0);
+    for (const c of seed.criteria) assert.strictEqual(c.guidance, null, `${c.id}: guidance is null`);
   });
 
   test("voice measurements use semitones, seconds and words per minute", () => {

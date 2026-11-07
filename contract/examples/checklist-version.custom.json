@@ -45,7 +45,7 @@
       "na_condition": null,
       "kind": "scored",
       "kinds": [],
-      "guidance": "",
+      "guidance": null,
       "fingerprint": "9c41d7a2e0b3"
     },
     {
@@ -74,7 +74,7 @@
       "na_condition": null,
       "kind": "scored",
       "kinds": [],
-      "guidance": "",
+      "guidance": null,
       "model": null,
       "fingerprint": "5be08f13c6a9"
     },
@@ -93,7 +93,7 @@
       "kinds": [
         "insult"
       ],
-      "guidance": "",
+      "guidance": null,
       "fingerprint": "d2a7716f48e1"
     }
   ]

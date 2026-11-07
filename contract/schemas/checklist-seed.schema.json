@@ -184,8 +184,11 @@
           "description": "Violation kinds of a gross-error criterion; empty otherwise."
         },
         "guidance": {
-          "type": "string",
-          "description": "Per-criterion guidance; empty string when none."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Per-criterion guidance; null when none (it is part of the fingerprint, and null and an empty string hash differently)."
         },
         "model": {
           "type": [
