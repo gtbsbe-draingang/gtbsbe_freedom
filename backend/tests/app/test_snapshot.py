@@ -213,6 +213,50 @@ def with_heavier_c01(data: dict) -> None:
     data["criteria"][0]["weight"] = 20  # a weight is not part of the fingerprint
 
 
+def with_new_name(data: dict) -> None:
+    data["name"] += " (new)"
+
+
+def with_new_section_title(data: dict) -> None:
+    data["sections"][0]["title"] += " (new)"
+
+
+def with_swapped_sections(data: dict) -> None:
+    data["sections"][0], data["sections"][1] = data["sections"][1], data["sections"][0]
+
+
+def with_unlocked(data: dict) -> None:
+    data["locked"] = False
+
+
+def with_based_on(data: dict) -> None:
+    data["based_on"] = {"checklist_id": "somewhere-else", "version": 3}
+
+
+def with_new_scale_label(data: dict) -> None:
+    data["criteria"][3]["scale_steps"][0]["label"] += " (new)"
+
+
+def with_new_na_rule(data: dict) -> None:
+    data["criteria"][1]["na_condition"] += " (new)"
+
+
+def with_other_criterion_order(data: dict) -> None:
+    data["criteria"][0]["order"] = 99
+
+
+def with_other_section_for_c01(data: dict) -> None:
+    data["criteria"][0]["section_id"] = "safety"
+
+
+# Everything that is scored or shown. The first three are in a criterion's fingerprint, the rest are not.
+CONTENT_DRIFTS = [
+    with_guidance, with_new_title, with_swapped_criteria, with_new_scale_label, with_new_na_rule,
+    with_heavier_c01, with_new_name, with_new_section_title, with_swapped_sections, with_unlocked,
+    with_based_on, with_other_criterion_order, with_other_section_for_c01,
+]  # fmt: skip
+
+
 # --- the brief's tests ---------------------------------------------------------------------
 
 
@@ -310,7 +354,7 @@ def test_the_refusal_names_the_part_and_the_row_but_not_the_text(source: Source,
 # --- a seeded checklist that differs from its seed file ------------------------------------
 
 
-@pytest.mark.parametrize("change", [with_guidance, with_new_title, with_swapped_criteria])
+@pytest.mark.parametrize("change", CONTENT_DRIFTS, ids=lambda change: change.__name__)
 def test_export_refuses_when_the_seed_file_changed_since_the_database_was_seeded(
     source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: Callable[[dict], None]
 ) -> None:
@@ -323,9 +367,9 @@ def test_export_refuses_when_the_seed_file_changed_since_the_database_was_seeded
         export_snapshot(target)
 
     message = str(caught.value)
-    assert "official-chat" in message and "version 1" in message
+    assert "official-chat" in message and "version 1" in message and "official-chat-v1.json" in message
     assert "fresh database" in message
-    assert "Changed after" not in message  # names the checklist, never its text
+    assert "Changed after" not in message and "(new)" not in message  # names the checklist, never its text
     assert target.read_text(encoding="utf-8") == "OLD"  # nothing was written
     assert [p.name for p in target.parent.iterdir()] == ["snapshot.json"]  # and no temp file is left
     fresh_target = tmp_path / "never.json"
@@ -340,11 +384,13 @@ def test_export_refuses_when_the_seed_file_changed_since_the_database_was_seeded
         (with_guidance, True), (with_guidance, False),
         (with_new_title, True), (with_new_title, False),
         (with_swapped_criteria, False),
+        (with_heavier_c01, False), (with_new_name, False), (with_swapped_sections, False),
     ],
     ids=[
         "guidance, older version", "guidance, hand-edited row",
         "title, older version", "title, hand-edited row",
         "order",
+        "weight only", "name only", "section order",
     ],
 )  # fmt: skip
 def test_export_refuses_a_stored_seeded_checklist_that_was_altered(
@@ -357,15 +403,27 @@ def test_export_refuses_a_stored_seeded_checklist_that_was_altered(
         export_snapshot(target)
 
     assert "official-chat" in str(caught.value) and "version 1" in str(caught.value)
+    assert "official-chat-v1.json" in str(caught.value)
     assert "fresh database" in str(caught.value)
     assert not target.exists()
 
 
-def test_export_accepts_a_seeded_checklist_that_differs_only_in_weight(
-    source: Source, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    # A weight is not in the fingerprint: stored judgments are still reused, decisions still carry over.
-    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", with_heavier_c01))
+def test_export_refuses_a_seeded_checklist_whose_locked_flag_was_changed(source: Source, tmp_path: Path) -> None:
+    conn = connect()
+    try:  # the column is the authoritative flag (the JSON's copy keeps the old value)
+        conn.execute("UPDATE checklist_versions SET locked = 0 WHERE checklist_id = ?", (OFFICIAL[0],))
+        conn.commit()
+    finally:
+        conn.close()
+    target = tmp_path / "snapshot.json"
+    with pytest.raises(SnapshotError, match="official-chat version 1"):
+        export_snapshot(target)
+    assert not target.exists()
+
+
+def test_export_ignores_storage_metadata_of_a_seeded_checklist(source: Source, tmp_path: Path) -> None:
+    # Only `created_at` is not content: a database seeded on another day is the same checklist.
+    alter_stored(OFFICIAL, lambda data: data.update(created_at="2020-01-02T03:04:05+00:00"), refingerprint=False)
     path, document = exported(source, tmp_path)
     assert path.is_file() and document["checklists"]
 
@@ -578,11 +636,15 @@ def test_import_skips_checklist_versions_that_exist(source: Source, fresh, tmp_p
     )  # fmt: skip
 
 
+@pytest.mark.parametrize(
+    "change", [with_guidance, with_heavier_c01, with_new_name, with_unlocked], ids=lambda change: change.__name__
+)
 def test_import_warns_when_the_seeded_checklist_differs_from_the_snapshots_copy(
-    source: Source, fresh, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    source: Source, fresh, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture,
+    change: Callable[[dict], None],
 ) -> None:
     path, _ = exported(source, tmp_path)  # exported while the seed file was still the original
-    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", with_guidance))
+    seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", change))
     fresh()  # the new database is seeded from the changed file
     seeded = rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'")
 
@@ -592,23 +654,21 @@ def test_import_warns_when_the_seeded_checklist_differs_from_the_snapshots_copy(
     warned = [r for r in caplog.records if r.levelno == logging.WARNING]
     assert len(warned) == 1
     assert "official-chat" in warned[0].getMessage() and "version 1" in warned[0].getMessage()
-    assert "Changed after" not in caplog.text  # names the checklist, never its text
+    assert "Changed after" not in caplog.text and "(new)" not in caplog.text  # names the checklist, not its text
     assert count > 0 and len(store.list_conversations()) == 6  # the import still went ahead
     assert rows("SELECT * FROM checklist_versions WHERE checklist_id = 'official-chat'") == seeded  # seeded one kept
 
 
-@pytest.mark.parametrize("change", [None, with_heavier_c01], ids=["same seed", "weight only"])
-def test_import_does_not_warn_when_the_seeded_checklist_has_the_same_fingerprints(
-    source: Source, fresh, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture,
-    change: Callable[[dict], None] | None,
+def test_import_does_not_warn_when_the_seeded_checklist_has_the_same_content(
+    source: Source, fresh, tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
-    path, _ = exported(source, tmp_path)
-    if change is not None:
-        seed_from(monkeypatch, changed_official_seed(tmp_path / "seeds", change))
+    path, document = exported(source, tmp_path)
+    for row in document["checklists"]:  # the snapshot was made on another day: only created_at differs
+        row["created_at"] = row["checklist"]["created_at"] = "2020-01-02T03:04:05+00:00"
     fresh()
 
     with caplog.at_level(logging.WARNING, logger="app.snapshot"):
-        import_snapshot(path)
+        import_snapshot(write_doc(tmp_path / "older.json", document))
 
     assert [r for r in caplog.records if r.levelno >= logging.WARNING] == []
 

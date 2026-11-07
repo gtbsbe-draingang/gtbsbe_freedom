@@ -354,12 +354,17 @@ def test_snapshot_refuses_signed_text(
     assert target.read_text(encoding="utf-8") == "OLD"
 
 
+@pytest.mark.parametrize(
+    "change",
+    [lambda d: d["criteria"][0].update(guidance="New guidance."), lambda d: d["criteria"][0].update(weight=20)],
+    ids=["guidance", "weight only"],
+)
 def test_snapshot_refuses_a_seeded_checklist_that_differs_from_its_seed_file(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str], change
 ) -> None:
     target = build_snapshot(monkeypatch, tmp_path)
     use_database(monkeypatch, tmp_path / "source.db")  # seeded from the original seed file
-    changed = changed_official_seed(tmp_path / "seeds", lambda d: d["criteria"][0].update(guidance="New guidance."))
+    changed = changed_official_seed(tmp_path / "seeds", change)
     monkeypatch.setattr(checklists, "OFFICIAL_SEED", changed)
     monkeypatch.setattr(checklists, "CALLS_SEED", tmp_path / "seeds" / "none.json")
     target.write_text("OLD", encoding="utf-8")
@@ -369,7 +374,7 @@ def test_snapshot_refuses_a_seeded_checklist_that_differs_from_its_seed_file(
 
     assert caught.value.code == 1
     shown = capsys.readouterr()
-    assert "official-chat" in shown.err and "version 1" in shown.err
+    assert "official-chat" in shown.err and "version 1" in shown.err and "official-chat-v1.json" in shown.err
     assert "fresh database" in shown.err
     assert "New guidance" not in shown.out + shown.err
     assert target.read_text(encoding="utf-8") == "OLD"
