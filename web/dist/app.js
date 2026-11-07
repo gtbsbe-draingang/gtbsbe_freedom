@@ -5435,7 +5435,13 @@
         h(
           "div",
           { class: "cqa-sc-tot" },
-          h("b", { class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"], text: totalText2, data: { test: "total" } }),
+          h("b", {
+            class: ["cqa-sc-total", "num", none && "cqa-sc-total--none"],
+            text: totalText2,
+            // 0..100 -> 0..1: the CSS mixes red (0) into mint (100)
+            style: none ? null : { "--score": Math.max(0, Math.min(100, evaluation.final_total)) / 100 },
+            data: { test: "total" }
+          }),
           none ? null : h("span", { class: "cqa-sc-outof", text: t("scorecard.outOf") }),
           changed ? h("s", {
             class: ["cqa-sc-was", "num"],

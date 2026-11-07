@@ -1495,13 +1495,17 @@
   margin: 2px 0 10px;
 }
 .cqa .cqa-sc-total {
+  --score: 1;
   color: var(--mint);
+  color: color-mix(in oklch shorter hue, var(--mint) calc(var(--score) * 100%), #FF5A5F);
+  text-shadow: 0 0 calc(8px + var(--score) * 20px) color-mix(in srgb, currentColor 55%, transparent);
   font-size: 54px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
 }
 .cqa .cqa-sc-total--none {
+  text-shadow: none;
   font-size: 24px;
   letter-spacing: 0;
 }
