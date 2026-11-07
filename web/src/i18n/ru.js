@@ -261,6 +261,10 @@ const messages = {
   "review.decidedConfirmed": "Оценка подтверждена",
   "review.decidedChanged": "Ответ изменён на «{answer}»",
   "review.result": "Итог: {from} → {to}",
+  "review.saved": "Решение сохранено.",
+  "review.reloading": "Обновляю данные панели…",
+  "review.reloadFailed": "Панель не обновилась, решение уже сохранено.",
+  "review.reload": "Обновить",
 
   "view.soon": "Раздел ещё не готов.",
   "notfound.title": "Страница не найдена",

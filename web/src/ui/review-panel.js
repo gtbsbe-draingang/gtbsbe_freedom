@@ -88,7 +88,7 @@ function stepLabel(criterion, answer) {
  */
 export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
   const el = h("section", { class: "cqa-rv", attrs: { "aria-label": t("review.label") }, data: { test: "review-panel" } });
-  const view = { appeal: null, evaluation: null, version: null, conversation: null, outcome: null, answer: null, reason: "", busy: false, result: null };
+  const view = { appeal: null, evaluation: null, version: null, conversation: null, outcome: null, answer: null, reason: "", busy: false, result: null, saved: null, reloading: false, reloadFailed: false };
   let destroyed = false;
   let pollTimer = null;
   const stops = [];
@@ -246,6 +246,10 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
   function paintDecision() {
     clear(decisionBox).append(h("p", { class: "cqa-rv-label", text: t("review.decision") }));
     const { appeal } = view;
+    if (view.saved) {
+      decisionBox.append(savedView());
+      return;
+    }
     if (appeal.status !== "open") {
       decisionBox.append(decidedView());
       return;
@@ -351,30 +355,77 @@ export function renderReviewPanel(store, api, appealId, { onDecided } = {}) {
     );
   }
 
+  // The decision is a mutation; what follows it is only reading. A failure of the POST offers to
+  // decide again (nothing was saved); a failure of a read after a saved decision offers to read
+  // again, never to post the decision a second time.
   async function decide() {
-    if (view.busy || view.outcome === null || view.reason.trim() === "") return;
+    if (destroyed || view.busy || view.saved || view.outcome === null || view.reason.trim() === "") return;
     view.busy = true;
     paintDecision();
     const before = view.evaluation.final_total;
+    const body = { outcome: view.outcome, reason: view.reason.trim() };
+    if (view.outcome === "changed") body.answer = view.answer;
+    let evaluation;
     try {
-      const body = { outcome: view.outcome, reason: view.reason.trim() };
-      if (view.outcome === "changed") body.answer = view.answer;
-      const evaluation = await api.decideAppeal(appealId, body);
-      const appeal = await api.getAppeal(appealId);
-      if (destroyed) return;
-      view.evaluation = evaluation?.results ? evaluation : await api.getEvaluation(view.appeal.evaluation_id);
-      view.appeal = appeal;
-      view.result = { before, after: view.evaluation.final_total };
-      view.busy = false;
-      store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
-      draw();
-      onDecided?.(appeal);
+      evaluation = await api.decideAppeal(appealId, body);
     } catch (error) {
       if (destroyed) return;
       view.busy = false;
       paintDecision();
       toastError(store, error, { retry: decide });
+      return;
     }
+    view.saved = { before, evaluation: evaluation?.results ? evaluation : null };
+    view.busy = false;
+    store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 })); // other views refresh even if this one is gone
+    if (destroyed) return;
+    onDecided?.();
+    await reloadAfterDecision();
+  }
+
+  async function reloadAfterDecision() {
+    if (destroyed || !view.saved || view.reloading) return;
+    view.reloading = true;
+    view.reloadFailed = false;
+    paintDecision();
+    try {
+      const appeal = await api.getAppeal(appealId);
+      const evaluation = view.saved.evaluation ?? (await api.getEvaluation(appeal.evaluation_id));
+      if (destroyed) return;
+      view.appeal = appeal;
+      view.evaluation = evaluation;
+      view.result = { before: view.saved.before, after: evaluation.final_total };
+      view.saved = null;
+      view.reloading = false;
+      draw();
+    } catch (error) {
+      if (destroyed) return;
+      view.reloading = false;
+      view.reloadFailed = true;
+      paintDecision();
+      toastError(store, error, { retry: reloadAfterDecision });
+    }
+  }
+
+  // A saved decision whose panel has not been re-read yet: no form, the new total when the
+  // decision's answer carried it, and «Обновить» after a failed read.
+  function savedView() {
+    const { before, evaluation } = view.saved;
+    return h(
+      "div",
+      { class: "cqa-rv-decided", data: { test: "decision-saved" } },
+      h("b", { class: "cqa-rv-decided-what", text: t("review.saved") }),
+      evaluation ? h("p", { class: "cqa-rv-result", text: t("review.result", { from: totalText(before), to: totalText(evaluation.final_total) }), data: { test: "decision-result" } }) : null,
+      view.reloadFailed
+        ? h(
+            "p",
+            { class: "cqa-rv-note" },
+            t("review.reloadFailed"),
+            " ",
+            h("button", { class: "cqa-sc-btn", attrs: { type: "button" }, text: t("review.reload"), data: { test: "decision-reload" }, on: { click: () => reloadAfterDecision() } }),
+          )
+        : h("p", { class: "cqa-rv-hint", text: t("review.reloading") }),
+    );
   }
 
   // ---- wiring ---------------------------------------------------------------------------------

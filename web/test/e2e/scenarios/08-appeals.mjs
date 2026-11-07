@@ -117,8 +117,26 @@ export async function run(page) {
   await page.eval(`(() => { const s = document.querySelector(${quote(sel("decision-answer"))}); s.value = "yes"; s.dispatchEvent(new Event("change", { bubbles: true })); })()`);
   assert.equal(await page.eval(`document.querySelector(${quote(sel("decision-submit"))}).disabled`), true, "no decision without a reason");
   await page.type(sel("decision-reason"), "Требование выполнено в первом ответе.");
+  // Fault injection (review of #63): the decision is saved, but the first read after it fails.
+  // Recovery must re-read, never post the decision again.
+  await page.eval(`(() => {
+    const api = window.__cqaTest.api;
+    const realDecide = api.decideAppeal;
+    const realGet = api.getAppeal;
+    let armed = false;
+    window.__decides = 0;
+    api.decideAppeal = (...args) => (window.__decides += 1, realDecide(...args).then((r) => ((armed = true), r)));
+    api.getAppeal = (...args) => {
+      if (armed) { armed = false; return Promise.reject(Object.assign(new Error("offline"), { code: "network", retryable: true })); }
+      return realGet(...args);
+    };
+  })()`);
   await page.click(sel("decision-submit"));
+  await page.waitFor(`${sel("toast")}[data-kind="error"] ${sel("toast-retry")}`, 5000);
+  assert.equal(await page.count(sel("decision-submit")), 0, "a saved decision is not offered again while the panel re-reads");
+  await page.click(`${sel("toast")}[data-kind="error"] ${sel("toast-retry")}`);
   await page.waitFor(sel("decision-result"), 5000);
+  assert.equal(await page.eval(`window.__decides`), 1, "a failed read after the decision never posts it again");
   const result = TOTAL.exec(await page.text(sel("decision-result")));
   assert.ok(result, "the panel shows «Итог: old → new»");
   assert.equal(result[1], money(target.total), "the old total is the one before the decision");
@@ -161,6 +179,14 @@ export async function run(page) {
   await until(page, `document.querySelector(${quote(sel("job-progress"))}).textContent === "" && document.querySelector(${quote(sel("run-eval"))}).disabled === false && document.querySelector(${quote(`${otherCard} ${sel("appeal-open-earlier")}`)}) !== null`, "the re-run that keeps the open appeal in view", 10000);
   assert.equal(await page.eval(`document.querySelector(${quote(`${otherCard} ${sel("dispute")}`)}).disabled`), true, "no second appeal on a criterion with an open one");
   assert.ok((await page.eval(`[...document.querySelectorAll('[data-test="history-item"]')].map((i) => i.getAttribute("data-kind"))`)).includes("earlier-open"), "the history lists the appeal on the earlier evaluation");
+  // the drawer opened from another criterion must not offer it either (review of #63)
+  await page.click(`${sel("crit")}[data-criterion="${target.third}"] ${sel("dispute")}`);
+  await page.waitFor(sel("appeal-drawer"));
+  const offered = await page.eval(`[...document.querySelectorAll('[data-test="appeal-criterion"] option')].map((o) => o.value)`);
+  assert.ok(offered.includes(target.third), "the drawer offers the criterion it was opened from");
+  assert.ok(!offered.includes(target.other), "the drawer does not offer a criterion with an open appeal on an earlier evaluation");
+  await page.click(sel("appeal-cancel"));
+  await until(page, `document.querySelector(${quote(sel("appeal-drawer"))}) === null`, "the drawer to close");
 
   // ---- no model key: filing still works; the second opinion is «недоступно» ----
   await page.goto(`/?mockModelKey=0#/c/${encodeURIComponent(target.id)}`);
