@@ -37,13 +37,9 @@ As of `main` on 7 November 2026.
 | Area | State on `main` |
 |---|---|
 | Backend platform (storage, import, scoring, jobs, appeals, comparisons, analytics, CSV, snapshot export/restore) | Done |
-| Evaluator (masking, prompts, Claude client, answer checking, reuse, cost, dialogue info, second opinion, translation, DEV harness) | Done. A real DEV run evaluated all 65 dialogues (see [Models and cost](#models-and-cost)) |
+| Evaluator (masking, prompts, model client, answer checking, reuse, cost, dialogue info, second opinion, translation, DEV harness) | Done. Runs on the local Qwen model or the Claude API; all 65 DEV dialogues evaluated (see [Models and cost](#models-and-cost)) |
 | UI workspace: queue, transcript, scorecard, evaluation runs, evidence jumps | Done |
 | UI appeals: dispute drawer, appeals page, reviewer panel with second opinion and decision | Done |
-| UI loading, batch runs, checklist editor, "apply to dialogues" | On branch `a/36-loader`, not merged yet ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36)) |
-| UI comparison view, analytics and accuracy pages, call player, translation toggle, CSV button | Not built yet ([#36](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/36), [#37](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/37)). The backend endpoints for comparison, analytics and CSV already work |
-| Call audio streaming, accuracy report, reference answers, checklist interpretations | Draft PR [#56](https://github.com/gtbsbe-draingang/gtbsbe_freedom/pull/56) (stream D) |
-| Results snapshot for the jury (`data/snapshot/cqa-snapshot.json`) | Not committed yet ([#15](https://github.com/gtbsbe-draingang/gtbsbe_freedom/issues/15)). A fresh clone starts without stored results |
 
 Details in [In progress](#in-progress).
 
@@ -139,7 +135,7 @@ Key decisions:
 ├── contract/                    JSON Schemas and example payloads of the API contract
 │   ├── schemas/
 │   └── examples/
-├── data/                        Not in git yet: dev.json and audio/ are private; snapshot/ arrives with #15
+├── data/                        dev.json and audio/ are private (not in git); snapshot/ holds the jury snapshot
 ├── .github/workflows/backend.yml   CI: backend and evaluator tests
 ├── CLAUDE.md                    Project rules: Dynamics constraints, secrets, design language
 ├── EXTRA_FEATURES.md            Agreed features beyond the brief
@@ -580,13 +576,9 @@ The run reported in PR #60 and issue #20 on 7 November 2026 evaluated all **65 D
 
 | Work | Where | What it adds |
 |---|---|---|
-| Loading, batch runs, checklist editor | Branch `a/36-loader` (PRs #64, #65), issue #36 | Load a group or upload a JSON file. Run a batch from the queue selection with a dry-run estimate, progress and «Повторить неудачные». The checklist list and an editor with lineage, change badges and validation. «Применить к диалогам» for the control group, DEV or a selection |
-| Comparison view | Issue #36 | The before/after screen. The backend endpoint already works |
-| Reports, call player, translation, export | Issue #37 | Accuracy and analytics pages, a call player linked to transcript lines, a translation toggle, the CSV button |
-| Stream D: audio and quality | Draft PR #56 (`gyat`) | `backend/audio/`: call streaming through the backend (Range requests, fresh links on expiry, nothing written to disk). `backend/quality/`: the accuracy report against reference labels and per-criterion model choice. `data/reference/`: 520 provisional reference labels. Team interpretations of the official checklist (#25), added as `guidance` without changing the official wording. Ops runbook and demo script |
-| «Звонки» checklist and voice measurements | Issues #28, #29 | The calls checklist from `EXTRA_FEATURES.md`. Withheld until line-to-audio alignment passes an independent check |
-| Results snapshot | Issue #15 | The committed jury snapshot and a clean-clone check |
-| Control set, publication | Issues #34, #35 | Import and evaluate the control set, make the repository public, send the link |
+| Results snapshot | PR #100, issue #15 | The committed jury snapshot built from the 7 November DEV run, so a clean clone shows all 65 results without a key |
+| Control set | Issue #34 | Import and evaluate the control set with `backend/quality/control_run.py` once the organisers publish its `group_id`, then export the results |
+| Publication | Issue #35 | Make the repository public and send the link to the organisers |
 
 ## Known limitations
 
@@ -597,7 +589,7 @@ The run reported in PR #60 and issue #20 on 7 November 2026 evaluated all **65 D
 - **The checklist `rounding` field** is stored but scoring always rounds to two decimals, which is what the official checklist uses.
 - **Seed drift.** Startup does not notice a changed seed file under the same id and version. The snapshot export refuses it and the import warns.
 - **Split-origin hosting** needs a CSP change at the serving layer: the backend's HTML policy allows `connect-src` and `media-src` from `'self'` only.
-- **Host context:** the Dynamics bridge reads only the conversation id. Role, language and identity mapping, an `Xrm.WebApi` adapter and a PCF wrapper are not built. UI strings are Russian only.
+- **Host context:** the Dynamics bridge reads only the conversation id. Role, language and identity mapping, an `Xrm.WebApi` adapter and a PCF wrapper are not built. The UI itself is in Russian, Kazakh and English.
 
 ## For the team
 
