@@ -8881,6 +8881,14 @@
       );
       language2.value = view.language;
     }
+    function placeRows(nodes) {
+      const wanted = new Set(nodes);
+      for (const child of [...list.children]) if (!wanted.has(child)) child.remove();
+      nodes.forEach((node, i) => {
+        const there = list.children[i] ?? null;
+        if (there !== node) list.insertBefore(node, there);
+      });
+    }
     function paint() {
       if (destroyed) return;
       const hasItems = view.items.length > 0;
@@ -8896,8 +8904,8 @@
           pill.button.classList.toggle("is-on", pill.name === view.filter);
         }
         shown = base.filter(MATCHES[view.filter]);
-        list.replaceChildren(
-          ...shown.map((item) => {
+        placeRows(
+          shown.map((item) => {
             let row = rows.get(item.id);
             if (!row) {
               row = buildRow(item);
@@ -8969,7 +8977,7 @@
     subs.push(
       watch(store, (state) => state.selection, (selection) => {
         for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
-        paint();
+        if (!destroyed) paintSelectAll(shownItems());
       })
     );
     subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));

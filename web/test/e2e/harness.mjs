@@ -42,10 +42,11 @@ function makePage(cdp, baseUrl, viewport) {
       }
     },
     // A real mouse click at the centre of the element; fails if something else covers that point.
-    async click(selector) {
+    // { scroll: false } clicks the element where it is, for checks that the click moves nothing.
+    async click(selector, { scroll = true } = {}) {
       const target = await cdp.evaluate(`(() => {
         const el = ${find(selector, "click")};
-        el.scrollIntoView({ block: "center", inline: "center" });
+        if (${scroll}) el.scrollIntoView({ block: "center", inline: "center" });
         const r = el.getBoundingClientRect();
         const x = r.left + r.width / 2;
         const y = r.top + r.height / 2;
