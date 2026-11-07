@@ -1,0 +1,14 @@
+{
+  "id": "job-0002",
+  "created_at": "2026-11-07T09:50:00Z",
+  "status": "done",
+  "mode": "reuse",
+  "total": 3,
+  "done": 2,
+  "failed": 1,
+  "items": [
+    {"conversation": "demo:demo-ru-001", "status": "done", "error": null, "evaluation_id": "eval-0006"},
+    {"conversation": "demo:demo-kz-003", "status": "done", "error": null, "evaluation_id": "eval-0007"},
+    {"conversation": "demo:demo-ru-009", "status": "failed", "error": "model_call_failed: the answer stayed invalid after one retry", "evaluation_id": null}
+  ]
+}
