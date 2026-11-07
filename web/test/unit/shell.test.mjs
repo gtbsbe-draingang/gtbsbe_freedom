@@ -2,8 +2,11 @@
 // e2e scenarios 02-shell and 03-dynamics.
 import { describe, test, mock } from "node:test";
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { ApiError } from "../../src/api/errors.js";
 import { extractConversationId, groupOf, parseMockFault, readContext } from "../../src/context.js";
+import { t } from "../../src/i18n/ru.js";
 import { createStore, isCompact, watch } from "../../src/state/store.js";
 import { href, navFor, parseRoute, sameRoute } from "../../src/ui/router.js";
 import { dismissToast, errorText, toast, toastError } from "../../src/ui/toast.js";
@@ -290,8 +293,56 @@ describe("store", () => {
   });
 });
 
+// Every code the backend can return (agreed 2026-11-07), plus the three the client raises itself.
+const BACKEND_CODES = [
+  "invalid_request", "na_not_allowed", "step_not_in_scale", "bad_answer", "reason_required", "invalid_checklist",
+  "appeal_already_decided", "appeal_already_open", "checklist_locked", "model_key_missing", "organizer_url_missing",
+  "role_not_allowed", "not_found", "organizer_error", "no_records", "bad_record", "internal_error",
+];
+const CLIENT_CODES = ["network", "timeout", "bad_response"];
+
+// The coordinator's list lives in the (untracked) SDD folder; when it is there, read the codes
+// from it so a code added later cannot slip past this test.
+function codesFromErrorList() {
+  const file = fileURLToPath(new URL("../../../.superpowers/sdd/2026-11-07-cqa-frontend/error-codes.md", import.meta.url));
+  if (!existsSync(file)) return [];
+  const codes = new Set();
+  for (const line of readFileSync(file, "utf8").split("\n")) {
+    if (!line.startsWith("- ") || line.includes("warnings")) continue;
+    for (const [code] of line.split(" — ")[0].matchAll(/\b[a-z]+(?:_[a-z]+)+\b/g)) codes.add(code);
+  }
+  return [...codes];
+}
+
 describe("toast", () => {
   const fresh = () => createStore({ toasts: [] });
+
+  test("every backend and client error code has its own Russian text", () => {
+    const listed = codesFromErrorList();
+    for (const code of listed) assert.ok(BACKEND_CODES.includes(code), `error-codes.md lists ${code}; add it to BACKEND_CODES and ru.js`);
+    const all = [...new Set([...BACKEND_CODES, ...CLIENT_CODES, ...listed])];
+    const generic = t("error.generic");
+    const seen = new Map();
+    for (const code of all) {
+      const text = errorText(new ApiError(code, "dev message"));
+      assert.match(text, /[А-Яа-я]/, code);
+      assert.notEqual(text, generic, `${code} falls back to the generic text`);
+      assert.ok(!seen.has(text), `${code} and ${seen.get(text)} share a text`);
+      seen.set(text, code);
+    }
+  });
+
+  test("a code suffix after a colon is stripped; bad_record:<index> names the record", () => {
+    const generic = t("error.generic");
+    assert.equal(errorText(new ApiError("bad_record:3", "x")), t("error.bad_record_at", { n: 4 }));
+    assert.match(errorText(new ApiError("bad_record:0", "x")), /№1\b/);
+    assert.equal(errorText(new ApiError("bad_record:", "x")), t("error.bad_record"));
+    assert.equal(errorText(new ApiError("bad_record:abc", "x")), t("error.bad_record"));
+    assert.equal(errorText(new ApiError("bad_record", "x")), t("error.bad_record"));
+    assert.equal(errorText(new ApiError("not_found:zzz", "x")), t("error.not_found"));
+    assert.equal(errorText(new ApiError(":3", "x")), generic);
+    assert.equal(errorText(new ApiError("unknown_code:3", "x")), generic);
+  });
 
   test("errorText maps the API codes to Russian strings", () => {
     const codes = ["network", "timeout", "bad_response", "model_key_missing"];

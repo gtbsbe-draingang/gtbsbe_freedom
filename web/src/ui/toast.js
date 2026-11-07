@@ -11,8 +11,14 @@ const KINDS = ["error", "info"];
 let nextId = 1;
 
 // The Russian text for an error. Server and developer messages never reach the user.
+// A code may carry a suffix after a colon (`bad_record:3`): the text is looked up by the part
+// before it, and a numeric suffix on bad_record names the record (the server counts from 0).
 export function errorText(error) {
-  const code = typeof error?.code === "string" ? error.code : "";
+  const full = typeof error?.code === "string" ? error.code : "";
+  const colon = full.indexOf(":");
+  const code = colon < 0 ? full : full.slice(0, colon);
+  const suffix = colon < 0 ? "" : full.slice(colon + 1);
+  if (code === "bad_record" && /^\d+$/.test(suffix)) return t("error.bad_record_at", { n: Number(suffix) + 1 });
   const key = `error.${code}`;
   const text = code ? t(key) : key;
   return text === key ? t("error.generic") : text;

@@ -405,7 +405,7 @@
 .cqa .cqa-scrim {
   display: none;
 }
-@media (max-width: 899px) {
+@media (max-width: 899.98px) {
   .cqa .cqa-top {
     flex-wrap: wrap;
     gap: 4px 14px;
@@ -466,7 +466,7 @@
     cursor: pointer;
   }
 }
-@media (max-width: 699px) {
+@media (max-width: 699.98px) {
   .cqa .cqa-top {
     gap: 4px 10px;
     padding: 8px 12px 0;
