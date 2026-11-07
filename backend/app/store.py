@@ -12,7 +12,8 @@ Checklist versions: one row per (checklist_id, version), the whole `ChecklistVer
 the `locked` flag as a column (the flag is the part that changes after a version is saved).
 
 Shared names (shared-interfaces.md): `get_conversation`, `get_audio_url`, `save_audio_results`,
-`get_checklist_version`. Later tasks add the rest of the checklist part and the evaluation part.
+`get_checklist_version`, `latest_versions`, `save_checklist_version`. Later tasks add the
+evaluation part.
 """
 
 import sqlite3
@@ -212,6 +213,12 @@ def save_audio_results(
         )
 
 
+def _read_checklist_version(json_text: str, locked: int) -> ChecklistVersion:
+    # The column is authoritative for `locked`: it is the part that changes after a save.
+    stored = ChecklistVersion.model_validate_json(json_text)
+    return stored.model_copy(update={"locked": bool(locked)})
+
+
 def get_checklist_version(checklist_id: str, version: int) -> ChecklistVersion | None:
     """The stored checklist version, or None. `created_at` is always set; `locked` is the column's
     current value."""
@@ -223,10 +230,51 @@ def get_checklist_version(checklist_id: str, version: int) -> ChecklistVersion |
         ).fetchone()
     finally:
         conn.close()
-    if row is None:
-        return None
-    stored = ChecklistVersion.model_validate_json(row["json"])
-    return stored.model_copy(update={"locked": bool(row["locked"])})
+    return None if row is None else _read_checklist_version(row["json"], row["locked"])
+
+
+def list_checklists() -> list[tuple[ChecklistVersion, list[int]]]:
+    """The latest version of every checklist with all its version numbers (ascending), oldest
+    checklist first (the order its first version was stored: the seeds, then the user's). Both
+    queries read one snapshot, so the numbers always end with the version returned."""
+    conn = connect()
+    try:
+        conn.execute("BEGIN")  # a read snapshot: a save between the two queries stays invisible
+        latest = conn.execute(
+            "SELECT cv.json, cv.locked "
+            "FROM checklist_versions cv "
+            "JOIN (SELECT checklist_id, MAX(version) AS version, MIN(rowid) AS first_row "
+            "      FROM checklist_versions GROUP BY checklist_id) newest "
+            "  ON newest.checklist_id = cv.checklist_id AND newest.version = cv.version "
+            "ORDER BY newest.first_row"
+        ).fetchall()
+        numbers: dict[str, list[int]] = {}
+        for row in conn.execute("SELECT checklist_id, version FROM checklist_versions ORDER BY version"):
+            numbers.setdefault(row["checklist_id"], []).append(row["version"])
+    finally:
+        conn.close()
+    result = []
+    for row in latest:
+        version = _read_checklist_version(row["json"], row["locked"])
+        result.append((version, numbers[version.checklist_id]))
+    return result
+
+
+def latest_versions() -> list[ChecklistVersion]:
+    """The latest version of every checklist, oldest checklist first. `locked` is read like
+    `get_checklist_version` reads it."""
+    return [version for version, _ in list_checklists()]
+
+
+def _insert_checklist_version(conn: sqlite3.Connection, v: ChecklistVersion) -> ChecklistVersion:
+    created = v.created_at or _now().replace(microsecond=0)
+    stored = v.model_copy(update={"id": f"{v.checklist_id}:{v.version}", "created_at": created})
+    conn.execute(
+        "INSERT INTO checklist_versions (checklist_id, version, json, locked, created_at) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (v.checklist_id, v.version, stored.model_dump_json(), int(v.locked), _stamp(created)),
+    )
+    return stored
 
 
 def save_checklist_version(v: ChecklistVersion) -> ChecklistVersion:
@@ -235,8 +283,6 @@ def save_checklist_version(v: ChecklistVersion) -> ChecklistVersion:
 
     A stored version is never overwritten (editing a checklist makes a new version): an existing
     (checklist_id, version) raises ApiError(409, "version_exists")."""
-    created = v.created_at or _now().replace(microsecond=0)
-    stored = v.model_copy(update={"id": f"{v.checklist_id}:{v.version}", "created_at": created})
     with write_transaction() as conn:
         if conn.execute(
             "SELECT 1 FROM checklist_versions WHERE checklist_id = ? AND version = ?",
@@ -248,9 +294,32 @@ def save_checklist_version(v: ChecklistVersion) -> ChecklistVersion:
                 f"Checklist {v.checklist_id!r} version {v.version} already exists; "
                 "save the changes as a new version.",
             )
-        conn.execute(
-            "INSERT INTO checklist_versions (checklist_id, version, json, locked, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (v.checklist_id, v.version, stored.model_dump_json(), int(v.locked), _stamp(created)),
+        return _insert_checklist_version(conn, v)
+
+
+def append_checklist_version(checklist_id: str, v: ChecklistVersion) -> ChecklistVersion:
+    """Store `v` as the next version of an existing checklist: its `checklist_id` becomes the one
+    given and its `version` the latest stored one + 1 (both of `v` are ignored). Returns it as
+    stored.
+
+    The latest version is read and the new one inserted in one write transaction, so concurrent
+    saves get consecutive numbers instead of colliding. Raises ApiError(404, "not_found") for an
+    unknown checklist and ApiError(409, "checklist_locked") when its latest version is locked
+    (the column's value)."""
+    with write_transaction() as conn:
+        latest = conn.execute(
+            "SELECT version, locked FROM checklist_versions WHERE checklist_id = ? "
+            "ORDER BY version DESC LIMIT 1",
+            (checklist_id,),
+        ).fetchone()
+        if latest is None:
+            raise ApiError(404, "not_found", f"No checklist {checklist_id!r}.")
+        if latest["locked"]:
+            raise ApiError(
+                409,
+                "checklist_locked",
+                f"Checklist {checklist_id!r} is locked; save the changes as a new checklist.",
+            )
+        return _insert_checklist_version(
+            conn, v.model_copy(update={"checklist_id": checklist_id, "version": latest["version"] + 1})
         )
-    return stored

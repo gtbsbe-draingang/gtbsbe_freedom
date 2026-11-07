@@ -139,6 +139,25 @@ def test_load_checklist_file_recomputes_a_fingerprint_it_finds(tmp_path: Path) -
     assert re.fullmatch(r"[0-9a-f]{64}", load_checklist_file(path).criteria[0].fingerprint)
 
 
+def test_load_checklist_file_fingerprints_the_validated_criterion(tmp_path: Path) -> None:
+    # `na_allowed: 0` and a scale value `5.0` are valid input that pydantic coerces to False and 5.
+    # The fingerprint must be that of the stored criterion, not of the raw dict (where 0 and 5.0
+    # hash differently), or a fingerprint computed again later would not match the stored one.
+    data = checklist_dict()
+    data["criteria"][0]["na_allowed"] = 0
+    data["criteria"][1]["scale_steps"] = [
+        {"value": 0.0, "label": "Нет"},
+        {"value": 60.0, "label": "Да"},
+    ]
+    path = tmp_path / "x.json"
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    loaded = load_checklist_file(path)
+    for criterion in loaded.criteria:
+        assert criterion.fingerprint == criterion_fingerprint(criterion)
+    typed = checklist_dict()["criteria"]  # the same checklist written with the proper types
+    assert [c.fingerprint for c in loaded.criteria] == [criterion_fingerprint(c) for c in typed]
+
+
 def test_load_checklist_file_keeps_locked_as_written(tmp_path: Path) -> None:
     unlocked = write_checklist(tmp_path / "u.json", locked=False)
     assert load_checklist_file(unlocked).locked is False
