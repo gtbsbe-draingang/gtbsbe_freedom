@@ -384,7 +384,7 @@ def test_missing_version_is_404(setup) -> None:
     copy = save_copy(client, official, no_change)
     unknown = [
         ("nope", 1, copy.checklist_id, 1),  # from: no such checklist
-        (official.checklist_id, 2, copy.checklist_id, 1),  # from: no such version
+        (official.checklist_id, 999, copy.checklist_id, 1),  # from: no such version
         (official.checklist_id, 1, "nope", 1),  # to: no such checklist
         (official.checklist_id, 1, copy.checklist_id, 7),  # to: no such version
         (official.checklist_id, 0, copy.checklist_id, 1),  # a version number that cannot exist

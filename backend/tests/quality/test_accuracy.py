@@ -92,7 +92,7 @@ def test_router_missing_reference_and_valid_shape(tmp_path, monkeypatch, client)
     monkeypatch.setattr(route, 'get_store', lambda: SimpleNamespace(
         get_checklist_version=lambda *a: kwargs['checklist'],
         get_conversation=lambda key: kwargs['conversations'].get(key),
-        list_evaluations=lambda *a, **kw: e))
+        find_evaluations=lambda *a, **kw: e))
     response = client.get('/api/reports/accuracy')
     assert response.status_code == 200
     assert set(response.json()) == {'reference_note', 'model', 'overall', 'by_criterion', 'by_language',
@@ -107,6 +107,22 @@ def test_router_missing_reference_and_valid_shape(tmp_path, monkeypatch, client)
 def accuracy_validator():
     path = Path(__file__).resolve().parents[3] / 'contract/schemas/accuracy.schema.json'
     return Draft202012Validator(json.loads(path.read_text(encoding='utf-8')))
+
+
+def test_shipped_references_default_to_v2_and_exclude_unapproved_labels(client):
+    from app import store
+
+    _, evaluations, kwargs = fixture_data()
+    store.upsert_conversation(kwargs['conversations']['DEV:a'], None)
+    store.insert_evaluation(evaluations[0])  # old v1 runs never count toward v2
+    response = client.get('/api/reports/accuracy')
+    assert response.status_code == 200
+    data = response.json()
+    accuracy_validator().validate(data)
+    assert data['overall'] == {'agreement': None, 'n': 0}
+    assert data['disputed_excluded'] == 41
+    assert data['missing'] == 479
+    assert client.get('/api/reports/accuracy?version=1').status_code == 409
 
 
 def test_real_storage_empty_and_partial_report(client, tmp_path, monkeypatch):
