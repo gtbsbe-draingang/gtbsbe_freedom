@@ -23,7 +23,7 @@ evaluator code (masking, prompts, answer checking, one retry, Python scoring):
   measures closeness to those references, not organiser ground truth. The 25 planted
   violations (`backend/quality/planted.py`) are the model-independent check.
 - FP8 and BF16 give the same answer on 92.5% of the 520 criteria (part of the difference is
-  sampling at temperature 0.7). FP8 is about 1.5× faster and needs half the weight memory.
+  sampling at temperature 0.7 in those runs). FP8 is about 1.5× faster and needs half the weight memory.
 - **Evaluate with `official-chat` v2.** On v1, Haiku beats Qwen on c07 (87.7% vs 64.6%) because
   v1 lacks the approved #25 goodbye rule. Qwen on v2 gets 97% on c07 and 92.9% overall on the
   60 chats (477 labels), so the gap is the checklist version, not the model.
@@ -53,7 +53,7 @@ vllm serve ~/models/Qwen3.8-27B-FP8 \
   --max-model-len 32768 --gpu-memory-utilization 0.55 --max-num-seqs 32 \
   --enable-prefix-caching --reasoning-parser qwen3 \
   --default-chat-template-kwargs '{"enable_thinking": false}' \
-  --override-generation-config '{"temperature": 0.7, "top_p": 0.8, "top_k": 20}'
+  --override-generation-config '{"temperature": 0}'
 ```
 
 - 0.55 of an H200 holds 28 GiB of weights and a 44 GiB KV cache (579k tokens).
@@ -61,6 +61,13 @@ vllm serve ~/models/Qwen3.8-27B-FP8 \
   template. Qwen's template rejects `high` (only low, medium, xhigh); the evaluator never sends it.
 - vLLM turns the evaluator's `output_config.format` into constrained JSON decoding, so answers
   always match the schema.
+- **Temperature 0** (greedy): a scoring tool should give the most likely answer, not a sample.
+  The evaluator sends no temperature, so the server sets it. The comparison runs above used 0.7.
+  Measured on 6 DEV dialogues (5 planted cases and one call) evaluated twice from scratch at 0:
+  45 of 48 answers equal, 3 of 6 totals equal, explanations worded differently. Batched inference
+  still shifts FP8 numerics between runs, and the flips were the borderline cases (`p1-kz-011`
+  c07, `p1-ru-026` c04, `p1-en-014` c06). For exact repeats vLLM has `VLLM_BATCH_INVARIANT=1`
+  (needs compute capability 9.0, which the H200 has); its speed cost is not measured yet.
 
 ## Point the backend at it
 
