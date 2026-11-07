@@ -464,6 +464,18 @@ export function createQueue(store, api) {
     language.value = view.language;
   }
 
+  // Puts the rows in the list in this order, leaving every row that is already in place where it
+  // is. Taking them all out and back in (replaceChildren) detaches the checkbox that was just
+  // clicked: the browser drops its focus and, laying out the empty list, scrolls it to the top.
+  function placeRows(nodes) {
+    const wanted = new Set(nodes);
+    for (const child of [...list.children]) if (!wanted.has(child)) child.remove();
+    nodes.forEach((node, i) => {
+      const there = list.children[i] ?? null;
+      if (there !== node) list.insertBefore(node, there);
+    });
+  }
+
   function paint() {
     if (destroyed) return;
     const hasItems = view.items.length > 0;
@@ -480,8 +492,8 @@ export function createQueue(store, api) {
         pill.button.classList.toggle("is-on", pill.name === view.filter);
       }
       shown = base.filter(MATCHES[view.filter]);
-      list.replaceChildren(
-        ...shown.map((item) => {
+      placeRows(
+        shown.map((item) => {
           let row = rows.get(item.id);
           if (!row) {
             row = buildRow(item);
@@ -563,7 +575,7 @@ export function createQueue(store, api) {
   subs.push(
     watch(store, (state) => state.selection, (selection) => {
       for (const [id, row] of rows) row.check.checked = Boolean(selection?.has(id));
-      paint(); // the select-all box
+      if (!destroyed) paintSelectAll(shownItems()); // ticking a row changes no row, so no repaint
     }),
   );
   subs.push(watch(store, (state) => state.route, () => rows.forEach(paintCurrent)));
