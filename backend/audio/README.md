@@ -42,27 +42,34 @@ there. Range requests returned 206 for `bytes=1024-2047` and `bytes=-512` and
 endpoint resolved a fresh one exactly once. This checks the browser and our
 endpoint, not the live organiser links or the product UI's player.
 
-Offsets still use transcript timing, recording pauses and speech energy.
-They are estimates. Mono audio does not establish which speakers overlap;
-the public measurements return `overlap=null`. Pitch and rate depend on the
-estimated span and must not be treated as reliable emotion or interruption labels.
+Offsets use transcript timing, recording pauses and speech activity only; no
+speech recogniser runs in the product (#93). They are estimates. Mono audio does
+not establish which speakers overlap; the public measurements return
+`overlap=null`. Pitch and rate depend on the estimated span and must not be
+treated as reliable emotion or interruption labels.
 
-The cached Whisper-small diagnostic on 2026-11-07, against commit `11237d2`,
-compared 137 matched lines:
+How lines are placed (`audio.offsets`): recording clock from the system events,
+then a per-call delay for human lines and a separate one for the bot (humans end
+about +4 s after their timestamp, the bot about 1 s before), then each start is
+the speech onset nearest "end minus length at 15.4 characters a second", not
+before the same speaker's previous line ended. Speech activity (`audio.vad`) is
+voiced (Praat pitch) and at least 6 dB above the noise floor.
 
-| Call | Matched lines | Median absolute difference | Within 2 seconds | Maximum |
+Diagnostic on 2026-11-07 (#93): reference starts from a whole-call alignment of
+the transcript to Whisper-small word timings, run offline and not shipped; 168
+lines whose words matched clearly.
+
+| Method | Median | Within 1 s | Within 2 s | Maximum |
 |---|---:|---:|---:|---:|
-| p4-ru-001 | 18 | 0.73 s | 72% | 10.6 s |
-| p4-ru-002 | 29 | 0.80 s | 83% | 5.7 s |
-| p4-ru-003 | 23 | 1.96 s | 52% | 10.4 s |
-| p4-ru-004 | 35 | 1.00 s | 80% | 19.7 s |
-| p4-ru-005 | 32 | 0.87 s | 62% | 20.5 s |
+| Before #93 (one delay, energy, 13 c/s) | 1.00 s | 50% | 76% | 20 s |
+| #93 | 0.48 s | 71% | 86% | 9 s |
+| #93, speaking rate refitted leaving each call out | 0.47 s | 71% | 86% | 9 s |
 
-Overall: median 1.00 s, 71% within 2 s. This is a heuristic text match to ASR,
-not human ground truth, and covers only matched lines. Issue #28 does not pass
-acceptance. Listen and annotate starts independently, then improve local forced
-alignment before claiming the 2-second target. Do not tune and report on the
-same reference offsets without separating validation.
+Per call (within 2 s): p4-ru-001 92%, -002 97%, -003 78%, -004 83%, -005 79%.
+What remains are lines said slowly with long pauses (34 characters over 11 s),
+which length cannot predict. The reference is a recogniser, not human ground
+truth, and covers only matched lines: #28 still needs the listening check
+(`tests/manual/alignment_check.py`) before `CQA_AUDIO_ALIGNMENT=on`.
 
 The earlier `calls_v1.json` used invented IDs and was not derived from A's seed;
 it has been removed. Once A's authoritative seed is available, generate a draft:

@@ -7,14 +7,12 @@ import os
 import numpy as np
 
 from app.models import AudioOffset, Message, VoiceMeasurement
-from audio import asr_align
 from audio.measure import measure_operator
 from audio.offsets import compute_spans
 from audio.vad import speech_frames
 
 logger = logging.getLogger(__name__)
 MAX_BYTES = 128 * 1024 * 1024
-LANGUAGES = {"RU": "ru", "KZ": "kk", "EN": "en"}  # conversation.language to recogniser code
 
 
 def alignment_enabled() -> bool:
@@ -23,15 +21,13 @@ def alignment_enabled() -> bool:
     return os.environ.get("CQA_AUDIO_ALIGNMENT", "").strip().lower() == "on"
 
 
-def analyse(transcript: list[Message], samples: np.ndarray, sr: int, language: str = "RU", refine: bool = True):
+def analyse(transcript: list[Message], samples: np.ndarray, sr: int):
     if sr <= 0 or samples.ndim != 1 or not np.isfinite(samples).all():
         raise ValueError("Expected finite mono samples and a positive sample rate")
     if not len(samples):
         return [], []
     speech = speech_frames(samples, sr)
     spans, _ = compute_spans([m.model_dump() for m in transcript], speech, len(samples) / sr)
-    if refine and sr == 16000:
-        spans, _ = asr_align.refine(spans, samples, LANGUAGES.get(language, "ru"))
     offsets = [AudioOffset(message_index=s["message_index"], seconds=round(s["start"], 1)) for s in spans]
     measurements = []
     if len(samples) / sr >= .1:
@@ -43,10 +39,10 @@ def analyse(transcript: list[Message], samples: np.ndarray, sr: int, language: s
 
 def decode(data: bytes):
     import soundfile as sf
-    from scipy.signal import resample_poly
     x, sr = sf.read(io.BytesIO(data), dtype="float32", always_2d=True)
     x = x.mean(axis=1)
-    if sr != 16000:
+    if sr != 16000:  # the organisers' calls are 16 kHz already
+        from scipy.signal import resample_poly
         x = resample_poly(x, 16000, sr).astype(np.float32)
     return x, 16000
 
@@ -75,8 +71,8 @@ async def process_call(conversation: str) -> None:
 
     By default nothing is published: the timing has not passed the independent listening check
     (#28), and stored results from older builds are cleared. With CQA_AUDIO_ALIGNMENT=on the
-    recording is fetched into memory, aligned (length guess, then recogniser snapping when
-    faster-whisper is installed) and the results are stored. Failures never escape into the
+    recording is fetched into memory, aligned from its speech activity (`audio.offsets`) and the
+    results are stored. Failures never escape into the
     import job.
     """
     try:
@@ -91,7 +87,7 @@ async def process_call(conversation: str) -> None:
         if not player:
             return
         samples, sr = await asyncio.to_thread(decode, await _download(player))
-        offsets, measurements = await asyncio.to_thread(analyse, conv.transcript, samples, sr, conv.language)
+        offsets, measurements = await asyncio.to_thread(analyse, conv.transcript, samples, sr)
         store.save_audio_results(conversation, offsets, measurements)
     except Exception:
         logger.warning("Call audio processing failed; import can continue")

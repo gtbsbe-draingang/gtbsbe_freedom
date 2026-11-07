@@ -1,14 +1,21 @@
-"""Transcript line to position in the recording (issue #28).
+"""Transcript line to position in the recording (issues #28, #93). No speech recogniser.
 
-What the DEV calls show:
+What the five DEV calls show (measured against a recogniser's word timings, used offline only):
 - A call timestamp marks the END of an utterance, not its start.
 - The recording skips the stretches between the "paused" and "resumed" system events, and starts
   at the "recording started" event.
-- After removing those, one constant shift per call remains (about +4.4 s on four DEV calls,
-  +0.4 s on the fifth). It is found by matching the transcript against speech activity.
+- After removing those, a constant delay per call and SPEAKER TYPE remains: human lines (client,
+  operator) end about +4 s after their timestamp (+3.5..+4.3 s; about 0 on p4-ru-002), the bot's
+  lines about 1 s before theirs (-0.5..-1.4 s). Each is found by matching the transcript against
+  speech activity, the bot's in a narrow window since it has few lines. With it, ends are within
+  0.5 s (median).
+- People speak about 15.4 characters a second.
 
-Each line's start is then estimated from its end and its length, and snapped to the nearest
-speech onset in the audio. Lines that fall outside the recording get no offset.
+Each spoken line's start is then the speech onset nearest to "end minus estimated length", not
+before the same speaker's previous line ended. Another speaker's line may overlap: a client's
+"угу" during a long operator answer must not push the answer's start past it. Lines that fall
+outside the recording get no offset. On 168 lines: median 0.48 s, 86% within 2 s, max 9 s
+(1.0 s / 76% / 20 s before).
 """
 
 from __future__ import annotations
@@ -20,10 +27,12 @@ import numpy as np
 
 from audio.vad import HOP, onsets
 
-CHARS_PER_SECOND = 13.0  # fitted on the five DEV calls (#28); 14 with a 12 s cap missed long lines
-MAX_LINE_SECONDS = 20.0
-SEARCH = (-45.0, 45.0, 0.2)  # seconds: from, to, step
-SNAP = 1.5  # seconds around the estimated start in which a speech onset is accepted
+CHARS_PER_SECOND = 15.4  # fitted on the five DEV calls (#93); 14 to 16.5 give 83-86% within 2 s
+MIN_LINE_SECONDS, MAX_LINE_SECONDS = 0.6, 30.0
+SEARCH = (-45.0, 45.0, 0.2)  # seconds: from, to, step; human lines
+BOT_SEARCH = (-3.0, 1.0, 0.1)  # the bot's delay; a wide window lets its few lines lock on the wrong speech
+WINDOW = 2.2  # speech onsets are searched back to this many line lengths (plus 1 s) before the end
+OVERLAP = 0.3  # seconds a line may start before the same speaker's previous line ended
 
 START_WORDS = ("запущены", "басталды", "recording started", "transcription started")
 PAUSE_WORDS = ("приостановлены", "тоқтатылды", "уақытша тоқтатылды", "paused")
@@ -85,7 +94,7 @@ def recording_clock(lines: list[Line]):
 
 
 def _duration(text: str) -> float:
-    return float(np.clip(len(text) / CHARS_PER_SECOND, 0.6, MAX_LINE_SECONDS))
+    return float(np.clip(len(text) / CHARS_PER_SECOND, MIN_LINE_SECONDS, MAX_LINE_SECONDS))
 
 
 def _track(ends: list[tuple[float, float]], n: int) -> np.ndarray:
@@ -96,11 +105,11 @@ def _track(ends: list[tuple[float, float]], n: int) -> np.ndarray:
     return tr
 
 
-def best_shift(ends: list[tuple[float, float]], speech: np.ndarray) -> tuple[float, float]:
+def best_shift(ends: list[tuple[float, float]], speech: np.ndarray, search=SEARCH) -> tuple[float, float]:
     """The constant shift that best lines up transcript speech with audio speech, and its score."""
     base = _track(ends, len(speech))
     best = (-1.0, 0.0)
-    lo, hi, step = SEARCH
+    lo, hi, step = search
     for c in np.arange(lo, hi + step / 2, step):
         k = int(round(c / HOP))
         if abs(k) >= len(base):
@@ -127,29 +136,36 @@ def compute_spans(transcript: list[dict], speech: np.ndarray, duration: float) -
     to_rec, rec_start, pauses = recording_clock(lines)
     spoken = [(ln, to_rec(ln.t)) for ln in lines if ln.speaker in SPOKEN]
     spoken = [(ln, r) for ln, r in spoken if r is not None]
-    shift, score = best_shift([(r, _duration(ln.text)) for ln, r in spoken], speech)
+    human = [(r, _duration(ln.text)) for ln, r in spoken if ln.speaker != "bot"]
+    bot = [(r, _duration(ln.text)) for ln, r in spoken if ln.speaker == "bot"]
+    shift, score = best_shift(human, speech) if human else (0.0, 0.0)
+    bot_shift = best_shift(bot, speech, BOT_SEARCH)[0] if bot else 0.0
     starts_on = onsets(speech)
 
-    spans, prev_end = [], 0.0
+    spans, said_until = [], {}  # speaker -> end of their latest line
     for ln in lines:
         r = to_rec(ln.t)
         if r is None:
             continue
-        end = r + shift
         if ln.speaker in SPOKEN:
-            start = max(end - _duration(ln.text), prev_end - 0.3)
-            near = starts_on[np.abs(starts_on - start) <= SNAP] if len(starts_on) else starts_on
+            end = r + (bot_shift if ln.speaker == "bot" else shift)
+            length = _duration(ln.text)
+            start = max(end - length, said_until.get(ln.speaker, 0.0) - OVERLAP)
+            near = starts_on[(starts_on >= end - WINDOW * length - 1.0) & (starts_on <= end - OVERLAP)]
             if len(near):
                 start = float(near[np.argmin(np.abs(near - start))])
-            prev_end = max(prev_end, end)
+            start = min(start, end - OVERLAP)
+            said_until[ln.speaker] = max(said_until.get(ln.speaker, 0.0), end)
         else:
+            end = r + shift
             start = end  # an event has no duration
         if -1.0 <= start <= duration + 1.0:
             start = min(max(start, 0.0), duration)
             spans.append({"message_index": ln.index, "speaker": ln.speaker, "text": ln.text,
                           "start": start, "end": min(max(end, start), duration)})
-    info = {"shift_seconds": round(shift, 1), "match_score": round(score, 3), "recording_start": round(rec_start, 1),
-            "pauses": [[round(a, 1), round(b - a, 1)] for a, b in pauses], "lines_mapped": len(spans)}
+    info = {"shift_seconds": round(shift, 1), "bot_shift_seconds": round(bot_shift, 1), "match_score": round(score, 3),
+            "recording_start": round(rec_start, 1), "pauses": [[round(a, 1), round(b - a, 1)] for a, b in pauses],
+            "lines_mapped": len(spans)}
     return spans, info
 
 

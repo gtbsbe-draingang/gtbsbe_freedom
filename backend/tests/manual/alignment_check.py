@@ -1,6 +1,6 @@
 """Listening check for line-to-audio offsets (#28). Opt-in; uses the private DEV recordings.
 
-Run from backend/ (add `--extra asr` to the sync to include recogniser snapping):
+Run from backend/:
   uv run python tests/manual/alignment_check.py --audio-dir <private audio dir> --dev <dev.json> --out <dir>
 It computes offsets with the production `audio.pipeline.analyse`, samples lines from every call
 and writes `<out>/alignment-check.html`. Open it in a browser, play each sample and mark whether
@@ -52,14 +52,13 @@ def main() -> int:
     args = parser.parse_args()
 
     from app.models import Message
-    from audio import asr_align
     from audio.pipeline import analyse
     from audio.vad import load_mono
 
     data = json.loads(args.dev.read_text(encoding="utf-8"))
     records = data["data"]["records"] if "data" in data else data
     calls = [r for r in records if r.get("channel") == "voice call"]
-    method = "length guess + recogniser snapping" if asr_align.available() else "length guess only (faster-whisper not installed)"
+    method = "speech activity: per-speaker delay, onset nearest the length guess (#93)"
     rng = random.Random(args.seed)
     sections, total = [], 0
     for record in sorted(calls, key=lambda r: r["conversation_id"]):
@@ -70,7 +69,7 @@ def main() -> int:
             continue
         transcript = [Message(**m) for m in record["transcript"]]
         samples = load_mono(mp3, 16000)
-        offsets, _ = analyse(transcript, samples, 16000, record.get("language", "RU"))
+        offsets, _ = analyse(transcript, samples, 16000)
         at = {o.message_index: o.seconds for o in offsets}
         pool = [i for i, m in enumerate(record["transcript"])
                 if m["speaker"] in ("client", "operator") and i in at and len(m["text"].split()) >= 3]
