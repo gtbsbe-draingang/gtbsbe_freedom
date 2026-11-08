@@ -3,8 +3,8 @@
 How CQA (Conversation Quality Analytics) is built and why. This file is the map. Details that
 already live elsewhere are linked, not copied:
 
-- Setup, full HTTP API table, configuration, data-model ER diagram: [`README.md`](README.md)
-- Rules (secrets, Dynamics 365, design language, git): [`CLAUDE.md`](CLAUDE.md)
+- Setup and configuration: [`README.md`](README.md) and `backend/.env.example`
+- HTTP API: `/api/openapi.json` on a running server
 - API contract: [`contract/`](contract/) (JSON Schemas and examples)
 - Evaluator step plan: [`backend/evaluator/PLAN.md`](backend/evaluator/PLAN.md)
 
@@ -254,7 +254,7 @@ parameters or `window.CQA.setClientApiContext(Xrm, formContext)`; the API base i
 from `config.js`.
 
 The UI ships three ways without a rewrite: Dynamics web resources, an iframe of the hosted page,
-or a later PCF wrapper. Constraints that keep this true (full list in `CLAUDE.md`):
+or a later PCF wrapper. Constraints that keep this true:
 
 - Static files and relative paths; web-resource file types only (font inlined as base64, config
   as JS).
