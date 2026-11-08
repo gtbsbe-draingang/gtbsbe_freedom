@@ -26,6 +26,8 @@ import { setLocalizedText } from "../i18n/dom.js";
 // fetched again and redrawn only when what the pane shows changed, keeping the scroll position and
 // the marks, so the evidence the scorecard reloads points at the lines on screen.
 //
+// Left of the title, a small arrow leads back to the batch board while one exists (back-link.js).
+//
 // A call gets the player (player.js) on top. With a recording, each line's time is its start in the
 // recording and a button that seeks there; focusMessage (an evidence link) seeks too; the line being
 // played carries .is-playing and is kept in view while it plays.
@@ -34,6 +36,7 @@ import { formatOffset, offsets } from "../domain/time.js";
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
+import { createBackLink } from "./back-link.js";
 import { openImport } from "./loader.js";
 import { renderPlayer, startTimes } from "./player.js";
 import { errorText, toastError } from "./toast.js";
@@ -136,8 +139,9 @@ export function renderTranscript(store, api, args = {}) {
   const id = openId(store, args);
   const scroller = h("div", { class: "cqa-tr-scroll", attrs: { tabindex: "0", role: "region", "aria-label": t("transcript.label") }, data: { test: "transcript-list" } });
   const head = h("div", { class: "cqa-tr-head" });
+  const back = createBackLink(store, { place: "head" }); // there while the dialogue loads, too
   const playerHost = h("div", { class: "cqa-tr-player" });
-  const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, head, playerHost, scroller);
+  const el = h("div", { class: "cqa-tr", data: { test: "transcript" } }, h("div", { class: "cqa-tr-top" }, back.el, head), playerHost, scroller);
 
   let destroyed = false;
   let rows = []; // [{el, flag}] per message, empty until loaded
@@ -387,6 +391,7 @@ export function renderTranscript(store, api, args = {}) {
     if (destroyed) return;
     destroyed = true;
     markReady();
+    back.destroy();
     stopRefresh();
     player?.destroy();
     flashTimers.forEach((timer) => clearTimeout(timer));

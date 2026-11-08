@@ -20,6 +20,10 @@
 //     The board is rebuilt each time it comes back (closing a dialogue): the totals it fetched and
 //     its scroll position are kept per store, so it comes back as it was left; the totals are
 //     fetched again behind the scenes (an appeal may have changed one).
+//     Under the progress, the batch's own actions (the selection bar hides once a batch starts):
+//     «Продолжить следить» after a lost connection, «Повторить неудачные» when some failed (both on
+//     the batch job slot, job-runner.js) and «Выбрать снова», which ticks the same dialogues in the
+//     queue again (the bar comes back, e.g. to run them on another checklist).
 //     card(id): the card of that dialogue while at least half of it is in view, else null (the
 //     card the shell's motion grows into the scorecard panel, and back);
 //     shown(): called by the shell once the board is laid out, to restore the scroll.
@@ -28,6 +32,8 @@ import { fmt2, rat } from "../domain/rational.js";
 import { t } from "../i18n/ru.js";
 import { watch } from "../state/store.js";
 import { clear, h, placeChildren } from "./dom.js";
+import { jobSlot } from "./job-runner.js";
+import { BATCH_SLOT } from "./loader.js";
 import { href } from "./router.js";
 
 const FETCH_SLOTS = 4;
@@ -69,6 +75,7 @@ export function trackBatch(store) {
 export function createBatchBoard(store, api) {
   let destroyed = false;
   const memory = memoryOf(store);
+  const slot = jobSlot(store, api, BATCH_SLOT);
   const evaluations = new Map(); // evaluation_id -> { total, gross } | "loading" | "failed"
   const waiting = [];
   let active = 0;
@@ -79,10 +86,11 @@ export function createBatchBoard(store, api) {
   const checklist = h("span", { class: "cqa-bb-checklist", verbatim: true });
   const progress = h("p", { class: "cqa-bb-progress", attrs: { role: "status", "aria-live": "polite" }, data: { test: "board-progress" } });
   const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
+  const actions = h("div", { class: "cqa-bb-actions", data: { test: "board-actions" } }); // outside the live region
   const grid = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
   // the cards scroll on their own; the head with the progress stays in view
   const scroller = h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid);
-  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), scroller);
+  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, actions, hint), scroller);
   const empty = h(
     "div",
     { class: "cqa-empty", data: { test: "board-empty" } },
@@ -210,12 +218,40 @@ export function createBatchBoard(store, api) {
     const states = batch.dialogues.map((d) => cardState(batch, d.id));
     const done = states.filter((s) => s === "done").length;
     const failed = states.filter((s) => s === "failed").length;
-    const running = batch.lock !== null && batch.lock !== "interrupted";
-    clear(progress).append(h("span", { text: t(running ? "batch.progress" : "batch.done", { done, total }) }));
-    if (failed > 0) progress.append(" · ", h("span", { class: "cqa-bb-fail", text: t("batch.failed", { n: failed }) }));
+    const lost = batch.lock === "interrupted" || batch.lock === "resuming";
+    const running = batch.lock !== null && !lost;
+    clear(progress);
+    clear(actions);
+    if (lost) {
+      progress.append(h("span", { class: "cqa-bb-fail", text: t("batch.interrupted", { done, total }) }));
+      actions.append(button("batch.resume", "batch-resume", () => slot.resume(), { disabled: batch.lock === "resuming" }));
+    } else {
+      progress.append(h("span", { text: t(running ? "batch.progress" : "batch.done", { done, total }) }));
+      if (failed > 0) progress.append(" · ", h("span", { class: "cqa-bb-fail", text: t("batch.failed", { n: failed }) }));
+    }
+    if (!running && !lost) {
+      // the slot holds this batch's job until a new selection starts another batch
+      const own = slot.state();
+      if (own?.meta?.key === batch.key && (own.job?.failed ?? 0) > 0 && !slot.busy()) actions.append(button("batch.retry", "batch-retry", () => slot.retry()));
+      actions.append(
+        h("button", {
+          class: ["cqa-link", "cqa-bb-reselect"],
+          attrs: { type: "button", title: t("board.reselectTitle") },
+          text: t("board.reselect"),
+          data: { test: "board-reselect" },
+          on: { click: () => store.set({ selection: new Set(batch.dialogues.map((d) => d.id)), queueOpen: true }) },
+        }),
+      );
+    }
+    actions.hidden = actions.childElementCount === 0;
+  }
+
+  function button(key, test, onClick, { disabled = false } = {}) {
+    return h("button", { class: "cqa-sc-btn", attrs: { type: "button", disabled }, text: t(key), data: { test }, on: { click: onClick } });
   }
 
   const stop = watch(store, (state) => state.lastBatch ?? null, paint);
+  const stopSlot = slot.watch(() => paint()); // retry is offered only while the slot holds the job
   paint();
 
   return {
@@ -235,6 +271,7 @@ export function createBatchBoard(store, api) {
       if (cardsKey !== null) memory.scroll = { key: cardsKey, top: scroller.scrollTop };
       destroyed = true;
       stop();
+      stopSlot();
     },
   };
 }
