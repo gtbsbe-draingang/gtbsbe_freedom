@@ -1280,8 +1280,11 @@
   gap: 6px;
 }
 
+/* the same colour as the scorecard's total (.cqa-sc-total): mint at 100, towards red as it falls */
 .cqa .cqa-bb-num {
+  --score: 1;
   color: var(--mint);
+  color: color-mix(in oklch shorter hue, var(--mint) calc(var(--score) * 100%), #FF5A5F);
   font-size: 32px;
   font-weight: 700;
   line-height: 1;

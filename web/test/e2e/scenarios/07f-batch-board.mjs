@@ -91,14 +91,20 @@ export async function run(page) {
   })()`);
   const shown = await page.eval(`${JSON.stringify(picked)}.map((id) => [document.querySelector('${sel("board-card")}[data-id="' + id + '"] ${sel("board-total")}').textContent, !!document.querySelector('${sel("board-card")}[data-id="' + id + '"] ${sel("board-gross")}')])`);
   assert.deepEqual(shown, expected, "totals and gross-error tags match the server's evaluations");
+  // each total is coloured by its score, like the scorecard's: different totals, different colours
+  const colours = await page.eval(`[...document.querySelectorAll(${JSON.stringify(sel("board-total"))})].map((n) => [n.textContent, getComputedStyle(n).color])`);
+  for (const [a, ca] of colours) for (const [b, cb] of colours) if (a !== b) assert.notEqual(ca, cb, `${a} and ${b} have different colours`);
   assert.equal(await page.eval("document.documentElement.scrollWidth <= innerWidth"), true);
 
   // ---- a card opens the dialogue; the arrow left of its title comes back to the board ----
   const back = tabs ? sel("board-back-bar") : sel("board-back");
+  const cardColour = await page.eval(`getComputedStyle(${q(`${card(picked[1])} ${sel("board-total")}`)}).color`);
   await page.click(card(picked[1]));
   await until(page, `decodeURIComponent(location.hash) === "#/c/${picked[1]}"`, "the dialogue route");
   if (!tabs) await until(page, `getComputedStyle(${q(sel("scorecard-pane"))}).display !== "none"`, "the scorecard column to come back with a dialogue");
   await until(page, `${q(back)} && ${q(back)}.getClientRects().length > 0`, "the arrow back");
+  await page.waitFor(sel("total"));
+  assert.equal(await page.eval(`getComputedStyle(${q(sel("total"))}).color`), cardColour, "the card's total has the scorecard total's colour");
   assert.equal(await page.eval(`${q(back)}.getAttribute("aria-label")`), "К результатам");
   assert.equal(await page.eval(`${q(`${back} ${sel("board-back-count")}`)}.hidden`), true, "no counter once the batch is over");
   assert.equal(await page.eval(`${q(sel("board-back"))}.getClientRects().length > 0`), !tabs, "the arrow is left of the title from 700 px");
