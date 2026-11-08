@@ -119,6 +119,15 @@ function splitSelectors(list) {
   return out.filter(Boolean);
 }
 
+// A view transition's pseudo-elements hang off the document root, so they cannot sit under a scope
+// class. They are allowed when keyed on the scope's own transition types
+// (:root:active-view-transition-type(cqa-…)::view-transition-…), which only its own code starts.
+const viewTransitionScoped = (selector, scope) => {
+  const prefix = `${scope.slice(1)}-`;
+  const match = /^:root:active-view-transition-type\(([^()]*)\)::view-transition(?:-(?:group|image-pair|old|new)\([\w*-]+\))?(?::only-child)?$/.exec(selector);
+  return match !== null && match[1].split(",").every((type) => type.trim().startsWith(prefix));
+};
+
 // Returns a list of violations; empty means the stylesheet is scoped. `scopes` are the root
 // classes a selector may start with: .cqa (and .cqa-page) for the UI, .dynmock for the proof page.
 function cssViolations(css, { allowRoot = false, scopes = [".cqa"] } = {}) {
@@ -139,7 +148,7 @@ function cssViolations(css, { allowRoot = false, scopes = [".cqa"] } = {}) {
         found.push(`at-rule "${prelude}"`);
       } else {
         for (const selector of splitSelectors(prelude)) {
-          const scoped = scopes.some((scope) => selector.startsWith(scope));
+          const scoped = scopes.some((scope) => selector.startsWith(scope) || viewTransitionScoped(selector, scope));
           const root = allowRoot && selector.startsWith(":root");
           if (!scoped && !root) found.push(`selector "${selector}"`);
         }
@@ -330,6 +339,13 @@ describe("scanners catch violations", () => {
       "@keyframes cqaspin { to { opacity: 0 } }",
       "@keyframes dynmock-spin { to { opacity: 0 } }",
       ":root { --a: 1 }",
+      // view transitions: only keyed on the scope's own types
+      "::view-transition-group(cqa-hero) { z-index: 1 }",
+      ":root::view-transition-old(root) { animation: none }",
+      ":root:active-view-transition-type(open)::view-transition-old(root) { animation: none }",
+      ":root:active-view-transition-type(cqa-open, open)::view-transition-new(root) { animation: none }",
+      ":root:active-view-transition-type(cqa-open) .x { color: red }",
+      ":root:active-view-transition-type(cqa-open)::view-transition-old(root) p { color: red }",
     ]) {
       assert.ok(cssViolations(css).length > 0, `not detected: ${css}`);
     }
@@ -351,6 +367,8 @@ describe("scanners catch violations", () => {
       .cqa.cqa--dark { color: white }
       @media (max-width: 600px) { .cqa .panes { display: block } .cqa .x, .cqa .y { gap: 0 } }
       @keyframes cqa-sc-sweep { from { transform: translateX(-100%) } 50% { opacity: 1 } to { transform: none } }
+      :root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(root) { animation: none }
+      :root:active-view-transition-type(cqa-open)::view-transition-group(cqa-hero), :root:active-view-transition-type(cqa-open)::view-transition-new(cqa-hero):only-child { z-index: 2 }
     `;
     assert.deepEqual(cssViolations(css), []);
     // an animation name carries its scope's prefix, like a class name does

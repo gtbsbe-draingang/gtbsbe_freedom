@@ -2,7 +2,9 @@ import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 // The scorecard pane: the checklist picker and the run buttons, the brand panel with the total, the
 // sections and the gross-error flag, one card per criterion, and the info that does not count.
 //
-//   createScorecard(store, api, {id}?) -> { el, destroy }     what the shell mounts (panes.scorecard)
+//   createScorecard(store, api, {id}?) -> { el, ready, destroy }   what the shell mounts (panes.scorecard)
+//     `ready` settles once the first load is over (shown, failed or nothing to show): the shell's
+//     board -> dialogue motion waits for it briefly, so the card lands on the real total.
 //
 // Data: api.getConfig, listChecklists, getChecklistVersion, listEvaluations (the newest finished
 // evaluation of this dialogue for the picked checklist version), listAppeals (open ones disable
@@ -191,6 +193,8 @@ export function createScorecard(store, api, args = {}) {
     active: null, // the criterion id whose evidence is marked in the transcript
   };
   let destroyed = false;
+  let markReady;
+  const ready = new Promise((resolve) => (markReady = resolve));
   let pendingSel = null; // a shared checklist change that arrived during our own run
   let runStarted = 0; // Date.now() when the current run began (the loading card's clock)
   let clockTimer = null;
@@ -467,6 +471,7 @@ export function createScorecard(store, api, args = {}) {
       body.append(stateBox("scorecard-loading", t("scorecard.loading")));
       return;
     }
+    markReady();
     if (view.phase === "error") {
       body.append(
         stateBox(
@@ -879,14 +884,18 @@ export function createScorecard(store, api, args = {}) {
     if (view.phase === "ready") drawBody();
   }));
 
-  if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
-  else boot();
+  if (id === null) {
+    body.append(stateBox("scorecard-empty", t("workspace.pick")));
+    markReady();
+  } else boot();
 
   return {
     el,
+    ready,
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      markReady();
       stopClock();
       drawer?.close();
       unwatch.forEach((stop) => stop());

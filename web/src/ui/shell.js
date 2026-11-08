@@ -8,13 +8,17 @@ import { setLocalizedText, setLocalizedAttribute } from "../i18n/dom.js";
 //   views  { <routeName>(store, api, route) } every other route.
 //
 // A pane or view returns an HTMLElement or { el, update?(route), destroy?() }. Each falls back to
-// a placeholder until its page exists.
+// a placeholder until its page exists. A workspace pane may also give `ready` (a promise for its
+// first content), `shown()` (called once it is laid out after a change of dialogue) and, for the
+// board, `card(id)` (the card of a dialogue while it is in view): the board <-> dialogue motion
+// (pane-motion.js) uses them.
 import { t, currentLanguage, setLanguage } from "../i18n/ru.js";
 import { isCompact, watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { dropdown } from "./dropdown.js";
 import { icon } from "./icons.js";
 import { logoMark, logoWord } from "./logo.js";
+import { createPaneMotion } from "./pane-motion.js";
 import { href, navFor } from "./router.js";
 import { renderToasts } from "./toast.js";
 
@@ -312,6 +316,47 @@ function workspaceView(store, api, route, panes) {
   );
   grid.append(...[queueHost ? paneResizer(el, "left") : null, paneResizer(el, "right")].filter(Boolean));
 
+  // Board <-> dialogue: the dialogue's card grows into the scorecard's brand panel and back, the
+  // other panes slide or fade (pane-motion.js, motion.css). `wanted` is the dialogue the panes
+  // should show; it differs from `id` only while a view transition waits for its DOM change.
+  const motion = createPaneMotion(el);
+  let wanted = id;
+  let gone = false;
+  function swap() {
+    if (gone || wanted === id) return; // a transition skipped by destroy() still calls swap()
+    fillConversation(wanted);
+    paint();
+    for (const host of [transcriptHost, scorecardHost]) mounted.get(host)?.shown?.();
+  }
+  function change(nextId) {
+    wanted = nextId;
+    if (motion.busy()) {
+      motion.skip(); // a second click while the first still moves: no motion, the latest wins
+      swap();
+      return;
+    }
+    if (nextId === id) return;
+    const from = id;
+    const direction = from === null && panes.board ? "open" : nextId === null && panes.board ? "close" : null;
+    if (direction === null) {
+      swap();
+      return;
+    }
+    let hero = null; // the board card that morphs: the one opened, or the one returned to
+    motion.swapPanes({
+      direction,
+      swap,
+      ready: () => Promise.all([transcriptHost, scorecardHost].map((host) => mounted.get(host)?.ready)),
+      mark: (when) => {
+        if (when === "clear") hero?.classList.remove("is-vt-hero");
+        else if ((when === "old") === (direction === "open")) {
+          hero = mounted.get(transcriptHost)?.card?.(direction === "open" ? nextId : from) ?? null;
+          hero?.classList.add("is-vt-hero");
+        }
+      },
+    });
+  }
+
   const paint = () => {
     const { queueOpen, pane } = store.get();
     const open = Boolean(queueOpen) && !compact;
@@ -329,13 +374,11 @@ function workspaceView(store, api, route, panes) {
   return {
     el,
     update(next) {
-      const nextId = next.params.id ?? null;
-      if (nextId !== id) {
-        fillConversation(nextId);
-        paint();
-      }
+      change(next.params.id ?? null);
     },
     destroy() {
+      gone = true;
+      motion.destroy();
       subs.forEach((off) => off());
       for (const handle of mounted.values()) handle.destroy?.();
       mounted.clear();

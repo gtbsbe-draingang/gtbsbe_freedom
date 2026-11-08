@@ -13,10 +13,16 @@
 //     every job of the batch (the run, then «Повторить неудачные») are merged by dialogue. The job
 //     already in the slot when a new batch starts is the previous batch's: `ignore` holds its id.
 //
-//   createBatchBoard(store, api) -> { el, destroy }
+//   createBatchBoard(store, api) -> { el, card, shown, destroy }
 //     «Выберите диалог в очереди» until a batch has run; then the progress and a card per dialogue:
 //     shimmering while it waits or runs, then its final total (api.getEvaluation) and a gross-error
 //     tag; a failed one says so. Each card is a link that opens its dialogue.
+//     The board is rebuilt each time it comes back (closing a dialogue): the totals it fetched and
+//     its scroll position are kept per store, so it comes back as it was left; the totals are
+//     fetched again behind the scenes (an appeal may have changed one).
+//     card(id): the card of that dialogue while at least half of it is in view, else null (the
+//     card the shell's motion grows into the scorecard panel, and back);
+//     shown(): called by the shell once the board is laid out, to restore the scroll.
 import { setLocalizedText } from "../i18n/dom.js";
 import { fmt2, rat } from "../domain/rational.js";
 import { t } from "../i18n/ru.js";
@@ -25,6 +31,13 @@ import { clear, h, placeChildren } from "./dom.js";
 import { href } from "./router.js";
 
 const FETCH_SLOTS = 4;
+
+// per store: { totals: Map(evaluation id -> {total, gross}), scroll: {key, top} | null }
+const memories = new WeakMap();
+function memoryOf(store) {
+  if (!memories.has(store)) memories.set(store, { totals: new Map(), scroll: null });
+  return memories.get(store);
+}
 
 export function mergeBatch(previous, slot) {
   const meta = slot?.meta;
@@ -55,6 +68,7 @@ export function trackBatch(store) {
 
 export function createBatchBoard(store, api) {
   let destroyed = false;
+  const memory = memoryOf(store);
   const evaluations = new Map(); // evaluation_id -> { total, gross } | "loading" | "failed"
   const waiting = [];
   let active = 0;
@@ -67,7 +81,8 @@ export function createBatchBoard(store, api) {
   const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
   const grid = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
   // the cards scroll on their own; the head with the progress stays in view
-  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid));
+  const scroller = h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid);
+  const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), scroller);
   const empty = h(
     "div",
     { class: "cqa-empty", data: { test: "board-empty" } },
@@ -91,7 +106,11 @@ export function createBatchBoard(store, api) {
       api
         .getEvaluation(id)
         .then(
-          (evaluation) => evaluations.set(id, { total: evaluation.final_total ?? null, gross: evaluation.gross_error?.flag === true }),
+          (evaluation) => {
+            const found = { total: evaluation.final_total ?? null, gross: evaluation.gross_error?.flag === true };
+            evaluations.set(id, found);
+            memory.totals.set(id, found);
+          },
           () => evaluations.set(id, "failed"),
         )
         .finally(() => {
@@ -125,7 +144,9 @@ export function createBatchBoard(store, api) {
     const state = cardState(batch, id);
     const evaluationId = batch.items[id]?.evaluation_id ?? null;
     if (state === "done" && evaluationId) want(evaluationId);
-    const found = evaluationId ? evaluations.get(evaluationId) : undefined;
+    let found = evaluationId ? evaluations.get(evaluationId) : undefined;
+    // known from an earlier visit: shown at once while it is fetched again
+    if ((found === undefined || found === "loading") && memory.totals.has(evaluationId)) found = memory.totals.get(evaluationId);
     const shown = state === "done" ? (found === undefined || found === "loading" ? "loading" : found === "failed" ? "lost" : "done") : state;
     const key = shown === "done" ? `done:${found.total}:${found.gross}` : shown;
     if (card.painted === key) return;
@@ -199,7 +220,19 @@ export function createBatchBoard(store, api) {
 
   return {
     el,
+    card(id) {
+      const found = cards.get(id)?.el;
+      if (!found || board.hidden) return null;
+      const box = found.getBoundingClientRect();
+      const view = scroller.getBoundingClientRect();
+      const seen = Math.min(box.bottom, view.bottom) - Math.max(box.top, view.top);
+      return box.height > 0 && seen >= box.height / 2 ? found : null;
+    },
+    shown() {
+      if (cardsKey !== null && memory.scroll?.key === cardsKey) scroller.scrollTop = memory.scroll.top;
+    },
     destroy() {
+      if (cardsKey !== null) memory.scroll = { key: cardsKey, top: scroller.scrollTop };
       destroyed = true;
       stop();
     },
