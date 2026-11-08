@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 
 export const name = "eval-loading";
 export const path = "/#/c/DEV%3Ap1-ru-001";
+export const motion = true; // checks that the loading card moves
 export const viewports = [
   [1400, 900],
   [600, 800],

@@ -1,9 +1,13 @@
 // Runs scenarios in headless Chrome against a served build.
 //
-// A scenario is a module exporting { name, path, viewports: [[w, h], ...], run(page) }. For every
-// viewport the harness opens `path`, calls run(page), then fails the run on any CSP violation,
+// A scenario is a module exporting { name, path, viewports: [[w, h], ...], run(page), motion? }. For
+// every viewport the harness opens `path`, calls run(page), then fails the run on any CSP violation,
 // console error, uncaught exception or horizontal page overflow. Page-origin storage is cleared
 // before each run, so scenarios never depend on order.
+//
+// Pages run with prefers-reduced-motion: reduce, so a check right after a click never meets a view
+// transition still covering the page; a scenario about motion exports `motion = true` to get the
+// full motion, and can switch with page.reducedMotion(on).
 import { launch } from "./cdp.mjs";
 
 const SCENARIO_TIMEOUT_MS = 30000;
@@ -30,6 +34,9 @@ function makePage(cdp, baseUrl, viewport) {
   return {
     viewport,
     sleep: cdp.sleep,
+    async reducedMotion(on) {
+      await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: on ? "reduce" : "no-preference" }] });
+    },
     async goto(path) {
       await cdp.goto(new URL(path, baseUrl).href);
     },
@@ -135,6 +142,7 @@ export async function runScenarios(scenarios, { baseUrl }) {
         exceptions = [];
 
         const page = makePage(cdp, baseUrl, viewport);
+        await page.reducedMotion(scenario.motion !== true);
         try {
           await withTimeout(
             (async () => {

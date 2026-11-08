@@ -2,7 +2,9 @@ import { setLocalizedText } from "../i18n/dom.js";
 // The transcript pane: the dialogue as bubbles (client left, operator and bot right, system lines
 // as centred notes), built once per conversation.
 //
-//   renderTranscript(store, api, {id}?) -> { el, highlight, focusMessage, destroy }
+//   renderTranscript(store, api, {id}?) -> { el, ready, highlight, focusMessage, destroy }
+//     `ready` settles once the dialogue or its error is on screen (the shell's board -> dialogue
+//     motion waits for it briefly).
 //
 // The scorecard drives it:
 //   highlight(criterionId | null, evidence[], checkedRange, label?)
@@ -239,11 +241,14 @@ export function renderTranscript(store, api, args = {}) {
   function seekSeconds(seconds) {
     return player?.seekSeconds?.(seconds) ?? false;
   }
-  const handle = { el, highlight, focusMessage, seekSeconds, destroy };
+  let markReady;
+  const ready = new Promise((resolve) => (markReady = resolve));
+  const handle = { el, ready, highlight, focusMessage, seekSeconds, destroy };
 
   // ---- loading --------------------------------------------------------------------------------
 
   function show(conversation) {
+    markReady();
     const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
     const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
     const translationEpoch = ++translationRun;
@@ -322,6 +327,7 @@ export function renderTranscript(store, api, args = {}) {
   }
 
   function showError(error) {
+    markReady();
     player?.destroy();
     player = null;
     clear(playerHost);
@@ -380,6 +386,7 @@ export function renderTranscript(store, api, args = {}) {
   function destroy() {
     if (destroyed) return;
     destroyed = true;
+    markReady();
     stopRefresh();
     player?.destroy();
     flashTimers.forEach((timer) => clearTimeout(timer));
@@ -394,7 +401,9 @@ export function renderTranscript(store, api, args = {}) {
   const hook = window.__cqaTest;
   if (hook?.store === store) hook.transcript = { focusMessage, highlight, seekSeconds };
 
-  if (id === null) scroller.append(stateBox("transcript-empty", t("workspace.pick")));
-  else load();
+  if (id === null) {
+    scroller.append(stateBox("transcript-empty", t("workspace.pick")));
+    markReady();
+  } else load();
   return handle;
 }

@@ -1,0 +1,274 @@
+/* The workspace's motion between the batch board and an open dialogue (ui/pane-motion.js).
+   Opening a card (~0.4 s): the card grows into the scorecard's brand panel and its total flies to
+   the panel's total; the other cards fade back; the dialogue rises into the middle; the scorecard
+   column slides in from the right; the first messages and criteria follow one after another.
+   Closing plays it backwards: the panel shrinks into its card and the cards fade in.
+   - With view transitions (types cqa-open / cqa-close), the workspace carries .cqa-ws--vt while
+     the transition runs; it names the elements that move. Every ::view-transition rule below is
+     keyed on those types, so a host page's own transitions are left alone.
+   - Without them, .cqa-ws--arrive-slide moves the new panes with plain CSS animations.
+   - With reduced motion, the JS picks .cqa-ws--arrive-fade: a 150 ms fade, nothing moves. */
+
+/* ---- press: the card gives a little under the pointer ---- */
+.cqa .cqa-bb-card:active {
+  transform: translateY(-1px) scale(0.98);
+  transition-duration: 80ms;
+}
+
+/* ---- the elements a view transition moves ---- */
+.cqa .cqa-ws--vt .cqa-bb {
+  view-transition-name: cqa-board;
+}
+
+.cqa .cqa-ws--vt .cqa-tr {
+  view-transition-name: cqa-convo;
+}
+
+.cqa .cqa-ws--vt .cqa-pane-scorecard {
+  view-transition-name: cqa-side;
+}
+
+/* the card opened (or returned to) and the scorecard's brand panel are one element in motion;
+   so are their totals */
+.cqa .cqa-ws--vt .cqa-bb-card.is-vt-hero,
+.cqa .cqa-ws--vt .cqa-sc-body > .cqa-sc-hero:first-child {
+  view-transition-name: cqa-hero;
+}
+
+.cqa .cqa-ws--vt .cqa-bb-card.is-vt-hero .cqa-bb-num,
+.cqa .cqa-ws--vt .cqa-sc-body > .cqa-sc-hero:first-child .cqa-sc-total {
+  view-transition-name: cqa-hero-num;
+}
+
+/* the rest of the page (header, queue) changes in place */
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(root),
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* the card <-> brand panel: the box moves and resizes; the faces cross-fade early, while the
+   box is still near the card's size (plus-lighter keeps the sum opaque, so nothing shows through) */
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-group(cqa-hero) {
+  z-index: 2;
+  overflow: clip;
+  border-radius: 16px;
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-hero),
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-hero) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  mix-blend-mode: plus-lighter;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-hero) {
+  animation: cqa-vt-face-old 380ms linear both;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-hero) {
+  animation: cqa-vt-face-new 380ms linear both;
+}
+
+/* no partner (the scorecard is a hidden tab below 700 px, or the card is out of view) */
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-hero):only-child,
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-hero-num):only-child {
+  animation: cqa-vt-out 150ms ease-out both;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-hero):only-child,
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-hero-num):only-child {
+  animation: cqa-vt-fade-in 260ms ease-out 60ms both;
+}
+
+/* the total flies from the card to the panel (and back), resizing as it goes */
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-group(cqa-hero-num) {
+  z-index: 3;
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-hero-num),
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-hero-num) {
+  animation-duration: 380ms;
+}
+
+/* the other cards step back; the dialogue rises; the scorecard comes in from the right */
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-board) {
+  animation: cqa-vt-out 120ms ease-out both; /* gone before the dialogue is half in */
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-board) {
+  animation: cqa-vt-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) 90ms both; /* after the dialogue has left */
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-convo) {
+  animation: cqa-vt-rise 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-convo) {
+  animation: cqa-vt-drop 120ms ease-in both;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-new(cqa-side) {
+  animation: cqa-vt-from-right 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms both;
+}
+
+:root:active-view-transition-type(cqa-open, cqa-close)::view-transition-old(cqa-side) {
+  animation: cqa-vt-to-right 160ms ease-in both;
+}
+
+/* ---- without view transitions: the new panes move by themselves ---- */
+.cqa .cqa-ws--arrive-slide .cqa-pane-transcript > * {
+  animation: cqa-vt-rise 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
+}
+
+.cqa .cqa-ws--arrive-slide .cqa-pane-scorecard {
+  animation: cqa-vt-from-right 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms both;
+}
+
+/* ---- reduced motion: a short fade, nothing moves ---- */
+.cqa .cqa-ws--arrive-fade .cqa-pane-transcript > *,
+.cqa .cqa-ws--arrive-fade .cqa-pane-scorecard {
+  animation: cqa-vt-fade-in 150ms ease-out both;
+}
+
+/* ---- rows that follow one after another (both ways of moving) ---- */
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(-n + 8),
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(-n + 10),
+.cqa .cqa-ws--arrive .cqa-sc-body > :not(:first-child, .cqa-sc-crits) {
+  animation: cqa-vt-rise-sm 260ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms both;
+}
+
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(2) { animation-delay: 150ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(3) { animation-delay: 180ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(4) { animation-delay: 210ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(5) { animation-delay: 240ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(6) { animation-delay: 270ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(7) { animation-delay: 300ms; }
+.cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg:nth-child(8) { animation-delay: 330ms; }
+
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(1) { animation-delay: 160ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(2) { animation-delay: 190ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(3) { animation-delay: 220ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(4) { animation-delay: 250ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(5) { animation-delay: 280ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(6) { animation-delay: 310ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(7) { animation-delay: 340ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(8) { animation-delay: 370ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(9) { animation-delay: 400ms; }
+.cqa .cqa-ws--arrive .cqa-sc-crits > :nth-child(10) { animation-delay: 430ms; }
+
+/* back on the board: the cards fade in one after another (the morphing one is already there) */
+.cqa .cqa-ws--arrive .cqa-bb-grid > :nth-child(-n + 15):not(:has(.is-vt-hero)) {
+  animation: cqa-vt-fade-in 220ms ease-out both;
+}
+
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(2) { animation-delay: 20ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(3) { animation-delay: 40ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(4) { animation-delay: 60ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(5) { animation-delay: 80ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(6) { animation-delay: 100ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(7) { animation-delay: 120ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(8) { animation-delay: 140ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(9) { animation-delay: 160ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(10) { animation-delay: 180ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(11) { animation-delay: 200ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(12) { animation-delay: 220ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(13) { animation-delay: 240ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(14) { animation-delay: 260ms; }
+.cqa .cqa-ws--arrive .cqa-bb-grid > .cqa-bb-cell:nth-child(15) { animation-delay: 280ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-bb-card:active {
+    transform: none;
+  }
+
+  .cqa .cqa-ws--arrive .cqa-tr-msgs > .cqa-msg,
+  .cqa .cqa-ws--arrive .cqa-sc-crits > *,
+  .cqa .cqa-ws--arrive .cqa-sc-body > *,
+  .cqa .cqa-ws--arrive .cqa-bb-grid > *,
+  .cqa .cqa-ws--arrive-slide .cqa-pane-transcript > *,
+  .cqa .cqa-ws--arrive-slide .cqa-pane-scorecard {
+    animation: none;
+  }
+}
+
+@keyframes cqa-vt-face-old {
+  0% {
+    opacity: 1;
+  }
+  30%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cqa-vt-face-new {
+  0% {
+    opacity: 0;
+  }
+  30%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes cqa-vt-out {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes cqa-vt-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes cqa-vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cqa-vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes cqa-vt-rise-sm {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes cqa-vt-drop {
+  to {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes cqa-vt-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes cqa-vt-to-right {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}

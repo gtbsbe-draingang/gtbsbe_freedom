@@ -5059,6 +5059,8 @@
       // the criterion id whose evidence is marked in the transcript
     };
     let destroyed = false;
+    let markReady;
+    const ready = new Promise((resolve) => markReady = resolve);
     let pendingSel = null;
     let runStarted = 0;
     let clockTimer = null;
@@ -5133,8 +5135,8 @@
     function paintBar() {
       if (destroyed) return;
       const keyMissing = view.server?.model_key_configured === false;
-      const ready = view.phase === "ready" && view.sel !== null && view.version !== null;
-      const off = view.busy || keyMissing || !ready;
+      const ready2 = view.phase === "ready" && view.sel !== null && view.version !== null;
+      const off = view.busy || keyMissing || !ready2;
       setLocalizedText(runButton, t(view.evaluation ? "scorecard.rerun" : "scorecard.run"));
       for (const button of [runButton, fullButton]) {
         button.disabled = off;
@@ -5187,10 +5189,10 @@
       drawBody();
       paintBar();
     }
-    async function loadSelection({ quiet = false } = {}) {
+    async function loadSelection({ quiet: quiet2 = false } = {}) {
       const mine = ++loadRun;
       const sel = view.sel;
-      if (!quiet) {
+      if (!quiet2) {
         view.phase = "loading";
         drawBody();
         paintBar();
@@ -5230,7 +5232,7 @@
         console.warn("scorecard: the total could not be recomputed", error);
       }
     }
-    async function settle(first) {
+    async function settle2(first) {
       let job = first;
       const deadline = Date.now() + JOB_TIMEOUT_MS;
       while (!jobSettled(job)) {
@@ -5259,7 +5261,7 @@
           view.job = { phase: "running", id: first.id, done: first.done, total: first.total };
           paintBar();
         }
-        const job = await settle(first);
+        const job = await settle2(first);
         view.job = job.failed > 0 ? { phase: "failed", id: job.id, done: job.done, total: job.total } : null;
         store.set((state) => ({ queueRefresh: (state.queueRefresh ?? 0) + 1 }));
         if (!destroyed) await loadSelection({ quiet: true });
@@ -5297,6 +5299,7 @@
         body.append(stateBox("scorecard-loading", t("scorecard.loading")));
         return;
       }
+      markReady();
       if (view.phase === "error") {
         body.append(
           stateBox(
@@ -5643,13 +5646,17 @@
       if (state.role !== "controller") drawer?.close();
       if (view.phase === "ready") drawBody();
     }));
-    if (id === null) body.append(stateBox("scorecard-empty", t("workspace.pick")));
-    else boot();
+    if (id === null) {
+      body.append(stateBox("scorecard-empty", t("workspace.pick")));
+      markReady();
+    } else boot();
     return {
       el,
+      ready,
       destroy() {
         if (destroyed) return;
         destroyed = true;
+        markReady();
         stopClock();
         drawer?.close();
         unwatch.forEach((stop) => stop());
@@ -6689,8 +6696,11 @@
     function seekSeconds(seconds) {
       return player?.seekSeconds?.(seconds) ?? false;
     }
-    const handle = { el, highlight, focusMessage, seekSeconds, destroy };
+    let markReady;
+    const ready = new Promise((resolve) => markReady = resolve);
+    const handle = { el, ready, highlight, focusMessage, seekSeconds, destroy };
     function show(conversation) {
+      markReady();
       const transcript = Array.isArray(conversation?.transcript) ? conversation.transcript : [];
       const channel = conversation?.channel === "voice call" ? t("queue.channel.call") : conversation?.channel === "agent chat" ? t("queue.channel.chat") : "";
       const translationEpoch = ++translationRun;
@@ -6768,6 +6778,7 @@
       if (focus !== null) focusMessage(focus);
     }
     function showError(error) {
+      markReady();
       player?.destroy();
       player = null;
       clear(playerHost);
@@ -6819,6 +6830,7 @@
     function destroy() {
       if (destroyed) return;
       destroyed = true;
+      markReady();
       stopRefresh();
       player?.destroy();
       flashTimers.forEach((timer) => clearTimeout(timer));
@@ -6831,8 +6843,10 @@
     store.set({ transcript: handle });
     const hook = window.__cqaTest;
     if (hook?.store === store) hook.transcript = { focusMessage, highlight, seekSeconds };
-    if (id === null) scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
-    else load2();
+    if (id === null) {
+      scroller.append(stateBox2("transcript-empty", t("workspace.pick")));
+      markReady();
+    } else load2();
     return handle;
   }
 
@@ -7347,6 +7361,11 @@
 
   // src/ui/batch-board.js
   var FETCH_SLOTS = 4;
+  var memories = /* @__PURE__ */ new WeakMap();
+  function memoryOf(store) {
+    if (!memories.has(store)) memories.set(store, { totals: /* @__PURE__ */ new Map(), scroll: null });
+    return memories.get(store);
+  }
   function mergeBatch(previous, slot) {
     const meta = slot?.meta;
     if (!meta?.key || !Array.isArray(meta.dialogues)) return previous ?? null;
@@ -7372,6 +7391,7 @@
   }
   function createBatchBoard(store, api) {
     let destroyed = false;
+    const memory = memoryOf(store);
     const evaluations = /* @__PURE__ */ new Map();
     const waiting = [];
     let active = 0;
@@ -7382,7 +7402,8 @@
     const progress = h("p", { class: "cqa-bb-progress", attrs: { role: "status", "aria-live": "polite" }, data: { test: "board-progress" } });
     const hint = h("p", { class: "cqa-bb-hint", text: t("board.hint") });
     const grid2 = h("ul", { class: "cqa-bb-grid", attrs: { "aria-label": t("board.label") }, data: { test: "board-grid" } });
-    const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid2));
+    const scroller = h("div", { class: "cqa-bb-scroll", data: { test: "board-scroll" } }, grid2);
+    const board = h("div", { class: "cqa-bb-body" }, h("div", { class: "cqa-bb-head" }, title, checklist, progress, hint), scroller);
     const empty = h(
       "div",
       { class: "cqa-empty", data: { test: "board-empty" } },
@@ -7401,7 +7422,11 @@
         const id = waiting.shift();
         active += 1;
         api.getEvaluation(id).then(
-          (evaluation) => evaluations.set(id, { total: evaluation.final_total ?? null, gross: evaluation.gross_error?.flag === true }),
+          (evaluation) => {
+            const found = { total: evaluation.final_total ?? null, gross: evaluation.gross_error?.flag === true };
+            evaluations.set(id, found);
+            memory.totals.set(id, found);
+          },
           () => evaluations.set(id, "failed")
         ).finally(() => {
           active -= 1;
@@ -7430,7 +7455,8 @@
       const state = cardState(batch, id);
       const evaluationId = batch.items[id]?.evaluation_id ?? null;
       if (state === "done" && evaluationId) want(evaluationId);
-      const found = evaluationId ? evaluations.get(evaluationId) : void 0;
+      let found = evaluationId ? evaluations.get(evaluationId) : void 0;
+      if ((found === void 0 || found === "loading") && memory.totals.has(evaluationId)) found = memory.totals.get(evaluationId);
       const shown = state === "done" ? found === void 0 || found === "loading" ? "loading" : found === "failed" ? "lost" : "done" : state;
       const key = shown === "done" ? `done:${found.total}:${found.gross}` : shown;
       if (card.painted === key) return;
@@ -7498,7 +7524,19 @@
     paint();
     return {
       el,
+      card(id) {
+        const found = cards.get(id)?.el;
+        if (!found || board.hidden) return null;
+        const box = found.getBoundingClientRect();
+        const view = scroller.getBoundingClientRect();
+        const seen = Math.min(box.bottom, view.bottom) - Math.max(box.top, view.top);
+        return box.height > 0 && seen >= box.height / 2 ? found : null;
+      },
+      shown() {
+        if (cardsKey !== null && memory.scroll?.key === cardsKey) scroller.scrollTop = memory.scroll.top;
+      },
       destroy() {
+        if (cardsKey !== null) memory.scroll = { key: cardsKey, top: scroller.scrollTop };
         destroyed = true;
         stop();
       }
@@ -9363,6 +9401,82 @@
     );
   }
 
+  // src/ui/pane-motion.js
+  var READY_WAIT_MS = 300;
+  var ARRIVE_MS = 900;
+  function motionMode({ reduced: reduced2, viewTransitions }) {
+    if (reduced2) return "fade";
+    return viewTransitions ? "morph" : "slide";
+  }
+  function currentMode(doc) {
+    const view = doc.defaultView ?? globalThis;
+    const reduced2 = view.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+    const viewTransitions = typeof doc.startViewTransition === "function" && typeof view.ViewTransition === "function" && "types" in view.ViewTransition.prototype;
+    return motionMode({ reduced: reduced2, viewTransitions });
+  }
+  var settle = (promise, ms) => new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    Promise.resolve(promise).catch(() => {
+    }).finally(() => {
+      clearTimeout(timer);
+      resolve();
+    });
+  });
+  var quiet = (promise) => promise?.catch?.(() => {
+  });
+  function createPaneMotion(root) {
+    const doc = root.ownerDocument;
+    let timer = null;
+    let active = null;
+    function arrive(classes) {
+      clearTimeout(timer);
+      root.classList.remove("cqa-ws--arrive", "cqa-ws--arrive-slide", "cqa-ws--arrive-fade");
+      root.classList.add(...classes);
+      timer = setTimeout(() => root.classList.remove(...classes), ARRIVE_MS);
+    }
+    function swapPanes({ direction, swap, ready = () => null, mark = () => {
+    } }) {
+      const mode = currentMode(doc);
+      if (mode !== "morph") {
+        swap();
+        arrive(mode === "fade" ? ["cqa-ws--arrive-fade"] : ["cqa-ws--arrive", "cqa-ws--arrive-slide"]);
+        return null;
+      }
+      mark("old");
+      root.classList.add("cqa-ws--vt");
+      const transition = doc.startViewTransition({
+        update: async () => {
+          swap();
+          arrive(["cqa-ws--arrive"]);
+          mark("new");
+          await settle(ready(), READY_WAIT_MS);
+        },
+        types: [`cqa-${direction}`]
+      });
+      active = transition;
+      quiet(transition.ready);
+      quiet(transition.updateCallbackDone);
+      quiet(transition.finished)?.finally(() => {
+        if (active === transition) active = null;
+        root.classList.remove("cqa-ws--vt");
+        mark("clear");
+      });
+      return transition;
+    }
+    return {
+      swapPanes,
+      // A transition still running: the next change skips it (its DOM change still happens).
+      busy: () => active !== null,
+      skip() {
+        active?.skipTransition();
+      },
+      destroy() {
+        active?.skipTransition();
+        clearTimeout(timer);
+      }
+    };
+  }
+
   // src/ui/shell.js
   var NAV = ["workspace", "checklists", "appeals", "analytics"];
   var ROLES4 = ["controller", "reviewer"];
@@ -9647,6 +9761,43 @@
       grid2
     );
     grid2.append(...[queueHost ? paneResizer(el, "left") : null, paneResizer(el, "right")].filter(Boolean));
+    const motion = createPaneMotion(el);
+    let wanted = id;
+    let gone = false;
+    function swap() {
+      if (gone || wanted === id) return;
+      fillConversation(wanted);
+      paint();
+      for (const host of [transcriptHost, scorecardHost]) mounted.get(host)?.shown?.();
+    }
+    function change(nextId2) {
+      wanted = nextId2;
+      if (motion.busy()) {
+        motion.skip();
+        swap();
+        return;
+      }
+      if (nextId2 === id) return;
+      const from = id;
+      const direction = from === null && panes.board ? "open" : nextId2 === null && panes.board ? "close" : null;
+      if (direction === null) {
+        swap();
+        return;
+      }
+      let hero = null;
+      motion.swapPanes({
+        direction,
+        swap,
+        ready: () => Promise.all([transcriptHost, scorecardHost].map((host) => mounted.get(host)?.ready)),
+        mark: (when) => {
+          if (when === "clear") hero?.classList.remove("is-vt-hero");
+          else if (when === "old" === (direction === "open")) {
+            hero = mounted.get(transcriptHost)?.card?.(direction === "open" ? nextId2 : from) ?? null;
+            hero?.classList.add("is-vt-hero");
+          }
+        }
+      });
+    }
     const paint = () => {
       const { queueOpen, pane } = store.get();
       const open = Boolean(queueOpen) && !compact;
@@ -9662,13 +9813,11 @@
     return {
       el,
       update(next) {
-        const nextId2 = next.params.id ?? null;
-        if (nextId2 !== id) {
-          fillConversation(nextId2);
-          paint();
-        }
+        change(next.params.id ?? null);
       },
       destroy() {
+        gone = true;
+        motion.destroy();
         subs.forEach((off) => off());
         for (const handle of mounted.values()) handle.destroy?.();
         mounted.clear();
