@@ -6391,7 +6391,13 @@
           h(
             "div",
             { class: "cqa-bb-total" },
-            h("b", { class: ["cqa-bb-num", "num", none && "is-none"], text: none ? t("scorecard.totalNone") : fmt2(rat(found.total)), data: { test: "board-total" } }),
+            h("b", {
+              class: ["cqa-bb-num", "num", none && "is-none"],
+              text: none ? t("scorecard.totalNone") : fmt2(rat(found.total)),
+              // 0..100 -> 0..1, as the scorecard's total: the CSS mixes red (0) into mint (100)
+              style: none ? null : { "--score": Math.max(0, Math.min(100, found.total)) / 100 },
+              data: { test: "board-total" }
+            }),
             none ? null : h("span", { class: "cqa-bb-out", text: t("scorecard.outOf") })
           ),
           found.gross ? h("span", { class: "cqa-bb-gross", text: t("queue.tag.grossError"), data: { test: "board-gross" } }) : null
