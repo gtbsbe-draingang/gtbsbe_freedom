@@ -111,7 +111,10 @@ export async function run(page) {
     "«Оценить выбранные» is on screen without scrolling the list",
   );
   await page.click(sel("batch-run"));
-  await until(page, `/3 из 3/.test(document.querySelector(${quote(sel("batch-progress"))})?.textContent ?? "")`, "the batch to reach 3 of 3", 15000);
+  // the board takes over: the ticks are cleared and the bar hides
+  assert.equal(await page.count(sel("batch-bar")), 0, "the bar hides once the batch starts");
+  assert.equal(await page.eval(`window.__cqaTest.store.get().selection.size`), 0, "the ticks are cleared");
+  await until(page, `/3 из 3/.test(document.querySelector(${quote(sel("board-progress"))})?.textContent ?? "")`, "the batch to reach 3 of 3", 15000);
   await until(
     page,
     `${quote(picked)}.every((id) => /\\d/.test(document.querySelector('[data-test="queue-item"][data-id="' + id + '"] [data-test="queue-score"]')?.textContent ?? ""))`,

@@ -1,5 +1,7 @@
 // The batch board: «Оценить выбранные» shows the batch's dialogues as cards in the middle pane,
-// shimmering until each is evaluated, then with its total; a card opens the dialogue.
+// shimmering until each is evaluated, then with its total; a card opens the dialogue. The selection
+// bar hides once the batch starts; the arrow left of an open dialogue's title (with a «2/3» counter
+// while the batch runs) leads back; «Выбрать снова» ticks the batch's dialogues again.
 import assert from "node:assert/strict";
 
 export const name = "batch-board";
@@ -48,6 +50,12 @@ export async function run(page) {
   assert.equal(await page.eval(`${q(sel("transcript-pane"))}.getBoundingClientRect().right >= ${q(".cqa-ws-grid")}.getBoundingClientRect().right - 1`), true, "the board reaches the right edge");
   if (tabs) assert.equal(await page.eval(`getComputedStyle(${q(".cqa-tabs")}).display`), "none");
   assert.match(await page.text(sel("board-empty")), /Оценить выбранные/);
+  // no batch yet: an open dialogue has no arrow back
+  await page.eval(`location.hash = "#/c/DEV%3Ap1-ru-001"`);
+  await page.waitFor(sel("transcript-title"));
+  assert.equal(await page.eval(`${q(sel("board-back"))}.hidden && ${q(sel("board-back-bar"))}.hidden`), true, "no arrow back without a batch");
+  await page.eval(`location.hash = "#/"`);
+  await page.waitFor(sel("board-empty"));
 
   // ---- run a batch: the board shows a shimmering card per dialogue at once ----
   await openQueue(page);
@@ -56,6 +64,9 @@ export async function run(page) {
   await page.eval(hold);
   await page.click(sel("batch-run"));
   await until(page, `document.querySelectorAll(${JSON.stringify(sel("board-card"))}).length === 3`, "three cards");
+  assert.equal(await page.count(sel("batch-bar")), 0, "the bar hides: the board takes over");
+  assert.equal(await page.count(`${sel("queue-select")}:checked`), 0, "the ticks are cleared");
+  assert.equal(await page.count(sel("board-reselect")), 0, "nothing to select again while the batch runs");
   if (narrow) assert.equal(await page.eval("window.__cqaTest.store.get().queueOpen"), false, "the drawer closes so the board shows");
   assert.deepEqual(await page.eval(`[...document.querySelectorAll(${JSON.stringify(sel("board-card"))})].map((c) => c.getAttribute("data-id"))`), picked);
   assert.deepEqual(await page.eval(states), ["queued", "queued", "queued"]);
@@ -82,17 +93,37 @@ export async function run(page) {
   assert.deepEqual(shown, expected, "totals and gross-error tags match the server's evaluations");
   assert.equal(await page.eval("document.documentElement.scrollWidth <= innerWidth"), true);
 
-  // ---- a card opens the dialogue; «Результаты» in the batch bar comes back to the board ----
+  // ---- a card opens the dialogue; the arrow left of its title comes back to the board ----
+  const back = tabs ? sel("board-back-bar") : sel("board-back");
   await page.click(card(picked[1]));
   await until(page, `decodeURIComponent(location.hash) === "#/c/${picked[1]}"`, "the dialogue route");
   if (!tabs) await until(page, `getComputedStyle(${q(sel("scorecard-pane"))}).display !== "none"`, "the scorecard column to come back with a dialogue");
-  await until(page, `${q(sel("batch-results"))} !== null`, "the «Результаты» link");
-  await page.eval(`${q(sel("batch-results"))}.click()`);
+  await until(page, `${q(back)} && ${q(back)}.getClientRects().length > 0`, "the arrow back");
+  assert.equal(await page.eval(`${q(back)}.getAttribute("aria-label")`), "К результатам");
+  assert.equal(await page.eval(`${q(`${back} ${sel("board-back-count")}`)}.hidden`), true, "no counter once the batch is over");
+  assert.equal(await page.eval(`${q(sel("board-back"))}.getClientRects().length > 0`), !tabs, "the arrow is left of the title from 700 px");
+  assert.equal(await page.eval(`${q(sel("board-back-bar"))}.getClientRects().length > 0`), tabs, "and in the tab strip below");
+  if (tabs) {
+    // reachable from the scorecard tab too
+    await page.click(sel("tab-scorecard"));
+    assert.equal(await page.eval(`${q(back)}.getClientRects().length > 0`), true, "the arrow stays on the scorecard tab");
+  }
+  await page.click(back);
   await until(page, `location.hash === "#/" && ${states}.length === 3`, "the board again");
+  assert.equal(await page.count(sel("transcript")), 0, "the dialogue is closed");
+  if (!tabs) assert.equal(await page.eval(`getComputedStyle(${q(sel("scorecard-pane"))}).display`), "none", "and so is the scorecard column");
   assert.deepEqual(await page.eval(states), ["done", "done", "done"], "the board still has the results");
+
+  // ---- «Выбрать снова»: the batch's dialogues are ticked again and the bar is back ----
+  await page.click(sel("board-reselect"));
+  await page.waitFor(sel("batch-bar"));
+  assert.deepEqual(await page.eval("[...window.__cqaTest.store.get().selection]"), picked, "the same dialogues, in the same order");
+  if (narrow) assert.equal(await page.eval("window.__cqaTest.store.get().queueOpen"), true, "the drawer opens on the bar");
+  await page.eval("window.__cqaTest.store.set({ selection: new Set(), queueOpen: false })");
 
   // ---- a new tick resets the bar's job, not the board ----
   await openQueue(page);
+  await page.eval(`window.__cqaTest.store.set({ selection: new Set(${JSON.stringify(picked)}) })`);
   await page.eval(`${q(`${sel("queue-item")}[data-id="DEV:p1-en-003"] ${sel("queue-select")}`)}.click()`);
   assert.deepEqual(await page.eval(states), ["done", "done", "done"]);
 
@@ -105,22 +136,31 @@ export async function run(page) {
   assert.match(await page.text(card("DEV:p1-en-003")), /Не удалось оценить/);
   assert.match(await page.text(card("DEV:p1-en-003")), /timeout/);
   assert.match(await page.text(sel("board-progress")), /не удалось: 1/);
+  assert.equal(await page.count(sel("batch-retry")), 1, "the board offers «Повторить неудачные»");
   await page.eval(`window.__cqaTest.api.getJob = window.__realGetJob`);
   await page.eval(`(() => { const s = ${q(sel("ui-language"))}; s.value = "en"; s.dispatchEvent(new Event("change", { bubbles: true })); })()`);
   assert.match(await page.text(sel("batch-board")), /Batch evaluation results/);
   assert.match(await page.text(card("DEV:p1-en-003")), /Evaluation failed/);
   await page.eval(`(() => { const s = ${q(sel("ui-language"))}; s.value = "ru"; s.dispatchEvent(new Event("change", { bubbles: true })); })()`);
 
-  // ---- with a dialogue open, the dialogue stays; «Результаты» leads to the new batch ----
+  // ---- with a dialogue open, the dialogue stays; the arrow back counts the new batch, then leads to it ----
   await page.eval(`location.hash = "#/c/DEV%3Ap1-ru-001"`);
   await until(page, `${q(sel("transcript-pane"))}?.textContent.includes("p1-ru-001")`, "the dialogue");
   await openQueue(page);
-  await page.eval(`${q(`${sel("queue-item")}[data-id="DEV:p1-en-003"] ${sel("queue-select")}`)}.click()`); // untick: 3 left
+  await page.eval(`window.__cqaTest.store.set({ selection: new Set(${JSON.stringify(picked)}) })`);
   await runReady(page);
+  await page.eval(hold);
   await page.click(sel("batch-run"));
-  await until(page, `${q(sel("batch-results"))} !== null`, "the «Результаты» link of the new batch");
+  assert.equal(await page.count(sel("batch-bar")), 0, "the bar hides with a dialogue open too");
   assert.equal(decodeURIComponent(await page.eval("location.hash")), "#/c/DEV:p1-ru-001", "the open dialogue stays");
-  await page.eval(`${q(sel("batch-results"))}.click()`);
+  await until(page, `${q(`${back} ${sel("board-back-count")}`)}?.hidden === false`, "the counter on the arrow");
+  assert.equal(await page.text(`${back} ${sel("board-back-count")}`), "0/3");
+  assert.equal(await page.eval(`${q(back)}.getAttribute("aria-label")`), "К результатам: оценено 0 из 3");
+  await page.eval("window.__release()");
+  await page.eval(unhold);
+  await until(page, `${q(`${back} ${sel("board-back-count")}`)}.hidden`, "the counter to go when the batch ends", 15000);
+  await page.eval("window.__cqaTest.store.set({ queueOpen: false })");
+  await page.click(back);
   await until(page, `location.hash === "#/" && ${states}.length === 3`, "the board of the new batch");
   await until(page, `${states}.every((s) => s === "done")`, "the new batch done", 15000);
 

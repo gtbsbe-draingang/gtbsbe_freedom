@@ -93,7 +93,7 @@ export async function run(page) {
 
   // ---- close: the panel shrinks back into its card; the board is where it was, totals at once ----
   await page.eval(RECORD);
-  await page.eval(`${q(sel("batch-results"))}.click()`);
+  await page.eval(`${q(sel(tabs ? "board-back-bar" : "board-back"))}.click()`);
   await settled(page, "the close transition to end");
   const close = await page.eval("window.__vt");
   assert.deepEqual(close.types, ["cqa-close"]);
