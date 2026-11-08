@@ -1049,6 +1049,83 @@
 .cqa .cqa-tr-head:empty {
   display: none;
 }
+.cqa .cqa-tr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cqa .cqa-tr-top > .cqa-tr-head {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+.cqa .cqa-tr-top:not(:has(> .cqa-back:not([hidden]))):has(> .cqa-tr-head:empty) {
+  display: none;
+}
+.cqa .cqa-back {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  text-decoration: none;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+.cqa .cqa-back:hover {
+  border-color: var(--line-2);
+  color: var(--text);
+  transform: translateX(-2px);
+}
+.cqa .cqa-back:focus-visible {
+  outline: 2px solid var(--nav-on);
+  outline-offset: 2px;
+}
+.cqa .cqa-back:not(.is-running) {
+  width: 32px;
+  padding: 0;
+}
+.cqa .cqa-back-count {
+  font-size: 12px;
+  font-weight: 700;
+}
+.cqa .cqa-back.is-running {
+  border-color: var(--accent);
+  color: var(--accent-2);
+}
+.cqa.cqa--dark .cqa-back.is-running {
+  border-color: rgba(116, 250, 151, 0.45);
+  color: var(--mint);
+}
+.cqa .cqa-back--bar {
+  display: none;
+}
+@media (max-width: 699.98px) {
+  .cqa .cqa-back--head {
+    display: none;
+  }
+  .cqa .cqa-back--bar:not([hidden]) {
+    display: inline-flex;
+  }
+  .cqa .cqa-tr-top:has(> .cqa-tr-head:empty) {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-back:hover {
+    transform: none;
+  }
+}
 .cqa .cqa-tr-title {
   font-size: 22px;
   font-weight: 700;
@@ -1815,6 +1892,16 @@
 }
 .cqa .cqa-bb-progress .cqa-bb-fail {
   color: var(--bad-ink);
+}
+.cqa .cqa-bb-actions {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.cqa .cqa-bb-reselect {
+  font-size: 13px;
 }
 .cqa .cqa-bb-hint {
   flex-basis: 100%;

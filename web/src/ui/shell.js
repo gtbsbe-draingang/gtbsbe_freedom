@@ -17,6 +17,7 @@ import { isCompact, watch } from "../state/store.js";
 import { clear, h } from "./dom.js";
 import { dropdown } from "./dropdown.js";
 import { icon } from "./icons.js";
+import { createBackLink } from "./back-link.js";
 import { logoMark, logoWord } from "./logo.js";
 import { createPaneMotion } from "./pane-motion.js";
 import { href, navFor } from "./router.js";
@@ -290,7 +291,10 @@ function workspaceView(store, api, route, panes) {
   const tabs = ["transcript", "scorecard"].map((pane) =>
     h("button", { class: "cqa-tab", attrs: { type: "button", role: "tab", "aria-selected": "false" }, data: { test: `tab-${pane}` }, text: t(`workspace.tab.${pane}`), on: { click: () => store.set({ pane }) } }),
   );
-  const bar = h("div", { class: "cqa-ws-bar" }, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
+  // below 700 px the dialogue and the scorecard are tabs: the way back to the board sits here
+  const back = compact ? null : createBackLink(store, { place: "bar" });
+  if (back) track(back.destroy);
+  const bar = h("div", { class: "cqa-ws-bar" }, back?.el, toggle, h("div", { class: "cqa-tabs", attrs: { role: "tablist" } }, tabs));
   const scrim = compact
     ? null
     : h("button", { class: "cqa-scrim", attrs: { type: "button", tabindex: "-1", "aria-label": t("workspace.queueClose") }, data: { test: "queue-scrim" }, on: { click: () => store.set({ queueOpen: false }) } });
