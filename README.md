@@ -1,5 +1,7 @@
 # CQA: Conversation Quality Analytics
 
+**Team: gtbsbe**
+
 A prototype for the Freedom Broker × Nazarbayev University Data Challenge. It scores support operators' chats and calls against a configurable checklist, explains every score with evidence from the dialogue, and lets a score be appealed and reviewed. The interface is plain HTML, CSS and JavaScript, built so that it can later run as a component inside Microsoft Dynamics 365.
 
 **The flow:** pick a checklist (the official eight-criterion checklist is the default) → run an evaluation of an operator's dialogue → see each criterion's answer, points, explanation and the evidence line in the transcript → a controller files an appeal on one criterion → a model gives the reviewer a second opinion → the reviewer confirms or changes the answer, and the total is recalculated.
