@@ -23,6 +23,43 @@
   box-sizing: border-box;
 }
 
+/* One scrollbar everywhere (first made for the batch board): thin, the theme's green thumb on a
+   clear track, a little stronger while the pointer is over the scrolling area. Only the look:
+   which areas scroll, and how, is set where each one is styled. Every element gets the colour
+   itself rather than inheriting it, so hovering a pane does not light up the scrollbars inside
+   it. The page's own scrollbar belongs to <html>, which is the host's, so it is left alone. */
+.cqa,
+.cqa * {
+  scrollbar-color: var(--scroll-thumb) transparent;
+  scrollbar-width: thin;
+}
+
+.cqa:hover,
+.cqa :hover {
+  scrollbar-color: var(--scroll-thumb-hover) transparent;
+}
+
+/* Browsers without scrollbar-color (Safari before 18.2) draw the WebKit scrollbar parts. */
+.cqa ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.cqa ::-webkit-scrollbar-track,
+.cqa ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.cqa ::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--scroll-thumb) padding-box;
+}
+
+.cqa ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll-thumb-hover);
+}
+
 /* Tabular figures only on numbers: the font's tnum also widens spaces. */
 .cqa .num {
   font-variant-numeric: tabular-nums;

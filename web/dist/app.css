@@ -27,6 +27,14 @@
   --line: #E6E7E9;
   --scroll-thumb: rgba(42, 134, 64, 0.32);
   --scroll-thumb-hover: rgba(42, 134, 64, 0.55);
+  --brand-name:
+    linear-gradient(
+      90deg,
+      #055532,
+      #2A8640,
+      #4FB84E,
+      #2A8640,
+      #055532);
   --line-2: #D1D1D1;
   --frame: #D1D1D1;
   --text: #191919;
@@ -50,6 +58,16 @@
   --line: #333333;
   --scroll-thumb: rgba(116, 250, 151, 0.26);
   --scroll-thumb-hover: rgba(116, 250, 151, 0.45);
+  --brand-name:
+    linear-gradient(
+      90deg,
+      #2A8640,
+      #4FB84E,
+      #74FA97,
+      #64D9C4,
+      #74FA97,
+      #4FB84E,
+      #2A8640);
   --line-2: #454545;
   --frame: #000000;
   --text: rgba(255, 255, 255, 0.87);
@@ -91,6 +109,31 @@
 .cqa *::before,
 .cqa *::after {
   box-sizing: border-box;
+}
+.cqa,
+.cqa * {
+  scrollbar-color: var(--scroll-thumb) transparent;
+  scrollbar-width: thin;
+}
+.cqa:hover,
+.cqa :hover {
+  scrollbar-color: var(--scroll-thumb-hover) transparent;
+}
+.cqa ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.cqa ::-webkit-scrollbar-track,
+.cqa ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.cqa ::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--scroll-thumb) padding-box;
+}
+.cqa ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll-thumb-hover);
 }
 .cqa .num {
   font-variant-numeric: tabular-nums;
@@ -156,10 +199,33 @@
   height: calc(var(--logo-h) * 59.8106 / 111.565);
 }
 .cqa .cqa-prod {
-  color: var(--text-2);
   padding-left: 16px;
   border-left: 1px solid var(--line-2);
+  color: var(--accent-2);
+  background: var(--brand-name);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
   white-space: nowrap;
+  animation: cqa-prod-flow 6s linear infinite;
+}
+@keyframes cqa-prod-flow {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-prod {
+    animation: none;
+  }
 }
 .cqa .cqa-top--compact .cqa-prod {
   padding-left: 0;
@@ -1718,26 +1784,7 @@
       #000 10px,
       #000 calc(100% - 18px),
       transparent 100%);
-  scrollbar-color: var(--scroll-thumb) transparent;
   scrollbar-gutter: stable;
-  scrollbar-width: thin;
-}
-.cqa .cqa-bb-scroll:hover {
-  scrollbar-color: var(--scroll-thumb-hover) transparent;
-}
-.cqa .cqa-bb-scroll::-webkit-scrollbar {
-  width: 10px;
-}
-.cqa .cqa-bb-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.cqa .cqa-bb-scroll::-webkit-scrollbar-thumb {
-  border: 3px solid transparent;
-  border-radius: 999px;
-  background: var(--scroll-thumb) padding-box;
-}
-.cqa .cqa-bb-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scroll-thumb-hover);
 }
 @media (min-width: 900px) {
   .cqa .cqa-bb-body {

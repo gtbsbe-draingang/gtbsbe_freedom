@@ -23,6 +23,8 @@
   --line: #E6E7E9;
   --scroll-thumb: rgba(42, 134, 64, 0.32);
   --scroll-thumb-hover: rgba(42, 134, 64, 0.55);
+  /* the product name: a loop from the deep brand green to the brightest green that reads on white */
+  --brand-name: linear-gradient(90deg, #055532, #2A8640, #4FB84E, #2A8640, #055532);
   --line-2: #D1D1D1;
   --frame: #D1D1D1;
   --text: #191919;
@@ -47,6 +49,8 @@
   --line: #333333;
   --scroll-thumb: rgba(116, 250, 151, 0.26);
   --scroll-thumb-hover: rgba(116, 250, 151, 0.45);
+  /* on dark the loop reaches the mint and teal of the brand panel and the call-to-action button */
+  --brand-name: linear-gradient(90deg, #2A8640, #4FB84E, #74FA97, #64D9C4, #74FA97, #4FB84E, #2A8640);
   --line-2: #454545;
   --frame: #000000;
   --text: rgba(255, 255, 255, 0.87);

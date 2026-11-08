@@ -49,11 +49,40 @@
   height: calc(var(--logo-h) * 59.8106 / 111.565);
 }
 
+/* The product name «Qualio»: bold, its letters filled with the brand greens that flow slowly from
+   left to right. The gradient is twice the text's width and repeats, so moving it by its own width
+   loops without a seam. A logotype has no contrast requirement, but each theme keeps its greens
+   readable on its header. Without motion (reduced-motion setting) the colours stand still. */
 .cqa .cqa-prod {
-  color: var(--text-2);
   padding-left: 16px;
   border-left: 1px solid var(--line-2);
+  color: var(--accent-2); /* what shows if a browser cannot clip the gradient to the letters */
+  background: var(--brand-name);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
   white-space: nowrap;
+  animation: cqa-prod-flow 6s linear infinite;
+}
+
+@keyframes cqa-prod-flow {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cqa .cqa-prod {
+    animation: none;
+  }
 }
 
 .cqa .cqa-top--compact .cqa-prod {
