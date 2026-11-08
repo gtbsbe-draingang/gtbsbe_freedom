@@ -294,10 +294,6 @@ or a later PCF wrapper. Constraints that keep this true (full list in `CLAUDE.md
 
 ## 12. Known gaps
 
-- `TECH_STACK.md` describes a fully local setup (Qwen as judge, Qolda-AVL for audio). The code
-  does not do that: judging runs on the Claude API and audio contributes only numeric voice
-  measurements. Treat `TECH_STACK.md` as a proposal until it is reconciled.
 - Accuracy against reference answers (`backend/quality/`) exists, but no independent accuracy
   figure has been published yet; the slide placeholder is still open.
 - Analytics and accuracy pages: backend endpoints work, UI pages are placeholders (#36, #37).
-- Evaluator follow-ups that need the team lead are listed in `backend/evaluator/B_NEEDED.md`.

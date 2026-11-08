@@ -140,9 +140,7 @@ Key decisions:
 ├── data/                        dev.json and audio/ are private (not in git); snapshot/ holds the jury snapshot
 ├── .github/workflows/backend.yml   CI: backend and evaluator tests
 ├── CLAUDE.md                    Project rules: Dynamics constraints, secrets, design language
-├── EXTRA_FEATURES.md            Agreed features beyond the brief
-├── HANDOVER.md                  Front-end handover (written at cc5ff85; the appeals UI has landed since)
-└── SUBMISSION_AUDIT.md          Security audit before the repository goes public (#35)
+└── EXTRA_FEATURES.md            Agreed features beyond the brief
 ```
 
 ### Backend platform
